@@ -10,7 +10,7 @@ draft = true
 Jordan Williams <jwillikers@protonmail.com>
 v1.0, 2020-02-08
 :source-highlighter: rouge
-:rouge-style: base16.solarized.light
+:rouge-style: base16.solarized.dark
 :icons: font
 
 It is handy to have your system send you an email alert if it detects an issue or potential security risk.

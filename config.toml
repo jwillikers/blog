@@ -4,7 +4,7 @@ title = "JWillikers"
 theme = "beautifulhugo"
 enableEmoji = true
 enableGitInfo = true
-pygmentsStyle = "solarized-light"
+pygmentsStyle = "solarized-dark"
 pygmentsCodeFences = true
 pygmentsUseClasses = true
 
@@ -17,7 +17,7 @@ pygmentsUseClasses = true
     lineNos = false
     lineNumbersInTable = true
     noClasses = true
-    style = "solarized-light"
+    style = "solarized-dark"
     tabWidth = 4
 
 [params]
