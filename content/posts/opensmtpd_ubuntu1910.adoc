@@ -1,0 +1,99 @@
+---
+title: "OpenSMTPD Forwarding on Ubuntu 19.10"
+date: 2020-02-02T08:55:07-06:00 //
+draft: true
+
+categories:
+    - "Networking"
+tags:
+    - "2FA"
+    - "GMail"
+    - "OpenSMTPD"
+    - "OpenSMTPD 6.0.3"
+    - "Ubuntu"
+    - "Ubuntu 19.10"
+---
+
+= OpenSMTPD Forwarding on Ubuntu 19.10
+Jordan Williams <jwillikers@protonmail.com>
+v1.0, 2020-02-08
+
+It is handy to have your system send you an email alert if it detects an issue or potential security risk.
+Unfortunately, this isn't always straightforward, especially if you want to send an email from your desktop computer.
+Sending an email directly from your desktop to your email provider is likely going to accomplish absolutely nothing.
+The email will likely be blocked since it is from an unknown source, i.e. your desktop.
+I ran into this problem recently trying to set up https://linux.die.net/man/8/smartd[smartd] from https://www.smartmontools.org/[SmartMonTools] to email me when it detected hard drive failure.
+The https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol[Simple Mail Transfer Protocal (SMTP)] is perfect for getting around this by *relaying* the email through your legitimate email account and provider.
+In my instance, I wanted to relay the alert through my GMail account, which has nice support for SMTP.
+Using an Ubuntu desktop computer, I figured this would be a breeze.
+It wasn't.
+It turned out to be much harder than I anticipated because many guides use antiquated SMTP applications to relay their emails, such as https://wiki.archlinux.org/index.php/SSMTP[SSMTP].
+Being an https://www.openbsd.org/[OpenBSD] fanboy, I decided to use their SMTP application, https://github.com/OpenSMTPD/OpenSMTPD[OpenSMTPD].
+This brief guide will walk you through setting up https://github.com/OpenSMTPD/OpenSMTPD[OpenSMTPD] 6.0.3 on Ubuntu 19.10 for relaying emails through your GMail account.
+
+== Instructions
+. Install OpenSMTPD on Ubuntu.
++
+[source,shell,subs="+quotes"]
+sudo apt install opensmtpd
+
+. Configure OpenSMTPD.
+The OpenSMTPD packaged for Ubuntu 19.10 is a bit older and uses a deprecated configuration syntax.
+I have provided both versions of the syntax to help future-proof this post.
++
+The vanilla configuration file only requires a couple of minor changes.
+The gist of the configuration is to relay all mail originating from the local machine to my GMail account.
++
+./etc/smtpd.conf
+----
+# This is the smtpd server system-wide configuration file.
+# See smtpd.conf(5) for more information.
+
+table secrets file:/etc/mail/secrets # <1>
+
+# If you edit the file, you have to run "smtpctl update table aliases"
+table aliases file:/etc/aliases
+
+# To accept external mail, replace with: listen on all
+listen on localhost
+
+accept for any relay via tls+auth://MY_LABEL@smtp.gmail.com auth <secrets> # <2>
+
+accept for local alias <aliases> deliver to mbox
+accept for any relay
+----
+<1> Use the content of the file `/etc/mail/secrets`, shown below, as the `secrets` table.
+<2> The rule to forward all mail to the GMail SMTP server.
++
+./etc/mail/secrets
+----
+MY_LABEL my_username@gmail.com:my_app_password
+----
++
+./etc/aliases
+----
+# See man 5 aliases for format
+postmaster:    root
+----
+
+. Verify the OpenSMTPD configuration file.
++
+[source,shell,subs="+quotes"]
+smtpd -n
++
+image::smtpd_configuration_ok.png[]
+
+. Enable OpenSMTPD on system startup.
++
+[source,shell,subs="+quotes"]
+sudo systemctl enable opensmtpd
+
+. Install `mailutils` to associate standard system mail commands with OpenSMTPD.
++
+[source,shell,subs="+quotes"]
+sudo apt install mailutils
+
+. Send a test email using `mailutils`.
++
+[source,shell,subs="+quotes"]
+echo "Subject: hello" | sendmail test@example.com
