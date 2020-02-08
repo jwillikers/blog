@@ -1,7 +1,12 @@
 baseURL = "http://jwillikers.com/"
 languageCode = "en-us"
 title = "JWillikers"
-theme = "coder"
+theme = "beautifulhugo"
+enableEmoji = true
+enableGitInfo = true
+pygmentsStyle = "solarized-light"
+pygmentsCodeFences = true
+pygmentsUseClasses = true
 
 [markup]
   [markup.highlight]
@@ -15,12 +20,18 @@ theme = "coder"
     style = "solarized-light"
     tabWidth = 4
 
-[params]
-	author = "Jordan Williams"
-	info = "Software Developer"
-	description = "My developer website"
-	keywords = "blog,developer"
-	avatarurl = "https://www.gravatar.com/avatar/e3189498d000ca4eb4e893739fd63636?s=500"
+[Params]
+  subtitle = "My developer website"
+  rss = true
+  mainSections = ["post","posts"]
+  logo = "https://www.gravatar.com/avatar/e3189498d000ca4eb4e893739fd63636?s=500"
+
+[Author]
+	name = "Jordan Williams"
+    github = "jwillikers"
+    gitlab = "jwillikers"
+    bitbucket = "jwillikers"
+    custom_css = ["css/custom.css"]
 
 [[params.social]]
     name = "Github"
