@@ -3,6 +3,18 @@ languageCode = "en-us"
 title = "JWillikers"
 theme = "coder"
 
+[markup]
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = false
+    hl_Lines = ""
+    lineNoStart = 1
+    lineNos = false
+    lineNumbersInTable = true
+    noClasses = true
+    style = "solarized-light"
+    tabWidth = 4
+
 [params]
 	author = "Jordan Williams"
 	info = "Software Developer"
