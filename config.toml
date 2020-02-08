@@ -20,34 +20,20 @@ pygmentsUseClasses = true
     style = "solarized-light"
     tabWidth = 4
 
+[params]
+    custom_css = ["css/custom.css"]
+
 [Params]
-  subtitle = "My developer website"
-  rss = true
-  mainSections = ["post","posts"]
-  logo = "https://www.gravatar.com/avatar/e3189498d000ca4eb4e893739fd63636?s=500"
+    subtitle = "My developer website"
+    rss = true
+    mainSections = ["post","posts"]
+    logo = "https://www.gravatar.com/avatar/e3189498d000ca4eb4e893739fd63636?s=500"
 
 [Author]
 	name = "Jordan Williams"
     github = "jwillikers"
     gitlab = "jwillikers"
     bitbucket = "jwillikers"
-    custom_css = ["css/custom.css"]
-
-[[params.social]]
-    name = "Github"
-    icon = "fab fa-github fa-2x"
-    weight = 1
-    url = "https://github.com/jwillikers/"
-[[params.social]]
-    name = "Gitlab"
-    icon = "fab fa-gitlab fa-2x"
-    weight = 2
-    url = "https://gitlab.com/jwillikers/"
-[[params.social]]
-    name = "Bitbucket"
-    icon = "fab fa-bitbucket fa-2x"
-    weight = 2
-    url = "https://bitbucket.org/jwillikers/"
 
 [[menu.main]]
     name = "Blog"
