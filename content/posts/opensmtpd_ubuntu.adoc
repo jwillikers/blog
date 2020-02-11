@@ -33,8 +33,6 @@ This brief guide will walk you through setting up https://github.com/OpenSMTPD/O
 sudo apt install opensmtpd
 
 . Configure OpenSMTPD.
-The OpenSMTPD packaged for Ubuntu 19.10 is a bit older and uses a deprecated configuration syntax.
-I have provided both versions of the syntax to help future-proof this post.
 +
 The vanilla configuration file only requires a couple of minor changes.
 The gist of the configuration is to relay all mail originating from the local machine to my GMail account.
@@ -70,6 +68,28 @@ MY_LABEL my_username@gmail.com:my_app_password
 # See man 5 aliases for format
 postmaster:    root
 ----
+NOTE: The OpenSMTPD packaged for Ubuntu 19.10 uses a deprecated syntax for the configuration file.
+Please see below for a version of the configuration using the new syntax.
++
+./etc/smtpd.conf
+----
+# This is the smtpd server system-wide configuration file.
+# See smtpd.conf(5) for more information.
+
+table secrets file:/etc/mail/secrets
+
+# If you edit the file, you have to run "smtpctl update table aliases"
+table aliases file:/etc/aliases
+
+# To accept external mail, replace with: listen on all
+listen on localhost
+
+action "relay" relay host tls+auth://jordantheriver@smtp.gmail.com auth <secrets> # <1>
+
+match from local for any action "relay" <2>
+----
+<1> Create an __action__ named `relay`.
+<2> Call the `relay` __action__ for any email originating from the local machine.
 
 . Verify the OpenSMTPD configuration file.
 +
