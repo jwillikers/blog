@@ -32,11 +32,17 @@ This brief guide will walk you through setting up https://github.com/OpenSMTPD/O
 [source,console]
 sudo apt install opensmtpd
 
+. Grab your Email Account's Password or Key.
+For my use case, I want to use a GMail account which has two-factor authentication.
+Because I use two-factor authentication, I have to use an _App Password_ instead of my regular password.
+For any GMail users out there, instructions on how to generate an _App Password_ can be found https://support.google.com/accounts/answer/185833?hl=en[here].
+
 . Configure OpenSMTPD.
 +
+--
 The vanilla configuration file only requires a couple of minor changes.
 The gist of the configuration is to relay all mail originating from the local machine to my GMail account.
-+
+
 ./etc/smtpd.conf
 ----
 # This is the smtpd server system-wide configuration file.
@@ -57,12 +63,12 @@ accept for any relay
 ----
 <1> Use the content of the file `/etc/mail/secrets`, shown below, as the `secrets` table.
 <2> The rule to forward all mail to the GMail SMTP server.
-+
+
 ./etc/mail/secrets
 ----
 MY_LABEL my_username@gmail.com:my_app_password
 ----
-+
+
 ./etc/aliases
 ----
 # See man 5 aliases for format
@@ -70,7 +76,7 @@ postmaster:    root
 ----
 NOTE: The OpenSMTPD packaged for Ubuntu 19.10 uses a deprecated syntax for the configuration file.
 Please see below for a version of the configuration using the new syntax.
-+
+
 ./etc/smtpd.conf
 ----
 # This is the smtpd server system-wide configuration file.
@@ -90,13 +96,12 @@ match from local for any action "relay" <2>
 ----
 <1> Create an __action__ named `relay`.
 <2> Call the `relay` __action__ for any email originating from the local machine.
+--
 
 . Verify the OpenSMTPD configuration file.
 +
 [source,console,subs="+quotes"]
 smtpd -n
-+
-image::smtpd_configuration_ok.png[]
 
 . Enable OpenSMTPD on system startup.
 +
