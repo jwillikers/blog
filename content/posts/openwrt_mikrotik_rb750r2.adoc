@@ -1,0 +1,122 @@
++++
+title = "Installing OpenWrt on Mikrotik RB750r2 (hEX lite)"
+categories = ["Networking"]
+tags = ["hEX lite", "Mikrotik", "OpenWRT", "OpenWrt 19", "RB750r2", "Ubuntu", "Ubuntu 19.10"]
+date = "2020-02-08"
+draft = true
++++
+
+= Installing OpenWRT on Mikrotik RB750r2 (hEX lite)
+Jordan Williams <jwillikers@protonmail.com>
+v1.0, 2020-03-01
+:source-highlighter: rouge
+:rouge-style: base16.solarized.dark
+:icons: font
+
+https://openwrt.org/[OpenWrt] is an open-source router firmware solution based off of the Linux kernel.
+There are many https://openwrt.org/reasons_to_use_openwrt[reasons to use OpenWrt].
+I finally replaced the default https://wiki.mikrotik.com/wiki/Manual:RouterOS_features[RouterOS] installation on my https://mikrotik.com/product/RB750r2[MikroTik RB750r2 (hEX lite)] router with OpenWrt.
+Unfortunately, this took longer than it should have because of the difficulty I had finding the right install locations on the OpenWrt website.
+The website is a bit cluttered with odds and ends of installation instructions throughout.
+This article documents all of the necessary steps to install OpenWrt 19.07.1 on a MikroTik RB750r2 router from a laptop running Xubuntu 19.10.
+
+== Instructions
+
+The installation instructions are largely based on the OpenWrt instructions provided https://openwrt.org/toh/mikrotik/common[here].
+
+=== Prepare
+
+. Download the OpenWrt Firmware
++
+--
+First, download the OpenWrt firmware for the RB750r2.
+Go to the https://downloads.openwrt.org/[OpenWrt downloads page].
+Click on the latest release, https://downloads.openwrt.org/releases/19.07.1/targets/[19.07.1] at this time.
+The RB750r2 uses the `ar71xx` firmware, so click that https://downloads.openwrt.org/releases/19.07.1/targets/ar71xx/[link].
+Then, select https://downloads.openwrt.org/releases/19.07.1/targets/ar71xx/mikrotik/[mikrotik].
+From this page, download the https://downloads.openwrt.org/releases/19.07.1/targets/ar71xx/mikrotik/openwrt-19.07.1-ar71xx-mikrotik-vmlinux-initramfs-lzma.elf[vmlinux-initramfs-lzma.elf] and the https://downloads.openwrt.org/releases/19.07.1/targets/ar71xx/mikrotik/openwrt-19.07.1-ar71xx-mikrotik-rb-nor-flash-16M-squashfs-sysupgrade.bin[rb-nor-flash-16M-squashfs-sysupgrade.bin].
+The RouterBoard will boot this `.elf` file from the network and the sysupgrade `.bin` file will be flashed, i.e. installed, on to the RouterBoard.
+
+.Download with `curl`
+[source,console]
+curl https://downloads.openwrt.org/releases/19.07.1/targets/ar71xx/mikrotik/openwrt-19.07.1-ar71xx-mikrotik-vmlinux-initramfs-lzma.elf
+curl https://downloads.openwrt.org/releases/19.07.1/targets/ar71xx/mikrotik/openwrt-19.07.1-ar71xx-mikrotik-rb-nor-flash-16M-squashfs-sysupgrade.bin
+
+CAUTION: It is important to verify the integrity of the downloaded files before proceeding.
+OpenWrt documents this https://openwrt.org/docs/guide-quick-start/verify_firmware_checksum[here].
+
+.Verify the Checksum
+[source,console]
+----
+cat 9af1a143c64db0bbd901b1a8a513c56daf3f2b0aaf408e8b12017c93dbb9cb8a > openwrt-19.07.1-ar71xx-mikrotik-rb-nor-flash-16M-squashfs-sysupgrade.bin.SHA256 # <1>
+sha256sum -c openwrt-19.07.1-ar71xx-mikrotik-vmlinux-initramfs-lzma.elf.SHA256 openwrt-19.07.1-ar71xx-mikrotik-vmlinux-initramfs-lzma.elf # <2>
+
+cat 112aeb3fafb4d791c41f5347b08f88282d0f052a2ac7a9f3b665e5c532b87d13 > openwrt-19.07.1-ar71xx-mikrotik-rb-nor-flash-16M-squashfs-sysupgrade.bin.SHA256
+sha256sum -c openwrt-19.07.1-ar71xx-mikrotik-rb-nor-flash-16M-squashfs-sysupgrade.bin.SHA256 openwrt-19.07.1-ar71xx-mikrotik-rb-nor-flash-16M-squashfs-sysupgrade.bin
+----
+<1> Place the SHA256 checksum corresponding to the downloaded file from the https://downloads.openwrt.org/releases/19.07.1/targets/ar71xx/mikrotik/[webpage] in a file.
+<2> Check that the SHA256 checksum of the downloaded file matches the SHA256 checksum from the website.
+--
+
+. Setup the NetBoot Directory
+[source,console]
+----
+ln -s openwrt-19.07.1-ar71xx-mikrotik-vmlinux-initramfs-lzma.elf openwrt-ar71xx-mikrotik-vmlinux-initramfs.elf # <1>
+mkdir -p ~/mikrotik/trunk/bin/ar71xx/
+cp openwrt-ar71xx-mikrotik-vmlinux-initramfs-lzma.elf ~/mikrotik/trunk/bin/ar71xx/ # <2>
+----
+<1> Symlink the versioned initramfs file to a non-versioned form so that you don't have to worry about the specific version anymore.
+<2> Place the initframfs file in a dedicated boot directory.
+
+
+=== NetBoot
+
+I found the easiest one-off solution for booting off the network to be http://www.thekelleys.org.uk/dnsmasq/doc.html[dnsmasq] on Ubuntu 19.10.
+The `dnsmasq-base` package was already installed on my system, making the `dnsmasq` command available with no extra setup required.
+
+. Run NetBoot
+
+[source,console]
+----
+ifconfig eth0 192.168.1.10 up # <1>
+sudo dnsmasq -i eth0 --dhcp-range=192.168.1.100,192.168.1.200 \
+--dhcp-boot=openwrt-ar71xx-mikrotik-vmlinux-initramfs.elf \
+--enable-tftp --tftp-root=~/mikrotik/trunk/bin/ar71xx/ -d -u $USER -p0 -K --log-dhcp --bootp-dynamic
+----
+<1> Set the static IP address for your ethernet interface to 192.168.1.10.
+<2> Start the DHCP boot server.
+
+[TIP]
+.Finding Your Ethernet Interface
+====
+In the commands above, `eth0` represents the name of the ethernet interface connecting your computer to the RouterBoard.
+To find the name of your ethernet interface, use the `ifconfig` command from the `net-tools` package.
+[source,console]
+----
+apt install net-tools
+ifconfig # <1>
+----
+<1> List network interfaces.
+
+Ethernet interfaces should start with the letter `e`.
+My ethernet interface is actually `enp5s0`, so I replace `eth0` with `enp5s0`.
+====
+
+. NetBoot the RouterBoard
+  . Configure RouterOS to boot from ethernet.
+  Using your favorite web browser, log in to the RouterOS web console of your router, likely at address `192.168.88.1`.
+  Under the `Settings`
+  . Plug
+
+=== Flash
+
+. Flash OpenWrt
+
+=== Configure
+
+. Setup SSH
+. Setup PPPoE WAN
+
+=== Update
+
+. Update Packages
