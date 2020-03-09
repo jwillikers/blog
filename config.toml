@@ -1,4 +1,4 @@
-baseURL = "https://www.jwillikers.com/"
+baseURL = "https://jwillikers.com/"
 languageCode = "en-us"
 title = "JWillikers"
 theme = "coder"
