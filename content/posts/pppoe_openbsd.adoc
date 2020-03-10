@@ -1,8 +1,8 @@
 +++
 title = "PPPoE on OpenBSD"
 categories = ["Networking"]
-tags = ["PPPoE", "OpenBSD", "OpenBSD 6", "OpenBSD 6.6", "Networking", "Routing"]
-date = "2020-02-09"
+tags = ["BSD", "Internet", "Network", "OpenBSD", "OpenBSD 6", "OpenBSD 6.6", "PPPoE", "Router", "Routing", "Unix"]
+date = "2020-03-10"
 draft = false
 +++
 
@@ -25,9 +25,31 @@ endif::[]
 
 This brief article describes how I setup the internet connection on my PPPoE interface on OpenBSD 6.6.
 
+== DNS Servers
+
+If necessary, configure your system to use your preferred DNS nameservers.
+The place to do this is https://man.openbsd.org/resolv.conf.5[resolv.conf].
+My system uses the https://www.opendns.com/[OpenDNS] nameservers though the https://developers.google.com/speed/public-dns[Google] nameservers are also quite popular.
+
+./etc/resolv.conf
+[source]
+----
+nameserver 208.67.222.222
+nameserver 208.67.220.220
+----
+
+[TIP]
+====
+A common way of connecting to your ISP's network is through https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol[DHCP].
+DHCP is capable of providing your system with DNS nameservers according to https://tools.ietf.org/html/rfc2132#section-3.8[RFC 2132] and https://tools.ietf.org/html/rfc2937[RFC 2937].
+To my knowledge, this capability is absent from the https://tools.ietf.org/html/rfc2516[PPPoE Specification].
+If you are switching from DHCP to PPPoE, be mindful that you may need to set your nameservers if you have not explicitly done so.
+====
+
+
 == PPPoE Configuration
 
-The configuration only involves two configuration files and initializing the new network interface.
+The configuration only involves three configuration files and initializing the new network interface.
 I use a https://man.openbsd.org/OpenBSD-6.6/hostname.if[hostname.if] file to initialize the PPPoE interface when the system boots.
 This example is very similar to the one provided in the https://man.openbsd.org/OpenBSD-6.6/pppoe[PPPOE(4)] manpage with two differences.
 First, `chap` replaces `pap` as the authentication protocal.
