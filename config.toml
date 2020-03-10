@@ -1,7 +1,12 @@
 baseURL = "https://jwillikers.com/"
 languageCode = "en-us"
 title = "JWillikers"
-theme = "coder"
+theme = "beautifulhugo"
+enableEmoji = true
+enableGitInfo = true
+pygmentsStyle = "solarized-dark"
+pygmentsCodeFences = true
+pygmentsUseClasses = true
 
 [markup]
   [markup.highlight]
@@ -12,31 +17,23 @@ theme = "coder"
     lineNos = false
     lineNumbersInTable = true
     noClasses = true
-    style = "solarized-light"
+    style = "solarized-dark"
     tabWidth = 4
 
 [params]
-	author = "Jordan Williams"
-	info = "Software Developer"
-	description = "My developer website"
-	keywords = "blog,developer"
-	avatarurl = "https://www.gravatar.com/avatar/e3189498d000ca4eb4e893739fd63636?s=500"
+    custom_css = ["css/custom.css"]
 
-[[params.social]]
-    name = "Github"
-    icon = "fab fa-github fa-2x"
-    weight = 1
-    url = "https://github.com/jwillikers/"
-[[params.social]]
-    name = "Gitlab"
-    icon = "fab fa-gitlab fa-2x"
-    weight = 2
-    url = "https://gitlab.com/jwillikers/"
-[[params.social]]
-    name = "Bitbucket"
-    icon = "fab fa-bitbucket fa-2x"
-    weight = 2
-    url = "https://bitbucket.org/jwillikers/"
+[Params]
+    subtitle = "My developer website"
+    rss = true
+    mainSections = ["post","posts"]
+    logo = "https://www.gravatar.com/avatar/e3189498d000ca4eb4e893739fd63636?s=500"
+
+[Author]
+	name = "Jordan Williams"
+    github = "jwillikers"
+    gitlab = "jwillikers"
+    bitbucket = "jwillikers"
 
 [[menu.main]]
     name = "Blog"
