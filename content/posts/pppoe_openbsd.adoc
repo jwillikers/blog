@@ -2,13 +2,13 @@
 title = "PPPoE on OpenBSD"
 categories = ["Networking"]
 tags = ["BSD", "Internet", "Network", "OpenBSD", "OpenBSD 6", "OpenBSD 6.6", "PPPoE", "Router", "Routing", "Unix"]
-date = "2020-03-10"
+date = "2020-03-12"
 draft = false
 +++
 
 = Setup PPPoE on OpenBSD 6.6
 Jordan Williams <jordan@jwillikers.com>
-v1.0, 2020-03-10
+v1.0, 2020-03-12
 :source-highlighter: rouge
 :rouge-style: github
 :icons: font
@@ -54,20 +54,20 @@ If you are switching from DHCP to PPPoE, be mindful that you may need to set you
 
 The configuration only involves three configuration files and initializing the new network interface.
 I use a https://man.openbsd.org/OpenBSD-6.6/hostname.if[hostname.if] file to initialize the PPPoE interface when the system boots.
-This example is very similar to the one provided in the https://man.openbsd.org/OpenBSD-6.6/pppoe[PPPOE(4)] manpage with two differences.
+This example is very similar to the jumbo frames example provided in the https://man.openbsd.org/pppoe#MTU/MSS_ISSUES[PPPOE(4)] manpage with two differences.
 First, `chap` replaces `pap` as the authentication protocal.
 Second, only the relevant IPv4 options are shown since my ISP doesn't support IPv6.
 
 ./etc/hostname.pppoe0
 [source]
 ----
-inet 0.0.0.0 255.255.255.255 NONE \ # <1>
+inet 0.0.0.0 255.255.255.255 NONE mtu 1500 \ # <1>
 	pppoedev em0 authproto chap \ # <2>
 	authname 'username' authkey 'password' up
 dest 0.0.0.1
 !/sbin/route add default -ifp pppoe0 0.0.0.1
 ----
-<1> Set the IP to `0.0.0.0`, a wildcard representing whatever IP the PPPoE connection provides.
+<1> Set the IP to `0.0.0.0`, a wildcard representing whatever IP the PPPoE connection provides, and adjust the frame size.
 <2> `em0` is the ethernet interface for the router's WAN port.
 
 The physical `em0` interface must be up.
