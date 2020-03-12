@@ -2,13 +2,13 @@
 title = "DNSSEC with Unbound"
 categories = ["Networking"]
 tags = ["BSD", "DNS", "DNSSEC", "Internet", "Network", "OpenBSD", "OpenBSD 6", "OpenBSD 6.6", "Router", "Routing", "Unbound", "Unix"]
-date = "2020-03-10"
+date = "2020-03-11"
 draft = true
 +++
 
 = Setup PPPoE on OpenBSD 6.6
 Jordan Williams <jordan@jwillikers.com>
-v1.0, 2020-03-10
+v1.0, 2020-03-11
 :source-highlighter: rouge
 :rouge-style: base16.solarized.dark
 :icons: font
@@ -23,7 +23,7 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-Ever want to enable DNSSEC on your Unbound OpenBSD 6.6 server?
+Ever want to enable https://en.wikipedia.org/wiki/Domain_Name_System_Security_Extensions[DNSSEC] on your https://nlnetlabs.nl/projects/unbound/about/[Unbound] OpenBSD 6.6 server?
 Me too!
 Using this http://www.lonecpluspluscoder.com/2020/01/16/building-an-openbsd-wireguard-vpn-server-part-2-unbound-dns-setup/[article] as a guide, I document the process.
 
@@ -36,14 +36,15 @@ Use the https://man.openbsd.org/ftp.1[ftp] command to download the https://wiki.
 ftp -o /var/unbound/etc/root.hints https://www.internic.net/domain/named.root
 ----
 
-Download the trust anchor file.
+Download the trust anchor file with the https://man.openbsd.org/unbound-anchor[unbound-anchor] utility.
 
 [source,console]
 ----
 unbound-anchor
 ----
 
-Configure `unbound.conf`.
+Configure https://man.openbsd.org/unbound.conf[unbound.conf].
+Add the location of the `root.hints` file and uncomment the lines with the keys `auto-trust-anchor-file` and `val-log-level`.
 
 ./var/unbound/etc/unbound.conf
 [source]
@@ -56,90 +57,46 @@ val-log-level: 2
 ----
 <1> This line was added, not uncommented... to be fair.
 
+[NOTE]
+====
+Make sure the upstream resolvers support DNSSEC.
+The https://dnscrypt.info/public-servers[list provided by DNSCrypt] has some good options.
+
+[source]
+----
+# Use an upstream forwarder (recursive resolver) for some or all zones.
+#
+forward-zone:
+	name: "."				# use for ALL queries
+	forward-addr: 176.103.130.132 # adguard-dns-family
+	forward-addr: 185.228.168.10 # cleanbrowsing-adult
+----
+====
+
+Verify the configuration of unbound.conf which http://man.openbsd.org/unbound-checkconf.8[unbound-checkconf].
+
 [source,console]
 ----
 unbound-checkconf
 ----
+
+Finally, restart Unbound.
 
 [source,console]
 ----
 rcctl restart unbound
 ----
 
-Verify that DNSSEC is working with https://man.openbsd.org/OpenBSD-6.6/dig[dig].
+Verify that DNSSEC is working with the https://man.openbsd.org/OpenBSD-6.6/dig[dig] command.
+This website, `jwillikers.com`, has DNSSEC enabled and so makes for a good address to test.
 Cloudflare provides a nice write-up https://support.cloudflare.com/hc/en-us/articles/360021111972-Troubleshooting-DNSSEC#TroubleshootingDNSSEC-DNSSECinPracticewithDig[here].
 
 [source,console]
 ----
-dig www.cloudflare.com +dnssec
+dig jwillikers.com +dnssec
 ----
 
 [source]
 ----
 ;; flags: qr rd ra ad;
 ----
-
-If necessary, configure your system to use your preferred DNS nameservers.
-The place to do this is https://man.openbsd.org/resolv.conf.5[resolv.conf].
-My system uses the https://www.opendns.com/[OpenDNS] nameservers though the https://developers.google.com/speed/public-dns[Google] nameservers are also quite popular.
-
-./etc/resolv.conf
-[source]
-----
-nameserver 208.67.222.222
-nameserver 208.67.220.220
-----
-
-[TIP]
-====
-A common way of connecting to your ISP's network is through https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol[DHCP].
-DHCP is capable of providing your system with DNS nameservers according to https://tools.ietf.org/html/rfc2132#section-3.8[RFC 2132] and https://tools.ietf.org/html/rfc2937[RFC 2937].
-To my knowledge, this capability is absent from the https://tools.ietf.org/html/rfc2516[PPPoE Specification].
-If you are switching from DHCP to PPPoE, be mindful that you may need to set your nameservers if you have not explicitly done so.
-====
-
-
-== PPPoE Configuration
-
-The configuration only involves three configuration files and initializing the new network interface.
-I use a https://man.openbsd.org/OpenBSD-6.6/hostname.if[hostname.if] file to initialize the PPPoE interface when the system boots.
-This example is very similar to the one provided in the https://man.openbsd.org/OpenBSD-6.6/pppoe[PPPOE(4)] manpage with two differences.
-First, `chap` replaces `pap` as the authentication protocal.
-Second, only the relevant IPv4 options are shown since my ISP doesn't support IPv6.
-
-./etc/hostname.pppoe0
-[source]
-----
-inet 0.0.0.0 255.255.255.255 NONE \ # <1>
-	pppoedev em0 authproto chap \ # <2>
-	authname 'username' authkey 'password' up
-dest 0.0.0.1
-!/sbin/route add default -ifp pppoe0 0.0.0.1
-----
-<1> Set the IP to `0.0.0.0`, a wildcard representing whatever IP the PPPoE connection provides.
-<2> `em0` is the ethernet interface for the router's WAN port.
-
-The physical `em0` interface must be up.
-
-./etc/hostname.em0
-[source]
-----
-up mtu 1508
-----
-
-Start up the `em0` and `pppoe0` interfaces.
-[source,console]
-----
-sh /etc/netstart em0 pppoe0
-----
-
-[CAUTION]
-====
-The `/etc/netstart` script was not able to successfully establish a PPPoE connection when I changed my configuration from `pap` to `chap`.
-I had to reboot my system after changing the configuration file for the connection to succeed.
-
-[source,console]
-----
-reboot
-----
-====
