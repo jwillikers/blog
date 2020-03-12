@@ -4,7 +4,7 @@ title = "JWillikers"
 theme = "beautifulhugo"
 enableEmoji = true
 enableGitInfo = true
-pygmentsStyle = "solarized-dark"
+pygmentsStyle = "default"
 pygmentsCodeFences = true
 pygmentsUseClasses = true
 
