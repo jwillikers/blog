@@ -10,7 +10,7 @@ draft = true
 Jordan Williams <jordan@jwillikers.com>
 v1.0, 2020-03-11
 :source-highlighter: rouge
-:rouge-style: base16.solarized.dark
+:rouge-style: github
 :icons: font
 ifndef::env-github[]
 :imagesdir: ./
