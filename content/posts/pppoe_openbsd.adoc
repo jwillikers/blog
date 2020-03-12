@@ -55,7 +55,7 @@ If you are switching from DHCP to PPPoE, be mindful that you may need to set you
 The configuration only involves three configuration files and initializing the new network interface.
 I use a https://man.openbsd.org/OpenBSD-6.6/hostname.if[hostname.if] file to initialize the PPPoE interface when the system boots.
 This example is very similar to the jumbo frames example provided in the https://man.openbsd.org/pppoe#MTU/MSS_ISSUES[PPPOE(4)] manpage with two differences.
-First, `chap` replaces `pap` as the authentication protocal.
+First, `chap` replaces `pap` as the authentication protocol.
 Second, only the relevant IPv4 options are shown since my ISP doesn't support IPv6.
 
 ./etc/hostname.pppoe0
