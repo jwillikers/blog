@@ -12,9 +12,6 @@ v1.0, 2020-03-12
 :source-highlighter: rouge
 :rouge-style: github
 :icons: font
-ifndef::env-github[]
-:imagesdir: ./
-endif::[]
 ifdef::env-github[]
 :tip-caption: :bulb:
 :note-caption: :information_source:
@@ -23,11 +20,20 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-This brief article describes how I setup the internet connection on my PPPoE interface on OpenBSD 6.6.
+Some ISP's establish connections with their customers' networks through PPPoE.
+I recently setup an OpenBSD 6.6 router which required PPPoE.
+This is my story.
 
 == DNS Servers
 
 If necessary, configure your system to use your preferred DNS nameservers.
+[TIP]
+====
+A common way of connecting to your ISP's network is through https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol[DHCP].
+DHCP is capable of providing your system with DNS nameservers according to https://tools.ietf.org/html/rfc2132#section-3.8[RFC 2132] and https://tools.ietf.org/html/rfc2937[RFC 2937].
+To my knowledge, this capability is absent from the https://tools.ietf.org/html/rfc2516[PPPoE Specification].
+If you are switching from DHCP to PPPoE, be mindful that you may need to set your nameservers if you have not explicitly done so.
+====
 The place to do this is https://man.openbsd.org/resolv.conf.5[resolv.conf].
 My system uses a couple of nameservers from the https://dnscrypt.info/public-servers[list provided by DNSCrypt].
 The https://developers.google.com/speed/public-dns[Google nameservers] are also quite popular.
@@ -41,22 +47,15 @@ nameserver 185.228.168.10 # <2>
 <1> adguard-dns-family
 <2> cleanbrowsing-adult
 
-[TIP]
-====
-A common way of connecting to your ISP's network is through https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol[DHCP].
-DHCP is capable of providing your system with DNS nameservers according to https://tools.ietf.org/html/rfc2132#section-3.8[RFC 2132] and https://tools.ietf.org/html/rfc2937[RFC 2937].
-To my knowledge, this capability is absent from the https://tools.ietf.org/html/rfc2516[PPPoE Specification].
-If you are switching from DHCP to PPPoE, be mindful that you may need to set your nameservers if you have not explicitly done so.
-====
-
-
 == PPPoE Configuration
 
-The configuration only involves three configuration files and initializing the new network interface.
+The configuration is fairly straightforward.
 I use a https://man.openbsd.org/OpenBSD-6.6/hostname.if[hostname.if] file to initialize the PPPoE interface when the system boots.
-This example is very similar to the jumbo frames example provided in the https://man.openbsd.org/pppoe#MTU/MSS_ISSUES[PPPOE(4)] manpage with two differences.
+This example is very similar to the jumbo frames example provided in the https://man.openbsd.org/OpenBSD-6.6/pppoe#MTU/MSS_ISSUES[PPPOE(4)] manpage.
+Because this is a router, it requires more than the basic setup. PPPoE has an overhead and the incoming LAN connections will not be aware of this.
+My modifications to the example are as follows.
 First, `chap` replaces `pap` as the authentication protocol.
-Second, only the relevant IPv4 options are shown since my ISP doesn't support IPv6.
+Second, only IPv4 options are present since my ISP doesn't support IPv6.
 
 ./etc/hostname.pppoe0
 [source]
