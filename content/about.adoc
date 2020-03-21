@@ -1,18 +1,15 @@
 +++
 title = "About"
-date = "2020-03-20"
+date = "2020-03-21"
 draft = false
 +++
 
 = About
-Jordan Williams <jordan@jwillikers.com>
-v1.0, 2020-03-20
+Jordan Williams
+v1.0, 2020-03-21
 :source-highlighter: rouge
 :rouge-style: github
 :icons: font
-ifndef::env-github[]
-:imagesdir: ./
-endif::[]
 ifdef::env-github[]
 :tip-caption: :bulb:
 :note-caption: :information_source:
@@ -24,43 +21,42 @@ endif::[]
 Welcome to jwillikers.com, an archive for all of my tech experiments, configurations, and adventures.
 I hope that you will find something helpful here, something that will make your life a little easier as a developer, system administrator, or self-hoster.
 
-=== Me
+== Me
 
 This is my website, so I get to talk about myself right?
 
-==== On-the-job
+=== On-the-job
 
-===== Current
+==== Current
 
-At my current day job, I wrangle https://isocpp.org/[C++] and https://cmake.org/[CMake] code to create functioning, cross-platform graphical applications.
+At my current day job, I wrangle https://isocpp.org/[{cpp}] and https://cmake.org/[CMake] code to create functioning, cross-platform graphical applications.
 Developing at a small company, my hands are in just about everything from project management to cross-platform application development to software architecture to licensing compliance.
-I aggressively update the CMake build-system to automate as much of the brunt of dependency-management, building, testing, and packaging as possible.
-Additionally, I continue to implement common software engineering practices, such as version control (https://git-scm.com/[git] and git-flow), unit testing (Boost Test, Boost.uT, Catch2, and Google Test), micro-benchmarking (Google Benchmark), approval testing (ApprovalTests.cpp), versioning (semver), contracts / preconditions (Boost Contract), changelogs, package checksums, and Scrum.
-Entirely `C++03` when I started, and only using https://gcc.gnu.org/[GCC] (Mingw-w64 on Windows), some projects are now taking advantage of `C++20` features and both https://clang.llvm.org/[LLVM's Clang Compiler] and https://visualstudio.microsoft.com/vs/features/cplusplus/[Microsoft's Visual C++ Compiler].
-Use new C++ paradigms: concepts (Boost Concepts), and ranges (Boost ranges), better formatting with {fmt}, string_view, constexpr, lambdas,.
-The C++ tooling has been greatly expanded to include as many compiler warnings as possible, static-code analysis with https://clang.llvm.org/extra/clang-tidy/[clang-tidy], formatting with https://clang.llvm.org/docs/ClangFormat.html[clang-format], dynamic analysis with https://github.com/google/sanitizers[Google's sanitizers], https://ninja-build.org/[Ninja], and ccache.
-I fixed and verified licensing compliance with external projects.
-Where feasible, I have used CMake's https://cmake.org/cmake/help/latest/module/FetchContent.html[FetchContent] functionality to directly include the source code of dependencies, building and testing them as part of the project itself.
-Greatly improved error-checking and error messaging content.
-I added support in CMake to package the applications as distribution-agnostic https://appimage.org/[AppImages] using https://github.com/linuxdeploy/linuxdeploy[LinuxDeploy].
-I setup builds to be able to build shared libraries instead of only statical libraries.
-I replaced internal projects with better supported and higher-quality open-source alternatives.
-I setup a basic artifact repository.
-I found resources to improve code-quality and flexibility including the https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines[Cpp Core Guidelines], https://crascit.com/professional-cmake/[Professional CMake], and https://www.manning.com/books/c-plus-plus-concurrency-in-action[Concurrency in Action] to name a few.
-I learned to look at open-source projects to better understand common-practices and implementation details where documentation was insufficient or incorrect *cough* Gtk *cough*
-I setup project planning following the Scrum methodology with https://www.atlassian.com/software/jira[Jira] to reduce stress and keep me concentrated on the right tasks.
-I work with the https://www.qt.io/[Qt] and https://www.gtkmm.org/en/[Gtkmm] GUI toolkits and develop applications for Linux, macOS, and Windows.
-Conformed to macOS, Windows, and Linux standards, particularly for installation locations of directories, icons, mime-types, and documentation.
-Converted to standard DMG packaging on macOS.
-Basic systems and networking administration tasks, such as ssh setup, DNS configuration, and package management, as well as setting up virtual machines.
 
-===== Past
+.Tasks
+* Aggressively updated the CMake build-system to automate as much of the brunt of dependency-management, building, testing, and packaging as possible.
+* Implemented common software engineering practices, such as version control (https://git-scm.com/[git] and git-flow), unit testing (https://www.boost.org/doc/libs/1_72_0/libs/test/doc/html/index.html[Boost Test], https://boost-experimental.github.io/ut/quick-start/#/[[Boost.μt]], https://github.com/catchorg/Catch2[Catch2], and https://github.com/google/googletest[Google Test]), micro-benchmarking (https://github.com/google/benchmark[Google Benchmark]), approval testing (https://github.com/approvals/ApprovalTests.cpp[ApprovalTests.cpp]), versioning (https://semver.org/[semver]), contracts (https://www.boost.org/doc/libs/1_72_0/libs/contract/doc/html/index.html[Boost.Contract]), changelogs, package checksums, an artifact repository, and Scrum.
+* Expanded the {cpp} tooling to include as many compiler warnings as possible, static-code analysis with https://clang.llvm.org/extra/clang-tidy/[clang-tidy], formatting with https://clang.llvm.org/docs/ClangFormat.html[clang-format], dynamic analysis with https://github.com/google/sanitizers[Google's sanitizers], https://ninja-build.org/[Ninja], https://ccache.dev/[ccache], https://clang.llvm.org/[LLVM's Clang Compiler], and https://visualstudio.microsoft.com/vs/features/cplusplus/[Microsoft's Visual {cpp} Compiler].
+* Learned from resources to improve code-quality and flexibility including the https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines[Cpp Core Guidelines], https://crascit.com/professional-cmake/[Professional CMake], and https://www.manning.com/books/c-plus-plus-concurrency-in-action[Concurrency in Action] to name a few.
+* Planned according to the Scrum methodology using https://www.atlassian.com/software/jira[Jira] to reduce stress, facilitate collaboration, and keep me concentrated on the relevant tasks.
+* Applied new C++ paradigms such as: concepts (https://www.boost.org/doc/libs/1_72_0/libs/concept_check/concept_check.htm[Boost Concept Check Library]), ranges (https://www.boost.org/doc/libs/1_72_0/libs/range/doc/html/index.html[Boost ranges]), https://fmt.dev/latest/index.html[{fmt}], https://en.cppreference.com/w/cpp/string/basic_string_view[string_view], https://en.cppreference.com/w/cpp/language/constexpr[constexpr], https://en.cppreference.com/w/cpp/language/lambda[lambdas], https://en.cppreference.com/w/cpp/thread/future[futures], and more.
+* Improved dependency management by using CMake's https://cmake.org/cmake/help/latest/module/FetchContent.html[FetchContent] functionality to directly include the source code of dependencies, building and testing them as part of the project itself.
+* Fixed and verified licensing compliance with external projects.
+* Packaged applications for Linux as distribution-agnostic https://appimage.org/[AppImages] with https://github.com/linuxdeploy/linuxdeploy[LinuxDeploy].
+* Migrated from `{cpp}03` up to `{cpp}17/20`.
+* Replaced internal projects with better supported and higher-quality open-source alternatives.
+* Programmed cross-platform GUI applications with the https://www.qt.io/[Qt] and https://www.gtkmm.org/en/[Gtkmm], command-line tools, and libraries for Linux, macOS, and Windows.
+* Enhanced error-checking and the quality of error messages.
+* Converted builds to be able to build shared libraries instead of only statical libraries.
+* Studied open-source projects to better understand common-practices and implementation details where documentation was insufficient or incorrect *cough* Gtk *cough*.
+* Strengthened conformance to Linux, macOS, Windows standards.
+
+==== Past
 
 Previously, I interned at a Java-shop which developed log-analyzing security software.
 This was my first real introduction to software engineering, where I had to work with many developers and follow a complex, yet extremely helpful, process.
 This process included version control, testing, code-reviews, continuous integration, and deployment.
 I worked on the Gradle build-system and integrating deployment to Docker.
-I came to grips with organization of a large code-base, microservices, 
+I came to grips with organization of a large code-base, micro-services, 
 They even had me trained and certified in https://www.scrum.org/[Scrum].
 
 Before that, I interned as a data analyst at a healthcare institution.
@@ -68,30 +64,30 @@ This lead to lots of SQL development and digging through backend databases.
 I got very good at SQL.
 This job expanded my critical-thinking, as I constantly had to ask, "Where is this data coming from?" and, "What does this mean?" at all times.
 
-==== Education
+=== Education
 
 I have degree in Computer Science with a concentration in Information Insurance.
-Although I prefer the applied, a degree in the more theoretical aspects of Computer Science was extremely rewarding, as it stretched me to understand the underpinning aspects of computing.
-The experience in cyber security brought with it a cautious and proactive mindset, which influences how I think about and write code.
+Although I prefer the applied, a degree in the more theoretical aspects of Computer Science was quite rewarding, stretching me to understand the underpinning aspects of computing.
+The experience in cyber security brought with it a cautious and proactive mindset, which influences how I think about and write code today.
 
-==== Development Interests
+=== Development Interests
 
 Low-level software development is my preferred niche, where languages like C++, Rust, and Go thrive.
-Where web and GUI front-ends are cumbersome and and become very complex, I prefer creating command-line tools and libraries.
-I also enjoy making things simpler, easier to understand, and less in the way.
-And, in contrast to my previous statement, I also find concurrency fascinating and exciting, both in the problems it solves and the problems it creates.
+Where web and GUI front-ends become complex and cumbersome quite quickly, I prefer creating command-line tools and libraries with very specific intentions.
+I also enjoy making things simpler, easier to understand, and less in-the-way.
+And, in contrast to my previous statement, concurrency fascinates me, both in the problems it solves and the problems it creates.
 
-==== Side Projects
+=== Side Projects
 
 My side-projects include this blog, my home-network's OpenBSD router, and contributing to open-source projects.
 This blog is statically-generated with https://gohugo.io/[Hugo], and I write the content in https://asciidoctor.org/[Asciidoctor], my favorite markup language.
 https://www.openbsd.org/[OpenBSD] is an absolute gem of an operating system.
-It's simplicity, practicality, and detailed documentation are what make it my favorite one to use.
+It's simplicity, practicality, and detailed documentation are what make it my favorite one to use, though I will admit it is not my daily driver.
 If you haven't figured it out yet, I'm big proponent of open-source software where high-quality solutions to common problems abound.
 I enjoy collaborating with other developers to improve open-source projects.
 
 Otherwise, I enjoy several podcasts related to open-source and software development, particularly https://cppcast.com/[CppCast] and https://www.jupiterbroadcasting.com/[Jupiter Broadcasting], as well as books on specific programming languages and topics, which I still find invaluable for learning.
 
-==== Hobbies
+=== Hobbies
 
 As for hobbies outside of tech, I enjoy spending time with my wife, hiking and generally getting outside whenever possible, cooking, and socializing.
