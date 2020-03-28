@@ -1,0 +1,105 @@
++++
+title = "Unbound Adblock"
+categories = ["Networking"]
+tags = ["Adblock", "BSD", "DNS", "Internet", "Network", "OpenBSD", "OpenBSD 6", "OpenBSD 6.6", "Pi-hole", "Router", "Routing", "Unbound", "unbound-adblock", "Unix"]
+date = "2020-03-28"
+draft = true
++++
+
+= Setup PPPoE on OpenBSD 6.6
+Jordan Williams <jordan@jwillikers.com>
+v1.0, 2020-03-28
+:source-highlighter: rouge
+:rouge-style: github
+:icons: font
+ifndef::env-github[]
+:imagesdir: ./
+endif::[]
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+Ever want to get rid of all those https://ads-blocker.com/testing/#ad-blocker-test-steps[annoying internet ads]?
+Me too.
+I'd been planning on using something like https://pi-hole.net/[Pi-hole], but recently stumbled upon https://www.geoghegan.ca/unbound-adblock.html[unbound-adblock], which is perfect for my OpenBSD home router.
+The setup is very well-documented there, but I provide my own, slightly-modified setup instructions here.
+Most notably, the cron-job runs at 6:30 AM, not midnight, and I took the liberty of refining the PF rule to redirect DNS requests to Google's DNS servers.
+
+== Setup
+
+Use the https://man.openbsd.org/ftp.1[ftp] command to download the https://www.geoghegan.ca/scripts/unbound-adblock.sh[unbound-adblock.sh script].
+
+[source,console]
+----
+ftp -o /usr/local/bin/unbound-adblock.sh https://www.geoghegan.ca/scripts/unbound-adblock.sh
+chown root:bin /usr/local/bin/unbound-adblock.sh
+----
+
+
+[source,console]
+----
+useradd -s /sbin/nologin _adblock
+install -m 644 -o _adblock /dev/null /var/unbound/etc/adblock.conf
+----
+
+
+./var/unbound/etc/unbound.conf
+[source]
+----
+server:
+	...
+	# Include the unbound-adblock configuration file.
+	include: /var/unbound/etc/adblock.conf
+----
+
+./etc/doas.conf
+[source]
+----
+# Allow the unbound-adblock user / script to reload the unbound service.
+permit nopass _adblock cmd rcctl args reload unbound
+----
+
+[source,console]
+----
+crontab -u _adblock -e
+----
+
+.crontab
+[source]
+----
+# use /bin/sh to run commands, no matter what /etc/passwd says
+SHELL=/bin/sh
+
+# Update unbound-adblock at 6:30 every morning.
+30	6	*	*	*	/usr/local/bin/unbound-adblock.sh
+----
+
+
+[source,console]
+----
+doas -u _adblock sh /usr/local/bin/unbound-adblock.sh
+----
+
+
+[source,console]
+----
+rcctl restart unbound
+----
+
+./etc/pf.conf
+[source]
+----
+# Redirect any DNS requests to Google's DNS servers to the LAN's unbound server.
+pass in quick on $lan_if quick inet proto { tcp udp } to {8.8.8.8, 8.8.4.4} port domain rdr-to 192.168.1.1 port domain
+----
+
+[source,console]
+----
+pfctl -f /etc/pf.conf
+----
+
+Test your new-found adblocking https://ads-blocker.com/testing/#ad-blocker-test-steps[here].
