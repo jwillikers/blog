@@ -3,7 +3,7 @@ title = "DNSSEC with Unbound"
 categories = ["Networking"]
 tags = ["BSD", "DNS", "DNSSEC", "Internet", "Network", "OpenBSD", "OpenBSD 6", "OpenBSD 6.6", "Router", "Routing", "Unbound", "Unix"]
 date = "2020-03-11"
-draft = true
+draft = false
 +++
 
 = Setup PPPoE on OpenBSD 6.6
@@ -99,7 +99,7 @@ dig jwillikers.com +dnssec
 The example below contains the appropriate response with DNSSEC enabled.
 Look for the `ad` flag and the `RRSIG` entry.
 
-[source, console]
+[source]
 ----
 
 ; <<>> DiG 9.11.5-P4-5.1ubuntu2.1-Ubuntu <<>> jwillikers.com +dnssec
