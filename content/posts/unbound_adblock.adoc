@@ -38,19 +38,20 @@ NOTE: Disable any browser-based ad-blockers you might have enabled, otherwise yo
 
 == Configure
 
-Download the https://www.geoghegan.ca/scripts/unbound-adblock.sh[unbound-adblock.sh script] to `/usr/local/bin`.
+Download the https://www.geoghegan.ca/scripts/unbound-adblock.sh[unbound-adblock.sh script].
 
 [source,console]
 ----
-ftp -o /usr/local/bin/unbound-adblock.sh https://www.geoghegan.ca/scripts/unbound-adblock.sh
+ftp https://www.geoghegan.ca/scripts/unbound-adblock.sh
 ----
 
-Set the appropriate permissions on the script, making it owned by the _root_ user and the _bin_ group.
+Install the script with the appropriate permissions.
 
 [source,console]
 ----
-chown root:bin /usr/local/bin/unbound-adblock.sh
+install -g bin -m 644 -o root unbound-adblock.sh /usr/local/bin/ # <1>
 ----
+<1> The script will be owned by _root_, belong to the _bin_ group, and be readable by everyone and writeable by the owner.
 
 Create a new user, `_adblock`, who will not be allowed to login.
 
