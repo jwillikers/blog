@@ -1,0 +1,184 @@
++++
+title = "IPv6 on OpenBSD"
+categories = ["Networking"]
+tags = ["BSD", "DHCPCD", "DHCPv6", "Firewall", "Internet", IPv6, "Network", "OpenBSD", "OpenBSD 6", "OpenBSD 6.6", "PF", "Router", "Routing", "Unix"]
+date = "2020-05-09"
+draft = true
++++
+
+= PF Badhost
+Jordan Williams <jordan@jwillikers.com>
+v1.0, 2020-05-09
+:source-highlighter: rouge
+:rouge-style: github
+:icons: font
+ifndef::env-github[]
+:imagesdir: ./
+endif::[]
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+Configuring IPv6 on my OpenBSD home router was a much more difficult task than I'd expected.
+Of course, this is mostly because the learning curve of IPv6 and DHCPv6 was much steeper than I'd anticipated.
+That being said, OpenBSD doesn't provide DHCPv6 support in its DHCP daemon, which is where I had the most difficulty.
+I've documented my setup here in the hope it saves some time for someone else.
+
+== Configure
+
+=== PF
+
+./etc/pf.conf
+[source]
+----
+table <martians> {
+    0.0.0.0/8 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.0.0.0/24 \
+    192.0.2.0/24 224.0.0.0/3 192.168.0.0/16 198.18.0.0/15 198.51.100.0/24 \
+    203.0.113.0/24 \
+    ::/128 ::/96 ::1/128 ::ffff:0:0/96 100::/64 2001:10::/28 2001:2::/48 \
+    2001:db8::/32 3ffe::/16 fec0::/10 fc00::/7 }
+
+set block-policy drop
+set loginterface egress
+set optimization aggressive
+set skip on lo
+
+block all
+
+# Sample debug logging statement.
+#match log (matches) from 192.168.1.21 to 192.168.1.1
+
+match in all scrub (no-df random-id)
+antispoof for egress
+
+pass out inet6
+pass in on { secure_lan insecure_lan } inet6
+
+block in on egress from any to <martians>
+
+pass in on egress inet6 proto udp from fe80::/10 port dhcpv6-server \
+  to fe80::/10 port dhcpv6-client no state
+
+pass out on egress inet6 proto udp from any to any port 33433 >< 33626 keep state
+pass on any inet6 proto icmp6 all
+
+# Isolate each lan.
+pass on secure_lan from secure_lan:network to secure_lan:network
+pass on insecure_lan from insecure_lan:network to insecure_lan:network
+
+# Redirect DNS traffic
+pass in on secure_lan inet proto { tcp udp } to <google_dns_servers> port \
+  domain divert-to $secure_lan_dns_server port domain
+pass in on insecure_lan inet proto { tcp udp } to <google_dns_servers> port \
+  domain divert-to $insecure_lan_dns_server port domain
+----
+
+[source,console]
+----
+pfctl -f /etc/pf.conf
+----
+
+
+=== dhcpcd
+
+Install dhcpcd.
+There is a package available for wide-dhcpv6, but it lacks init scripts to conveniently integrate in the startup process.
+
+[source,console]
+----
+pkg_add dhcpcd
+----
+
+=== Router Advertisement Daemon
+
+Configure rad.
+
+./etc/rad.conf
+[source]
+----
+dns {
+  nameserver {
+    2a00:5a60::bad2:0ff # adguard-dns-family-ipv6
+    2a0d:2a00:1:: # cleanbrowsing-family-ipv6
+  }
+}
+
+interface em1
+interface em2
+interface em3
+interface em4
+interface em5
+interface vlan2
+----
+
+Router advertisements will be issued on the interfaces.
+Along with the router advertisements, each interface will advertize the globally configured DNS nameservers.
+This is quite handy as clients can receive everything they need to connect to the internet.
+Without the DNS servers, a host would need to obtain nameservers through IPv4 DHCP or else configure their DNS servers manually.
+Ideally, my setup would have used my local Unbound instance as the IPv6 nameserver, but I haven't figured how or what IPv6 address to assign to my Unbound server.
+
+Enable rad.
+[source,console]
+----
+rcctl enable rad
+rcctl start rad
+----
+
+=== Unbound
+
+./var/unbound/etc/unbound.conf
+[source]
+----
+server:
+	interface: 192.168.1.1
+	interface: 192.168.2.1
+	interface: 192.168.3.1
+	interface: 192.168.4.1
+	interface: 192.168.5.1
+	interface: 192.168.6.1
+	interface: 127.0.0.1
+	#interface: 127.0.0.1@5353	# listen on alternative port
+	interface: ::1
+
+	do-ip6: yes
+	prefer-ip6: yes
+
+	access-control: ::0/0 refuse
+	access-control: ::1 allow
+	access-control: fd00::/8 allow
+	access-control: fe80::/10 allow
+
+# Use an upstream forwarder (recursive resolver) for some or all zones.
+#
+forward-zone:
+	name: "."				# use for ALL queries
+	forward-addr: 2a00:5a60::bad2:0ff # adguard-dns-family-ipv6
+	forward-addr: 2a0d:2a00:1:: # cleanbrowsing-family-ipv6
+	forward-addr: 176.103.130.132 # adguard-dns-family
+	forward-addr: 185.228.168.10 # cleanbrowsing-adult
+----
+
+=== Prefer IPv6
+
+./etc/resolv.conf.tail
+[source]
+----
+family inet6 inet4
+----
+
+=== IPv6 Routing
+
+./etc/sysctl.conf
+[source]
+----
+net.inet6.ip6.forwarding=1
+----
+
+[source,console]
+----
+reboot
+----
