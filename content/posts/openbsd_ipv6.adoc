@@ -24,79 +24,101 @@ ifdef::env-github[]
 endif::[]
 
 Configuring IPv6 on my OpenBSD home router was a much more difficult task than I'd expected.
-Of course, this is mostly because the learning curve of IPv6 and DHCPv6 was much steeper than I'd anticipated.
-That being said, OpenBSD doesn't provide DHCPv6 support in its DHCP daemon, which is where I had the most difficulty.
-I've documented my setup here in the hope it saves some time for someone else.
+While this was mostly due to the steep learning curve of IPv6 and DHCPv6, OpenBSD doesn't provide DHCPv6 support in its native DHCP daemon.
+I've documented my setup and difficulties here in the hope it saves some time for someone else.
 
 == Configure
 
 === PF
 
+First is the firewall configuration.
+Below are snippets highlighting the required IPv6 packet-filter rules.
+
 ./etc/pf.conf
 [source]
 ----
-table <martians> {
+table <martians> { # <1>
     0.0.0.0/8 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.0.0.0/24 \
     192.0.2.0/24 224.0.0.0/3 192.168.0.0/16 198.18.0.0/15 198.51.100.0/24 \
     203.0.113.0/24 \
     ::/128 ::/96 ::1/128 ::ffff:0:0/96 100::/64 2001:10::/28 2001:2::/48 \
     2001:db8::/32 3ffe::/16 fec0::/10 fc00::/7 }
 
-set block-policy drop
-set loginterface egress
-set optimization aggressive
-set skip on lo
+...
 
-block all
-
-# Sample debug logging statement.
-#match log (matches) from 192.168.1.21 to 192.168.1.1
-
-match in all scrub (no-df random-id)
-antispoof for egress
-
-pass out inet6
+pass out inet6 # <2>
 pass in on { secure_lan insecure_lan } inet6
 
 block in on egress from any to <martians>
 
 pass in on egress inet6 proto udp from fe80::/10 port dhcpv6-server \
-  to fe80::/10 port dhcpv6-client no state
+  to fe80::/10 port dhcpv6-client no state # <3>
 
-pass out on egress inet6 proto udp from any to any port 33433 >< 33626 keep state
+pass out on egress inet6 proto udp from any to any port 33433 >< 33626 keep state # <4>
 pass on any inet6 proto icmp6 all
 
-# Isolate each lan.
 pass on secure_lan from secure_lan:network to secure_lan:network
 pass on insecure_lan from insecure_lan:network to insecure_lan:network
-
-# Redirect DNS traffic
-pass in on secure_lan inet proto { tcp udp } to <google_dns_servers> port \
-  domain divert-to $secure_lan_dns_server port domain
-pass in on insecure_lan inet proto { tcp udp } to <google_dns_servers> port \
-  domain divert-to $insecure_lan_dns_server port domain
 ----
+<1> Update the martians table with IPv6 addresses.
+<2> Allow IPv6 traffic.
+<3> Allow DHCPv6 traffic between link-local IPv6 addresses.
+<4> Allow ICMPv6 traffic.
 
-[source,console]
-----
-pfctl -f /etc/pf.conf
-----
+=== DHCPv6
 
-
-=== dhcpcd
-
-Install dhcpcd.
-There is a package available for wide-dhcpv6, but it lacks init scripts to conveniently integrate in the startup process.
+There were two ways to obtain IPv6 address blocks for my home router: https://tools.ietf.org/html/rfc4862[SLAAC] and https://tools.ietf.org/html/rfc3315[DHCPv6].
+At first, I tried to configure my external interface with OpenBSD's IPv6 auto-configuration.
+I successfully received a globally routeable /64 block.
+Of course, my ISP only supplies dynamic IPv6 addresses.
+This put me in a pickle.
+How do I dynamically assign address blocks to my internal interfaces?
+How do I use SLAAC to configure my host machines when SLAAC requires a /64 subnet for the internal interface?
+It took my a long time to realize I needed DHCPv6 to request multiple /64 blocks from my ISP and assign them to my internal network interfaces.
+OpenBSD has yet to natively support DHCPv6, so a third-party package was required.
+I installed https://roy.marples.name/projects/dhcpcd/[dhcpcd].
+There was a package available for https://sourceforge.net/projects/wide-dhcpv6/[wide-dhcpv6], but it lacked rc init scripts to conveniently integrate into the startup process.
 
 [source,console]
 ----
 pkg_add dhcpcd
 ----
 
+Configuration of dhcpcd was done in `/etc/dhcpcd.conf`.
+The default configuration required only a few changes, detailed below.
+
+./etc/dhcpcd.conf
+[source]
+----
+ipv6only # <1>
+noipv6rs # <2>
+waitip 6 # <3>
+
+allowinterfaces em0 em1 em2 em3 em4 em5 vlan2 # <4>
+
+interface em0 # <5>
+  ipv6rs # <6>
+  ia_na 1 # <7>
+  ia_pd 2 em1/0 em2/1 em3/2 em4/3 em5/4 vlan2/5 # <8>
+----
+<1> Enable DHCP services for IPv6 only.
+<2> Disable IPv6 router solicitation on all interfaces.
+<3> Wait for an IPv6 address to be assigned before forking to the background.
+<4> Allow touching these interfaces.
+<5> Configure my external interface `em0`.
+<6> Enable router solicitation on `em0`.
+<7> Obtain a normal IPv6 address for `em0`.
+<8> Request a prefix delegation for all of my internal interfaces.
+
+I then enabled the dhcpcd service at boot.
+[source,console]
+----
+rcctl enable dhcpcd
+----
+
 === Router Advertisement Daemon
 
-Configure rad.
-
+On OpenBSD, https://man.openbsd.org/rad.8[rad] handles SLAAC on the LAN interfaces.
 ./etc/rad.conf
 [source]
 ----
@@ -115,17 +137,17 @@ interface em5
 interface vlan2
 ----
 
-Router advertisements will be issued on the interfaces.
+Router advertisements will be issued on the listed interfaces.
 Along with the router advertisements, each interface will advertize the globally configured DNS nameservers.
 This is quite handy as clients can receive everything they need to connect to the internet.
 Without the DNS servers, a host would need to obtain nameservers through IPv4 DHCP or else configure their DNS servers manually.
-Ideally, my setup would have used my local Unbound instance as the IPv6 nameserver, but I haven't figured how or what IPv6 address to assign to my Unbound server.
+Ideally, my setup would have used my local Unbound instance as the IPv6 nameserver, but I haven't quite figured out how to handle that.
+Specifically, what IPv6 address should I assign to my Unbound server?
 
-Enable rad.
+Start rad at boot.
 [source,console]
 ----
 rcctl enable rad
-rcctl start rad
 ----
 
 === Unbound
