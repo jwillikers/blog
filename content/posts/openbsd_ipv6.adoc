@@ -6,7 +6,7 @@ date = "2020-05-23"
 draft = false
 +++
 
-= PF Badhost
+= IPv6 on OpenBSD
 Jordan Williams <jordan@jwillikers.com>
 v1.0, 2020-05-23
 :source-highlighter: rouge
