@@ -27,14 +27,14 @@ Configuring https://en.wikipedia.org/wiki/IPv6[IPv6] on my https://www.openbsd.o
 While this was mostly due to the steep learning curve of IPv6 and https://en.wikipedia.org/wiki/DHCPv6[DHCPv6], OpenBSD doesn't provide DHCPv6 support in its native https://man.openbsd.org/dhcpd[DHCP daemon].
 I've documented my setup and difficulties here in the hope it saves some time for someone else.
 
-== Configure
+== Configuration
 
-I configured IPv6 on OpenBSD 6.7.
+I configured IPv6 on on my home router running OpenBSD 6.7.
 
 === PF
 
-First was the firewall configuration.
-Below are snippets highlighting the required IPv6 packet-filter rules.
+IPv6 packets need to get through the firewall for anything to happen.
+Below are snippets of my IPv6 packet-filter rules to allow the necessary traffic.
 
 ./etc/pf.conf
 [source]
@@ -69,17 +69,17 @@ pass on insecure_lan from insecure_lan:network to insecure_lan:network
 
 === DHCPv6
 
-There were two ways to obtain IPv6 address blocks for my home router: https://tools.ietf.org/html/rfc4862[SLAAC] and https://tools.ietf.org/html/rfc3315[DHCPv6].
+There are two ways to obtain IPv6 address blocks: https://tools.ietf.org/html/rfc4862[SLAAC] and https://tools.ietf.org/html/rfc3315[DHCPv6].
 At first, I tried to configure my external interface with OpenBSD's IPv6 auto-configuration.
-I successfully received a globally routeable /64 block.
+I successfully received a globally reachable /64 block.
 Of course, my ISP only supplies dynamic IPv6 addresses.
 This put me in a pickle.
 How do I dynamically assign address blocks to my internal interfaces?
 How do I use SLAAC to configure my host machines when SLAAC requires a /64 subnet for the internal interface?
-It took my a long time to realize I needed DHCPv6 to request multiple /64 blocks from my ISP and assign them to my internal network interfaces.
+It took me a while to realize I needed DHCPv6 to request multiple /64 blocks from my ISP and assign them to my internal network interfaces.
 OpenBSD has yet to natively support DHCPv6, so a third-party package was required.
-I installed https://roy.marples.name/projects/dhcpcd/[dhcpcd].
-There was a package available for https://sourceforge.net/projects/wide-dhcpv6/[wide-dhcpv6], but it lacked rc init scripts to conveniently integrate into the startup process.
+I decided on https://roy.marples.name/projects/dhcpcd/[dhcpcd].
+There is a package available for https://sourceforge.net/projects/wide-dhcpv6/[wide-dhcpv6], but it lacks rc init scripts to conveniently integrate into the system's startup process.
 
 [source,console]
 ----
@@ -121,6 +121,7 @@ rcctl enable dhcpcd
 === Router Advertisement Daemon
 
 On OpenBSD, https://man.openbsd.org/rad.8[rad] handles SLAAC on the LAN interfaces.
+Configuration of rad is done in https://man.openbsd.org/rad.conf.5[rad.conf].
 
 ./etc/rad.conf
 [source]
@@ -141,14 +142,14 @@ interface vlan2
 ----
 
 Router advertisements will be issued on the listed interfaces.
-Along with the router advertisements, each interface will advertize the globally configured DNS nameservers.
-These are Cloudflare's IPv6 DNS namesavers.
+Along with the router advertisements, each interface will advertize the DNS nameservers configured globally at the top of the file.
+These are Cloudflare's IPv6 DNS nameservers, in this instance.
 This is quite handy as clients can receive everything they need to connect to the internet.
 Without the DNS servers, a host would need to obtain nameservers through IPv4 DHCP or else configure their DNS servers manually.
-Ideally, my setup would have used my local Unbound instance as the IPv6 nameserver, but I haven't quite figured out how to handle that yet.
-Specifically, what IPv6 address should I assign to my Unbound server?
+Ideally, my setup would have used my local Unbound instance for IPv6 DNS lookups, but I haven't quite figured out how to handle that yet.
+Specifically, I'm at a loss for how to dynamically assign an IPv6 address to the Unbound server.
 
-Start rad at boot.
+I enabled rad to start at boot.
 [source,console]
 ----
 rcctl enable rad
@@ -156,7 +157,8 @@ rcctl enable rad
 
 === Unbound
 
-I enabled IPv6 support on https://man.openbsd.org/unbound[Unbound] and provided upstream IPv6 DNS servers.
+While I did not bind https://man.openbsd.org/unbound[Unbound] to any public IPv6 addresses, it can still do IPv6 DNS lookups.
+I enabled IPv6 support on Unbound and provided upstream IPv6 DNS servers.
 
 ./var/unbound/etc/unbound.conf
 [source]
@@ -192,7 +194,7 @@ forward-zone:
 
 === Prefer IPv6
 
-Prefer using IPv6 over IPv4.
+I configured my router to prefer using IPv6 over IPv4.
 
 ./etc/resolv.conf.tail
 [source]
@@ -202,7 +204,7 @@ family inet6 inet4
 
 === IPv6 Routing
 
-Don't forget to enable IPv6 routing.
+Of course, I enabled IPv6 routing.
 
 ./etc/sysctl.conf
 [source]
@@ -210,40 +212,31 @@ Don't forget to enable IPv6 routing.
 net.inet6.ip6.forwarding=1
 ----
 
-== Deploy
+== Deployment
 
-Reboot for all the changes to take effect.
+Last of all, the system was rebooted to put all the changes in to take effect.
 
 [source,console]
 ----
 reboot
 ----
 
-== Verify
+== Verification
 
-Once your router has rebooted, run https://man.openbsd.org/ifconfig[ifconfig] to ensure that your interfaces have public IPv6 addresses.
+Once my router had rebooted, I ran https://man.openbsd.org/ifconfig[ifconfig] to ensure that my interfaces had public IPv6 addresses.
 
-Output interface information.
 [source,console]
 ----
 ifconfig
 ----
 
-Now then, below is some sample output for my configuration.
+The resultant output is below.
 The details have been modified for privacy.
-You will want to look for public IPv6 addresses, not https://en.wikipedia.org/wiki/Link-local_address[link-local IPv6 addresses].
-Public IPv6 addresses indicate you ar properly receiving addresses from your ISP.
 
-Link-local addresses will begin with `fe80`.
-The following shows sample output indicating a link-local address.
-[source,console]
-----
-	inet6 fe80::%em0 prefixlen 64 scopeid 0x1
-----
-
-NOTE: Notice that some interfaces do not show public IPv6 address block assignments.
-At first, I thought that dhcpcd was not provisioning addresses correctly.
-However, I've come to realize that public IPv6 addresses are only shown for interfaces with active connections.
+At first, I noticed that some interfaces were not showing public IPv6 address assignments.
+They only had https://en.wikipedia.org/wiki/Link-local_address[link-local IPv6 addresses], i.e. addresses beginning with 'fe80::'.
+I thought that dhcpcd was not provisioning addresses correctly.
+Eventually, I realized that public IPv6 addresses are only shown for interfaces with active connections.
 
 [source,console]
 ----
@@ -310,12 +303,9 @@ vlan2: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
 	inet6 2001:DB8:face:cafe:5::1 prefixlen 64 pltime 205172 vltime 231092
 ----
 
-To make sure end-to-end connections are working over IPv6, it's easiest to ping an IPv6 address.
-I used my laptop running https://ubuntu.com/[Ubuntu] to ping https://www.cloudflare.com/[Cloudflare]'s DNS server.
+To make sure end-to-end connections were working over IPv6, I pinged https://www.cloudflare.com/[Cloudflare]'s DNS server from my laptop.
 
 [source,console]
 ----
 ping6 2606:4700:4700::1111
 ----
-
-If your ping is successful, then you have true IPv6 connectivity!
