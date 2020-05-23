@@ -1,14 +1,14 @@
 +++
 title = "IPv6 on OpenBSD"
 categories = ["Networking"]
-tags = ["BSD", "DHCPCD", "DHCPv6", "Firewall", "Internet", IPv6, "Network", "OpenBSD", "OpenBSD 6", "OpenBSD 6.6", "PF", "Router", "Routing", "Unix"]
-date = "2020-05-09"
-draft = true
+tags = ["BSD", "DHCPCD", "DHCPv6", "Firewall", "Internet", "IPv6", "Network", "OpenBSD", "OpenBSD 6", "OpenBSD 6.7", "PF", "Router", "Routing", "Unix"]
+date = "2020-05-23"
+draft = false
 +++
 
 = PF Badhost
 Jordan Williams <jordan@jwillikers.com>
-v1.0, 2020-05-09
+v1.0, 2020-05-23
 :source-highlighter: rouge
 :rouge-style: github
 :icons: font
@@ -23,15 +23,17 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-Configuring IPv6 on my OpenBSD home router was a much more difficult task than I'd expected.
-While this was mostly due to the steep learning curve of IPv6 and DHCPv6, OpenBSD doesn't provide DHCPv6 support in its native DHCP daemon.
+Configuring https://en.wikipedia.org/wiki/IPv6[IPv6] on my https://www.openbsd.org/[OpenBSD] home router was a much more difficult task than I'd expected.
+While this was mostly due to the steep learning curve of IPv6 and https://en.wikipedia.org/wiki/DHCPv6[DHCPv6], OpenBSD doesn't provide DHCPv6 support in its native https://man.openbsd.org/dhcpd[DHCP daemon].
 I've documented my setup and difficulties here in the hope it saves some time for someone else.
 
 == Configure
 
+I configured IPv6 on OpenBSD 6.7.
+
 === PF
 
-First is the firewall configuration.
+First was the firewall configuration.
 Below are snippets highlighting the required IPv6 packet-filter rules.
 
 ./etc/pf.conf
@@ -119,13 +121,14 @@ rcctl enable dhcpcd
 === Router Advertisement Daemon
 
 On OpenBSD, https://man.openbsd.org/rad.8[rad] handles SLAAC on the LAN interfaces.
+
 ./etc/rad.conf
 [source]
 ----
 dns {
   nameserver {
-    2a00:5a60::bad2:0ff # adguard-dns-family-ipv6
-    2a0d:2a00:1:: # cleanbrowsing-family-ipv6
+	2606:4700:4700::1111
+	2606:4700:4700::1001
   }
 }
 
@@ -139,9 +142,10 @@ interface vlan2
 
 Router advertisements will be issued on the listed interfaces.
 Along with the router advertisements, each interface will advertize the globally configured DNS nameservers.
+These are Cloudflare's IPv6 DNS namesavers.
 This is quite handy as clients can receive everything they need to connect to the internet.
 Without the DNS servers, a host would need to obtain nameservers through IPv4 DHCP or else configure their DNS servers manually.
-Ideally, my setup would have used my local Unbound instance as the IPv6 nameserver, but I haven't quite figured out how to handle that.
+Ideally, my setup would have used my local Unbound instance as the IPv6 nameserver, but I haven't quite figured out how to handle that yet.
 Specifically, what IPv6 address should I assign to my Unbound server?
 
 Start rad at boot.
@@ -151,6 +155,8 @@ rcctl enable rad
 ----
 
 === Unbound
+
+I enabled IPv6 support on https://man.openbsd.org/unbound[Unbound] and provided upstream IPv6 DNS servers.
 
 ./var/unbound/etc/unbound.conf
 [source]
@@ -178,13 +184,15 @@ server:
 #
 forward-zone:
 	name: "."				# use for ALL queries
-	forward-addr: 2a00:5a60::bad2:0ff # adguard-dns-family-ipv6
-	forward-addr: 2a0d:2a00:1:: # cleanbrowsing-family-ipv6
-	forward-addr: 176.103.130.132 # adguard-dns-family
-	forward-addr: 185.228.168.10 # cleanbrowsing-adult
+	forward-addr: 2606:4700:4700::1111
+	forward-addr: 2606:4700:4700::1001
+	forward-addr: 1.1.1.1
+	forward-addr: 1.0.0.1
 ----
 
 === Prefer IPv6
+
+Prefer using IPv6 over IPv4.
 
 ./etc/resolv.conf.tail
 [source]
@@ -194,13 +202,120 @@ family inet6 inet4
 
 === IPv6 Routing
 
+Don't forget to enable IPv6 routing.
+
 ./etc/sysctl.conf
 [source]
 ----
 net.inet6.ip6.forwarding=1
 ----
 
+== Deploy
+
+Reboot for all the changes to take effect.
+
 [source,console]
 ----
 reboot
 ----
+
+== Verify
+
+Once your router has rebooted, run https://man.openbsd.org/ifconfig[ifconfig] to ensure that your interfaces have public IPv6 addresses.
+
+Output interface information.
+[source,console]
+----
+ifconfig
+----
+
+Now then, below is some sample output for my configuration.
+The details have been modified for privacy.
+You will want to look for public IPv6 addresses, not https://en.wikipedia.org/wiki/Link-local_address[link-local IPv6 addresses].
+Public IPv6 addresses indicate you ar properly receiving addresses from your ISP.
+
+Link-local addresses will begin with `fe80`.
+The following shows sample output indicating a link-local address.
+[source,console]
+----
+	inet6 fe80::%em0 prefixlen 64 scopeid 0x1
+----
+
+NOTE: Notice that some interfaces do not show public IPv6 address block assignments.
+At first, I thought that dhcpcd was not provisioning addresses correctly.
+However, I've come to realize that public IPv6 addresses are only shown for interfaces with active connections.
+
+[source,console]
+----
+em0: flags=808843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST,AUTOCONF4> mtu 1500
+	lladdr 00:00:00:00:00:00
+	index 1 priority 0 llprio 3
+	groups: egress
+	media: Ethernet autoselect (1000baseT full-duplex,rxpause,txpause)
+	status: active
+	inet 123.45.67.253 netmask 0xffffff00 broadcast 123.45.67.255
+	inet6 fe80::%em0 prefixlen 64 scopeid 0x1
+	inet6 2001:DB8:face:cafe:abcd:1234:5678:39 prefixlen 64 autoconf pltime 604473 vltime 2591673
+em1: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	lladdr 00:00:00:00:00:01
+	index 2 priority 0 llprio 3
+	groups: secure_lan
+	media: Ethernet autoselect (1000baseT full-duplex,rxpause,txpause)
+	status: active
+	inet 192.168.1.1 netmask 0xffffff00 broadcast 192.168.1.255
+	inet6 fe80::0001%em1 prefixlen 64 scopeid 0x2
+em2: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	lladdr 00:00:00:00:00:02
+	index 3 priority 0 llprio 3
+	groups: secure_lan
+	media: Ethernet autoselect (100baseTX full-duplex)
+	status: active
+	inet 192.168.2.1 netmask 0xffffff00 broadcast 192.168.2.255
+	inet6 fe80::1%em2 prefixlen 64 scopeid 0x3
+	inet6 2001:DB8:face:cafe:1::1 prefixlen 64 pltime 205171 vltime 231091
+em3: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	lladdr 00:00:00:00:00:02
+	index 4 priority 0 llprio 3
+	groups: secure_lan
+	media: Ethernet autoselect (none)
+	status: no carrier
+	inet 192.168.3.1 netmask 0xffffff00 broadcast 192.168.3.255
+	inet6 fe80::2%em3 prefixlen 64 scopeid 0x4
+em4: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	lladdr 00:00:00:00:00:03
+	index 5 priority 0 llprio 3
+	groups: secure_lan
+	media: Ethernet autoselect (1000baseT full-duplex,master,rxpause,txpause)
+	status: active
+	inet 192.168.4.1 netmask 0xffffff00 broadcast 192.168.4.255
+	inet6 fe80::3%em4 prefixlen 64 scopeid 0x5
+	inet6 2001:DB8:face:cafe:3::1 prefixlen 64 pltime 205172 vltime 231092
+em5: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	lladdr 00:00:00:00:00:04
+	index 6 priority 0 llprio 3
+	groups: secure_lan
+	media: Ethernet autoselect (none)
+	status: no carrier
+	inet 192.168.5.1 netmask 0xffffff00 broadcast 192.168.5.255
+	inet6 fe80::4%em5 prefixlen 64 scopeid 0x6
+vlan2: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	lladdr 00:00:00:00:00:05
+	index 9 priority 0 llprio 3
+	encap: vnetid 2 parent em1 txprio packet rxprio outer
+	groups: vlan insecure_lan
+	media: Ethernet autoselect (1000baseT full-duplex,rxpause,txpause)
+	status: active
+	inet 192.168.6.1 netmask 0xffffff00 broadcast 192.168.6.255
+	inet6 fe80::5%vlan2 prefixlen 64 scopeid 0x9
+	inet6 2001:DB8:face:cafe:5::1 prefixlen 64 pltime 205172 vltime 231092
+----
+
+To make sure end-to-end connections are working over IPv6, it's easiest to ping an IPv6 address.
+I used my laptop running https://ubuntu.com/[Ubuntu] to ping https://www.cloudflare.com/[Cloudflare]'s DNS server.
+
+[source,console]
+----
+ping6 2606:4700:4700::1111
+----
+
+If your ping is successful, then you have true IPv6 connectivity!
