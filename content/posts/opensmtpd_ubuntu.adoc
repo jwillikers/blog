@@ -1,119 +1,135 @@
 +++
-title = "OpenSMTPD Forwarding on Ubuntu"
+title = "OpenSMTPD Relay on Ubuntu"
 categories = ["Networking"]
-tags = ["2FA", "GMail", "OpenSMTPD", "OpenSMTPD 6.0", "OpenSMTPD 6.0.3", "Ubuntu", "Ubuntu 19.10"]
-date = "2020-02-08"
-draft = true
+tags = ["2FA", "Email", "GMail", "OpenSMTPD", "OpenSMTPD 6", "OpenSMTPD 6.6", "OpenSMTPD 6.6.4", "Relay", "SMTP", "Ubuntu", "Ubuntu 20.04"]
+date = "2020-05-24"
+draft = false
 +++
 
-= OpenSMTPD Forwarding on Ubuntu
-Jordan Williams <jwillikers@protonmail.com>
-v1.0, 2020-02-08
+= OpenSMTPD Relay on Ubuntu
+Jordan Williams <jordan@jwillikers.com>
+v1.0, 2020-05-24
 :source-highlighter: rouge
-:rouge-style: base16.solarized.dark
+:rouge-style: github
 :icons: font
 
-It is handy to have your system send you an email alert if it detects an issue or potential security risk.
-Unfortunately, this isn't always straightforward, especially if you want to send an email from your desktop computer.
-Sending an email directly from your desktop to your email provider is likely going to accomplish absolutely nothing.
-The email will likely be blocked since it is from an unknown source, i.e. your desktop.
-I ran into this problem recently trying to set up https://linux.die.net/man/8/smartd[smartd] from https://www.smartmontools.org/[SmartMonTools] to email me when it detected hard drive failure.
-The https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol[Simple Mail Transfer Protocal (SMTP)] is perfect for getting around this by *relaying* the email through your legitimate email account and provider.
+It can be handy to have your system email you if it detects an issue or potential security risk.
+Unfortunately, this isn't always straightforward, especially when you want to send an email from your desktop computer.
+Sending an email directly from your desktop to your email account is likely going to accomplish nothing.
+The email will likely be blocked since, to your email provider, it is from an unknown source.
+I ran into this problem recently trying to set up https://www.smartmontools.org/[SmartMonTools] to send an email when it detected hard drive errors.
+The https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol[Simple Mail Transfer Protocal (SMTP)] is perfect for getting around this by *relaying* the email through your account from an established email provider.
+
 In my instance, I wanted to relay the alert through my GMail account, which has nice support for SMTP.
 Using an Ubuntu desktop computer, I figured this would be a breeze.
 It wasn't.
-It turned out to be much harder than I anticipated because many guides use antiquated SMTP applications to relay their emails, such as https://wiki.archlinux.org/index.php/SSMTP[SSMTP].
-Being an https://www.openbsd.org/[OpenBSD] fanboy, I decided to use their SMTP application, https://github.com/OpenSMTPD/OpenSMTPD[OpenSMTPD].
-This brief guide will walk you through setting up https://github.com/OpenSMTPD/OpenSMTPD[OpenSMTPD] 6.0.3 on Ubuntu 19.10 for relaying emails through your GMail account.
+It turned out to be much harder than I anticipated because many guides demonstrate SMTP relay using antiquated applications, such as https://wiki.archlinux.org/index.php/SSMTP[SSMTP].
+Being an https://www.openbsd.org/[OpenBSD] fanboy, I with the modern https://github.com/OpenSMTPD/OpenSMTPD[OpenSMTPD] application.
 
 == Instructions
-. Install OpenSMTPD on Ubuntu.
-+
+
+This brief guide will walk you through relaying emails on Ubuntu 20.04 with OpenSMTPD 6.6.4.
+
+=== Install
+
+First, install OpenSMTPD on Ubuntu.
 [source,console]
-sudo apt install opensmtpd
+$ sudo apt install opensmtpd
 
-. Grab your Email Account's Password or Key.
-For my use case, I want to use a GMail account which has two-factor authentication.
-Because I use two-factor authentication, I have to use an _App Password_ instead of my regular password.
-For any GMail users out there, instructions on how to generate an _App Password_ can be found https://support.google.com/accounts/answer/185833?hl=en[here].
+NOTE: This will probably ask you a couple of questions from an ncurses interface, but it should be fairly self explanatory.
 
-. Configure OpenSMTPD.
-+
---
-The vanilla configuration file only requires a couple of minor changes.
-The gist of the configuration is to relay all mail originating from the local machine to my GMail account.
+Additionally, you will likely want to install the `mailutils` package to provide the standard system mail commands.
+
+[source,console]
+$ sudo apt install mailutils
+
+NOTE: The `mailutils` package is required for the verification step at the end of this tutorial.
+
+=== Configure
+
+Grab your email account's password.
+For my use case, I was using a GMail account which required two-factor authentication.
+Because of this, I had to use an _App Password_ instead of my regular password.
+For any GMail users in a similar situation, instructions on how to generate an _App Password_ can be found https://support.google.com/accounts/answer/185833?hl=en[here].
+
+The default configuration file only requires a couple of minor tweaks.
+The gist of the configuration is to relay all mail originating from the local machine to a GMail account.
 
 ./etc/smtpd.conf
 ----
+#	$OpenBSD: smtpd.conf,v 1.10 2018/05/24 11:40:17 gilles Exp $
+
 # This is the smtpd server system-wide configuration file.
 # See smtpd.conf(5) for more information.
 
 table secrets file:/etc/mail/secrets # <1>
-
-# If you edit the file, you have to run "smtpctl update table aliases"
 table aliases file:/etc/aliases
 
 # To accept external mail, replace with: listen on all
+#
 listen on localhost
 
-accept for any relay via tls+auth://MY_LABEL@smtp.gmail.com auth <secrets> # <2>
+action "local" maildir alias <aliases>
+action "relay" relay host smtp+tls://jdoe@smtp.gmail.com:587 auth <secrets> # <2>
 
-accept for local alias <aliases> deliver to mbox
-accept for any relay
+# Uncomment the following to accept external mail for domain "example.org"
+#
+# match from any for domain "example.org" action "local"
+match for local action "local"
+match from local for any action "relay"
 ----
-<1> Use the content of the file `/etc/mail/secrets`, shown below, as the `secrets` table.
-<2> The rule to forward all mail to the GMail SMTP server.
+<1> Use the content of the file `/etc/mail/secrets`, shown below, for the `secrets` table.
+<2> The rule to forward all mail to GMail's SMTP server using TLS.
+
+Your account credentials must be associated with a label in the `/etc/mail/secrets` file.
+
+Create the `secrets` file.
+[source,console]
+----
+$ sudo mkdir /etc/mail
+$ sudo touch /etc/mail/secrets
+----
+
+Now, make sure the file's permissions are tight before putting your plain-text password inside.
+[source,console]
+----
+$ sudo chmod 640 /etc/mail/secrets # <1>
+$ sudo chown root:opensmtpd /etc/mail/secrets # <2>
+----
+<1> Permit read and write access for the file's owner and read access for the file's group.
+<2> Set the file's ownership such that it belongs to the `root` user and `opensmtpd` group.
+
+The following example illustrates the file format.
 
 ./etc/mail/secrets
 ----
-MY_LABEL my_username@gmail.com:my_app_password
+jdoe jdoe@gmail.com:my_app_password # <1>
+----
+<1> Use the label `jdoe` to represent the account `jdoe` at `gmail.com` which has the passphrase `my_app_password`.
+
+Check that the OpenSMTPD configuration file is valid.
+[source,console]
+----
+$ sudo smtpd -n
+[sudo] password for jordan: 
+configuration OK
 ----
 
-./etc/aliases
-----
-# See man 5 aliases for format
-postmaster:    root
-----
-NOTE: The OpenSMTPD packaged for Ubuntu 19.10 uses a deprecated syntax for the configuration file.
-Please see below for a version of the configuration using the new syntax.
+Restart OpenSMTPD to make sure the configuration changes take effect.
+[source,console]
+$ sudo systemctl restart opensmtpd
 
-./etc/smtpd.conf
-----
-# This is the smtpd server system-wide configuration file.
-# See smtpd.conf(5) for more information.
+Enable OpenSMTPD on system startup, if desired.
+[source,console]
+$ sudo systemctl enable opensmtpd
 
-table secrets file:/etc/mail/secrets
+=== Verify
 
-# If you edit the file, you have to run "smtpctl update table aliases"
-table aliases file:/etc/aliases
+To test the configuration, you can send an email from your computer and check if the email appears in the receiving account.
 
-# To accept external mail, replace with: listen on all
-listen on localhost
+Send a test email using the `mail` command from the `mailutils` package.
 
-action "relay" relay host tls+auth://jordantheriver@smtp.gmail.com auth <secrets> # <1>
+[source,bash"]
+$ echo "Does it work?" | mail -s "OpenSMTPD Test Email" test@example.com
 
-match from local for any action "relay" <2>
-----
-<1> Create an __action__ named `relay`.
-<2> Call the `relay` __action__ for any email originating from the local machine.
---
-
-. Verify the OpenSMTPD configuration file.
-+
-[source,console,subs="+quotes"]
-smtpd -n
-
-. Enable OpenSMTPD on system startup.
-+
-[source,console,subs="+quotes"]
-sudo systemctl enable opensmtpd
-
-. Install `mailutils` to associate standard system mail commands with OpenSMTPD.
-+
-[source,console,subs="+quotes"]
-sudo apt install mailutils
-
-. Send a test email using `mailutils`.
-+
-[source,console,subs="+quotes"]
-echo "Subject: hello" | sendmail test@example.com
+If everything works, you should receive an email at the designated address.
