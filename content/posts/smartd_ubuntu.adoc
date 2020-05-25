@@ -58,7 +58,7 @@ It checks the https://en.wikipedia.org/wiki/Serial_ATA[SATA] disk `/dev/sda` for
     -M exec /usr/share/smartmontools/smartd-runner # <12>
 ----
 <1> Run for the device `/dev/sda`.
-<2> Specify that the device uses an `ATA` interface.
+<2> Specify that the device uses a https://en.wikipedia.org/wiki/SCSI_/_ATA_Translation[SCSI to ATA Translation] interface.
 <3> Enable https://www.smartmontools.org/wiki/test_offline[SMART Automatic Offline Testing].
 <4> Automatically save SMART attributes.
 <5> Check the health status of the disk for failing health status.
