@@ -248,7 +248,7 @@ em0: flags=808843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST,AUTOCONF4> mtu 1500
 	status: active
 	inet 123.45.67.253 netmask 0xffffff00 broadcast 123.45.67.255
 	inet6 fe80::%em0 prefixlen 64 scopeid 0x1
-	inet6 2001:DB8:face:cafe:abcd:1234:5678:39 prefixlen 64 autoconf pltime 604473 vltime 2591673
+	inet6 2001:DB8:face:cafe:abcd:1111:2222:33 prefixlen 64 autoconf pltime 604473 vltime 2591673
 em1: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
 	lladdr 00:00:00:00:00:01
 	index 2 priority 0 llprio 3
