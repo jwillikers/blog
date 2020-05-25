@@ -1,0 +1,25 @@
++++
+title = "Contact"
+date = "2020-05-25"
+draft = false
++++
+
+= Contact
+Jordan Williams
+v1.0, 2020-05-25
+:source-highlighter: rouge
+:rouge-style: github
+:icons: font
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+Notice an error?
+Have a question?
+Find something helpful?
+Your feedback is welcome.
+Please feel free to contact me via email: mailto:jordan@jwillikers.com[]
