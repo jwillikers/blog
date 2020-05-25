@@ -43,3 +43,7 @@ pygmentsUseClasses = true
     name = "About"
     weight = 2
     url = "/about/"
+[[menu.main]]
+    name = "Contact"
+    weight = 3
+    url = "/contact/"
