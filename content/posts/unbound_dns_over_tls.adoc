@@ -1,0 +1,148 @@
++++
+title = "DNS over TLS with Unbound"
+categories = ["Networking"]
+tags = ["BSD", "DNS", "DoT", "Internet", "Network", "OpenBSD", "OpenBSD 6", "OpenBSD 6.7", "Router", "TLS","Unbound", "Unbound 1", "Unbound 1.10", "Unbound 1.10.1"]
+date = "2020-05-29"
+draft = false
++++
+
+= DNS over TLS with Unbound
+Jordan Williams <jordan@jwillikers.com>
+v1.0, 2020-05-29
+:source-highlighter: rouge
+:rouge-style: github
+:icons: font
+ifndef::env-github[]
+:imagesdir: ./
+endif::[]
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+Recently, https://blog.mozilla.org/netpolicy/2020/02/25/the-facts-mozillas-dns-over-https-doh/[Firefox announced] it's roll-out of https://en.wikipedia.org/wiki/DNS_over_HTTPS[DNS over HTTPS (DoH)].
+That made me think, "Encrypting DNS... Why don't I do that for my home network?"
+Well, I've now had the opportunity to configure my https://nlnetlabs.nl/projects/unbound/about/[Unbound DNS resolver] to encrypt it's DNS requests.
+Unbound has support built-in for DoH's sibling protocol, https://en.wikipedia.org/wiki/DNS_over_TLS[DNS over TLS (DoT)].
+Instead of encrypting DNS traffic and masking it as standard HTTPS traffic, it uses the dedicated port 853.
+
+== Tutorial
+
+This tutorial describes the steps required to setup DNS over TLS on https://nlnetlabs.nl/projects/unbound/about/[Unbound] 1.10.1 on an https://www.openbsd.org/[OpenBSD] 6.7 system.
+
+=== Configure
+
+Configuration is done in the https://man.openbsd.org/unbound.conf[unbound.conf] file.
+The vanilla `unbound.conf` requires little more than un-commenting a few lines.
+Set `tls-cert-bundle` to the location of the system's certificates, which is `/etc/ssl/cert.pem` on OpenBSD 6.7.
+
+./var/unbound/etc/unbound.conf
+[source]
+----
+	# CA Certificates used for forward-tls-upstream (RFC7858) hostname
+	# verification.  Since it's outside the chroot it is only loaded at
+	# startup and thus cannot be changed via a reload.
+	tls-cert-bundle: "/etc/ssl/cert.pem"
+----
+
+Un-comment the DNS-over-TLS forward-zone section, and add your desired DNS entries.
+
+./var/unbound/etc/unbound.conf
+[source]
+----
+# Use an upstream DNS-over-TLS forwarder and do not fall back to cleartext
+# if that fails.
+forward-zone:
+	name: "."
+	forward-tls-upstream: yes		# use DNS-over-TLS forwarder
+	forward-first: no			# do NOT send direct
+#	# the hostname after "#" is not a comment, it is used for TLS checks:
+	forward-addr: 2606:4700:4700::1111@853#cloudflare-dns.com
+	forward-addr: 1.1.1.1@853#cloudflare-dns.com
+	forward-addr: 2606:4700:4700::1001@853#cloudflare-dns.com
+	forward-addr: 1.0.0.1@853#cloudflare-dns.com
+----
+
+NOTE: This configuration uses Cloudflare's DNS servers.
+Make sure that whichever servers you choose support DNS over TLS.
+
+That is all it takes to configure DNS over TLS.
+But before moving on, take a moment to admire those lovely comments from the package maintainers.
+You don't see comments that make a task so easy all that often.
+
+To be on the safe side, verify the configuration of `unbound.conf` with http://man.openbsd.org/unbound-checkconf.8[unbound-checkconf].
+
+[source,console]
+----
+$ unbound-checkconf
+unbound-checkconf: no errors in /var/unbound/etc/unbound.conf
+----
+
+Did you read those comments? Restart the machine for the changes to take effect.
+
+[source,console]
+----
+$ reboot
+----
+
+=== Verify
+
+Could the configuration really be that easy?
+It's probably best to check if DNS requests are truly being encrypted.
+A packet capture can show that.
+
+Start capturing all DNS traffic from the Unbound server to the upstream DNS.
+
+[source,console]
+----
+$ tcpdump -v -i em0 -s 65535 -w dns.pcap dst port 53 or 853 # <1>
+----
+<1> Capture packets on the egress interface, `em0`.
+Capture all traffic going to the standard DNS and DoT ports, port 53 and 853 respectively.
+Write the capture to the file `dns.pcap`
+
+Then do some digging or web browsing from a host using the Unbound resolver.
+
+[source,console]
+----
+$ dig mozilla.org
+----
+
+Use `Ctrl-C` to end the packet capture.
+
+Next, analyze the packet capture.
+I opened up the packet capture in https://www.wireshark.org/[Wireshark] on my laptop.
+But, it's just as easy to view it on the terminal with https://www.wireshark.org/docs/man-pages/tshark.html[tshark].
+Optionally, install `tshark`.
+
+[source,console]
+----
+$ pkg_add wireshark --no_x11
+----
+
+Review DNS requests in the packet capture.
+Here I use `tshark`.
+
+[source,console]
+----
+$ tshark -r dns.pcap
+    1   0.000000 2001:DB8::1 ? 2606:4700:4700::1001 TCP 98 38416 ? 853 [SYN] Seq=0 Win=16384 Len=0 MSS=1440 SACK_PERM=1 WS=64 TSval=3906316800 TSecr=0
+    2   0.000105 2001:DB8::1 ? 2606:4700:4700::1001 TCP 98 16888 ? 853 [SYN] Seq=0 Win=16384 Len=0 MSS=1440 SACK_PERM=1 WS=64 TSval=1343386395 TSecr=0
+    3   0.005709 2001:DB8::1 ? 2606:4700:4700::1001 TCP 74 38416 ? 853 [ACK] Seq=1 Ack=1 Win=16384 Len=0
+    4   0.005710 2001:DB8::1 ? 2606:4700:4700::1001 TCP 74 16888 ? 853 [ACK] Seq=1 Ack=1 Win=16384 Len=0
+    5   0.006150 2001:DB8::1 ? 2606:4700:4700::1001 TLSv1 386 Client Hello
+    6   0.006494 2001:DB8::1 ? 2606:4700:4700::1001 TLSv1 386 Client Hello
+    7   0.012466 2001:DB8::1 ? 2606:4700:4700::1001 TCP 74 38416 ? 853 [ACK] Seq=313 Ack=2721 Win=13632 Len=0
+    8   0.012468 2001:DB8::1 ? 2606:4700:4700::1001 TCP 74 16888 ? 853 [ACK] Seq=313 Ack=2721 Win=13632 Len=0
+    9   0.013037 2001:DB8::1 ? 2606:4700:4700::1001 TCP 74 38416 ? 853 [ACK] Seq=313 Ack=2742 Win=16384 Len=0
+   10   0.019366 2001:DB8::1 ? 2606:4700:4700::1001 TLSv1.2 148 Application Data
+   11   0.019892 2001:DB8::1 ? 2606:4700:4700::1001 TCP 74 16888 ? 853 [ACK] Seq=313 Ack=2741 Win=16384 Len=0
+----
+
+You should see output similar to that above.
+A TLSv1.2 connection is established between the Unbound server and Cloudflare's DNS server `2606:4700:4700::1001`.
+In this packet capture, un-encrypted DNS traffic over port 53 is entirely absent.
+That means all DNS requests from the router to the DNS server are encrypted!
