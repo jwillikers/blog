@@ -1,0 +1,73 @@
++++
+title = "Installing Docker on Ubuntu"
+categories = ["Networking"]
+tags = ["Containers", "Docker", "Docker Compose", "Ubuntu", "Ubuntu 20.04", "Virtualization"]
+date = "2020-05-30"
+draft = false
++++
+
+= Installing Docker on Ubuntu
+Jordan Williams <jordan@jwillikers.com>
+v1.0, 2020-05-30
+:source-highlighter: rouge
+:rouge-style: github
+:icons: font
+ifndef::env-github[]
+:imagesdir: ./
+endif::[]
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+Installing https://www.docker.com/[Docker] on https://ubuntu.com/[Ubuntu] should be easy, right?
+Turns out yes... but only if you go about it the right way.
+
+== The Right (Easy) Way
+
+Save yourself some hassle by installing Docker as packaged per your version of Ubuntu.
+I use https://docs.docker.com/compose/[docker-compose], and installing its package with https://wiki.debian.org/Aptitude[apt] also installs Docker.
+
+[source,console]
+----
+$ apt install docker-compose
+----
+
+If you just want to install Docker without docker-compose, install the `docker.io` package.
+
+[source,console]
+----
+$ apt install docker.io
+----
+
+Add your user to the `docker` group if you want to run docker without requiring superuser privileges.
+
+[source,console]
+----
+$ usermod -aG docker $USER
+----
+
+Reboot to complete the installation.
+
+[source,console]
+----
+$ reboot
+----
+
+== The Other Ways
+
+I made a couple of mistakes attempting to install Docker on Ubuntu 20.04.
+
+Installing Docker through https://wiki.debian.org/Aptitude[GNOME Software] caused me grief.
+The Software app installs the https://snapcraft.io/[snap] package.
+This resulted in Docker not finding "VBoxManage" whenever I tried to create the default Docker machine.
+While this will probably work in the future, I'm staying away from it for now.
+
+I also tried to install Docker from https://docs.docker.com/engine/install/ubuntu/[Docker's installation instructions].
+This might have just been due to the fact that the Docker snap was still installed, but I ran into a weird ZFS issue which blocked me from re-creating a container.
+Docker was unable to delete the ZFS dataset when destroying a container.
+This rendered Docker unable to create a new container.
+Fortunately, installing with `apt` was even easier, and I didn't run into this issue.
