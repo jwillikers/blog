@@ -34,14 +34,18 @@ This brief guide will walk you through relaying emails on Ubuntu 20.04 with Open
 
 First, install OpenSMTPD on Ubuntu.
 [source,console]
-$ sudo apt install opensmtpd
+----
+$ apt install opensmtpd
+----
 
 NOTE: This will probably ask you a couple of questions from an ncurses interface, but it should be fairly self explanatory.
 
 Additionally, you will likely want to install the `mailutils` package to provide the standard system mail commands.
 
 [source,console]
-$ sudo apt install mailutils
+----
+$ apt install mailutils
+----
 
 NOTE: The `mailutils` package is required for the verification step at the end of this tutorial.
 
@@ -86,15 +90,15 @@ Your account credentials must be associated with a label in the `/etc/mail/secre
 Create the `secrets` file.
 [source,console]
 ----
-$ sudo mkdir /etc/mail
-$ sudo touch /etc/mail/secrets
+$ mkdir /etc/mail
+$ touch /etc/mail/secrets
 ----
 
 Now, make sure the file's permissions are tight before putting your plain-text password inside.
 [source,console]
 ----
-$ sudo chmod 640 /etc/mail/secrets # <1>
-$ sudo chown root:opensmtpd /etc/mail/secrets # <2>
+$ chmod 640 /etc/mail/secrets # <1>
+$ chown root:opensmtpd /etc/mail/secrets # <2>
 ----
 <1> Permit read and write access for the file's owner and read access for the file's group.
 <2> Set the file's ownership such that it belongs to the `root` user and `opensmtpd` group.
@@ -110,18 +114,21 @@ jdoe jdoe@gmail.com:my_app_password # <1>
 Check that the OpenSMTPD configuration file is valid.
 [source,console]
 ----
-$ sudo smtpd -n
-[sudo] password for jordan: 
+$ smtpd -n
 configuration OK
 ----
 
 Restart OpenSMTPD to make sure the configuration changes take effect.
 [source,console]
-$ sudo systemctl restart opensmtpd
+----
+$ systemctl restart opensmtpd
+----
 
 Enable OpenSMTPD on system startup, if desired.
 [source,console]
-$ sudo systemctl enable opensmtpd
+----
+$ systemctl enable opensmtpd
+----
 
 === Verify
 
@@ -130,6 +137,8 @@ To test the configuration, you can send an email from your computer and check if
 Send a test email using the `mail` command from the `mailutils` package.
 
 [source,bash"]
+----
 $ echo "Does it work?" | mail -s "OpenSMTPD Test Email" test@example.com
+----
 
 If everything works, you should receive an email at the designated address.
