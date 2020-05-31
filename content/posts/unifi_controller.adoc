@@ -34,7 +34,26 @@ Here's how.
 
 === Install Docker
 
-Docker should be easy enough to install by following https://jwillikers.com/posts/docker_ubuntu/[this blog post].
+Install Docker Compose.
+
+[source,console]
+----
+$ apt install docker-compose
+----
+
+Add your user to the `docker` group if you want to run docker without requiring superuser privileges.
+
+[source,console]
+----
+$ usermod -aG docker $USER
+----
+
+Reboot to complete the installation.
+
+[source,console]
+----
+$ reboot
+----
 
 === Compose
 
