@@ -32,7 +32,9 @@ With https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol[SMTP], your sys
 
 First, install SmartMonTools on Ubuntu.
 [source,console]
-$ sudo apt install smartmontools
+----
+$ apt install smartmontools
+----
 
 === Configure
 
@@ -74,7 +76,9 @@ Don't log the skipped test, which could wake-up the disk.
 
 Enable `smartd` on system startup.
 [source,console]
-$ sudo systemctl enable smartd
+----
+$ systemctl enable smartd
+----
 
 === Verify
 
@@ -88,7 +92,7 @@ It also shows the total number of tests for each type of self-test for the next 
 
 [source,console]
 ----
-$ sudo smartd -q showtests
+$ smartd -q showtests
 smartd 7.1 2019-12-30 r5022 [x86_64-linux-5.4.0-31-generic] (local build)
 Copyright (C) 2002-19, Bruce Allen, Christian Franke, www.smartmontools.org
 
@@ -134,7 +138,7 @@ The log shows that one short offline test has been run without error.
 
 [source,console]
 ----
-$ sudo smartctl -d sat -l xselftest,25,selftest /dev/sda
+$ smartctl -d sat -l xselftest,25,selftest /dev/sda
 smartctl 7.1 2019-12-30 r5022 [x86_64-linux-5.4.0-31-generic] (local build)
 Copyright (C) 2002-19, Bruce Allen, Christian Franke, www.smartmontools.org
 
@@ -169,7 +173,9 @@ To test the email functionality, you can tell `smartd` to send a test email.
 Restart `smartd` so that it sends the test email.
 
 [source,console]
-$ sudo systemctl restart smartd
+----
+$ systemctl restart smartd
+----
 
 If everything works, you should receive an email at the designated address.
 
