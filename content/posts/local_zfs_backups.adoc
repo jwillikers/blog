@@ -1,0 +1,141 @@
++++
+title = "Local ZFS Backups"
+categories = ["Systems"]
+tags = ["Backups", "Ubuntu", "Ubuntu 20.04", "ZFS"]
+date = "2020-06-13"
+draft = true
++++
+
+= Local ZFS Backups
+Jordan Williams <jordan@jwillikers.com>
+v1.0, 2020-06-13
+:source-highlighter: rouge
+:rouge-style: github
+:icons: font
+
+ZFS is 
+
+== Tutorial
+
+This tutorial describes the steps required to backup user data to an external disk using ZFS on Ubuntu 20.04.
+
+=== Setup
+
+Create a new pool.
+
+// -O compression=lz4
+// -O encryption=on?
+
+[source,console]
+----
+$ zpool create -o ashift=12 backup-01 /dev/sdb <1>
+----
+<1> Set ashift to 12 for 512MB block sizes on the disk.
+
+Enable encryption for the pool.
+
+[source,console]
+----
+$ zpool set feature@encryption=enabled backup-01
+----
+
+Create the backup dataset in the new pool, using a password for the key.
+
+[source,console]
+----
+$ zfs create \
+  -o mountpoint=/media/jordan/backup-01 \ # <1>
+  -o encryption=on \ # <2>
+  -o keysource=passphrase,prompt \ # <3>
+  backup-01/USERDATA/jordan
+----
+<1> Mount the dataset at `/media/jordan/backup-01`.
+<2> Encrypt the dataset.
+<3> Prompt the user for the key's passphrase.
+
+// Is it auto-mounted??
+Mount the dataset for backing up the files.
+
+[source,console]
+----
+$ zfs mount backup-01/USERDATA/jordan
+----
+
+Copy the files from the target directory to the backup directory.
+
+[source,console]
+----
+$ tar cfC - /home/jordan . | tar xpfC - /media/jordan/backup-01
+----
+
+Take a snapshot.
+// Best to use the zsys tool instead.
+
+[source,console]
+----
+$ zfs snapshot -r backup-01/USERDATA/jordan@2020-06-06-13:09:00
+----
+
+Un-mount the dataset.
+
+[source,console]
+----
+$ zfs umount backup-01/mnt
+$ zfs key -u backup-01 <1>
+----
+<1> Un-mount the key after un-mounting the dataset.
+
+Export the backup pool.
+
+[source,console]
+----
+$ zpool export backup-01
+----
+
+=== Incremental Backups
+
+Incrementally send data between the last two backups.
+
+[source,console]
+----
+$ zfs send \
+  --replicate \ # <1>
+  --raw \ # <2>
+  -i rpool@previous_backup main_pool@backup \ # <3>
+  | zfs receive -dvu backup-01
+----
+<1> Stream the data.
+<2> Send the raw, encrypted data.
+<3> Send the incremental between `` and ``.
+
+=== Restore
+
+Import the pool, unlocking it with the encryption key.
+
+[source,console]
+----
+$ zpool import backup-01 -d /dev -l
+----
+
+// Copy the necessary files from the backup.
+
+// [source,console]
+// ----
+// cp zfs/snapshots/
+// ----
+
+Revert to the snapshot.
+
+[source,console]
+----
+$ zfs rollback -r 
+----
+
+=== Verify
+
+== Resources
+
+https://blog.heckel.io/2017/01/08/zfs-encryption-openzfs-zfs-on-linux/
+https://www.ixsystems.com/community/threads/zfs-send-to-external-backup-drive.17850/
+https://ryan.himmelwright.net/post/zfs-backups-to-luks-external/
+https://www.freebsd.org/doc/handbook/zfs-zfs.html
