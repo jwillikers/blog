@@ -1,0 +1,73 @@
++++
+title = "Backup Docker Data"
+categories = ["Virtualization"]
+tags = ["Backups", "Containers", "Docker", "Ubuntu", "Ubuntu 20.04"]
+date = "2020-06-20"
+draft = true
++++
+
+= Backup Docker Data
+Jordan Williams <jordan@jwillikers.com>
+v1.0, 2020-06-20
+:source-highlighter: rouge
+:rouge-style: github
+:icons: font
+ifndef::env-github[]
+:imagesdir: ./
+endif::[]
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+Backups are super helpful, especially when you like to blow everything away as often as I.
+Backing up the data from a Docker container can help you quickly get things up and running.
+
+== Tutorial
+
+https://jwillikers.com/unifi_controller.adoc
+
+=== Backup
+
+// Use better tar commands for this, to simplify it as much as possible.
+
+[source,console]
+----
+$ docker run \
+  --rm \ # <1>
+  --volumes-from unifi-controller \
+  -v $(pwd):/backup \
+  ubuntu tar cvf /backup/backup.tar var/unifi-controller
+----
+<1> Remove the container when finished.
+<2> 
+<3> 
+
+Compress the backup, if you like.
+
+[source,console]
+----
+$ xz backup.tar
+----
+
+=== Restore
+
+Decompress the backup, if necessary.
+
+[source,console]
+----
+$ unxz backup.tar.xz
+----
+
+[source,console]
+----
+$ docker run 
+  --rm \ # <1>
+  --volumes-from unifi-controller \ # <2>
+   -v $(pwd):/backup \ # <3>
+   ubuntu bash -c "cd /dbdata && tar xvf /backup/backup.tar --strip 1" # <4>
+----
+<1> 
