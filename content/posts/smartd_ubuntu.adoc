@@ -1,6 +1,6 @@
 +++
 title = "Automatically Detect & Report Hard Drive Failure"
-categories = ["Networking"]
+categories = ["Systems"]
 tags = ["Email", "Hard Drive", "HDD", "OpenSMTPD", "Relay", "SMART", "smartctl", "smartd", "smartd.conf", "SmartMonTools", "SMTP", "Ubuntu", "Ubuntu 20.04"]
 date = "2020-05-25"
 draft = false
