@@ -1,0 +1,71 @@
++++
+title = "Install ZFS on the Pinebook Pro"
+categories = ["Security"]
+tags = ["Manjaro", "Pinebook", "Pinebook Pro", "ZFS"]
+date = "2020-06-30"
+draft = false
++++
+
+= Install ZFS on the Pinebook Pro
+Jordan Williams <jordan@jwillikers.com>
+v1.0, 2020-06-30
+:source-highlighter: rouge
+:rouge-style: github
+:icons: font
+
+Recently, I obtained a 64-bit ARM, budget Linux laptop, the https://www.pine64.org/pinebook-pro/[Pinebook Pro].
+It's a wonderful, sleek little notebook, boasting great convenience and power-efficiency.
+I enjoy using it so much, it's becoming my main machine, and I'd love love to put all of my music, audiobooks, pictures, and ebooks on it.
+The only problem being my media takes up a bit more than the 64 GiB available on the machine's built-in eMMC.
+With a spacious microSD card in-hand, I knew it was time to get more experience with my new filesystem of choice https://openzfs.org/wiki/Main_Page[ZFS].
+
+== Tutorial
+
+This tutorial describes the steps required to install ZFS on a Pinebook Pro running the tailored version of Manjaro KDE.
+
+=== Install
+
+The ZFS software is readily available as a https://en.wikipedia.org/wiki/Dynamic_Kernel_Module_Support[DKMS] module.
+So first, install DKMS on the Pinebook Pro.
+More in-depth instructions can be found on the https://wiki.archlinux.org/index.php/Dynamic_Kernel_Module_Support[Arch Linux Wiki].
+
+[source,sh]
+----
+$ sudo pacman -S dkms linux-pinebookpro-headers
+----
+
+The https://github.com/Jguer/yay[yay] tool provides a nifty way to install packages from the https://wiki.archlinux.org/index.php/Arch_User_Repository[AUR].
+
+[source,sh]
+----
+$ sudo pacman -S yay
+----
+
+Then, install the https://aur.archlinux.org/packages/zfs-dkms-any/[zfs-dkms-any] package from the AUR.
+
+[source,sh]
+----
+$ yay -S zfs-dkms-any
+----
+
+=== Configure
+
+To load the ZFS DKMS module at boot, create the appropriate file for https://www.freedesktop.org/wiki/Software/systemd/[systemd].footnote:[https://wiki.archlinux.org/index.php/Kernel_module#Automatic_module_loading_with_systemd[Automatic Module Loading with systemd]]
+
+./etc/modules-load.d/zfs.conf
+----
+# Load ZFS at boot
+zfs
+----
+
+Enable importing pools and mounting datasets at boot.footnote:[https://wiki.archlinux.org/index.php/ZFS#Automatic_Start[ZFS Automatic Start]]
+
+[source,sh]
+----
+$ sudo systemctl enable zfs-mount
+$ sudo systemctl enable zfs.target
+----
+
+=== Next Steps
+
+Stay tuned for upcoming posts on setting up a ZPool and ZFS datasets on the microSD card! 
