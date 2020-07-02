@@ -1,7 +1,7 @@
 +++
 title = "Local ZFS Backups"
 categories = ["Systems"]
-tags = ["Backups", "Ubuntu", "Ubuntu 20.04", "ZFS"]
+tags = ["Backups", "Ubuntu", "Ubuntu2004", "ZFS"]
 date = "2020-06-13"
 draft = true
 +++

@@ -1,7 +1,7 @@
 +++
 title = "OpenSMTPD Relay on Ubuntu"
 categories = ["Networking"]
-tags = ["2FA", "Email", "GMail", "OpenSMTPD", "OpenSMTPD 6", "OpenSMTPD 6.6", "OpenSMTPD 6.6.4", "Relay", "SMTP", "Ubuntu", "Ubuntu 20.04"]
+tags = ["2FA", "Email", "GMail", "OpenSMTPD", "OpenSMTPD6", "Relay", "SMTP", "Ubuntu", "Ubuntu2004"]
 date = "2020-05-24"
 draft = false
 +++

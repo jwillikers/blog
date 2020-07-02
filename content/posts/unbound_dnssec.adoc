@@ -1,7 +1,7 @@
 +++
 title = "DNSSEC with Unbound"
 categories = ["Networking"]
-tags = ["BSD", "DNS", "DNSSEC", "Internet", "Network", "OpenBSD", "OpenBSD 6", "OpenBSD 6.6", "Router", "Routing", "Unbound", "Unix"]
+tags = ["BSD", "DNS", "DNSSEC", "Internet", "Network", "OpenBSD", "OpenBSD6", "OpenBSD66", "Router", "Unbound", "Unix"]
 date = "2020-03-28"
 draft = false
 +++

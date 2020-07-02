@@ -1,7 +1,7 @@
 +++
 title = "Encrypt ZFS Pool on Ubuntu"
 categories = ["Security"]
-tags = ["Encryption", "Ubiquity", "Ubuntu", "Ubuntu2004", "ZFS", "ZPool"]
+tags = ["Encryption", "Ubiquity", "Ubuntu", "Ubuntu2004", "ZFS"]
 date = "2020-06-20"
 draft = true
 +++
