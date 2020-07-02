@@ -1,7 +1,7 @@
 +++
 title = "Encrypt ZFS Pool on Ubuntu"
 categories = ["Security"]
-tags = ["Encryption", "Ubiquity", "Ubuntu", "Ubuntu 20.04", "ZFS", "ZPool"]
+tags = ["Encryption", "Ubiquity", "Ubuntu", "Ubuntu2004", "ZFS", "ZPool"]
 date = "2020-06-20"
 draft = true
 +++
@@ -22,6 +22,12 @@ ZFS is
 This tutorial describes the steps required to backup user data to an external disk using ZFS on Ubuntu 20.04.
 
 === Setup
+
+https://wiki.archlinux.org/index.php/Dynamic_Kernel_Module_Support
+
+----
+$ sudo pacman -S dkms linux-pinebookpro-headers
+----
 
 Create a new pool.
 
