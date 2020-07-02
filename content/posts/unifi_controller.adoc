@@ -68,7 +68,7 @@ $ cd unifi_controller
 The provided `docker-compose` file requires just one tweak.
 The volume must be configured.
 
-.docker-compose
+.docker-compose.yml
 ----
 ---
 version: "2.1"
@@ -81,7 +81,7 @@ services:
       - PGID=1000
       - MEM_LIMIT=1024M #optional
     volumes:
-      - data-volume:/var/unifi-controller/config
+      - data:/config
     ports:
       - 3478:3478/udp
       - 10001:10001/udp
@@ -94,7 +94,7 @@ services:
     restart: unless-stopped
 
 volumes:
-  data-volume:
+  data:
 ----
 
 The `docker-compose` should be pretty self-explanatory.
