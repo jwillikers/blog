@@ -62,6 +62,8 @@ Enable importing pools and mounting datasets at boot.footnote:[https://wiki.arch
 
 [source,sh]
 ----
+$ sudo systemctl enable zfs-import-cache
+$ sudo systemctl enable zfs-import.target
 $ sudo systemctl enable zfs-mount
 $ sudo systemctl enable zfs.target
 ----
