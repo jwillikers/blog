@@ -165,7 +165,7 @@ Copy over the music.
 
 [source,console]
 ----
-$ cp -r ~/Music /media/jordan/Music
+$ tar cfC - /home/jordan/Music . | tar xpfC - /media/jordan/Music
 ----
 
 Then change the mount location back to `~/Music`.
