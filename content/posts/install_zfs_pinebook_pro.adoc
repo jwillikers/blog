@@ -1,7 +1,7 @@
 +++
 title = "Install ZFS on the Pinebook Pro"
 categories = ["Systems"]
-tags = ["Manjaro", "Pinebook", "PinebookPro", "ZFS"]
+tags = ["Manjaro", "PinebookPro", "ZFS"]
 date = "2020-06-30"
 draft = false
 +++
