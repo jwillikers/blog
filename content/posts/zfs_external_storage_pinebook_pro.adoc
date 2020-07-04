@@ -1,6 +1,6 @@
 +++
 title = "External Storage on the Pinebook Pro with ZFS"
-categories = ["Security"]
+categories = ["Systems"]
 tags = ["Manjaro", "PinebookPro", "ZFS"]
 date = "2020-07-03"
 draft = false
