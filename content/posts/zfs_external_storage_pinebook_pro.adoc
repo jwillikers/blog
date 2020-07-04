@@ -81,8 +81,12 @@ Create the pool.footnote:[https://wiki.archlinux.org/index.php/ZFS#Creating_ZFS_
 
 [source,console]
 ----
-$ sudo zpool create -o ashift=12 ext_pool mmc-AB5CD_0x00000001
+$ sudo zpool create \
+  -o ashift=12 \
+  -O compression=on \ <1>
+  ext_pool mmc-AB5CD_0x00000001
 ----
+<1> Turn on compression by default.
 
 Configure the system to automatically import the pool on boot.footnote:[https://wiki.archlinux.org/index.php/ZFS#Automatic_Start[Arch Linux Wiki: ZFS - Automatic Start]]
 
