@@ -12,8 +12,7 @@ v1.0, 2020-07-03
 :source-highlighter: rouge
 :rouge-style: github
 :icons: font
-
-// Set relative paths for Hugo
+// Link to relative documents when using Hugo.
 :relfileprefix: ../
 :outfilesuffix: /
 
@@ -24,7 +23,7 @@ And now you're just dying to use ZFS on that, right?
 
 == Tutorial
 
-Following the previous post, <<install_zfs_pinebook_pro#Installing ZFS on the Pinebook Pro>>, this tutorial describes the steps required to setup a microSD card for your music files with ZFS on the Pinebook Pro.
+Following the previous post, <<install_zfs_pinebook_pro#,Install ZFS on the Pinebook Pro>>, this tutorial describes the steps required to setup a microSD card for your music files with ZFS on the Pinebook Pro.
 
 === Create the Pool
 
