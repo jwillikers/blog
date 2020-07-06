@@ -1,7 +1,7 @@
 +++
 title = "Unbound Adblock"
 categories = ["Networking"]
-tags = ["Adblock", "BSD", "DNS", "Internet", "Network", "OpenBSD", "OpenBSD6", "OpenBSD67", "Pihole", "Router", "Unbound", "unbound-adblock", "Unix"]
+tags = ["Adblock", "BSD", "DNS", "OpenBSD", "OpenBSD6", "OpenBSD67", "Pihole", "Unbound", "unbound-adblock"]
 date = "2020-03-28"
 draft = false
 +++

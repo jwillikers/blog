@@ -1,7 +1,7 @@
 +++
 title = "DNS over TLS with Unbound"
 categories = ["Networking"]
-tags = ["BSD", "DNS", "DoT", "Internet", "Network", "OpenBSD", "OpenBSD6", "OpenBSD67", "Router", "TLS", "Unbound"]
+tags = ["BSD", "DNS", "DoT", "OpenBSD", "OpenBSD6", "OpenBSD67", "TLS", "Unbound"]
 date = "2020-05-29"
 draft = false
 +++
