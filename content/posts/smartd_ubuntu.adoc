@@ -12,6 +12,9 @@ v1.0, 2020-05-25
 :source-highlighter: rouge
 :rouge-style: github
 :icons: font
+// Link to relative documents when using Hugo.
+:relfileprefix: ../
+:outfilesuffix: /
 
 I recently fixed my mother-in-law's laptop.
 Long story short, the hard disk was toast.
@@ -24,7 +27,7 @@ SmartMonTools is even cross-platform and available in package repositories every
 == Tutorial
 
 This tutorial describes the steps required to setup automated hard disk health checks and email notifications using SmartMonTools 7.1 on Ubuntu 20.04.
-If you're configuring a desktop like me or otherwise configuring a system which doesn't have a https://en.wikipedia.org/wiki/Message_transfer_agent[MTA (Mail Transport Agent)] or https://en.wikipedia.org/wiki/Email_client[MUA (Mail User Agent)] setup already and wish to send emails externally, I recommend following my tutorial on setting up an https://jwillikers.com/posts/opensmtpd_ubuntu/[OpenSMTPD Relay on Ubuntu].
+If you're configuring a desktop like me or otherwise configuring a system which doesn't have a https://en.wikipedia.org/wiki/Message_transfer_agent[MTA (Mail Transport Agent)] or https://en.wikipedia.org/wiki/Email_client[MUA (Mail User Agent)] setup already and wish to send emails externally, I recommend following my tutorial on setting up an <<opensmtpd_ubuntu#,OpenSMTPD Relay on Ubuntu>>.
 Emails sent straight from a willy-nilly desktop user account to an online email provider are unlikely to be accepted.
 With https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol[SMTP], your system can relay emails through your online email provider to remedy this.
 
