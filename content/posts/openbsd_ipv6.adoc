@@ -1,7 +1,7 @@
 +++
 title = "IPv6 on OpenBSD"
 categories = ["Networking"]
-tags = ["BSD", "DHCPCD", "DHCPv6", "Firewall", "Internet", "IPv6", "Network", "OpenBSD", "OpenBSD6", "OpenBSD67", "PF", "Router", "Unix"]
+tags = ["BSD", "DHCPCD", "DHCPv6", "Firewall", "IPv6", "OpenBSD", "OpenBSD6", "OpenBSD67", "PF"]
 date = "2020-05-23"
 draft = false
 +++

@@ -1,14 +1,14 @@
 +++
 title = "Local ZFS Backups"
 categories = ["Systems"]
-tags = ["Backups", "Ubuntu", "Ubuntu2004", "ZFS"]
-date = "2020-06-13"
+tags = ["Backups", "Linux", "Ubuntu", "Ubuntu2004", "ZFS"]
+date = "2020-07-04"
 draft = true
 +++
 
 = Local ZFS Backups
 Jordan Williams <jordan@jwillikers.com>
-v1.0, 2020-06-13
+v1.0, 2020-07-04
 :source-highlighter: rouge
 :rouge-style: github
 :icons: font
@@ -19,78 +19,67 @@ ZFS is
 
 This tutorial describes the steps required to backup user data to an external disk using ZFS on Ubuntu 20.04.
 
-=== Setup
+=== Create the Pool
 
-Create a new pool.
-
-// -O compression=lz4
-// -O encryption=on?
+First, determine which device is the external hard drive.
 
 [source,console]
 ----
-$ zpool create -o ashift=12 backup-01 /dev/sdb <1>
+$ sudo fdisk -l
+Disk /dev/sdb: 931.49 GiB, 1000170586112 bytes, 1953458176 sectors
+Disk model: easystore 25FC  
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: gpt
+Disk identifier: 00000000-0000-0000-0000-000000000001
 ----
-<1> Set ashift to 12 for 512MB block sizes on the disk.
 
-Enable encryption for the pool.
+In this case, `/dev/sdb` is the 1 TB external hard drive.
 
-[source,console]
-----
-$ zpool set feature@encryption=enabled backup-01
-----
-
-Create the backup dataset in the new pool, using a password for the key.
-
-[source,console]
-----
-$ zfs create \
-  -o mountpoint=/media/jordan/backup-01 \ # <1>
-  -o encryption=on \ # <2>
-  -o keysource=passphrase,prompt \ # <3>
-  backup-01/USERDATA/jordan
-----
-<1> Mount the dataset at `/media/jordan/backup-01`.
-<2> Encrypt the dataset.
-<3> Prompt the user for the key's passphrase.
-
-// Is it auto-mounted??
-Mount the dataset for backing up the files.
+Next, determine the disk id to use when creating the zpool.footnote:[https://wiki.archlinux.org/index.php/ZFS#Identify_disks[Arch Linux Wiki: Identify Disks]]
 
 [source,console]
 ----
-$ zfs mount backup-01/USERDATA/jordan
+$ ls -lh /dev/disk/by-id/ | grep -w sdb
+lrwxrwxrwx 1 root root  9 Jul  4 07:23 usb-WD_easystore_25FC_000000000000000000000001-0:0 -> ../../sdb
 ----
 
-Copy the files from the target directory to the backup directory.
+// Is this necessary?
+Then, double-check the block size.
 
 [source,console]
 ----
-$ tar cfC - /home/jordan . | tar xpfC - /media/jordan/backup-01
+$ sudo blockdev --getpbsz /dev/sdb
+512
 ----
+
+The SD card's block size is 512 MiB, which means `ashift` should be set to 12.footnote:[https://wiki.archlinux.org/index.php/ZFS#Advanced_Format_disks[Arch Linux Wiki: ZFS - Advanced Format Disks]]
+
+Create the pool.footnote:[https://wiki.archlinux.org/index.php/ZFS#Creating_ZFS_pools[Arch Linux Wiki: ZFS - Creating ZFS Pools]]
+
+[source,console]
+----
+$ sudo zpool create \
+  -o ashift=12 \
+  -O compression=on \ <1>
+  backup_pool usb-WD_easystore_25FC_000000000000000000000001-0:0
+----
+<1> Turn on compression by default.
 
 Take a snapshot.
-// Best to use the zsys tool instead.
 
 [source,console]
 ----
-$ zfs snapshot -r backup-01/USERDATA/jordan@2020-06-06-13:09:00
+$ sudo zfs snapshot -r rpool/USERDATA/jordan@2020-07-04-13:00:58
 ----
 
-Un-mount the dataset.
+// Export the backup pool.
 
-[source,console]
-----
-$ zfs umount backup-01/mnt
-$ zfs key -u backup-01 <1>
-----
-<1> Un-mount the key after un-mounting the dataset.
-
-Export the backup pool.
-
-[source,console]
-----
-$ zpool export backup-01
-----
+// [source,console]
+// ----
+// $ zpool export backup_pool
+// ----
 
 === Incremental Backups
 
@@ -100,42 +89,29 @@ Incrementally send data between the last two backups.
 ----
 $ zfs send \
   --replicate \ # <1>
-  --raw \ # <2>
-  -i rpool@previous_backup main_pool@backup \ # <3>
-  | zfs receive -dvu backup-01
+  -i 2020-07-04-13:00:00 rpool/USERDATA/jordan@2020-07-04-14:00:00 \ # <2>
+  | zfs receive -dvu backup_pool
 ----
 <1> Stream the data.
-<2> Send the raw, encrypted data.
-<3> Send the incremental between `` and ``.
+<2> Send the incremental for the snapshots of `USERDATA/jordan` at 13:00 and 14:00 on July 4th.
 
 === Restore
 
-Import the pool, unlocking it with the encryption key.
+You can do a complete restoration of the entire dataset, or otherwise mount it.
+
+Retrieve the snapshot.
 
 [source,console]
 ----
-$ zpool import backup-01 -d /dev -l
+$ zfs send --replicate backup_pool/USERDATA/jordan@2020-07-04-14:00:00 | zfs receive -dvu rpool
 ----
-
-// Copy the necessary files from the backup.
-
-// [source,console]
-// ----
-// cp zfs/snapshots/
-// ----
 
 Revert to the snapshot.
 
 [source,console]
 ----
-$ zfs rollback -r 
+$ sudo zfs rollback -r rpool/USERDATA/jordan@2020-07-04-14:00:00
 ----
 
 === Verify
 
-== Resources
-
-https://blog.heckel.io/2017/01/08/zfs-encryption-openzfs-zfs-on-linux/
-https://www.ixsystems.com/community/threads/zfs-send-to-external-backup-drive.17850/
-https://ryan.himmelwright.net/post/zfs-backups-to-luks-external/
-https://www.freebsd.org/doc/handbook/zfs-zfs.html
