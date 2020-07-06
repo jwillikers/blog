@@ -44,6 +44,10 @@ pygmentsUseClasses = true
     weight = 2
     url = "/about/"
 [[menu.main]]
-    name = "Contact"
+    name = "Resources"
     weight = 3
+    url = "/resources/"
+[[menu.main]]
+    name = "Contact"
+    weight = 4
     url = "/contact/"
