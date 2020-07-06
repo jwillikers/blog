@@ -1,0 +1,51 @@
++++
+title = "Resources"
+date = "2020-07-06"
+draft = false
++++
+
+= Resources
+Jordan Williams
+v1.0, 2020-07-06
+:source-highlighter: rouge
+:rouge-style: github
+:icons: font
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+There's always so much to learn in any industry.
+As a full time Software Engineer, there is more out there for me to learn than neurons in between my ears.
+Putting networking and systems administration on top of that is downright overwhelming.
+Fortunately, I've found several priceless resources to help me learn.
+
+== Software Engineering
+
+* https://www.oreilly.com/library/view/software-engineering-at/9781492082781/[Software Engineering at Google] - If I had to be stranded on a deserted island with other Software Engineers and could only bring one item, I would bring this book without thinking twice.
+
+== Programming
+
+* https://www.manning.com/books/c-plus-plus-concurrency-in-action-second-edition[Concurrency in Action] - The best concurrency metaphors I've yet to come across.
+* https://cppcast.com/[CppCast] - This podcast has introduced me to an incredibly diverse range of people, projects, features, and tools related to C++.
+* https://crascit.com/professional-cmake/[Professional CMake] - This book is a life-saver when digging through CMake code.
+* https://doc.rust-lang.org/book/[The Rust Programming Language]
+
+== Systems Administration / Networking
+
+* https://2.5admins.com/[2.5 Admins]
+* https://arstechnica.com/author/jimsalter/[Jim Salter at Ars Technica]
+
+=== *BSD
+
+* https://nostarch.com/absfreebsd3[Absolute FreeBSD]
+* https://nostarch.com/obenbsd2e[Absolute OpenBSD]
+* https://www.bsdnow.tv/[BSDNow]
+
+=== Linux
+
+* https://linuxunplugged.com/[Linux Unplugged]
+* https://ubuntupodcast.org/[Ubuntu Podcast]
