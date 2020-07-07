@@ -25,70 +25,36 @@ My posts serve as convenient references for myself, but my hope is that they wil
 
 This is my personal developer blog, so I'm taking the opportunity to talk a bit about myself.
 
-=== On-the-job
+=== The Gist
 
-==== Current
+The reasons I pursue a career in software, engineering have continued to grow and evolve over time. 
+Suffice it to say that I enjoy participating as part of a team to solve real and interesting problems in order to positively impact the lives of others.
+
+As a software engineer, I strive to write the least amount of simple and safe code required to complete a given task.
+Ideally, this amounts to writing no code at all because I'm able to discover that a perfectly adequate and tenable solution already exists.
+
+=== Career
+
+==== Cross-platform Application Development
 
 At my current day job, I wrangle https://isocpp.org/[{cpp}] and https://cmake.org/[CMake] code to create functional, cross-platform graphical applications.
 Developing at a small company, my hands are in just about everything from project management to cross-platform application development to systems administration to licensing compliance.
+My focus here has been to learn how to write good {cpp} code, to improve the build system, and to implement both standard software engineering practices and agile development models.
 
-.Tasks
-* Aggressively updated the CMake build-system to automate as much of the brunt of dependency-management, building, testing, and packaging as possible.
-* Implemented common software engineering practices:
-** Version control
-** Unit testing
-** Micro-benchmarking
-** Approval testing
-** Versioning
-** Contracts/Preconditions
-** Changelogs
-** Code reviews
-* Expanded the {cpp} tooling to improve code safety:
-** Enabled as many compiler warnings as possible
-** Standardized formatting with https://clang.llvm.org/docs/ClangFormat.html[clang-format]
-** Statically analyzed code with https://clang.llvm.org/extra/clang-tidy/[clang-tidy]
-** Dynamic analyzed code with https://github.com/google/sanitizers[Google's sanitizers]
-** Introduced other compilers: https://clang.llvm.org/[LLVM's Clang Compiler] and https://visualstudio.microsoft.com/vs/features/cplusplus/[Microsoft's Visual {cpp} Compiler].
-* Improved build performance by using new tools:
-** https://ninja-build.org/[Ninja]
-** https://ccache.dev/[ccache]
-* Learned from various resources how to improve code-quality and flexibility including the https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines[Cpp Core Guidelines], https://crascit.com/professional-cmake/[Professional CMake], and https://www.manning.com/books/c-plus-plus-concurrency-in-action[Concurrency in Action] to name a couple.
-* Planned according to the Scrum methodology to reduce developer stress, facilitate collaboration, and keep me focused on the relevant tasks.
-* Applied new {cpp} paradigms to simplify the existing codebase, such as: 
-** Concepts
-** Ranges
-** https://fmt.dev/latest/index.html[{fmt}],
-** https://en.cppreference.com/w/cpp/string/basic_string_view[string_view]
-** https://en.cppreference.com/w/cpp/language/constexpr[constexpr]
-** https://en.cppreference.com/w/cpp/language/lambda[lambdas]
-** https://en.cppreference.com/w/cpp/thread/future[futures]
-* Improved dependency management by using CMake's https://cmake.org/cmake/help/latest/module/FetchContent.html[FetchContent] functionality to directly include the source code of dependencies, building and testing them as part of the project itself.
-* Fixed and verified licensing compliance with external projects.
-* Packaged applications for Linux as distribution-agnostic https://appimage.org/[AppImages] with https://github.com/linuxdeploy/linuxdeploy[LinuxDeploy].
-* Migrated from `{cpp}03` to `{cpp}17/20`.
-* Replaced internal projects with better supported and higher-quality open-source alternatives to reduce the maintenance load of the codebase.
-* Programmed cross-platform GUI applications with the https://www.qt.io/[Qt] and https://www.gtkmm.org/en/[Gtkmm], command-line tools, and libraries for Linux, macOS, and Windows.
-* Enhanced error-checking and the quality of error messages.
-* Converted builds to be able to build shared libraries instead of only statical libraries.
-* Studied open-source projects to better understand common-practices and implementation details where documentation was insufficient or incorrect.
-* Instituted conformance to Linux, macOS, and Windows standards.
-* Learned how to use powerful, open-source {cpp} libraries, including:
-** Boost Process
-** Boost Spirit X3
-** Boost Interprocess
-** Boost.ut
-** fmt
-** Google Benchmark
-** Qt
-** Gtk
+It has been challenging to implement better practices and processes while both maintaining a large, legacy code-base lacking any standards what-so-ever and adding high-quality code for new features.
+This is has been a phenomenal learning opportunity, but mostly in a trial-by-fire sort of way.
+Such circumstances have bred in me a deep appreciation of the software engineering principles which foster the production of maintainable code.
+This endeavor has also lead me to understand how the process of writing good code is impacted by management, project planning, collaboration, communication, and even company culture.
 
-==== Past
+==== Software Engineering Intern
 
 Previously, I interned at a cyber security company which developed log-analyzing security software.
 This was my first real introduction to software engineering, where I had the privilege to be a part of the backend developer team.
 This is where I learned first-hand how the fundamental software engineering practices such as version control, testing, code-reviews, continuous integration, and deployment all fit together.
 My work their included Java, Python, and Awk development as well as work on the Gradle build-system and integrating deployment to Docker.
 I even underwent certification as a https://www.scrum.org/[Scrum] master.
+
+==== Data Analyst
 
 Before that, I interned as a data analyst at a healthcare institution.
 This lead to lots of SQL development and digging through backend databases.
@@ -97,7 +63,7 @@ I constantly had to question, "Where is this data coming from?" and, "What does 
 
 === Education
 
-I have degree in Computer Science with a concentration in Information Insurance.
+I graduated with a bachelor's degree in Computer Science with a concentration in Information Insurance.
 Although I prefer the applied, a degree in the more theoretical aspects of Computer Science was quite rewarding, stretching me to understand the underpinning aspects of computing.
 The experience in cyber security brought with it a cautious and proactive mindset, which influences how I think about and write code today.
 
