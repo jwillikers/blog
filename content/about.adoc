@@ -1,12 +1,12 @@
 +++
 title = "About"
-date = "2020-03-21"
+date = "2020-07-07"
 draft = false
 +++
 
 = About
 Jordan Williams
-v1.0, 2020-03-21
+v1.0, 2020-07-07
 :source-highlighter: rouge
 :rouge-style: github
 :icons: font
@@ -18,8 +18,8 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-Welcome to jwillikers.com, an archive for all of my tech experiments, configurations, and adventures.
-I hope that you will find something helpful here, something that will make your life a little easier as a developer, system administrator, or self-hoster.
+Welcome to jwillikers.com, where I like to put all of my handy admin and dev guides from my myriad of tinkering.
+My posts serve as convenient references for myself, but my hope is that they will help you as well.
 
 == Me
 
