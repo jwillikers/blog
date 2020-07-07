@@ -24,7 +24,7 @@ pygmentsUseClasses = true
     custom_css = ["css/custom.css"]
 
 [Params]
-    subtitle = "An archive for my development stories, experiences, and setups."
+    subtitle = "Handy admin and dev guides from my myriad of tinkering"
     rss = true
     mainSections = ["post","posts"]
     logo = "https://www.gravatar.com/avatar/e3189498d000ca4eb4e893739fd63636?s=500"
