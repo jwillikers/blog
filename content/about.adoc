@@ -74,17 +74,21 @@ Unfortunately, I've learned from experience that poor code has a tendency to mak
 This has ingrained in me strong convictions for utilizing standard software engineering practices, high-quality open source software, and the best tooling available to create safe and maintainable code.
 
 There is also nothing like having fun and learning new things while solving a challenging problem.
-This is why languages which pursue safety and simplicity, such as Rust and Go are my favorites.
+This is why languages which pursue safety and simplicity, such as Rust and Go, are my favorites.
 They tend allow me to focus on the problem at hand rather than frustrate me with issues and complexities inherent in the language.
 
-=== Side Projects
+=== Interests
 
-I have a few side-projects, namely, this blog, my home-network's OpenBSD router, ZFS, and contributing where and when I can to open-source projects.
-This blog is statically-generated with https://gohugo.io/[Hugo], and I write the content in https://asciidoctor.org/[Asciidoctor], my favorite markup language.
-https://www.openbsd.org/[OpenBSD] is an absolute gem of an operating system.
-It's simplicity, practicality, and detailed documentation are what make it my favorite one to use, though I will admit it is not my daily driver.
 If you haven't figured it out yet, I'm big proponent of open-source software where high-quality solutions to common problems abound.
 I enjoy collaborating with other developers to improve open-source software for everyone.
+
+* Desktop Linux, namely https://ubuntu.com/download/desktop[Ubuntu] and https://www.gnome.org/[GNOME]
+* Open-hardware mobile devices (and relevant software), such as the https://www.pine64.org/pinebook-pro/[Pinebook Pro], https://www.pine64.org/pinephone/[PinePhone], and https://www.pine64.org/pinetab/[PineTab] developed by https://www.pine64.org/[Pine64]
+* Safe, simple, and easy-to-use programming languages like https://www.rust-lang.org/[Rust] and https://golang.org/[Go]
+* https://www.openbsd.org/[OpenBSD]
+* https://www.freebsd.org/[FreeBSD]
+* https://openzfs.org/wiki/Main_Page[OpenZFS]
+* https://riscv.org/[RISC-V]
 
 === Hobbies
 
