@@ -67,7 +67,7 @@ I graduated with a bachelor's degree in Computer Science with a concentration in
 Although I prefer the applied, a degree in the more theoretical aspects of Computer Science was quite rewarding, stretching me to understand the underpinning aspects of computing.
 The experience in cyber security brought with it a cautious and proactive mindset, which influences how I think about and write code today.
 
-=== Development Interests
+=== Development Preferences
 
 I like writing code to make people's lives easier.
 Unfortunately, I've learned from experience that poor code has a tendency to make the lives of everyone more difficult, especially for developers.
