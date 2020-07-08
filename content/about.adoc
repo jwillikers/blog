@@ -1,12 +1,12 @@
 +++
 title = "About"
-date = "2020-07-07"
+date = "2020-07-08"
 draft = false
 +++
 
 = About
 Jordan Williams
-v1.0, 2020-07-07
+v1.0, 2020-07-08
 :source-highlighter: rouge
 :rouge-style: github
 :icons: font
@@ -25,7 +25,7 @@ My posts serve as convenient references for myself, but my hope is that they wil
 
 This is my personal developer blog, so I'm taking the opportunity to talk a bit about myself.
 
-=== The Gist
+=== Career
 
 The reasons I pursue a career in software, engineering have continued to grow and evolve over time. 
 Suffice it to say that I enjoy participating as part of a team to solve real and interesting problems in order to positively impact the lives of others.
@@ -33,7 +33,7 @@ Suffice it to say that I enjoy participating as part of a team to solve real and
 As a software engineer, I strive to write the least amount of simple and safe code required to complete a given task.
 Ideally, this amounts to writing no code at all because I'm able to discover that a perfectly adequate and tenable solution already exists.
 
-=== Career
+In the sections which follow I describe my experience in the field.
 
 ==== Cross-platform Application Development
 
