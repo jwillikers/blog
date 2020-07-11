@@ -36,8 +36,8 @@ This tutorial uses that container as an example for creating and restoring backu
 
 === Backup
 
-Creating backups is done by producing an archive of the important files on the host filesystem from the container's data volume. 
-
+. Creating backups is done by producing an archive of the important files on the host filesystem from the container's data volume. 
++
 [source,console]
 ----
 $ docker run \
@@ -51,8 +51,8 @@ $ docker run \
 <3> Mount the current directory to `/backup` in the container.
 <4> Using an Ubuntu image, create an archive of the directory `/config/unifi-controller` in the `/backup` directory.
 
-Compress the backup.
-
+. Compress the backup.
++
 [source,console]
 ----
 $ xz unifi-controller_backup_2020-07-01.tar
@@ -62,15 +62,15 @@ $ xz unifi-controller_backup_2020-07-01.tar
 
 To restore from a backup, just reverse the backup process.
 
-Decompress the backup.
-
+. Decompress the backup.
++
 [source,console]
 ----
 $ unxz unifi-controller_backup_2020-07-01.tar.xz
 ----
 
-Restore the contents of the archive to the data volume.
-
+. Restore the contents of the archive to the data volume.
++
 [source,console]
 ----
 $ docker run 
@@ -88,11 +88,10 @@ $ docker run
 
 It's always important to test your backups.
 The simplest way to check the backup is with a fresh instance of the container.
-
 For the UniFi Controller, this is trivially accomplished.
 
-First, copy the compose file to another directory and give the container a new name.
-
+. First, copy the compose file to another directory and give the container a new name.
++
 [source,console]
 ----
 $ mkdir unifi-controller2
@@ -100,8 +99,8 @@ $ cp unifi-controller/docker-compose.yml unifi-controller2
 $ cd unifi-controller2
 ----
 
-The modified yaml file should look like the following.
-
+. Modify the yaml file to match the following.
++
 .docker-compose.yml
 ----
 ---
@@ -132,24 +131,23 @@ volumes:
 ----
 <1> Name the container _unifi-controller2_.
 
-Initialize the container.
-
+. Initialize the container.
++
 [source,console]
 ----
 $ docker-compose up --no-start
 ----
 
-Now follow the backup procedure laid out above.
-
-Decompress the backup.
-
+. Decompress the backup.
++
 [source,console]
 ----
 $ unxz unifi-controller_backup_2020-07-01.tar.xz
 ----
 
-Restore the contents of the archive to the new container's data volume.
-
+. Restore the contents of the archive to the new container's data volume.
++
+--
 [source,console]
 ----
 $ docker run 
@@ -162,20 +160,22 @@ $ docker run
 
 That's it!
 The data from your original container should now be duplicated in _unifi-controller2_.
+--
 
-Now, run _unifi-controller2_.
-
+. Now, start _unifi-controller2_.
++
 [source,console]
 ----
 $ docker-compose up -d
 ----
 
-Then, open the UniFi Controller's web UI.
-
+. Then, open the UniFi Controller's web UI.
++
 [source,console]
 ----
 $ xdg-open http://127.0.0.1:8443
 ----
 
-You should be able to login just as you would on the _unifi-controller_ container.
-All of your controller's settings should be intact, verifying the backup and the restore process.
+. Login just as you would on the _unifi-controller_ container and verify that your restored controller's configuration matches the original.
+
+You have now learned how to back up and restore the data in a Docker container's data volume.
