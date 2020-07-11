@@ -1,12 +1,12 @@
 +++
 title = "Contact"
-date = "2020-05-25"
+date = "2020-07-11"
 draft = false
 +++
 
 = Contact
 Jordan Williams
-v1.0, 2020-05-25
+v1.0, 2020-07-11
 :source-highlighter: rouge
 :rouge-style: github
 :icons: font
@@ -22,4 +22,5 @@ Notice an error?
 Have a question?
 Find something helpful?
 Your feedback is welcome.
-Please feel free to contact me via email: mailto:jordan@jwillikers.com[]
+Please feel free to contact me via email at mailto:jordan@jwillikers.com[].
+You are also welcome to open an issue on https://github.com/jwillikers/blog[this website's Github repository].
