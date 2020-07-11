@@ -12,6 +12,9 @@ v1.0, 2020-06-30
 :source-highlighter: rouge
 :rouge-style: github
 :icons: font
+// Link to relative documents when using Hugo.
+:relfileprefix: ../
+:outfilesuffix: /
 
 Recently, I obtained a 64-bit ARM, budget Linux laptop, the https://www.pine64.org/pinebook-pro/[Pinebook Pro].
 It's a wonderful, sleek little notebook, boasting great convenience and power-efficiency.
@@ -74,4 +77,4 @@ $ sudo systemctl enable zfs.target
 
 === Next Steps
 
-Stay tuned for upcoming posts on setting up a ZPool and ZFS datasets on the microSD card! 
+See <<zfs_external_storage_pinebook_pro#,External Storage on the Pinebook Pro with ZFS>> to learn how to use ZFS to store your files on a microSD card.
