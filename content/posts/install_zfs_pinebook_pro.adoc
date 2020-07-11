@@ -28,16 +28,12 @@ This tutorial describes the steps required to install ZFS on a Pinebook Pro runn
 The ZFS software is readily available as a https://en.wikipedia.org/wiki/Dynamic_Kernel_Module_Support[DKMS] module for the arm64 architecture.
 The following instructions detail how to install the ZFS DKMS module.
 
-. First, install DKMS on the Pinebook Pro.
+. First, install DKMS on the Pinebook Pro.footnote:[https://wiki.archlinux.org/index.php/Dynamic_Kernel_Module_Support[Arch Linux Wiki: Dynamic Kernel Module Support]]
 +
---
-More in-depth instructions can be found on the https://wiki.archlinux.org/index.php/Dynamic_Kernel_Module_Support[Arch Linux Wiki].
-
 [source,sh]
 ----
 $ sudo pacman -S dkms linux-pinebookpro-headers
 ----
---
 
 . The https://github.com/Jguer/yay[yay] tool provides a nifty way to install packages from the https://wiki.archlinux.org/index.php/Arch_User_Repository[AUR].
 +
@@ -58,7 +54,7 @@ $ yay -S zfs-dkms-any
 It's likely you want to have ZFS available without having to explicitly load the DKMS module, import pools, and mount datasets every time you restart your computer.
 These next steps describe exactly how to avoid such nonsense.
 
-. To load the ZFS DKMS module at boot, create the appropriate file for https://www.freedesktop.org/wiki/Software/systemd/[systemd].footnote:[https://wiki.archlinux.org/index.php/Kernel_module#Automatic_module_loading_with_systemd[Automatic Module Loading with systemd]]
+. To load the ZFS DKMS module at boot, create the appropriate file for https://www.freedesktop.org/wiki/Software/systemd/[systemd].footnote:[https://wiki.archlinux.org/index.php/Kernel_module#Automatic_module_loading_with_systemd[Arch Linux Wiki: Kernel Module - Automatic Module Loading with systemd]]
 +
 ./etc/modules-load.d/zfs.conf
 ----
@@ -66,7 +62,7 @@ These next steps describe exactly how to avoid such nonsense.
 zfs
 ----
 
-. Enable importing pools and mounting datasets at boot.footnote:[https://wiki.archlinux.org/index.php/ZFS#Automatic_Start[ZFS Automatic Start]]
+. Enable importing pools and mounting datasets at boot.footnote:[https://wiki.archlinux.org/index.php/ZFS#Automatic_Start[Arch Linux Wiki: ZFS - Automatic Start]]
 +
 [source,sh]
 ----
