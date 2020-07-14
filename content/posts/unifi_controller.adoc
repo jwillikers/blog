@@ -7,7 +7,8 @@ draft = false
 +++
 
 For wi-fi, I use use a https://www.ui.com/unifi/unifi-ap/[UniFi AP].
-One slightly annoying aspect of this the https://www.ui.com/download/unifi/unifi-ap[UniFi Controller]. If you don't have a smartphone or need to manage more than one device, you'll need to set one up.
+One slightly annoying aspect of this is the https://www.ui.com/download/unifi/unifi-ap[UniFi Controller].
+If you don't have a smartphone or need to manage more than one device, you'll need to set one up.
 I provide a brief tutorial for setting up the UniFi Controller with https://docs.docker.com/compose/[Docker Compose] here.
 
 == Tutorial
@@ -17,39 +18,45 @@ Here's how.
 
 === Install Docker
 
-Install Docker Compose.
+First, you must install Docker on your system.
 
+. Install Docker Compose.
++
 [source,console]
 ----
-$ apt install docker-compose
+$ sudo apt install docker-compose
 ----
 
-Add your user to the `docker` group if you want to run docker without requiring superuser privileges.
-
+. Add your user to the `docker` group if you want to run docker without requiring superuser privileges.
++
 [source,console]
 ----
-$ usermod -aG docker $USER
+$ sudo usermod -aG docker $USER
 ----
 
-Reboot to complete the installation.
-
+. Reboot to complete the installation.
++
 [source,console]
 ----
-$ reboot
+$ sudo reboot
 ----
 
 === Compose
 
-With Docker installed, create a directory for the `docker-compose` file.
+Configuring the `docker-compose` file should provide all of the necessary details required to get the controller up and running.
 
+. With Docker installed, create a directory for the `docker-compose` file.
++
 [source,console]
 ----
 $ mkdir unifi_controller
 $ cd unifi_controller
 ----
 
-The provided `docker-compose` file requires just one tweak.
-The volume must be configured.
+. Configure the `docker-compose` file.
++
+--
+The provided `docker-compose` file requires just one tweak, configuring the volume.
 
 .docker-compose.yml
 ----
@@ -82,16 +89,17 @@ volumes:
 
 The `docker-compose` should be pretty self-explanatory.
 It really just forwards the necessary ports from the Docker container to the host machine.
+--
 
-Once configured, run the container.
-
+. Once configured, run the container.
++
 [source,console]
 ----
 $ docker-compose up -d
 ----
 
-Then, just open the UniFi Controller's web UI.
-
+. Then, just open the UniFi Controller's web UI.
++
 [source,console]
 ----
 $ xdg-open http://127.0.0.1:8443
