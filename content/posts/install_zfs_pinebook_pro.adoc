@@ -9,12 +9,6 @@ draft = false
 = Install ZFS on the Pinebook Pro
 Jordan Williams <jordan@jwillikers.com>
 v1.0, 2020-06-30
-:source-highlighter: rouge
-:rouge-style: github
-:icons: font
-// Link to relative documents when using Hugo.
-:relfileprefix: ../
-:outfilesuffix: /
 
 Recently, I obtained a 64-bit ARM, budget Linux laptop, the https://www.pine64.org/pinebook-pro/[Pinebook Pro].
 It's a wonderful, sleek little notebook, boasting great convenience and power-efficiency.

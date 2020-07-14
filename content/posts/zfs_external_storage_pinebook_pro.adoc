@@ -9,12 +9,6 @@ draft = false
 = External Storage on the Pinebook Pro with ZFS
 Jordan Williams <jordan@jwillikers.com>
 v1.0, 2020-07-03
-:source-highlighter: rouge
-:rouge-style: github
-:icons: font
-// Link to relative documents when using Hugo.
-:relfileprefix: ../
-:outfilesuffix: /
 
 The https://www.pine64.org/pinebook-pro/[Pinebook Pro] comes with a small amount of internal disk space, only 64 GB.
 While this is upgradeable to 128 GB, that still isn't enough for those with large media collections.

@@ -9,9 +9,6 @@ draft = true
 = Encrypt ZFS Pool on Ubuntu
 Jordan Williams <jordan@jwillikers.com>
 v1.0, 2020-06-20
-:source-highlighter: rouge
-:rouge-style: github
-:icons: font
 
 https://linsomniac.gitlab.io/post/2020-04-09-ubuntu-2004-encrypted-zfs/
 

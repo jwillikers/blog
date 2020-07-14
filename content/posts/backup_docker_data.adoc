@@ -9,22 +9,6 @@ draft = false
 = Backup Docker Data
 Jordan Williams <jordan@jwillikers.com>
 v1.0, 2020-07-02
-:source-highlighter: rouge
-:rouge-style: github
-:icons: font
-ifndef::env-github[]
-:imagesdir: ./
-endif::[]
-ifdef::env-github[]
-:tip-caption: :bulb:
-:note-caption: :information_source:
-:important-caption: :heavy_exclamation_mark:
-:caution-caption: :fire:
-:warning-caption: :warning:
-endif::[]
-// Set relative paths for Hugo
-:relfileprefix: ../
-:outfilesuffix: /
 
 Backups are super helpful, especially when you like to blow everything away fairly often.
 Backing up the data from a Docker container can help you quickly get things up and running again.

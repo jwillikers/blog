@@ -9,16 +9,6 @@ draft = false
 = Setup PPPoE on OpenBSD 6.6
 Jordan Williams <jordan@jwillikers.com>
 v1.0, 2020-03-12
-:source-highlighter: rouge
-:rouge-style: github
-:icons: font
-ifdef::env-github[]
-:tip-caption: :bulb:
-:note-caption: :information_source:
-:important-caption: :heavy_exclamation_mark:
-:caution-caption: :fire:
-:warning-caption: :warning:
-endif::[]
 
 Some ISP's establish connections with their customers' networks through PPPoE.
 I recently setup an OpenBSD 6.6 router which required PPPoE.

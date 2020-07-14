@@ -7,16 +7,6 @@ draft = false
 = About
 Jordan Williams
 v1.0, 2020-07-08
-:source-highlighter: rouge
-:rouge-style: github
-:icons: font
-ifdef::env-github[]
-:tip-caption: :bulb:
-:note-caption: :information_source:
-:important-caption: :heavy_exclamation_mark:
-:caution-caption: :fire:
-:warning-caption: :warning:
-endif::[]
 
 Welcome to jwillikers.com, where I like to put all of my handy admin and dev guides from my myriad of tinkering.
 My posts serve as convenient references for myself, but my hope is that they will help you as well.

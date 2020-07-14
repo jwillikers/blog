@@ -9,19 +9,6 @@ draft = false
 = IPv6 on OpenBSD
 Jordan Williams <jordan@jwillikers.com>
 v1.0, 2020-05-23
-:source-highlighter: rouge
-:rouge-style: github
-:icons: font
-ifndef::env-github[]
-:imagesdir: ./
-endif::[]
-ifdef::env-github[]
-:tip-caption: :bulb:
-:note-caption: :information_source:
-:important-caption: :heavy_exclamation_mark:
-:caution-caption: :fire:
-:warning-caption: :warning:
-endif::[]
 
 Configuring https://en.wikipedia.org/wiki/IPv6[IPv6] on my https://www.openbsd.org/[OpenBSD] home router was a much more difficult task than I'd expected.
 While this was mostly due to the steep learning curve of IPv6 and https://en.wikipedia.org/wiki/DHCPv6[DHCPv6], OpenBSD doesn't provide DHCPv6 support in its native https://man.openbsd.org/dhcpd[DHCP daemon].

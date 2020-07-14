@@ -9,9 +9,6 @@ draft = true
 = Local ZFS Backups
 Jordan Williams <jordan@jwillikers.com>
 v1.0, 2020-07-04
-:source-highlighter: rouge
-:rouge-style: github
-:icons: font
 
 ZFS is 
 
