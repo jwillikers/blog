@@ -9,12 +9,6 @@ draft = false
 = Automatically Detect & Report Hard Drive Failure
 Jordan Williams <jordan@jwillikers.com>
 v1.0, 2020-05-25
-:source-highlighter: rouge
-:rouge-style: github
-:icons: font
-// Link to relative documents when using Hugo.
-:relfileprefix: ../
-:outfilesuffix: /
 
 I recently fixed my mother-in-law's laptop.
 Long story short, the hard disk was toast.

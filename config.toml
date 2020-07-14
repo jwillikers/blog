@@ -14,6 +14,12 @@ pygmentsUseClasses = true
     extensions = ["asciidoctor-html5s"]
     workingFolderCurrent = true
     trace = true
+    [markup.asciidocext.attributes]
+        source-highlighter = "rouge"
+        rouge-style = "github"
+        icons = "font"
+        relfileprefix = "../"
+        outfilesuffix = "/"
 
   [markup.highlight]
     codeFences = true

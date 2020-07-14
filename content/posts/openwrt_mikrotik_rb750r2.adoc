@@ -9,9 +9,6 @@ draft = true
 = Installing OpenWRT on Mikrotik RB750r2 (hEX lite)
 Jordan Williams <jwillikers@protonmail.com>
 v1.0, 2020-03-01
-:source-highlighter: rouge
-:rouge-style: base16.solarized.dark
-:icons: font
 
 https://openwrt.org/[OpenWrt] is an open-source router firmware solution based off of the Linux kernel.
 There are many https://openwrt.org/reasons_to_use_openwrt[reasons to use OpenWrt].

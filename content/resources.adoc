@@ -7,16 +7,6 @@ draft = false
 = Resources
 Jordan Williams
 v1.0, 2020-07-06
-:source-highlighter: rouge
-:rouge-style: github
-:icons: font
-ifdef::env-github[]
-:tip-caption: :bulb:
-:note-caption: :information_source:
-:important-caption: :heavy_exclamation_mark:
-:caution-caption: :fire:
-:warning-caption: :warning:
-endif::[]
 
 There's always so much to learn in any industry.
 As a full time Software Engineer, there is more out there for me to learn than neurons in between my ears.

@@ -7,16 +7,6 @@ draft = false
 = Contact
 Jordan Williams
 v1.0, 2020-07-11
-:source-highlighter: rouge
-:rouge-style: github
-:icons: font
-ifdef::env-github[]
-:tip-caption: :bulb:
-:note-caption: :information_source:
-:important-caption: :heavy_exclamation_mark:
-:caution-caption: :fire:
-:warning-caption: :warning:
-endif::[]
 
 Notice an error?
 Have a question?

@@ -9,19 +9,6 @@ draft = false
 = Setup PPPoE on OpenBSD 6.6
 Jordan Williams <jordan@jwillikers.com>
 v1.0, 2020-03-28
-:source-highlighter: rouge
-:rouge-style: github
-:icons: font
-ifndef::env-github[]
-:imagesdir: ./
-endif::[]
-ifdef::env-github[]
-:tip-caption: :bulb:
-:note-caption: :information_source:
-:important-caption: :heavy_exclamation_mark:
-:caution-caption: :fire:
-:warning-caption: :warning:
-endif::[]
 
 Ever want to enable https://en.wikipedia.org/wiki/Domain_Name_System_Security_Extensions[DNSSEC] on your https://nlnetlabs.nl/projects/unbound/about/[Unbound] OpenBSD 6.6 server?
 Me too!

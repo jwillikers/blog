@@ -9,19 +9,6 @@ draft = false
 = PF Badhost
 Jordan Williams <jordan@jwillikers.com>
 v1.0, 2020-04-04
-:source-highlighter: rouge
-:rouge-style: github
-:icons: font
-ifndef::env-github[]
-:imagesdir: ./
-endif::[]
-ifdef::env-github[]
-:tip-caption: :bulb:
-:note-caption: :information_source:
-:important-caption: :heavy_exclamation_mark:
-:caution-caption: :fire:
-:warning-caption: :warning:
-endif::[]
 
 Blocking connections to nefarious IP addresses in your firewall is usually a good idea.
 On https://www.openbsd.org/[OpenBSD], the https://www.geoghegan.ca/pfbadhost.html[pf-badhost] script updates https://www.openbsd.org/faq/pf/[PF] to block traffic to and from such addresses.
