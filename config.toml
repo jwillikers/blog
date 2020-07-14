@@ -9,6 +9,12 @@ pygmentsCodeFences = true
 pygmentsUseClasses = true
 
 [markup]
+  [markup.asciidocext]
+    backend = "html5s"
+    extensions = ["asciidoctor-html5s"]
+    workingFolderCurrent = true
+    trace = true
+
   [markup.highlight]
     codeFences = true
     guessSyntax = false
