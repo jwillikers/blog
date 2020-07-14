@@ -4,10 +4,6 @@ date = "2020-07-11"
 draft = false
 +++
 
-= Contact
-Jordan Williams
-v1.0, 2020-07-11
-
 Notice an error?
 Have a question?
 Find something helpful?

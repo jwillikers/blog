@@ -6,10 +6,6 @@ date = "2020-03-28"
 draft = false
 +++
 
-= Unbound Adblock
-Jordan Williams <jordan@jwillikers.com>
-v1.0, 2020-03-28
-
 Ever want to get rid of all those https://ads-blocker.com/testing/#ad-blocker-test-steps[annoying internet ads]?
 Me too.
 I'd been planning on using something like https://pi-hole.net/[Pi-hole], but recently stumbled upon https://www.geoghegan.ca/unbound-adblock.html[unbound-adblock], which is perfect for my OpenBSD home router.

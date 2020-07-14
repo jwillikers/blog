@@ -6,10 +6,6 @@ date = "2020-05-29"
 draft = false
 +++
 
-= DNS over TLS with Unbound
-Jordan Williams <jordan@jwillikers.com>
-v1.0, 2020-05-29
-
 Recently, https://blog.mozilla.org/netpolicy/2020/02/25/the-facts-mozillas-dns-over-https-doh/[Firefox announced] it's roll-out of https://en.wikipedia.org/wiki/DNS_over_HTTPS[DNS over HTTPS (DoH)].
 That made me think, "Encrypting DNS... Why don't I do that for my home network?"
 Well, I've now had the opportunity to configure my https://nlnetlabs.nl/projects/unbound/about/[Unbound DNS resolver] to encrypt it's DNS requests.

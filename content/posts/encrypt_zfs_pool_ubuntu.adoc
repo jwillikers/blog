@@ -6,10 +6,6 @@ date = "2020-06-20"
 draft = true
 +++
 
-= Encrypt ZFS Pool on Ubuntu
-Jordan Williams <jordan@jwillikers.com>
-v1.0, 2020-06-20
-
 https://linsomniac.gitlab.io/post/2020-04-09-ubuntu-2004-encrypted-zfs/
 
 ZFS is 

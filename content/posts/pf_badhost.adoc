@@ -6,10 +6,6 @@ date = "2020-04-04"
 draft = false
 +++
 
-= PF Badhost
-Jordan Williams <jordan@jwillikers.com>
-v1.0, 2020-04-04
-
 Blocking connections to nefarious IP addresses in your firewall is usually a good idea.
 On https://www.openbsd.org/[OpenBSD], the https://www.geoghegan.ca/pfbadhost.html[pf-badhost] script updates https://www.openbsd.org/faq/pf/[PF] to block traffic to and from such addresses.
 This post walks through my installation and verification of pf-badhost.
