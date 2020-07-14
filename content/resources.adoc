@@ -4,10 +4,6 @@ date = "2020-07-06"
 draft = false
 +++
 
-= Resources
-Jordan Williams
-v1.0, 2020-07-06
-
 There's always so much to learn in any industry.
 As a full time Software Engineer, there is more out there for me to learn than neurons in between my ears.
 Putting networking and systems administration on top of that is downright overwhelming.

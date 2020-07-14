@@ -6,10 +6,6 @@ date = "2020-03-28"
 draft = false
 +++
 
-= Setup PPPoE on OpenBSD 6.6
-Jordan Williams <jordan@jwillikers.com>
-v1.0, 2020-03-28
-
 Ever want to enable https://en.wikipedia.org/wiki/Domain_Name_System_Security_Extensions[DNSSEC] on your https://nlnetlabs.nl/projects/unbound/about/[Unbound] OpenBSD 6.6 server?
 Me too!
 Using this http://www.lonecpluspluscoder.com/2020/01/16/building-an-openbsd-wireguard-vpn-server-part-2-unbound-dns-setup/[article] as a guide, I document the process.

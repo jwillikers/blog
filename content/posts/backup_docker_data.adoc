@@ -6,10 +6,6 @@ date = "2020-07-02"
 draft = false
 +++
 
-= Backup Docker Data
-Jordan Williams <jordan@jwillikers.com>
-v1.0, 2020-07-02
-
 Backups are super helpful, especially when you like to blow everything away fairly often.
 Backing up the data from a Docker container can help you quickly get things up and running again.
 

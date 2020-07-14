@@ -6,10 +6,6 @@ date = "2020-05-30"
 draft = false
 +++
 
-= UniFi Controller
-Jordan Williams <jordan@jwillikers.com>
-v1.0, 2020-05-30
-
 For wi-fi, I use use a https://www.ui.com/unifi/unifi-ap/[UniFi AP].
 One slightly annoying aspect of this the https://www.ui.com/download/unifi/unifi-ap[UniFi Controller]. If you don't have a smartphone or need to manage more than one device, you'll need to set one up.
 I provide a brief tutorial for setting up the UniFi Controller with https://docs.docker.com/compose/[Docker Compose] here.

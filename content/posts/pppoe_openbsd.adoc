@@ -6,10 +6,6 @@ date = "2020-03-12"
 draft = false
 +++
 
-= Setup PPPoE on OpenBSD 6.6
-Jordan Williams <jordan@jwillikers.com>
-v1.0, 2020-03-12
-
 Some ISP's establish connections with their customers' networks through PPPoE.
 I recently setup an OpenBSD 6.6 router which required PPPoE.
 This is my story.
