@@ -1,0 +1,91 @@
++++
+title = "Update U-Boot on the Pinebook Pro"
+categories = ["Systems"]
+tags = ["ArchLinux", "Linux", "Manjaro", "PinebookPro", "UBoot"]
+date = "2020-08-23"
+draft = false
++++
+
+The other day, https://elementary.io[Elementary] announced https://www.google.com/search?channel=fs&client=ubuntu&q=elementaryos+6[elementaryOS 6] preview builds for the https://www.pine64.org/pinebook-pro/[Pinebook Pro].
+I went ahead and flashed an SD card with a build image to try it out.
+Instead of booting to elmentaryOS on the SD card as the system should have, it booted to Manjaro.
+While a quick restart from Manjaro caused the system to boot from the SD card, I figured it must be time to upgrade the bootloader, https://www.denx.de/wiki/U-Boot[U-Boot].
+As it turns out, it was time because this solved my boot issue.
+
+== Tutorial
+
+This tutorial provides instructions for updating the Pinebook Pro's bootloader from Manjaro Linux.
+
+=== Steps
+
+. First, ensure the system is up-to-date.
++
+[source,shell]
+----
+$ sudo pacman -Syuu
+:: Synchronizing package databases...
+  core is up to date
+  extra is up to date
+  community is up to date
+:: Starting full system upgrade...
+ there is nothing to do
+----
+
+. Next, determine which device is the onboard eMMC module.
++
+--
+[source,shell]
+----
+$ lsblk
+NAME         MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+loop0          7:0    0  85.5M  1 loop /var/lib/snapd/snap/core/9806
+loop1          7:1    0  85.8M  1 loop /var/lib/snapd/snap/core/9670
+loop2          7:2    0 174.6M  1 loop /var/lib/snapd/snap/multipass/2446
+loop3          7:3    0  62.2M  1 loop /var/lib/snapd/snap/snapcraft/5312
+loop4          7:4    0  48.4M  1 loop /var/lib/snapd/snap/core18/1883
+loop5          7:5    0  36.9M  1 loop /var/lib/snapd/snap/review-tools/1723
+loop6          7:6    0  62.2M  1 loop /var/lib/snapd/snap/snapcraft/5282
+loop7          7:7    0  48.8M  1 loop /var/lib/snapd/snap/core18/1888
+loop8          7:8    0 173.6M  1 loop /var/lib/snapd/snap/multipass/2379
+mmcblk2      179:0    0  58.2G  0 disk # <1>
+├─mmcblk2p1  179:1    0 213.6M  0 part /boot
+└─mmcblk2p2  179:2    0    58G  0 part /
+mmcblk2boot0 179:32   0     4M  1 disk 
+mmcblk2boot1 179:64   0     4M  1 disk 
+mmcblk1      179:96   0 238.5G  0 disk # <2>
+zram0        252:0    0   5.6G  0 disk [SWAP]
+----
+<1> In this case, `mmcblk2` is the internal 64 GB eMMC module.
+<2> `mmcblk1` happens to be a connected 250 GB SD card.
+--
+
+[CAUTION]
+====
+Flashing to the wrong device could destroy your data.
+If you have an SD card connected, you might want to unplug it to be safe.
+====
+
+. Flash `idbloader.img` to the eMMC.
++
+[source,shell]
+----
+$ sudo dd if=/boot/idbloader.img of=/dev/mmcblk2 seek=64 conv=notrunc,fsync
+322+1 records in
+322+1 records out
+164958 bytes (165 kB, 161 KiB) copied, 0.00663394 s, 24.9 MB/s
+----
+
+. Flash `u-boot.itb` to the eMMC.
++
+[source,shell]
+----
+$ sudo dd if=/boot/u-boot.itb of=/dev/mmcblk2 seek=16384 conv=notrunc,fsync
+1801+1 records in
+1801+1 records out
+922192 bytes (922 kb, 901 KiB) copied, 0.0833926 s, 11.1 MB/s
+----
+
+=== Conclusion
+
+That's all.
+You should now have the latest U-Boot booting your system!
