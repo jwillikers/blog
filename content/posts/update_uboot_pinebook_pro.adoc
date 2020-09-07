@@ -57,13 +57,13 @@ zram0        252:0    0   5.6G  0 disk [SWAP]
 ----
 <1> In this case, `mmcblk2` is the internal 64 GB eMMC module.
 <2> `mmcblk1` happens to be a connected 250 GB SD card.
---
 
 [CAUTION]
 ====
 Flashing to the wrong device could destroy your data.
 If you have an SD card connected, you might want to unplug it to be safe.
 ====
+--
 
 . Flash `idbloader.img` to the eMMC.footnote:[https://gitlab.manjaro.org/manjaro-arm/packages/core/uboot-pinebookpro/-/blob/master/uboot-pinebookpro.install[Manjaro ARM Gitlab: uboot-pinebookpro]]
 +
