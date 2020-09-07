@@ -1,7 +1,7 @@
 +++
 title = "Virtualize Ubuntu Desktop on macOS with QEMU"
 categories = ["Systems"]
-tags = ["HomeBrew", "Linux", "macOS", "MacPorts", "QEMU", "Ubuntu", "Ubuntu2004", "virtio", "Virtualization"]
+tags = ["Homebrew", "Linux", "macOS", "MacPorts", "QEMU", "Ubuntu", "Ubuntu2004", "virtio", "Virtualization"]
 date = "2020-09-07"
 draft = false
 +++
@@ -14,16 +14,16 @@ I also recommend checking out https://github.com/machyve/xhyve[xhyve], a port of
 
 == Tutorial
 
-This is a quick run-through on how to create and run a virtual Ubuntu 20.04 desktop machine on macOS Catalina using either https://www.qemu.org/2020/08/11/qemu-5-1-0/[QEMU 5.1] via https://brew.sh[HomeBrew] or https://www.qemu.org/2020/04/29/qemu-5-0-0/[QEMU 5.0] via https://www.macports.org/[MacPorts].
+This is a quick run-through on how to create and run a virtual Ubuntu 20.04 desktop machine on macOS Catalina using either https://www.qemu.org/2020/08/11/qemu-5-1-0/[QEMU 5.1] via https://brew.sh[Homebrew] or https://www.qemu.org/2020/04/29/qemu-5-0-0/[QEMU 5.0] via https://www.macports.org/[MacPorts].
 This guide assumes you have familiarity with the command-line, virtual machines, ssh, port-forwarding, and graphical Linux installers.
 
-. Install either https://docs.brew.sh/Installation[HomeBrew] or https://www.macports.org/install.php[MacPorts] according to their installation instructions.
+. Install either https://docs.brew.sh/Installation[Homebrew] or https://www.macports.org/install.php[MacPorts] according to their installation instructions.
 
 . Pull down the https://www.qemu.org/download/#macos[qemu package].
 +
 [source,sh]
 ----
-# For HomeBrew
+# For Homebrew
 $ brew install qemu
 
 # For MacPorts
