@@ -57,12 +57,12 @@ mmcblk2boot1 179:96   0     4M  1 disk
 ----
 <1> `mmcblk0` is the 250 GB SD card running Manjaro.
 <2> `mmcblk2` is the internal 16 GB eMMC module.
---
 
 [CAUTION]
 ====
 Flashing to the wrong device could destroy your data.
 ====
+--
 
 . Flash the `bin` file to the eMMC.footnote:[https://gitlab.manjaro.org/manjaro-arm/packages/core/uboot-pinephone-crust[Manjaro ARM Gitlab: uboot-pinephone-crust]]
 +
