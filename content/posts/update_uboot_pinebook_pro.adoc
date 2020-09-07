@@ -65,7 +65,7 @@ Flashing to the wrong device could destroy your data.
 If you have an SD card connected, you might want to unplug it to be safe.
 ====
 
-. Flash `idbloader.img` to the eMMC.
+. Flash `idbloader.img` to the eMMC.footnote:[https://gitlab.manjaro.org/manjaro-arm/packages/core/uboot-pinebookpro/-/blob/master/uboot-pinebookpro.install[Manjaro ARM Gitlab: uboot-pinebookpro]]
 +
 [source,shell]
 ----
