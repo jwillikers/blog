@@ -19,6 +19,7 @@
         "libvirt",
         "lsblk",
         "machdep",
+        "macos",
         "mmcblk",
         "mountpoint",
         "multipass",
@@ -40,6 +41,7 @@
         "userdata",
         "virtio",
         "vmnic",
+        "whpx",
         "zpool"
     ]
 }
