@@ -20,7 +20,6 @@ pygmentsUseClasses = true
         icons = "font"
         relfileprefix = "../"
         outfilesuffix = "/"
-        "figure-caption!" = ""
 
   [markup.highlight]
     codeFences = true
