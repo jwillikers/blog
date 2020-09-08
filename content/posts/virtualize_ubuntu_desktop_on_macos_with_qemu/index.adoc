@@ -6,6 +6,11 @@ date = "2020-09-07"
 draft = false
 +++
 
+.The Focal Fossa nestles in on Santa Catalina Island
+image::virtualize_ubuntu_desktop_on_macos_with_qemu.png[An Ubuntu Desktop on macOS Catalina]
+
+'''
+
 Recently, I discovered that the Linux hypervisor, https://www.qemu.org/[QEMU], is available on macOS.
 This is particularly exciting because I have to spin-up Linux VMs on macs at my day job, and I've wanted to get some more hands-on experience with QEMU.
 QEMU runs VMs quite efficiently and provides a robust set of tools for creating, managing, and running virtual machines.
