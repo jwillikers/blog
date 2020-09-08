@@ -7,6 +7,7 @@ draft = false
 +++
 
 .The Focal Fossa nestles in on Santa Catalina Island
+[caption=""]
 image::virtualize_ubuntu_desktop_on_macos_with_qemu.png[An Ubuntu Desktop on macOS Catalina]
 
 '''
