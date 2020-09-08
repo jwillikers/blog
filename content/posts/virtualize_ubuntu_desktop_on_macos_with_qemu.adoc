@@ -65,7 +65,8 @@ $ qemu-system-x86_64 \
   -vga virtio \
   -display default,show-cursor=on \
   -device virtio-net,netdev=vmnic -netdev user,id=vmnic \
-  -device intel-hda -device hda-duplex \
+  -audiodev coreaudio,id=coreaudio \
+  -device ich9-intel-hda -device hda-output,audiodev=coreaudio \
   -cdrom ubuntu-20.04.1-desktop-amd64.iso \
   -drive file=ubuntu2004.qcow2,if=virtio
 ----
@@ -85,7 +86,8 @@ The default `cpu` option, `qemu64`, emulates the CPU instead of using passthroug
 `-vga virtio`:: Use the virtio display card.
 `-display default,show-cursor=on`:: Don't hide the cursor.
 `-device virtio-net,netdev=vmnic -netdev user,id=vmnic`:: Pass-through networking with virtio.footnote:[https://wiki.gentoo.org/wiki/QEMU/Options#Pass-through[Gentoo Wiki: QEMU/Options - Networking Pass-through]]
-`-device intel-hda -device hda-duplex`:: Emulate Intel HD audio, enabling sound output from the guest.
+`-audiodev coreaudio,id=coreaudio`:: Add a backend audio driver for https://developer.apple.com/library/archive/documentation/MusicAudio/Conceptual/CoreAudioOverview/WhatisCoreAudio/WhatisCoreAudio.html[Apple's Core Audio].
+`-device ich9-intel-hda -device hda-output,audiodev=coreaudio`:: Add an audio bus and an output device utilizing the `coreaudio` driver created previously. This enables audio output from the guest.
 `-cdrom ubuntu-20.04.1-desktop-amd64.iso`:: Attach the Boot ISO in the VM as a CD.
 `-drive file=ubuntu2004.qcow2,if=virtio`:: Attach the hard-disk created earlier, using virtio drivers.
 
@@ -109,7 +111,8 @@ $ qemu-system-x86_64 \
   -display default,show-cursor=on \
   -usb \
   -device virtio-net,netdev=vmnic -netdev user,id=vmnic \
-  -device intel-hda -device hda-duplex \
+  -audiodev coreaudio,id=coreaudio \
+  -device ich9-intel-hda -device hda-output,audiodev=coreaudio \
   -drive file=ubuntu2004.qcow2,if=virtio
 ----
 
