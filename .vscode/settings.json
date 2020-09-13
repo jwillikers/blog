@@ -28,6 +28,7 @@
         "notrunc",
         "os",
         "pacman",
+        "passwd",
         "qcow",
         "qemu",
         "recordsize",
@@ -42,6 +43,8 @@
         "virtio",
         "vmnic",
         "whpx",
+        "xfreerdp",
+        "xrdp",
         "zpool"
     ]
 }
