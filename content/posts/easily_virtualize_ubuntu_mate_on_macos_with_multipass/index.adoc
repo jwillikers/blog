@@ -87,7 +87,7 @@ $ sudo apt upgrade
 $ sudo apt install ubuntu-mate-desktop xrdp
 ----
 
-NOTE: To use the default desktop or other https://ubuntu.com/download/flavours[Ubuntu flavors], substitute the respective package.  For example, substitute `ubuntu-mate-desktop` with `ubuntu-desktop` to install the standard Ubuntu desktop.
+NOTE: To use the default desktop or other https://ubuntu.com/download/flavours[Ubuntu flavors], substitute the respective package. For example, substitute `ubuntu-mate-desktop` with `ubuntu-desktop` to install the standard Ubuntu desktop.
 --
 
 . Set a password for the default `ubuntu`.
@@ -117,7 +117,7 @@ Disk usage:     4.3G out of 48.3G
 Memory usage:   204.7M out of 3.8G
 ----
 
-Here the IP address it `192.168.64.2`.
+Here the IP address is `192.168.64.2`.
 --
 
 . Install either https://docs.brew.sh/Installation[Homebrew] or https://www.macports.org/install.php[MacPorts] according to their installation instructions.
