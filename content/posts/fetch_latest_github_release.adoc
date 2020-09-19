@@ -1,0 +1,38 @@
++++
+title = "One-liner to Fetch the Latest Github Release"
+categories = ["Systems"]
+tags = ["awk", "curl", "git", "Github"]
+date = "2020-09-19"
+draft = false
++++
+
+Sometimes, it would be awfully convenient to grab the installer for the latest release of your favorite Github project directly from the command-line.
+And if it could incorporate https://en.wikipedia.org/wiki/AWK[awk], that would be great too.footnote:[https://gist.github.com/steinwaywhw/a4cd19cda655b8249d908261a62687f8#gistcomment-3457870[Github Gist: One Liner to Download the Latest Release from Github Repo]] 
+Well, the following command-line is a pretty nifty template to do just that!
+You will need https://curl.haxx.se/[curl] for this to work.
+Substitute in the user or organization name, the project's name, and the desired file extension for the _<user>_, _<repo>_, and _<extension>_ fields respectively.
+
+.Install the latest Github release
+[source,shell]
+----
+$ curl -s https://api.github.com/repos/<user>/<repo>/releases/latest | awk -F': ' '/browser_download_url/ && /\.<file extension>/ {gsub(/"/, "", $(NF)); system("curl -LO " $(NF))}'
+----
+
+Here is a quick explanation.
+First, `curl` obtains the response from an HTTP GET request.footnote[https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html[RFC 2616]]
+This response contains the URLs for the various artifacts for the latest release of the project.
+Next, `awk` processes the response, finding the line containing a download URL and matching the given file extension.
+It then removes the quotation marks surrounding the URL and downloads the file directly with `curl`.
+
+It's also easy enough to modify the match pattern for the file extension to make it more specific if need be.
+The following example demonstrates this by fetching the latest Linux release zip file of the https://ninja-build.org/[Ninja build system].
+
+.Install the latest Ninja release
+[source,shell]
+----
+$ curl -s https://api.github.com/repos/ninja-build/ninja/releases/latest | awk -F': ' '/browser_download_url/ && /linux\.zip/ {gsub(/"/, "", $(NF)); system("curl -LO " $(NF))}'
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   637  100   637    0     0   1103      0 --:--:-- --:--:-- --:--:--  1105
+100 99913  100 99913    0     0   101k      0 --:--:-- --:--:-- --:--:--  372k
+----
