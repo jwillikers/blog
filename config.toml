@@ -32,9 +32,6 @@ pygmentsUseClasses = true
     style = "solarized-dark"
     tabWidth = 4
 
-[params]
-    custom_css = ["css/custom.css"]
-
 [Params]
     subtitle = "Handy admin and dev guides from my myriad of tinkering"
     rss = true
