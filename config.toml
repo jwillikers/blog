@@ -1,14 +1,26 @@
 baseURL = "https://jwillikers.com/"
-languageCode = "en-us"
+languageCode = "en"
+defaultContentLanguage = "en"
 title = "JWillikers"
-theme = "beautifulhugo"
+theme = "LoveIt"
+enableRobotsTXT = true
 enableEmoji = true
 enableGitInfo = true
-pygmentsStyle = "default"
-pygmentsCodeFences = true
-pygmentsUseClasses = true
 
+# Markup related configuration in Hugo
 [markup]
+  # Syntax Highlighting (https://gohugo.io/content-management/syntax-highlighting)
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = false
+    lineNos = false
+    lineNumbersInTable = true
+    # false is a necessary configuration (https://github.com/dillonzq/LoveIt/issues/158)
+    noClasses = false
+    tabWidth = 4
+    style = "solarized-dark"
+    hl_Lines = ""
+    lineNoStart = 1
   [markup.asciidocext]
     backend = "html5s"
     extensions = ["asciidoctor-html5s"]
@@ -20,43 +32,212 @@ pygmentsUseClasses = true
         icons = "font"
         relfileprefix = "../"
         outfilesuffix = "/"
+  # Goldmark is from Hugo 0.60 the default library used for Markdown
+  [markup.goldmark]
+    [markup.goldmark.extensions]
+      definitionList = true
+      footnote = true
+      linkify = true
+      strikethrough = true
+      table = true
+      taskList = true
+      typographer = true
+    [markup.goldmark.renderer]
+      # whether to use HTML tags directly in the document
+      unsafe = true
+  # Table Of Contents settings
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 6
 
-  [markup.highlight]
-    codeFences = true
-    guessSyntax = false
-    hl_Lines = ""
-    lineNoStart = 1
-    lineNos = false
-    lineNumbersInTable = true
-    noClasses = true
-    style = "solarized-dark"
-    tabWidth = 4
+# Author config
+[author]
+  name = "Jordan Williams"
+  email = "jordan@jwillikers.com"
 
-[Params]
-    subtitle = "Handy admin and dev guides from my myriad of tinkering"
-    rss = true
-    mainSections = ["post","posts"]
-    logo = "https://www.gravatar.com/avatar/e3189498d000ca4eb4e893739fd63636?s=500"
+# Sitemap config
+[sitemap]
+  changefreq = "weekly"
+  filename = "sitemap.xml"
+  priority = 0.5
 
-[Author]
-	name = "Jordan Williams"
-    github = "jwillikers"
-    gitlab = "jwillikers"
-    bitbucket = "jwillikers"
+    # Menu config
+    [menu]
+      [[menu.main]]
+        identifier = "posts"
+        # you can add extra information before the name (HTML format is supported), such as icons
+        pre = ""
+        # you can add extra information after the name (HTML format is supported), such as icons
+        post = ""
+        name = "Posts"
+        url = "/posts/"
+        # title will be shown when you hover on this menu link.
+        title = ""
+        weight = 1
+      [[menu.main]]
+        identifier = "tags"
+        pre = ""
+        post = ""
+        name = "Tags"
+        url = "/tags/"
+        title = ""
+        weight = 2
+      [[menu.main]]
+        identifier = "categories"
+        pre = ""
+        post = ""
+        name = "Categories"
+        url = "/categories/"
+        title = ""
+        weight = 3
+      [[menu.main]]
+        identifier = "about"
+        pre = ""
+        post = ""
+        name = "About"
+        url = "/about/"
+        title = ""
+        weight = 4
+      [[menu.main]]
+        identifier = "contact"
+        pre = ""
+        post = ""
+        name = "Contact"
+        url = "/contact/"
+        title = ""
+        weight = 5
+      [[menu.main]]
+        identifier = "resources"
+        pre = ""
+        post = ""
+        name = "Resources"
+        url = "/resources/"
+        title = ""
+        weight = 6
+      [[menu.main]]
+        identifier = "github"
+        pre = "<i class='fab fa-github fa-fw'></i>"
+        post = ""
+        name = ""
+        url = "https://github.com/jwillikers/blog"
+        title = "GitHub"
+        weight = 7
 
-[[menu.main]]
-    name = "Blog"
-    weight = 1
-    url  = "/posts/"
-[[menu.main]]
-    name = "About"
-    weight = 2
-    url = "/about/"
-[[menu.main]]
-    name = "Resources"
-    weight = 3
-    url = "/resources/"
-[[menu.main]]
-    name = "Contact"
-    weight = 4
-    url = "/contact/"
+[params]
+  version = "0.2.X"
+    paginate = 12
+    # copyright description used only for seo schema
+    copyright = "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License."
+    # site description
+    description = "Jordan Williams' developer blog"
+    # site keywords
+    keywords = ["Blog", "Linux"]
+    # App icon config
+    [params.app]
+    # optional site title override for the app when added to an iOS home screen or Android launcher
+    title = "JWillikers"
+    # whether to omit favicon resource links
+    noFavicon = false
+    # modern SVG favicon to use in place of older style .png and .ico files
+    svgFavicon = ""
+    # Android browser theme color
+    themeColor = "#ffffff"
+    # Safari mask icon color
+    iconColor = "#5bbad5"
+    # Windows v8-10 tile color
+    tileColor = "#da532c"
+    # Search config
+    [params.home]
+    # amount of RSS pages
+    rss = 10
+    # Home page profile
+    [params.home.profile]
+        enable = true
+        # Gravatar Email for preferred avatar in home page
+        gravatarEmail = "jordan@jwillikers.com"
+        # URL of avatar shown in home page
+        avatarURL = "https://www.gravatar.com/avatar/e3189498d000ca4eb4e893739fd63636?s=500"
+        # title shown in home page (HTML format is supported)
+        title = ""
+        # subtitle shown in home page
+        subtitle = "Handy admin and dev guides from my myriad of tinkering"
+        # whether to use typeit animation for subtitle
+        typeit = true
+        # whether to show social links
+        social = true
+        # disclaimer (HTML format is supported)
+        disclaimer = ""
+    # Home page posts
+    [params.home.posts]
+        enable = true
+        # special amount of posts in each home posts page
+        paginate = 6
+    # Social config in home page
+
+  # Header config
+  [params.header]
+    # desktop header mode ("fixed", "normal", "auto")
+    desktopMode = "fixed"
+    # mobile header mode ("fixed", "normal", "auto")
+    mobileMode = "auto"
+    # Header title config
+    [params.header.title]
+      # URL of the LOGO
+      logo = ""
+      # title name
+      name = "JWillikers"
+      # you can add extra information before the name (HTML format is supported), such as icons
+      # pre = "<i class='far fa-kiss-wink-heart fa-fw'></i>"
+      # you can add extra information after the name (HTML format is supported), such as icons
+      post = ""
+      # whether to use typeit animation for title name
+      typeit = false
+
+  # Footer config
+  [params.footer]
+    enable = true
+    # Custom content (HTML format is supported)
+    custom = ''
+    # whether to show Hugo and theme info
+    hugo = true
+    # whether to show copyright info
+    copyright = true
+    # whether to show the author
+    author = true
+    # site creation time
+    since = 2019
+    # ICP info only in China (HTML format is supported)
+    icp = ""
+    # license info (HTML format is supported)
+    license= '<a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a>'
+
+[params.social]
+    GitHub = "jwillikers"
+    Gitlab = "jwillikers"
+    Bitbucket = "jwillikers"
+    Stackoverflow = "9835303"
+    RSS = true
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[params.search]
+  enable = true
+  # type of search engine ("lunr", "algolia")
+  type = "lunr"
+  # max index length of the chunked content
+  contentLength = 4000
+  # placeholder of the search bar
+  placeholder = ""
+  # LoveIt NEW | 0.2.1 max number of results length
+  maxResultLength = 10
+  # LoveIt NEW | 0.2.3 snippet length of the result
+  snippetLength = 30
+  # LoveIt NEW | 0.2.1 HTML tag name of the highlight part in results
+  highlightTag = "em"
+  # LoveIt NEW | 0.2.4 whether to use the absolute URL based on the baseURL in search index
+  absoluteURL = false
+  [params.search.algolia]
+    index = ""
+    appID = ""
+    searchKey = ""
