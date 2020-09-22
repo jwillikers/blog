@@ -19,7 +19,7 @@ $ curl -s https://api.github.com/repos/<user>/<repo>/releases/latest | awk -F': 
 ----
 
 Here is a quick explanation.
-First, `curl` obtains the response from an HTTP GET request.footnote[https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html[RFC 2616]]
+First, `curl` obtains the response from an HTTP GET request.footnote:[https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html[RFC 2616]]
 This response contains the URLs for the various artifacts for the latest release of the project.
 Next, `awk` processes the response, finding the line containing a download URL and matching the given file extension.
 It then removes the quotation marks surrounding the URL and downloads the file directly with `curl`.
