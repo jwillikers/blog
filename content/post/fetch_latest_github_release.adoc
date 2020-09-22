@@ -1,6 +1,6 @@
 +++
 title = "One-liner to Fetch the Latest Github Release"
-categories = ["Systems"]
+categories = ["Command-line"]
 tags = ["awk", "curl", "git", "Github"]
 date = "2020-09-19"
 draft = false
