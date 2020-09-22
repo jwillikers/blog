@@ -1,0 +1,89 @@
++++
+title = "Unlock KeePassXC on Login"
+categories = ["Systems"]
+tags = ["KeePassXC", "Linux", "Ubuntu"]
+date = "2020-09-19"
+draft = true
++++
+
+. Install KeePassXC.
++
+[source,shell]
+----
+$ sudo snap install keepassxc
+----
+
+. Install the `libsecret-tools` package.
++
+[source,shell]
+----
+$ sudo apt install libsecret-tools
+----
+
+. Create a secret
++
+[source,shell]
+----
+$ secret-tool store --label="KeePass Passwords" keepass Passwords
+Password:
+----
+
++
+[source,shell]
+----
+$ which keepassxc
+/snap/bin/keepassxc
+----
+
++
+[source,shell]
+----
+$ secret-tool lookup keepass Passwords | /snap/bin/keepassxc --pw-stdin /home/jordan/Documents/Passwords.kdbx
+----
+
+https://askubuntu.com/a/1210421
+
+
+
+
+
+
+// Unlock KeePassXC on login
+https://gist.github.com/dAnjou/b99f55de34b90246f381e71e3c8f9262
+
+https://github.com/keepassxreboot/keepassxc/wiki/Using-DBus-with-KeePassXC
+
+https://avaldes.co/2020/01/28/secret-service-keepassxc.html
+
+https://c3pb.de/blog/keepassxc-secrets-service.html
+
+https://grabski.me/tech,/linux/2020/09/02/automatically-unlock-keepassxc-on-startup-and-after-lock-screen/
+
+
+https://github.com/swick/mozilla-gnome-keyring
+
+
+https://askubuntu.com/questions/106724/syncing-a-gnome-keyring-across-devices-w-ubuntu-one
+
+https://gist.github.com/innerand/405025e7fbae1b270025666418655d8b
+
+https://askubuntu.com/questions/96798/where-does-seahorse-gnome-keyring-store-its-keyrings
+
+$ kill 9012
+
+https://launchpad.net/~phoerious/+archive/ubuntu/keepassxc
+$ sudo add-apt-repository ppa:phoerious/keepassxc
+$ sudo apt-get update
+
+$ sudo apt install -y keepassxc
+
+➜  blog git:(master) ✗ ps -e | grep goa-daemon  
+   9078 ?        00:00:05 goa-daemon
+➜  blog git:(master) ✗ kill 9078
+
+https://github.com/keepassxreboot/keepassxc/issues/3864
+logout instead of prev
+
+
+
+

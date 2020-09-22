@@ -1,0 +1,85 @@
+https://wiki.archlinux.org/index.php/Davfs2#Using_systemd
+
+.~/systemd/system/mnt-webdav-service.mount
+
+./etc/systemd/system/mnt-webdav-service.mount
+[source]
+----
+[Unit]
+Description=Mount WebDAV Service
+After=network-online.target
+Wants=network-online.target
+
+[Mount]
+What=http(s)://address:<port>/path
+Where=/mnt/webdav/service
+Options=uid=1000,file_mode=0664,dir_mode=2775,grpid
+Type=davfs
+TimeoutSec=15
+
+[Install]
+WantedBy=multi-user.target
+----
+
+./etc/systemd/system/mnt-webdav-service.automount
+[source]
+----
+[Unit]
+Description=Mount WebDAV Service
+After=network-online.target
+Wants=network-online.target
+
+[Automount]
+Where=/mnt/webdav/service
+TimeoutIdleSec=300
+
+[Install]
+WantedBy=remote-fs.target
+----
+
+
+https://wiki.archlinux.org/index.php/Fstab#Automount_with_systemd
+
+
+
+
+
+
+
+
+
+
+
+https://wiki.archlinux.org/index.php/Davfs2#Storing_credentials
+
+
+
+
+
+
+./etc/fstab
+[source]
+----
+https://webdav.example/path /mnt/webdav davfs rw,user,uid=username,noauto 0 0
+----
+
+./etc/davfs2/secrets
+[source]
+----
+https://webdav.example/path davusername davpassword
+----
+
+[source,shell]
+----
+$ chmod 600 /etc/davfs2/secrets
+----
+
+[source,shell]
+----
+$ chown root:root /etc/davfs2/secrets
+----
+
+[source,shell]
+----
+$ chmod 600 ~/.davfs2/secrets
+----
