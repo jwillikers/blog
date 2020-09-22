@@ -2,23 +2,76 @@ baseURL = "https://jwillikers.com/"
 languageCode = "en"
 defaultContentLanguage = "en"
 title = "JWillikers"
-theme = "LoveIt"
 enableRobotsTXT = true
 enableEmoji = true
 enableGitInfo = true
+theme = "even"
 
-# Markup related configuration in Hugo
+#gravatarEmail = "jordan@jwillikers.com"
+#avatarURL = "https://www.gravatar.com/avatar/e3189498d000ca4eb4e893739fd63636?s=500"
+
+#pygmentsOptions = "linenos=table"
+#pygmentsCodefences = true
+#pygmentsUseClasses = true
+#pygmentsCodefencesGuessSyntax = false
+
+paginate = 5
+copyright = '''
+Jordan Williams
+<br />
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+<img alt="Creative Commons License" style="border-width:0"
+  src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
+<br />
+<span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text"
+  property="dct:title" rel="dct:type">JWillikers</span> by 
+  <a xmlns:cc="http://creativecommons.org/ns#" href="https://jwillikers.com"
+  property="cc:attributionName" rel="cc:attributionURL">Jordan Williams</a>
+  is licensed under a 
+  <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+  Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+'''
+
+[author]
+  name = "Jordan Williams"
+  email = "jordan@jwillikers.com"
+
+[[menu.main]]
+  name = "Archives"
+  weight = 10
+  identifier = "archives"
+  url = "/post/"
+[[menu.main]]
+  name = "Tags"
+  weight = 20
+  identifier = "tags"
+  url = "/tags/"
+[[menu.main]]
+  name = "Categories"
+  weight = 30
+  identifier = "categories"
+  url = "/categories/"
+[[menu.main]]
+  name = "Resources"
+  weight = 40
+  identifier = "resources"
+  url = "/resources/"
+[[menu.main]]
+  name = "About"
+  weight = 50
+  identifier = "about"
+  url = "/about/"
+
+
 [markup]
-  # Syntax Highlighting (https://gohugo.io/content-management/syntax-highlighting)
   [markup.highlight]
     codeFences = true
     guessSyntax = false
     lineNos = false
     lineNumbersInTable = true
-    # false is a necessary configuration (https://github.com/dillonzq/LoveIt/issues/158)
     noClasses = false
     tabWidth = 4
-    style = "solarized-dark"
+    style = "solarized-light"
     hl_Lines = ""
     lineNoStart = 1
   [markup.asciidocext]
@@ -27,217 +80,78 @@ enableGitInfo = true
     workingFolderCurrent = true
     trace = true
     [markup.asciidocext.attributes]
-        source-highlighter = "rouge"
-        rouge-style = "github"
-        icons = "font"
-        relfileprefix = "../"
-        outfilesuffix = "/"
-  # Goldmark is from Hugo 0.60 the default library used for Markdown
-  [markup.goldmark]
-    [markup.goldmark.extensions]
-      definitionList = true
-      footnote = true
-      linkify = true
-      strikethrough = true
-      table = true
-      taskList = true
-      typographer = true
-    [markup.goldmark.renderer]
-      # whether to use HTML tags directly in the document
-      unsafe = true
-  # Table Of Contents settings
-  [markup.tableOfContents]
-    startLevel = 2
-    endLevel = 6
+    source-highlighter = "rouge"
+    rouge-style = "base16.solarized.light"
+    icons = "font"
+    relfileprefix = "../"
+    outfilesuffix = "/"
 
-# Author config
-[author]
-  name = "Jordan Williams"
-  email = "jordan@jwillikers.com"
-
-# Sitemap config
 [sitemap]
   changefreq = "weekly"
   filename = "sitemap.xml"
   priority = 0.5
 
-    # Menu config
-    [menu]
-      [[menu.main]]
-        identifier = "posts"
-        # you can add extra information before the name (HTML format is supported), such as icons
-        pre = ""
-        # you can add extra information after the name (HTML format is supported), such as icons
-        post = ""
-        name = "Posts"
-        url = "/posts/"
-        # title will be shown when you hover on this menu link.
-        title = ""
-        weight = 1
-      [[menu.main]]
-        identifier = "tags"
-        pre = ""
-        post = ""
-        name = "Tags"
-        url = "/tags/"
-        title = ""
-        weight = 2
-      [[menu.main]]
-        identifier = "categories"
-        pre = ""
-        post = ""
-        name = "Categories"
-        url = "/categories/"
-        title = ""
-        weight = 3
-      [[menu.main]]
-        identifier = "about"
-        pre = ""
-        post = ""
-        name = "About"
-        url = "/about/"
-        title = ""
-        weight = 4
-      [[menu.main]]
-        identifier = "contact"
-        pre = ""
-        post = ""
-        name = "Contact"
-        url = "/contact/"
-        title = ""
-        weight = 5
-      [[menu.main]]
-        identifier = "resources"
-        pre = ""
-        post = ""
-        name = "Resources"
-        url = "/resources/"
-        title = ""
-        weight = 6
-      [[menu.main]]
-        identifier = "github"
-        pre = "<i class='fab fa-github fa-fw'></i>"
-        post = ""
-        name = ""
-        url = "https://github.com/jwillikers/blog"
-        title = "GitHub"
-        weight = 7
-
 [params]
-  version = "0.2.X"
-    paginate = 12
-    # copyright description used only for seo schema
-    copyright = "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License."
-    # site description
-    description = "Jordan Williams' developer blog"
-    # site keywords
-    keywords = ["Blog", "Linux"]
-    # App icon config
-    [params.app]
-    # optional site title override for the app when added to an iOS home screen or Android launcher
-    title = "JWillikers"
-    # whether to omit favicon resource links
-    noFavicon = false
-    # modern SVG favicon to use in place of older style .png and .ico files
-    svgFavicon = ""
-    # Android browser theme color
-    themeColor = "#ffffff"
-    # Safari mask icon color
-    iconColor = "#5bbad5"
-    # Windows v8-10 tile color
-    tileColor = "#da532c"
-    # Search config
-    [params.home]
-    # amount of RSS pages
-    rss = 10
-    # Home page profile
-    [params.home.profile]
-        enable = true
-        # Gravatar Email for preferred avatar in home page
-        gravatarEmail = "jordan@jwillikers.com"
-        # URL of avatar shown in home page
-        avatarURL = "https://www.gravatar.com/avatar/e3189498d000ca4eb4e893739fd63636?s=500"
-        # title shown in home page (HTML format is supported)
-        title = ""
-        # subtitle shown in home page
-        subtitle = "Handy admin and dev guides from my myriad of tinkering"
-        # whether to use typeit animation for subtitle
-        typeit = true
-        # whether to show social links
-        social = true
-        # disclaimer (HTML format is supported)
-        disclaimer = ""
-    # Home page posts
-    [params.home.posts]
-        enable = true
-        # special amount of posts in each home posts page
-        paginate = 6
-    # Social config in home page
+  version = "4.x" # Used to give a friendly message when you have an incompatible update
+  debug = false # If true, load `eruda.min.js`. See https://github.com/liriliri/eruda
+  archivePaginate = 50 
+  since = "2020" # Site creation time
+  gitRepo = "https://github.com/jwillikers/blog" 
 
-  # Header config
-  [params.header]
-    # desktop header mode ("fixed", "normal", "auto")
-    desktopMode = "fixed"
-    # mobile header mode ("fixed", "normal", "auto")
-    mobileMode = "auto"
-    # Header title config
-    [params.header.title]
-      # URL of the LOGO
-      logo = ""
-      # title name
-      name = "JWillikers"
-      # you can add extra information before the name (HTML format is supported), such as icons
-      # pre = "<i class='far fa-kiss-wink-heart fa-fw'></i>"
-      # you can add extra information after the name (HTML format is supported), such as icons
-      post = ""
-      # whether to use typeit animation for title name
-      typeit = false
+  logoTitle = "JWillikers" # default: the title value
+  keywords = ["Blog", "BSD", "Linux"] 
+  description = "Handy admin and dev guides from my myriad of tinkering" 
 
-  # Footer config
-  [params.footer]
-    enable = true
-    # Custom content (HTML format is supported)
-    custom = ''
-    # whether to show Hugo and theme info
-    hugo = true
-    # whether to show copyright info
-    copyright = true
-    # whether to show the author
-    author = true
-    # site creation time
-    since = 2019
-    # ICP info only in China (HTML format is supported)
-    icp = ""
-    # license info (HTML format is supported)
-    license= '<a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a>'
+  showArchiveCount = false
+
+  dateFormatToUse = "2006-01-02"
+
+  moreMeta = false
+
+  highlightInClient = true
+
+  toc = true
+  autoCollapseToc = false # Auto expand and collapse toc
+
+  # see https://github.com/fancyapps/fancybox
+  fancybox = true
+
+  # mathjax see https://www.mathjax.org/
+  mathjax = false
+  mathjaxEnableSingleDollar = false
+  mathjaxEnableAutoNumber = false
+  mathjaxUseLocalFiles = false # You should install mathjax in `your-site/static/lib/mathjax`
+
+  # contain author, lastMod, markdown link, license
+  postMetaInFooter = false
+  contentCopyright = '''
+&copy; 2020 Jordan Williams
+<br />
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+<img alt="Creative Commons License" style="border-width:0"
+  src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
+<br />
+<span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text"
+  property="dct:title" rel="dct:type">JWillikers</span> by 
+  <a xmlns:cc="http://creativecommons.org/ns#" href="https://jwillikers.com"
+  property="cc:attributionName" rel="cc:attributionURL">Jordan Williams</a>
+  is licensed under a 
+  <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+  Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+'''
+
+  # Link custom CSS and JS assets
+  #   (relative to /static/css and /static/js respectively)
+  customCSS = [ "syntax.css" ]
+  customJS = []
+
+  uglyURLs = false # please keep same with uglyurls setting
 
 [params.social]
-    GitHub = "jwillikers"
-    Gitlab = "jwillikers"
-    Bitbucket = "jwillikers"
-    Stackoverflow = "9835303"
-    RSS = true
+  a-github = "https://github.com/jwillikers"
+  b-gitlab = "https://gitlab.com/jwillikers"
+  c-stack-overflow = "https://stackoverflow.com/users/9835303/"
+  d-email = "mailto:jordan@jwillikers.com"
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]
-
-[params.search]
-  enable = true
-  # type of search engine ("lunr", "algolia")
-  type = "lunr"
-  # max index length of the chunked content
-  contentLength = 4000
-  # placeholder of the search bar
-  placeholder = ""
-  # LoveIt NEW | 0.2.1 max number of results length
-  maxResultLength = 10
-  # LoveIt NEW | 0.2.3 snippet length of the result
-  snippetLength = 30
-  # LoveIt NEW | 0.2.1 HTML tag name of the highlight part in results
-  highlightTag = "em"
-  # LoveIt NEW | 0.2.4 whether to use the absolute URL based on the baseURL in search index
-  absoluteURL = false
-  [params.search.algolia]
-    index = ""
-    appID = ""
-    searchKey = ""

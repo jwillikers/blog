@@ -2,6 +2,6 @@
 	path = public
 	url = git@github.com:jwillikers/jwillikers.github.io.git
 	branch = master
-[submodule "themes/LoveIt"]
-	path = themes/LoveIt
-	url = https://github.com/dillonzq/LoveIt
+[submodule "themes/even"]
+	path = themes/even
+	url = https://github.com/olOwOlo/hugo-theme-even
