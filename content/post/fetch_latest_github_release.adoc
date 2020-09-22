@@ -13,9 +13,10 @@ You will need https://curl.haxx.se/[curl] for this to work.
 Substitute in the user or organization name, the project's name, and the desired file extension for the _<user>_, _<repo>_, and _<extension>_ fields respectively.
 
 .Install the latest Github release
-[source,shell]
+[source,sh]
 ----
-$ curl -s https://api.github.com/repos/<user>/<repo>/releases/latest | awk -F': ' '/browser_download_url/ && /\.<file extension>/ {gsub(/"/, "", $(NF)); system("curl -LO " $(NF))}'
+$ curl -s https://api.github.com/repos/<user>/<repo>/releases/latest \
+  | awk -F': ' '/browser_download_url/ && /\.<file extension>/ {gsub(/"/, "", $(NF)); system("curl -LO " $(NF))}'
 ----
 
 Here is a quick explanation.
@@ -28,9 +29,10 @@ It's also easy enough to modify the match pattern for the file extension to make
 The following example demonstrates this by fetching the latest Linux release zip file of the https://ninja-build.org/[Ninja build system].
 
 .Install the latest Ninja release
-[source,shell]
+[source,sh]
 ----
-$ curl -s https://api.github.com/repos/ninja-build/ninja/releases/latest | awk -F': ' '/browser_download_url/ && /linux\.zip/ {gsub(/"/, "", $(NF)); system("curl -LO " $(NF))}'
+$ curl -s https://api.github.com/repos/ninja-build/ninja/releases/latest \
+  | awk -F': ' '/browser_download_url/ && /linux\.zip/ {gsub(/"/, "", $(NF)); system("curl -LO " $(NF))}'
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
 100   637  100   637    0     0   1103      0 --:--:-- --:--:-- --:--:--  1105
