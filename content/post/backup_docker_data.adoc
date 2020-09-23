@@ -18,7 +18,7 @@ This tutorial uses that container as an example for creating and restoring backu
 
 . Creating backups is done by producing an archive of the important files on the host filesystem from the container's data volume. 
 +
-[source,console]
+[source,sh]
 ----
 $ docker run \
   --rm \ # <1>
@@ -33,7 +33,7 @@ $ docker run \
 
 . Compress the backup.
 +
-[source,console]
+[source,sh]
 ----
 $ xz unifi-controller_backup_2020-07-01.tar
 ----
@@ -44,14 +44,14 @@ To restore from a backup, just reverse the backup process.
 
 . Decompress the backup.
 +
-[source,console]
+[source,sh]
 ----
 $ unxz unifi-controller_backup_2020-07-01.tar.xz
 ----
 
 . Restore the contents of the archive to the data volume.
 +
-[source,console]
+[source,sh]
 ----
 $ docker run 
   --rm \ # <1>
@@ -72,7 +72,7 @@ For the UniFi Controller, this is trivially accomplished.
 
 . First, copy the compose file to another directory and give the container a new name.
 +
-[source,console]
+[source,sh]
 ----
 $ mkdir unifi-controller2
 $ cp unifi-controller/docker-compose.yml unifi-controller2
@@ -82,6 +82,7 @@ $ cd unifi-controller2
 . Modify the yaml file to match the following.
 +
 .docker-compose.yml
+[source,dockerfile]
 ----
 ---
 version: "2.1"
@@ -113,14 +114,14 @@ volumes:
 
 . Initialize the container.
 +
-[source,console]
+[source,sh]
 ----
 $ docker-compose up --no-start
 ----
 
 . Decompress the backup.
 +
-[source,console]
+[source,sh]
 ----
 $ unxz unifi-controller_backup_2020-07-01.tar.xz
 ----
@@ -128,7 +129,7 @@ $ unxz unifi-controller_backup_2020-07-01.tar.xz
 . Restore the contents of the archive to the new container's data volume.
 +
 --
-[source,console]
+[source,sh]
 ----
 $ docker run 
   --rm \
@@ -144,14 +145,14 @@ The data from your original container should now be duplicated in _unifi-control
 
 . Now, start _unifi-controller2_.
 +
-[source,console]
+[source,sh]
 ----
 $ docker-compose up -d
 ----
 
 . Then, open the UniFi Controller's web UI.
 +
-[source,console]
+[source,sh]
 ----
 $ xdg-open http://127.0.0.1:8443
 ----

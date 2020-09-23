@@ -58,7 +58,7 @@ You don't see comments that make a task so easy all that often.
 
 To be on the safe side, verify the configuration of `unbound.conf` with http://man.openbsd.org/unbound-checkconf.8[unbound-checkconf].
 
-[source,console]
+[source,sh]
 ----
 $ unbound-checkconf
 unbound-checkconf: no errors in /var/unbound/etc/unbound.conf
@@ -66,7 +66,7 @@ unbound-checkconf: no errors in /var/unbound/etc/unbound.conf
 
 Did you read those comments? Restart the machine for the changes to take effect.
 
-[source,console]
+[source,sh]
 ----
 $ reboot
 ----
@@ -79,7 +79,7 @@ A packet capture can show that.
 
 Start capturing all DNS traffic from the Unbound server to the upstream DNS.
 
-[source,console]
+[source,sh]
 ----
 $ tcpdump -v -i em0 -s 65535 -w dns.pcap dst port 53 or 853 # <1>
 ----
@@ -89,7 +89,7 @@ Write the capture to the file `dns.pcap`
 
 Then do some digging or web browsing from a host using the Unbound resolver.
 
-[source,console]
+[source,sh]
 ----
 $ dig mozilla.org
 ----
@@ -101,7 +101,7 @@ I opened up the packet capture in https://www.wireshark.org/[Wireshark] on my la
 But, it's just as easy to view it on the terminal with https://www.wireshark.org/docs/man-pages/tshark.html[tshark].
 Optionally, install `tshark`.
 
-[source,console]
+[source,sh]
 ----
 $ pkg_add wireshark --no_x11
 ----
@@ -109,7 +109,7 @@ $ pkg_add wireshark --no_x11
 Review DNS requests in the packet capture.
 Here I use `tshark`.
 
-[source,console]
+[source,sh]
 ----
 $ tshark -r dns.pcap
     1   0.000000 2001:DB8::1 ? 2606:4700:4700::1001 TCP 98 38416 ? 853 [SYN] Seq=0 Win=16384 Len=0 MSS=1440 SACK_PERM=1 WS=64 TSval=3906316800 TSecr=0

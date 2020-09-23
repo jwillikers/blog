@@ -15,14 +15,14 @@ Make sure to check out the well-written https://www.geoghegan.ca/pfbadhost.html[
 
 Download the https://www.geoghegan.ca/scripts/pf-badhost.sh[pf-badhost.sh script].
 
-[source,console]
+[source,sh]
 ----
 ftp https://www.geoghegan.ca/scripts/pf-badhost.sh
 ----
 
 Install the script with the appropriate permissions.
 
-[source,console]
+[source,sh]
 ----
 install -g bin -m 644 -o root pf-badhost.sh /usr/local/bin/ # <1>
 ----
@@ -30,14 +30,14 @@ install -g bin -m 644 -o root pf-badhost.sh /usr/local/bin/ # <1>
 
 Create a new user, `_pfbadhost`, who will not be allowed to login.
 
-[source,console]
+[source,sh]
 ----
 useradd -s /sbin/nologin _pfbadhost
 ----
 
 Install an empty `pf-badhost.txt` file owned by the `_pfbadhost` user which is readable and writeable by the owner only.
 
-[source,console]
+[source,sh]
 ----
 install -m 600 -o _pfbadhost /dev/null /etc/pf-badhost.txt
 ----
@@ -55,7 +55,7 @@ permit nopass _pfbadhost cmd pfctl args -t pfbadhost -T replace -f /etc/pf-badho
 
 Edit the crontab file for `_pfbadhost`.
 
-[source,console]
+[source,sh]
 ----
 crontab -u _pfbadhost -e
 ----
@@ -74,7 +74,7 @@ SHELL=/bin/sh
 
 Run the `pf-badhost.sh` script.
 
-[source,console]
+[source,sh]
 ----
 doas -u _pfbadhost sh /usr/local/bin/pf-badhost.sh
 ----
@@ -82,7 +82,7 @@ doas -u _pfbadhost sh /usr/local/bin/pf-badhost.sh
 Configure PF to block all traffic to or from the blacklisted addresses.
 
 ./etc/pf.conf
-[source]
+[source,pf]
 ----
 # pf-badhost configuration
 table <pfbadhost> persist file “/etc/pf-badhost.txt” # <1>
@@ -97,14 +97,14 @@ NOTE: Be careful not to block your internal network's traffic here.
 
 Reload the PF ruleset.
 
-[source,console]
+[source,sh]
 ----
 pfctl -f /etc/pf.conf
 ----
 
 Following the original tutorial, run the `pf-badhost.sh` script once more for good measure.
 
-[source,console]
+[source,sh]
 ----
 doas -u _pfbadhost sh /usr/local/bin/pf-badhost.sh
 ----
@@ -126,14 +126,14 @@ However, I figured that probably wasn't the best idea and so devised a safer tes
 
 Make sure that the server is reachable before adding it to the blacklist.
 
-[source,console]
+[source,sh]
 ----
 ping -c 3 8.8.8.8
 ----
 
 There should be zero percent packet loss if everything went well, like in the following output.
 
-[source,console]
+[source,sh]
 ----
 PING 8.8.8.8 (8.8.8.8): 56 data bytes
 64 bytes from 8.8.8.8: icmp_seq=0 ttl=52 time=9.906 ms
@@ -160,14 +160,14 @@ Now, add the server`s IP address to the blacklist.
 
 Update the table by reloading PF.
 
-[source,console]
+[source,sh]
 ----
 pfctl -f /etc/pf.conf
 ----
 
 Now, verify that the server is no longer reachable.
 
-[source,console]
+[source,sh]
 ----
 ping -c 50 8.8.8.8
 ----
@@ -175,7 +175,7 @@ ping -c 50 8.8.8.8
 This should take a minute and not have any successful pings.
 Your output should match the following, accounting for the IP address you selected.
 
-[source,console]
+[source,sh]
 ----
 PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
 
@@ -196,7 +196,7 @@ First, ensure you can ping the server before it is blacklisted.
 I had to add a temporary rule to my PF configuration to allow the server to ping the router.
 
 ./etc/pf.conf
-[source]
+[source,pf]
 ----
 pass in on egress from 1.2.3.4 to any # <1>
 
@@ -209,7 +209,7 @@ block out quick on egress to <pfbadhost>
 
 To account for the new rule, reload the PF ruleset.
 
-[source,console]
+[source,sh]
 ----
 pfctl -f /etc/pf.conf
 ----
@@ -217,7 +217,7 @@ pfctl -f /etc/pf.conf
 The IP address `2.2.2.2` will represent the router's gateway address.
 From the server, ping the router.
 
-[source,console]
+[source,sh]
 ----
 ping -c 3 2.2.2.2
 ----
@@ -225,7 +225,7 @@ ping -c 3 2.2.2.2
 It should be able to ping the server, assuming the server is not one of the blacklisted IPs or impeded by a firewall rule.
 Successful output should look like the following.
 
-[source,console]
+[source,sh]
 ----
 PING 2.2.2.2 (2.2.2.2): 56 data bytes
 64 bytes from 2.2.2.2: icmp_seq=0 ttl=52 time=9.906 ms
@@ -248,21 +248,21 @@ Now, Add the IP address of the server to `/etc/pf-badhost.txt`
 
 Update the table by reloading PF.
 
-[source,console]
+[source,sh]
 ----
 pfctl -f /etc/pf.conf
 ----
 
 From the server, ping the router again.
 
-[source,console]
+[source,sh]
 ----
 ping -c 50 2.2.2.2
 ----
 
 The packets should all be dropped, printing the output below.
 
-[source,console]
+[source,sh]
 ----
 PING 2.2.2.2 (2.2.2.2) 56(84) bytes of data.
 
