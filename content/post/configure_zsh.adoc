@@ -44,12 +44,27 @@ Shell changed.
 
 . Now, open up a fresh terminal session to start using .
 
-. Install Antigen.footnote:[https://github.com/zsh-users/antigen/wiki/Installation[Antigen Wiki: Installation]]
+. Download and install Antigen.footnote:[https://github.com/zsh-users/antigen/wiki/Installation[Antigen Wiki: Installation]]
+There is a https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=906757[bug] in the https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=zsh-antigen;dist=unstable[debian package] at this time, so manually download and install it.footnote:[There is also an https://bugs.launchpad.net/ubuntu/+source/zsh-antigen/+bug/1770915[Ubuntu bug report] and an https://github.com/zsh-users/antigen/issues/659[Antigen bug report.]]
 +
+--
+[source,sh]
+----
+$ wget -q git.io/antigen
+$ sudo mkdir /usr/share/zsh-antigen
+$ sudo mv antigen /usr/share/zsh-antigen/antigen.zsh
+----
+
+[NOTE]
+====
+When the bug is fixed, you can simply install the package with https://wiki.debian.org/Aptitude[Aptitude] as follows.
+
 [source,sh]
 ----
 $ sudo apt install -y zsh-antigen
 ----
+====
+--
 
 . Create the `.antigenrc` configuration file.footnote:[https://github.com/zsh-users/antigen/wiki/Quick-start#configure-zshrc[Antigen Wiki: Quich start - Configure `.zshrc`]]
 +
