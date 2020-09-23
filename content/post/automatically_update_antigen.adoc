@@ -1,0 +1,215 @@
++++
+title = "Automatically Update Antigen"
+categories = ["Service Management"]
+tags = ["Antigen", "CentOS", "Linux", "oh-my-zsh", "RedHat", "systemd", "Ubuntu", "ZSH"]
+date = "2020-09-23"
+draft = false
++++
+
+There's a catch when it comes to managing plugins with http://antigen.sharats.me/[Antigen] as done in <<configure_zsh#,Configure ZSH>>.
+
+.According to the Antigen documentation:
+[quote, Antigen Wiki: Commands - antigen update]
+This is something you might not want to put in your .zshrc. Instead, run it occasionally to update your plugins.
+
+I hate having to do any form of maintenance _occasionally_, especially simple maintenance.
+This has two potential outcomes:
+
+. Completely forget to do it ever.
+. Do it incessantly.
+
+Okay, there are more than just those two options.
+You could create some sort of _plan_ for how often to do this.
+But, if you are going to so much work you might just want to automate it.
+
+== Tutorial
+
+This tutorial explains how to configure https://www.freedesktop.org/wiki/Software/systemd/[systemd] services and timers to automatically update a user's ZSH plugins with Antigen once a week.
+This tutorial is broken into two sections, each of which accomplishes the same goal.
+The first describes how to use systemd user service and the second a system service for those unfortunate enough to be using Red Hat Enterprise Linux 7 and CentOS 7.
+
+=== User-level Update Service
+
+This particular use-case is a good fit for https://wiki.archlinux.org/index.php/Systemd/User[systemd user services] because an Antigen and ZSH setup is a user-specific configuration.
+
+. Create the systemd user configuration directory.
++
+[source,sh]
+----
+$ mkdir -p ~/.config/systemd/user
+----
+
+. Create a systemd service to update the Antigen plugins.
++
+--
+.~/.config/systemd/user/update-antigen.service
+[source,ini]
+----
+[Unit]
+Description=Update Antigen
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/zsh -c '. "$0" && exec "$@"' /home/jordan/.zshrc antigen update
+
+[Install]
+WantedBy=default.target
+----
+
+The command-line here is tricky because the `antigen update` command requires that the user's Antigen functions and configuration be loaded.
+Of course, systemd is not going to run a command from this context automatically because it throws reproducibility right out the window.
+Thankfully some bash magic can make it happen.footnote:[https://stackoverflow.com/a/49765275/9835303[StackOverflow: Using a user's .bashrc in a systemd service]]
+--
+
+. Test run the new systemd unit.
++
+[source,sh]
+----
+$ systemctl --user start update-antigen.service
+----
+
+. Check the output of the command to make sure everything worked.
++
+[source,sh]
+----
+$ systemctl --user status update-antigen.service
+● update-antigen.service - Update Antigen
+     Loaded: loaded (/home/jordan/.config/systemd/user/update-antigen.service; disabled; vendor preset: enabled)
+     Active: inactive (dead) since Tue 2020-09-22 15:36:26 CDT; 2min 51s ago
+TriggeredBy: ● update-antigen.timer
+    Process: 557748 ExecStart=/usr/bin/zsh -c . "$0" && exec "$@" /home/jordan/.zshrc antigen update (code=exited, status=0/SUCCESS)
+   Main PID: 557748 (code=exited, status=0/SUCCESS)
+
+Sep 22 15:36:23 jwillikers systemd[7678]: Starting Update Antigen...
+Sep 22 15:36:24 jwillikers zsh[557748]: Updating robbyrussell/oh-my-zsh@master... Done. Took 0s.
+Sep 22 15:36:25 jwillikers zsh[557748]: Updating zsh-users/zsh-autosuggestions@master... Done. Took 1s.
+Sep 22 15:36:25 jwillikers zsh[557748]: Updating zsh-users/zsh-completions@master... Done. Took 0s.
+Sep 22 15:36:26 jwillikers zsh[557748]: Updating zsh-users/zsh-syntax-highlighting@master... Done. Took 1s.
+Sep 22 15:36:26 jwillikers systemd[7678]: update-antigen.service: Succeeded.
+Sep 22 15:36:26 jwillikers systemd[7678]: Finished Update Antigen.
+----
+
+. Add a systemd timer to update the Antigen plugins once per week.
++
+--
+.~/.config/systemd/user/update-antigen.timer
+[source,ini]
+----
+[Unit]
+Description=Update Antigen weekly
+
+[Timer]
+Persistent=true
+OnCalendar=weekly
+
+[Install]
+WantedBy=timers.target
+----
+
+This timer has `Persistent=true` to account for the situation when the timer would fire but the user has no session running.
+With this option, the timer will just fire the next time the user logs on.
+--
+
+. Set the the Antigen update timer to start when logging in.footnote:[https://wiki.archlinux.org/index.php/Systemd/User#Basic_setup[Arch Wiki: systemd/user - Basic Setup]]
++
+[source,sh]
+----
+$ systemctl --user enable update-antigen.timer
+Created symlink /home/jordan/.config/systemd/user/timers.target.wants/update-antigen.timer → /home/jordan/.config/systemd/user/update-antigen.timer.
+----
+
+=== System-level Update Service
+
+The Red Hat Enterprise Linux 7 and CentOS 7 distributions don't support user-level systemd services, but a system-level service is still possible, as this section describes.footnote:[https://help.tableau.com/current/server-linux/en-us/systemd_user_service_error.htm[Tableau Help: systemd User Service Failures]]
+
+. Add a `systemd` service to update the Antigen plugins.
++
+--
+./etc/systemd/system/update-jordan-antigen.service
+[source,ini]
+----
+[Unit]
+Description=Update Jordan's Antigen plugins for ZSH
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=jordan
+Group=jordan
+ExecStart=/usr/bin/zsh -c '. "$0" && exec "$@"' /home/jordan/.zshrc antigen update
+
+[Install]
+WantedBy=multi-user.target
+----
+
+This systemd unit executes the `antigen update` command after loading the `.zshrc` file for the user `jordan`.footnote:[https://stackoverflow.com/a/49765275/9835303[StackOverflow: Using a user's .bashrc in a systemd service]]
+This is run as the user `jordan` and it requires the network be online in order to update.
+--
+
+. Verify the `network-online.target` exists.footnote:[https://www.freedesktop.org/wiki/Software/systemd/NetworkTarget/[Running Services After the Network is up]]
++
+[source,sh]
+----
+$ systemctl is-enabled NetworkManager-wait-online.service
+enabled
+----
+
+. Test run the new `systemd` unit.
++
+[source,sh]
+----
+$ sudo systemctl start update-jordan-antigen.service
+----
+
+. Check the output of the command to make sure everything worked.
++
+[source,sh]
+----
+$ sudo systemctl status update-jordan-antigen.service
+● update-jordan-antigen.service - Update Jordan\'s Antigen plugins for ZSH
+   Loaded: loaded (/etc/systemd/system/update-jordan-antigen.service; disabled; vendor preset: disabled)
+   Active: inactive (dead)
+
+Sep 16 14:12:36 jwillikers systemd[1]: Starting Update Jordan\'s Antigen plugins for ZSH...
+Sep 16 14:12:37 jwillikers zsh[315]: Updating robbyrussell/oh-my-zsh@master... Done. Took 1s.
+Sep 16 14:12:38 jwillikers zsh[315]: Updating zsh-users/zsh-autosuggestions@master... Done. Took 1s.
+Sep 16 14:12:38 jwillikers zsh[315]: Updating zsh-users/zsh-completions@master... Done. Took 0s.
+Sep 16 14:12:39 jwillikers zsh[315]: Updating zsh-users/zsh-syntax-highlighting@master... Done. Took 1s.
+Sep 16 14:12:39 jwillikers systemd[1]: Started Update Jordan\'s Antigen plugins for ZSH.
+----
+
+. Add a systemd timer to update the Antigen plugins once per week.
++
+./etc/systemd/system/update-jordan-antigen.timer
+[source,ini]
+----
+[Unit]
+Description=Update Antigen weekly
+
+[Timer]
+Persistent=true
+OnCalendar=weekly
+
+[Install]
+WantedBy=timers.target
+----
+
+. Activate the Antigen update timer on system startup.
++
+--
+[source,sh]
+----
+$ sudo systemctl enable update-jordan-antigen.timer
+Created symlink from /etc/systemd/system/timers.target.wants/update-jordan-antigen.timer to /etc/systemd/system/update-jordan-antigen.timer.
+----
+
+This timer has `Persistent=true` to account for the situation when the timer would fire but the system is not powered on.
+With this option, the timer will just fire the next the system boots.
+--
+
+== Conclusion
+
+That's the tutorial.
+You should now have a working systemd service to automatically update your ZSH plugins for you each week.
+Don't forget to disable your update service when you decide to make the switch to the https://fishshell.com/[Fish shell]. 🐟
