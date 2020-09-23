@@ -22,21 +22,21 @@ First, you must install Docker on your system.
 
 . Install Docker Compose.
 +
-[source,console]
+[source,sh]
 ----
 $ sudo apt install docker-compose
 ----
 
 . Add your user to the `docker` group if you want to run docker without requiring superuser privileges.
 +
-[source,console]
+[source,sh]
 ----
 $ sudo usermod -aG docker $USER
 ----
 
 . Reboot to complete the installation.
 +
-[source,console]
+[source,sh]
 ----
 $ sudo reboot
 ----
@@ -47,7 +47,7 @@ Configuring the `docker-compose` file should provide all of the necessary detail
 
 . With Docker installed, create a directory for the `docker-compose` file.
 +
-[source,console]
+[source,sh]
 ----
 $ mkdir unifi_controller
 $ cd unifi_controller
@@ -59,6 +59,7 @@ $ cd unifi_controller
 The provided `docker-compose` file requires just one tweak, configuring the volume.
 
 .docker-compose.yml
+[source,dockerfile]
 ----
 ---
 version: "2.1"
@@ -93,14 +94,14 @@ It really just forwards the necessary ports from the Docker container to the hos
 
 . Once configured, run the container.
 +
-[source,console]
+[source,sh]
 ----
 $ docker-compose up -d
 ----
 
 . Then, just open the UniFi Controller's web UI.
 +
-[source,console]
+[source,sh]
 ----
 $ xdg-open http://127.0.0.1:8443
 ----

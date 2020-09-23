@@ -23,14 +23,14 @@ NOTE: Disable any browser-based ad-blockers you might have enabled, otherwise yo
 
 Download the https://www.geoghegan.ca/scripts/unbound-adblock.sh[unbound-adblock.sh script].
 
-[source,console]
+[source,sh]
 ----
 ftp https://www.geoghegan.ca/scripts/unbound-adblock.sh
 ----
 
 Install the script with the appropriate permissions.
 
-[source,console]
+[source,sh]
 ----
 install -g bin -m 644 -o root unbound-adblock.sh /usr/local/bin/ # <1>
 ----
@@ -38,14 +38,14 @@ install -g bin -m 644 -o root unbound-adblock.sh /usr/local/bin/ # <1>
 
 Create a new user, `_adblock`, who will not be allowed to login.
 
-[source,console]
+[source,sh]
 ----
 useradd -s /sbin/nologin _adblock
 ----
 
 Install an empty `adblock.conf` file owned by the `_adblock` user which is readable by everyone but only writeable by the owner.
 
-[source,console]
+[source,sh]
 ----
 install -m 644 -o _adblock /dev/null /var/unbound/etc/adblock.conf
 ----
@@ -72,7 +72,7 @@ permit nopass _adblock cmd rcctl args reload unbound
 
 Edit the `_adblock` users crontab file.
 
-[source,console]
+[source,sh]
 ----
 crontab -u _adblock -e
 ----
@@ -91,14 +91,14 @@ SHELL=/bin/sh
 
 Run the `unbound-adblock.sh` script once.
 
-[source,console]
+[source,sh]
 ----
 doas -u _adblock sh /usr/local/bin/unbound-adblock.sh
 ----
 
 Restart the unbound service.
 
-[source,console]
+[source,sh]
 ----
 rcctl restart unbound
 ----
@@ -107,7 +107,7 @@ Add a PF rule to redirect all DNS queries bound for Google's DNS servers, `8.8.8
 The example below uses a macro `lan_if` to represent the LAN network interface, `em1`.
 
 ./etc/pf.conf
-[source]
+[source,pf]
 ----
 # Redirect any DNS requests to Google's DNS servers to the LAN's unbound server.
 lan_if = "em1"
@@ -122,7 +122,7 @@ NOTE: Be careful to position this rule in a place where it is not superceded by 
 My actual configuration is a bit more complex, but I have included it here for reference.
 
 ./etc/pf.conf
-[source]
+[source,pf]
 ----
 lan1_if = "em1"
 lan2_if = "em2"
@@ -155,7 +155,7 @@ pass in quick on $guest_wifi_if inet proto { tcp udp } to <google_dns_servers> p
 
 Reload the updated PF rules.
 
-[source,console]
+[source,sh]
 ----
 pfctl -f /etc/pf.conf
 ----

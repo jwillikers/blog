@@ -26,7 +26,7 @@ This brief guide will walk you through relaying emails on Ubuntu 20.04 with Open
 === Install
 
 First, install OpenSMTPD on Ubuntu.
-[source,console]
+[source,sh]
 ----
 $ apt install opensmtpd
 ----
@@ -35,7 +35,7 @@ NOTE: This will probably ask you a couple of questions from an ncurses interface
 
 Additionally, you will likely want to install the `mailutils` package to provide the standard system mail commands.
 
-[source,console]
+[source,sh]
 ----
 $ apt install mailutils
 ----
@@ -81,14 +81,14 @@ match from local for any action "relay"
 Your account credentials must be associated with a label in the `/etc/mail/secrets` file.
 
 Create the `secrets` file.
-[source,console]
+[source,sh]
 ----
 $ mkdir /etc/mail
 $ touch /etc/mail/secrets
 ----
 
 Now, make sure the file's permissions are tight before putting your plain-text password inside.
-[source,console]
+[source,sh]
 ----
 $ chmod 640 /etc/mail/secrets # <1>
 $ chown root:opensmtpd /etc/mail/secrets # <2>
@@ -105,20 +105,20 @@ jdoe jdoe@gmail.com:my_app_password # <1>
 <1> Use the label `jdoe` to represent the account `jdoe` at `gmail.com` which has the passphrase `my_app_password`.
 
 Check that the OpenSMTPD configuration file is valid.
-[source,console]
+[source,sh]
 ----
 $ smtpd -n
 configuration OK
 ----
 
 Restart OpenSMTPD to make sure the configuration changes take effect.
-[source,console]
+[source,sh]
 ----
 $ systemctl restart opensmtpd
 ----
 
 Enable OpenSMTPD on system startup, if desired.
-[source,console]
+[source,sh]
 ----
 $ systemctl enable opensmtpd
 ----

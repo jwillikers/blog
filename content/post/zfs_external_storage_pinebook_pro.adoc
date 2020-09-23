@@ -25,7 +25,7 @@ Adding the disk to a pool places it under the control of ZFS, providing all of t
 . First, determine which device is the microSD card.
 +
 --
-[source,console]
+[source,sh]
 ----
 $ sudo fdisk -l
 Disk /dev/mmcblk2: 58.25 GiB, 62537072640 bytes, 122142720 sectors
@@ -57,7 +57,7 @@ In this case, `/dev/mmcblk1` is the 256GB microSD card.
 
 . Next, determine the disk id to use when creating the zpool.footnote:[https://wiki.archlinux.org/index.php/ZFS#Identify_disks[Arch Linux Wiki: Identify Disks]]
 +
-[source,console]
+[source,sh]
 ----
 $ ls -lh /dev/disk/by-id/ | grep -w mmcblk1
 lrwxrwxrwx 1 root root 13 Jun 24 07:33 mmc-AB5CD_0x00000001 -> ../../mmcblk1
@@ -66,7 +66,7 @@ lrwxrwxrwx 1 root root 13 Jun 24 07:33 mmc-AB5CD_0x00000001 -> ../../mmcblk1
 . Then, check the block size.
 +
 --
-[source,console]
+[source,sh]
 ----
 $ sudo blockdev --getpbsz /dev/mmcblk1
 512
@@ -77,7 +77,7 @@ The SD card's block size is 512 MiB, which means `ashift` should be set to 12.fo
 
 . Create the pool.footnote:[https://wiki.archlinux.org/index.php/ZFS#Creating_ZFS_pools[Arch Linux Wiki: ZFS - Creating ZFS Pools]]
 +
-[source,console]
+[source,sh]
 ----
 $ sudo zpool create \
   -o ashift=12 \
@@ -88,7 +88,7 @@ $ sudo zpool create \
 
 . Configure the system to automatically import the pool on boot.footnote:[https://wiki.archlinux.org/index.php/ZFS#Automatic_Start[Arch Linux Wiki: ZFS - Automatic Start]]
 +
-[source,console]
+[source,sh]
 ----
 $ sudo zpool set cachefile=/etc/zfs/zpool.cache ext_pool
 ----
@@ -99,7 +99,7 @@ With the microSD card now managed by ZFS, it is now possible to create the ZFS d
 
 . Create the ZFS dataset for your tunes.
 +
-[source,console]
+[source,sh]
 ----
 $ sudo zfs create \
   -o recordsize=1M \ # <1>
@@ -110,7 +110,7 @@ $ sudo zfs create \
 
 . Set the appropriate ownership for the mounted `~/Music` directory.
 +
-[source,console]
+[source,sh]
 ----
 $ sudo chown -R jordan:jordan /home/jordan/Music
 ----
@@ -123,7 +123,7 @@ Since the pool is on an SD card, you might just want to pop it out and carry it 
 
 . Export the pool from the Pinebook Pro.
 +
-[source,console]
+[source,sh]
 ----
 $ sudo zpool export ext_pool
 ----
@@ -132,7 +132,7 @@ $ sudo zpool export ext_pool
 
 . Import the pool.
 +
-[source,console]
+[source,sh]
 ----
 $ sudo zpool import ext_pool
 cannot mount '/home/jordan/Music': directory is not empty
@@ -143,7 +143,7 @@ cannot mount '/home/jordan/Music': directory is not empty
 --
 I keep my music in `~/Music`, so I have to mount the dataset somewhere else.
 
-[source,console]
+[source,sh]
 ----
 $ sudo zfs set mountpoint=/media/jordan/Music ext_pool/music
 ----
@@ -151,28 +151,28 @@ $ sudo zfs set mountpoint=/media/jordan/Music ext_pool/music
 
 . Mount the dataset to the updated location.
 +
-[source,console]
+[source,sh]
 ----
 $ sudo zfs mount ext_pool/music
 ----
 
 . Set the appropriate ownership for the mounted directory.
 +
-[source,console]
+[source,sh]
 ----
 $ sudo chown jordan:jordan /media/jordan/Music
 ----
 
 . Copy over the music.
 +
-[source,console]
+[source,sh]
 ----
 $ tar cfC - /home/jordan/Music . | tar xpfC - /media/jordan/Music
 ----
 
 . Then change the mount location back to `~/Music`.
 +
-[source,console]
+[source,sh]
 ----
 $ sudo zfs set mountpoint=/home/jordan/Music ext_pool/music
 cannot mount '/home/jordan/Music': directory is not empty
@@ -181,14 +181,14 @@ property may be set but unable to remount filesystem
 
 . Export the pool from the machine.
 +
-[source,console]
+[source,sh]
 ----
 $ sudo zpool export ext_pool
 ----
 
 . Now place the SD card back into the Pinebook Pro, and import the pool again.
 +
-[source,console]
+[source,sh]
 ----
 $ sudo zpool import ext_pool
 ----
@@ -199,7 +199,7 @@ If everything is successful, your music should now be available in `~/Music`.
 
 You should also check that the pool and music dataset are automatically mounted at boot.
 
-[source,console]
+[source,sh]
 ----
 $ sudo reboot
 ----
