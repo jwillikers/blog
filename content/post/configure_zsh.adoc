@@ -125,3 +125,4 @@ $ antigen update
 
 You should now be able to install and configure ZSH as your default shell in Ubuntu.
 You should also be able to setup Antigen to use oh-my-zsh and a couple of convenient plugins.
+If you want to automate updating your Antigen plugins with https://www.freedesktop.org/wiki/Software/systemd/[systemd], checkout the post <<automatically_update_antigen#,Automatically Update Antigen>>.
