@@ -1,0 +1,37 @@
+# tag::localhost[]
+NoHostAuthenticationForLocalhost yes
+# end::localhost[]
+
+# tag::vm_host[]
+Host vm_host
+  Hostname vm_host.local
+# end::vm_host[]
+
+# tag::vm1_vm2[]
+Host vm1
+  HostKeyAlias vm1.localhost
+
+Host vm2
+  HostKeyAlias vm2.localhost
+
+Host vm1 vm2
+  Hostname localhost
+  Port 9001
+  ProxyJump vm_host
+# end::vm1_vm2[]
+
+# tag::mdns[]
+Host *.local
+  CheckHostIP no
+# end::mdns[]
+
+# tag::defaults[]
+Host *
+  AddKeysToAgent yes
+  IdentitiesOnly yes
+  IdentityFile ~/.ssh/id_rsa_catalina-build.pub
+  PreferredAuthentications publickey,keyboard-interactive,password,gssapi-with-mic,hostbased
+
+  # Specific to macOS
+  UseKeychain yes
+# end::defaults[]
