@@ -1,0 +1,46 @@
++++
+title = "Change your Shell"
+categories = ["Command-line"]
+tags = ["BSD", "fish", "Linux", "macOS", "shell", "Ubuntu"]
+date = "2020-10-01"
+draft = false
++++
+
+Sometimes, you just want to switch to a better shell for your terminal - like https://fishshell.com/[fish].
+
+== Tutorial
+
+Here's a quick run through of how to change your default login shell which assumes you understand the basics of the command-line on Unix-like systems.
+These instructions are exemplified on an Ubuntu 20.04 system for the fish shell but this works just the same for any shell on *BSD, Linux, and macOS.
+
+. Install the fish package.
++
+--
+[source,sh]
+----
+➜ sudo apt install -y fish
+----
+
+This debian package installs the `fish` executable in `/usr/bin`.
+--
+
+. Register fish as a valid login shell by adding its file path to the `/etc/shells` file.footnote:[https://man7.org/linux/man-pages/man5/shells.5.html[shells(5) — Linux manual page]]
++
+[source,sh]
+----
+➜ echo /usr/bin/fish | sudo tee -a /etc/shells
+/usr/bin/fish
+----
+
+. Set the default login shell of the current user to fish.footnote:[https://fishshell.com/docs/current/tutorial.html#switching-to-fish[Fish Shell Tutorial - Switching to fish?]]
++
+[source,sh]
+----
+➜ chsh -s /usr/bin/fish
+Password:
+----
+
+== Conclusion
+
+Nice and simple, right?
+It should be a piece of cake to change your login shell now.
