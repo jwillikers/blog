@@ -80,6 +80,7 @@ Jordan Williams
     workingFolderCurrent = true
     trace = true
     [markup.asciidocext.attributes]
+    experimental = ""
     source-highlighter = "rouge"
     rouge-style = "base16.solarized.light"
     icons = "font"

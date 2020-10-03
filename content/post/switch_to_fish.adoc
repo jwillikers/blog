@@ -1,0 +1,250 @@
++++
+title = "Switch to fish"
+categories = ["Command-line"]
+tags = ["Debian", "fish", "Linux", "shell", "Ubuntu"]
+date = "2020-10-03"
+draft = false
++++
+
+I've finally made the switch from https://www.zsh.org/[ZSH] to the https://fishshell.com/[fish shell].
+Unlike ZSH, I don't need to install and manage a whole host of plugins.
+Everything I want comes packaged right in as part of the shell itself.
+
+== The Switch
+
+In this post, I describe how to switch to the fish shell and some of the interesting features it offers.
+
+=== Install
+
+Installing fish is a piece of cake.
+On https://ubuntu.com/[Ubuntu], a fish package is readily available.
+An additional https://help.launchpad.net/Packaging/PPA[PPA] supplies newer versions of fish than those that ship with the distribution.
+The following steps install fish through the PPA.
+
+. Add the https://launchpad.net/~fish-shell/+archive/ubuntu/release-3[fish PPA].
++
+[source,sh]
+----
+➜ sudo apt-add-repository ppa:fish-shell/release-3
+----
+
+. Update https://wiki.debian.org/Aptitude[Aptitude] with the new PPA.
++
+[source,sh]
+----
+➜ sudo apt update
+----
+
+. Install the fish package.
++
+[source,sh]
+----
+➜ sudo apt install -y fish
+----
+
+=== Switch
+
+Once installed, switching is just a matter of updating the login shell.footnote:[https://fishshell.com/docs/current/tutorial.html#switching-to-fish[fish Tutorial: Switching to fish?]]
+
+. Register `/usr/bin/fish` as a login shell by adding its path to https://manpages.ubuntu.com/manpages/en/man5/shells.5.html[`/etc/shells`].
++
+--
+Debian provides a convenient https://manpages.ubuntu.com/manpages/en/man8/add-shell.8.html[`add-shell`] command to accomplish this.
+
+[source,sh]
+----
+➜ sudo add-shell /usr/bin/fish
+----
+--
+
+. Set the current user's login shell to fish with https://manpages.ubuntu.com/manpages/en/man1/chsh.1.html[`chsh`].
++
+[source,sh]
+----
+➜ chsh -s /usr/bin/fish
+Password: 
+----
+
+. Now, open up a fresh terminal session to start using fish.
++
+--
+You should see a fresh, vanilla shell prompt like the following.
+
+[source,sh]
+----
+Welcome to fish, the friendly interactive shell
+Type help for instructions on how to use fish
+jordan@jwillkers ~>
+----
+--
+
+=== Configure
+
+Adjusting basic configuration options is quick ang easy with fish.
+
+. Configuring the fish shell is as easy as selecting options the provided by the web interface.
++
+[source,sh]
+----
+➜ fish_config
+----
+
+. Style the prompt.
++
+--
+If you like that https://ohmyz.sh/[oh-my-zsh] feel as I do, you might want to use https://github.com/ohmyzsh/ohmyzsh/wiki/Themes#robbyrussell[robbyrussell's theme] for your shell prompt.
+If you like doing things the old fashion way - or want to set the prompt remotely, here's a quick rundown.
+
+. Make sure the `~/.config/fish/functions` directory exists.
++
+[source,sh]
+----
+➜ mkdir -p ~/.config/fish/functions
+----
+
+. Then copy over the desired prompt configuration, `robbyrussell.fish` in this case, from `/usr/share/fish/tools/web_config/sample_prompts/`. 
++
+[source,sh]
+----
+➜ cp /usr/share/fish/tools/web_config/sample_prompts/robbyrussell.fish ~/.config/fish/functions/fish_prompt.fish
+----
+--
+
+. Adjust the color theme.
++
+--
+The color theme can be important when your terminal's color theme obscures autosuggestions.
+https://ethanschoonover.com/solarized/[Solarized] is my color scheme of choice.
+The `fish_config` web tool outputs the commands that set the various variables for a color theme when one is selected.
+This is  easy to translate to a command-line which can be quite helpful when configuring remotely.
+As an example, the following command sets the color scheme to solarized dark.
+
+[source,sh]
+----
+➜ set -U fish_color_normal normal; \
+  set -U fish_color_command 93a1a1; \
+  set -U fish_color_quote 657b83; \
+  set -U fish_color_redirection 6c71c4; \
+  set -U fish_color_error dc322f; \
+  set -U fish_color_end 268bd2; \
+  set -U fish_color_selection white --bold --background=brblack; \
+  set -U fish_color_search_match bryellow --background=black; \
+  set -U fish_color_history_current --bold; \
+  set -U fish_color_operator 00a6b2; \
+  set -U fish_color_param 839496; \
+  set -U fish_color_cwd green; \
+  set -U fish_color_cwd_root red; \
+  set -U fish_color_valid_path --underline; \
+  set -U fish_color_autosuggestion 586e75; \
+  set -U fish_color_user brgreen; \
+  set -U fish_color_escape 00a6b2; \
+  set -U fish_color_cancel -r; \
+  set -U fish_pager_color_completion B3A06D; \
+  set -U fish_pager_color_description B3A06D; \
+  set -U fish_pager_color_prefix cyan --underline; \
+  set -U fish_pager_color_progress brwhite --background=cyan; \
+  set -U fish_color_host normal; \
+  set -U fish_color_match --background=brblue; \
+  set -U fish_color_comment 586e75
+----
+--
+
+. Now, if you're thinking about `.fishrc`, forget about it.footnote:[https://fishshell.com/docs/current/index.html#initialization-files[fish Documentation: Initialization files]]
+The equivalent of `~/.bashrc` and `~/.zshrc` is `~/.config/fish/config.fish` but a lot of configuration is better achieved - and organized - through https://fishshell.com/docs/current/tutorial.html#universal-variables[_universal variables_] and https://fishshell.com/docs/current/tutorial.html#autoloading-functions[_autoloading functions_].
+
+. Update the `PATH` environment variable in fish to suit your needs.footnote:[https://fishshell.com/docs/current/tutorial.html#path[fish Tutorial: $PATH]]
++
+--
+When messing with `PATH`, use fish's dedicated internal variable `fish_user_paths`.
+This variable is special and populates `PATH`.
+Some Linux distributions don't include `/usr/local/bin` in `PATH` by default.
+With the https://fishshell.com/docs/current/cmds/set.html[`set`] command, prepend `/usr/local/bin` to `PATH` as follows.
+
+[source,sh]
+----
+➜ set -p fish_user_paths /usr/local/bin
+----
+
+The `-p` option prepends a value to the given variable.
+The `-U` option signifies a https://fishshell.com/docs/current/tutorial.html#universal-variables[_universal variable_], which persists the variable in the future and across any currently running fish sessions.
+This reduces the overhead of having to mess about with shell startup files.
+These variables can be managed in the file `~/.config/fish/fish_variables`.
+--
+
+=== Learn
+
+A lot of fish functionality has been covered already, but "there's always more to learn" as they say.
+A few additional fish topics are covered here.
+
+* Export shell variables with the `-x` flag.
++
+--
+This makes the variables accessible to other programs.
+`PATH` is automatically exported from the contents of the un-exported `fish_user_paths` variable, making this an exception.
+For everything else, export the variable by calling `set` with the `-x` flag.
+To add a value to the beginning of the `LD_LIBRARY_PATH` environment variable and export it, use `set` as follows.
+
+[source,sh]
+----
+➜ set -px LD_LIBRARY_PATH /usr/local/lib
+----
+--
+
+* Understand how fish handles https://fishshell.com/docs/current/index.html#path-variables[_PATH variables_].
++
+--
+The fish shell stores lists internally as arrays of strings.
+This is fundamentally different from how shells typically represent many fundamental variables which contain lists of paths, such as `PATH` and `LD_LIBRARY_PATH`.
+Classic shells store these "lists" as a single string of colon-separated paths.
+Many applications and programs expect the incumbent formatting, so fish treats these as special variables called _PATH variables_.
+When printing or joining _PATH variables_, colons are used to delimit values when the variables are _quoted_.
+Otherwise, spaces separate each path in the list.
+Any variable ending in `PATH` is automatically treated as a _PATH variable_.
+So, when using `set` to deal a _PATH variable_, you can still treat it as you would any other list in fish.footnote:[https://fishshell.com/docs/current/index.html#lists[fish Documentation: Lists]]
+As an example, the following command adds `/usr/local/lib` to the beginning of the classic `LD_LIBRARY_PATH` variable and appends `~/lib` to the end.
+
+[source,sh]
+----
+➜ set -x LD_LIBRARY_PATH /usr/local/lib $LD_LIBRARY_PATH ~/lib
+----
+
+When quoting the variable, it must be modified like so to achieve the same result.
+
+[source,sh]
+----
+➜ set -x LD_LIBRARY_PATH /usr/local/lib:"$LD_LIBRARY_PATH":~/lib
+----
+--
+
+* Use https://fishshell.com/docs/current/index.html#autosuggestions[autosuggestions] instead of Bash's https://www.gnu.org/software/bash/manual/html_node/Commands-For-History.html[reverse-search-history].
++
+--
+This one has required a little bit of learning curve since I'm so used to finding previous commands with kbd:[Ctrl+R].
+While not a one-to-one correlation, the autosuggestions in fish can be used instead.
+Just start typing a command and fish will provide suggestions on your prompt.
+As autosuggestion appear from your history, choose the suggested line with kbd:[→].
+To select only the next word of the suggestion, use kbd:[Alt+→].
+--
+
+* Another nifty feature is the https://fishshell.com/docs/current/tutorial.html#wildcards[recursive wildcard] which automatically descends into subdirectories for matching a particular pattern.
+--
+The following example recursively searches and lists all files ending in `.fish` in `~/.config`.
+
+[source,sh]
+----
+➜ ls ~/.config/**.fish
+/home/jordan/.config/fish/functions/fish_prompt.fish
+----
+--
+
+== Troubleshoot
+
+Common issues involve various environment variables and initialization functionality which assumes the default login shell is Bash.
+Some people place `fish` in their `~/.bashrc` file to start fish from within Bash so that all environment variables are correctly configured.
+I prefer to use `fish` as my login shell and file bugs as necessary for projects to properly support it, but this is definitely a bit a of a pain but thus is progress, eh?
+
+== Conclusion
+
+There's a lot to learn about the fish shell.
+It provides an extremely convenient feature set and is attempting to solve issues inherited from shells of generations past.
+I love it, and its a great improvement to my workflow.
