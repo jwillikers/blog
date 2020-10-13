@@ -241,6 +241,7 @@ To select only the next word of the suggestion, use kbd:[Alt+→].
 --
 
 * Another nifty feature is the https://fishshell.com/docs/current/tutorial.html#wildcards[recursive wildcard] which automatically descends into subdirectories for matching a particular pattern.
++
 --
 The following example recursively searches and lists all files ending in `.fish` in `~/.config`.
 
