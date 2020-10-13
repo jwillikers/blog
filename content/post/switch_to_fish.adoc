@@ -156,6 +156,13 @@ As an example, the following command sets the color scheme to solarized dark.
 ➜ set -U fish_greeting ""
 ----
 
+. Enable backwards-incompatible features.footnote:[https://fishshell.com/docs/current/index.html#future-feature-flags[fish Documentation: Future feature flags]]
++
+[source,sh]
+----
+➜ set -U fish_features stderr-nocaret qmark-noglob
+----
+
 . Now, if you're thinking about `.fishrc`, forget about it.footnote:[https://fishshell.com/docs/current/index.html#initialization-files[fish Documentation: Initialization files]]
 The equivalent of `~/.bashrc` and `~/.zshrc` is `~/.config/fish/config.fish` but a lot of configuration is better achieved - and organized - through https://fishshell.com/docs/current/tutorial.html#universal-variables[_universal variables_] and https://fishshell.com/docs/current/tutorial.html#autoloading-functions[_autoloading functions_].
 
