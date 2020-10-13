@@ -163,6 +163,34 @@ As an example, the following command sets the color scheme to solarized dark.
 ➜ set -U fish_features stderr-nocaret qmark-noglob
 ----
 
+. Enable https://fishshell.com/docs/current/index.html#vi-mode-commands[Vi mode].
++
+--
+For user's who prefer http://ex-vi.sourceforge.net/[Vi] and https://www.vim.org/[Vim], there is a nifty method of enabling Vim keyboard shortcuts in addition to the default Emacs shortcuts.
+Creating the file below will enable this and default to insert mode.
+
+[source,sh]
+.~/.config/fish/functions/fish_user_key_bindings.fish
+----
+function fish_user_key_bindings
+    fish_default_key_bindings -M insert
+    fish_vi_key_bindings insert
+end
+----
+
+[TIP]
+====
+Override the `fish_mode_prompt` function with an empty function to disable the Vi mode indicator.
+
+[source,sh]
+.~/.config/fish/functions/fish_mode_prompt.fish
+----
+function fish_mode_prompt
+end
+----
+====
+--
+
 . Now, if you're thinking about `.fishrc`, forget about it.footnote:[https://fishshell.com/docs/current/index.html#initialization-files[fish Documentation: Initialization files]]
 The equivalent of `~/.bashrc` and `~/.zshrc` is `~/.config/fish/config.fish` but a lot of configuration is better achieved - and organized - through https://fishshell.com/docs/current/tutorial.html#universal-variables[_universal variables_] and https://fishshell.com/docs/current/tutorial.html#autoloading-functions[_autoloading functions_].
 
