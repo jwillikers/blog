@@ -48,7 +48,7 @@ TIP: From within Vim, access the plugin's help documentation with `:help solariz
 . Enable the Solarized Dark color scheme in your Vim configuration file.
 +
 [source]
-.\~/.vim/vimrc
+.~/.vim/vimrc
 ----
 syntax enable
 set background=dark
