@@ -79,7 +79,7 @@ NOTE: You will have to log out and back in again for changes in `~/.pam_environm
 +
 [source,sh]
 ----
-➜ alias -s cat /usr/bin/bat
+➜ alias -s cat (which bat)
 ----
 
 . Highlight syntax within `man` pages.
