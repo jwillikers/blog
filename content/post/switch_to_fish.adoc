@@ -230,14 +230,21 @@ When quoting the variable, it must be modified like so to achieve the same resul
 ----
 --
 
-* Use https://fishshell.com/docs/current/index.html#autosuggestions[autosuggestions] instead of Bash's https://www.gnu.org/software/bash/manual/html_node/Commands-For-History.html[reverse-search-history].
+* Take advantage of https://fishshell.com/docs/current/index.html#autosuggestions[autosuggestions].
 +
 --
-This one has required a little bit of learning curve since I'm so used to finding previous commands with kbd:[Ctrl+R].
-While not a one-to-one correlation, the autosuggestions in fish can be used instead.
 Just start typing a command and fish will provide suggestions on your prompt.
 As autosuggestion appear from your history, choose the suggested line with kbd:[→].
 To select only the next word of the suggestion, use kbd:[Alt+→].
+--
+
+* Use fish's https://fishshell.com/docs/current/index.html#history-search[searchable history] instead of Bash's https://www.gnu.org/software/bash/manual/html_node/Commands-For-History.html[reverse-search-history].
++
+--
+This one has required a bit of learning curve since I'm so used to finding previous commands by searching with kbd:[Ctrl+R].
+With fish, this is even simpler.
+Start typing the letters, word, or phrase you want to match.
+Then, just press kbd:[Alt+↑] to scroll backwards through history for matches.
 --
 
 * Another nifty feature is the https://fishshell.com/docs/current/tutorial.html#wildcards[recursive wildcard] which automatically descends into subdirectories for matching a particular pattern.
