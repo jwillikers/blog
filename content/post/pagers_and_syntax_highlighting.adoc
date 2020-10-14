@@ -1,5 +1,5 @@
 +++
-title = "Syntax Highlighting on the Command-line with bat"
+title = "Pagers and Syntax Highlighting"
 categories = ["Command-line"]
 tags = ["bat", "Linux", "less", "Rust", "Solarized", "Ubuntu", "Unix"]
 date = "2020-10-11"
