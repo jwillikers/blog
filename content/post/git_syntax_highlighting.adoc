@@ -1,5 +1,5 @@
 +++
-title = "Syntax Highlighting for git"
+title = "Git Syntax Highlighting"
 categories = ["Command-line"]
 tags = ["delta", "git", "Linux", "Rust", "Solarized", "Ubuntu", "Unix"]
 date = "2020-10-14"
