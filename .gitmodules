@@ -4,4 +4,4 @@
 	branch = master
 [submodule "themes/even"]
 	path = themes/even
-	url = https://github.com/olOwOlo/hugo-theme-even
+	url = https://github.com/olOwOlo/hugo-theme-even.git
