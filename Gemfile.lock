@@ -1,0 +1,20 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    asciidoctor (2.0.10)
+    asciidoctor-html5s (0.5.0)
+      asciidoctor (>= 1.5.7, < 3.0)
+      thread_safe (~> 0.3.4)
+    rouge (3.24.0)
+    thread_safe (0.3.6)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  asciidoctor
+  asciidoctor-html5s
+  rouge
+
+BUNDLED WITH
+   2.1.4
