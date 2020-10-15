@@ -173,7 +173,7 @@ Now that rbenv is setup, it's straightforward to build a version of Ruby and spe
 --
 [source,sh]
 ----
-➜ rbenv install (rbenv install -l | grep -v - | tail -1)
+➜ rbenv install (rbenv install -L | grep -v - | tail -1)
 Downloading ruby-2.7.1.tar.bz2...
 -> https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.1.tar.bz2
 Installing ruby-2.7.1...
