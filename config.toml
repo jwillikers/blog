@@ -117,7 +117,7 @@ Jordan Williams
 
   highlightInClient = true
 
-  toc = true
+  toc = false
   autoCollapseToc = false # Auto expand and collapse toc
 
   # see https://github.com/fancyapps/fancybox
