@@ -1,0 +1,201 @@
+= Grow Disk Space on a CentOS 7 VM Using QEMU, LVM, and XFS
+:page-layout:
+:page-category: Systems
+:page-tags: [CentOS, disk, filesystem, Linux, LVM, QEMU, XFS]
+
+Sometimes you just need some more disk space.
+Expanding the size of a virtual disk, though, is not necessarily as easy as you'd hope.
+Having just done this on a https://www.centos.org/[CentOS] 7 virtual machine, I document how to do so here.
+Thanks goes to the article https://www.systemmen.com/storage-fs/how-to-extend-linux-lvm-partition-in-aws-379.html[How to extend Linux LVM partition in AWS] from https://www.systemmen.com/[SystemMen].
+
+== Tutorial
+
+This tutorial details how to grow the disk image for a CentOS 7 virtual machine.
+Experience with CentOS 7, the command-line, and Linux filesystem and logical volume management is assumed.
+This tutorial uses https://www.qemu.org/[QEMU] for modifying the disk image, http://www.sourceware.org/lvm2/[LVM] for logical volume management, and https://xfs.wiki.kernel.org/[XFS] for the underlying filesystem.
+
+. Be sure to backup any critical data.
+
+. Shutdown the virtual machine.
+
+. Increase the size of the disk image with the https://www.qemu.org/docs/master/interop/qemu-img.html[QEMU disk image utility].
++
+--
+[source,sh]
+----
+➜ qemu-img resize example.qcow2 +40G
+Image resized.
+----
+
+This increases the size of the disk image _example.qcow2_ by forty Gibibytes.
+--
+
+. Start the virtual machine.
+
+. On the virtual machine, install the `cloud-utils-growpart` package from Canonical's https://github.com/canonical/cloud-utils[cloud-utils] project.
++
+[source,sh]
+----
+➜ sudo dnf -y install cloud-utils-growpart
+----
+
+. List your disks and partitions with the https://www.freebsd.org/cgi/man.cgi?query=lsblk&manpath=CentOS+7.1[`lsblk`] command and note the device and partition you wish to expand.
++
+--
+[source,sh]
+----
+➜ lsblk
+NAME                           MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+fd0                              2:0    1     4K  0 disk
+sr0                             11:0    1  1024M  0 rom
+vda                            252:0    0    80G  0 disk
+├─vda1                         252:1    0     1G  0 part /boot
+└─vda2                         252:2    0    59G  0 part
+  ├─centos-root                253:0    0    37G  0 lvm  /
+  ├─centos-swap                253:1    0   3.9G  0 lvm  [SWAP]
+  └─centos-home                253:2    0  18.1G  0 lvm  /home
+----
+
+The _home_ partition is low on space, so partition 2 on the device `vda` will be expanded because it contains `centos-home`.
+--
+
+. Grow partition 2 on device `vda` with all the new free space on the disk image by using the https://www.freebsd.org/cgi/man.cgi?query=growpart&manpath=Debian+8.1.0[`growpart`] command.
++
+[source,sh]
+----
+➜ sudo growpart /dev/vda 2
+CHANGED: partition=2 start=2099200 old: size=123729920 end=125829120 new: size=207615967 end=209715167
+----
+
+. Reboot the VM.
+
+. Expand the corresponding physical from new space available on the partition with https://www.freebsd.org/cgi/man.cgi?query=pvresize&manpath=CentOS+7.1[`pvresize`].
++
+[source,sh]
+----
+➜ sudo pvresize /dev/vda2
+  Physical volume "/dev/vda2" changed
+  1 physical volume(s) resized or updated / 0 physical volume(s) not resized
+----
+
+. Use the https://www.gnu.org/software/coreutils/manual/html_node/df-invocation.html[`df`] command, determine which logical volume is to be grown.
++
+--
+[source,sh]
+----
+➜ df -Th
+Filesystem                             Type      Size  Used Avail Use% Mounted on
+devtmpfs                               devtmpfs  1.9G     0  1.9G   0% /dev
+tmpfs                                  tmpfs     1.9G     0  1.9G   0% /dev/shm
+tmpfs                                  tmpfs     1.9G  9.2M  1.9G   1% /run
+tmpfs                                  tmpfs     1.9G     0  1.9G   0% /sys/fs/cgroup
+/dev/mapper/centos-root                xfs        38G   15G   23G  40% /
+/dev/vda1                              xfs      1014M  238M  777M  24% /boot
+/dev/mapper/centos-home                xfs        19G   18G  213M  99% /home
+tmpfs                                  tmpfs     379M   12K  379M   1% /run/user/42
+tmpfs                                  tmpfs     379M     0  379M   0% /run/user/1001
+----
+
+The `/dev/mapper/centos-home` filesystem is ninety-nine percent full, so this is the volume that needs to be enlarged.
+--
+
+. With https://www.freebsd.org/cgi/man.cgi?query=lvextend&manpath=CentOS+7.1[`lvextend`], extend the logical volume to with the space just added to the physical volume.
++
+[source,sh]
+----
+➜ sudo lvextend -l +100%FREE /dev/mapper/centos-home
+  Size of logical volume centos/home changed from <18.09 GiB (4630 extents) to <58.09 GiB (14870 extents).
+  Logical volume centos/home successfully resized.
+----
+
+. Determine the filesystem path for the logical volume `/dev/mapper/centos-home` from the output of the https://www.freebsd.org/cgi/man.cgi?query=lvdisplay&apropos=0&sektion=0&manpath=CentOS+7.1&arch=default&format=html[`lvdisplay`] command.
++
+--
+[source,sh]
+----
+➜ sudo lvdisplay
+  --- Logical volume ---
+  LV Path                /dev/centos/swap
+  LV Name                swap
+  VG Name                centos
+  LV UUID                rEAof0-CesW-iUqd-dq11-9k8P-p82Y-9bMvMQ
+  LV Write Access        read/write
+  LV Creation host, time localhost, 2020-09-15 08:09:39 -0500
+  LV Status              available
+  # open                 2
+  LV Size                <3.88 GiB
+  Current LE             992
+  Segments               1
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     8192
+  Block device           253:1
+
+  --- Logical volume ---
+  LV Path                /dev/centos/home
+  LV Name                home
+  VG Name                centos
+  LV UUID                IPqAHo-dvhr-ha1L-qbwf-DcAw-yAu1-K1VM6O
+  LV Write Access        read/write
+  LV Creation host, time localhost, 2020-09-15 08:09:39 -0500
+  LV Status              available
+  # open                 1
+  LV Size                <18.09 GiB
+  Current LE             4630
+  Segments               2
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     8192
+  Block device           253:2
+
+  --- Logical volume ---
+  LV Path                /dev/centos/root
+  LV Name                root
+  VG Name                centos
+  LV UUID                fPqtH3-fYV2-UX79-M2qG-731D-hv8c-t5M0TA
+  LV Write Access        read/write
+  LV Creation host, time localhost, 2020-09-15 08:09:40 -0500
+  LV Status              available
+  # open                 1
+  LV Size                <37.04 GiB
+  Current LE             9481
+  Segments               1
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     8192
+  Block device           253:0
+----
+
+The path is indicated by the field _LV Path_.
+The path for the _home_ directory is `/dev/centos/home`.
+--
+
+. Increase the filesystem's size by passing the path `/dev/centos/home` to the https://www.freebsd.org/cgi/man.cgi?query=xfs_growfs&manpath=CentOS+7.1[`xfs_growfs`] command.
++
+[source,sh]
+----
+➜ sudo xfs_growfs /dev/centos/home
+meta-data=/dev/mapper/home isize=512    agcount=5, agsize=1185024 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0 spinodes=0
+data     =                       bsize=4096   blocks=4741120, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal               bsize=4096   blocks=2560, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+data blocks changed from 4741120 to 15226880
+----
+
+. Verify that more disk space is indeed available.
++
+[source,sh]
+----
+➜ df -Th /home
+Filesystem                             Type  Size  Used Avail Use% Mounted on
+/dev/mapper/centos-home                xfs    59G   18G   41G  31% /home
+----
+
+== Conclusion
+
+You should now be able to resize a CentOS 7 virtual machine using QEMU, LVM, and XFS and have a better understanding of the tools and steps involved in the process.

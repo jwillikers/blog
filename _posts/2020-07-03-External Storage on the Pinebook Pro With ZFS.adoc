@@ -1,0 +1,206 @@
+= External Storage on the Pinebook Pro With ZFS
+:page-layout:
+:page-category: Systems
+:page-tags: [ArchLinux, Linux, Manjaro, PinebookPro, ZFS]
+
+NOTE: This tutorial is out-of-date and will be updated when I get ZFS working again on the Pinebook Pro.
+
+The https://www.pine64.org/pinebook-pro/[Pinebook Pro] comes with a small amount of internal disk space, only 64 GB.
+While this is upgradeable to 128 GB, that still isn't enough for those with large media collections.
+The easiest solution is to use a microSD card.
+And now you're just dying to use ZFS on that, right?
+
+== Tutorial
+
+Following the previous post, <<install_zfs_pinebook_pro#,Install ZFS on the Pinebook Pro>>, this tutorial describes the steps required to setup a microSD card for your music files with ZFS on the Pinebook Pro.
+
+=== Create the Pool
+
+The microSD card will need to be provisioned as its own pool using ZFS.
+Adding the disk to a pool places it under the control of ZFS, providing all of the necessary ZFS capabilities.
+
+. First, determine which device is the microSD card.
++
+--
+[source,sh]
+----
+$ sudo fdisk -l
+Disk /dev/mmcblk2: 58.25 GiB, 62537072640 bytes, 122142720 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x33192aaf
+
+Device         Boot  Start       End   Sectors   Size Id Type
+/dev/mmcblk2p1       62500    500000    437501 213.6M  c W95 FAT32 (LBA)
+/dev/mmcblk2p2      500001 122142719 121642719    58G 83 Linux
+
+
+Disk /dev/mmcblk1: 238.51 GiB, 256087425024 bytes, 500170752 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x00000000
+
+Device         Boot Start       End   Sectors   Size Id Type
+/dev/mmcblk1p1      65536 500170751 500105216 238.5G  7 HPFS/NTFS/exFAT
+...
+----
+
+In this case, `/dev/mmcblk1` is the 256GB microSD card.
+--
+
+. Next, determine the disk id to use when creating the zpool.footnote:[https://wiki.archlinux.org/index.php/ZFS#Identify_disks[Arch Linux Wiki: Identify Disks]]
++
+[source,sh]
+----
+$ ls -lh /dev/disk/by-id/ | grep -w mmcblk1
+lrwxrwxrwx 1 root root 13 Jun 24 07:33 mmc-AB5CD_0x00000001 -> ../../mmcblk1
+----
+
+. Then, check the block size.
++
+--
+[source,sh]
+----
+$ sudo blockdev --getpbsz /dev/mmcblk1
+512
+----
+
+The SD card's block size is 512 MiB, which means `ashift` should be set to 12.footnote:[https://wiki.archlinux.org/index.php/ZFS#Advanced_Format_disks[Arch Linux Wiki: ZFS - Advanced Format Disks]]
+--
+
+. Create the pool.footnote:[https://wiki.archlinux.org/index.php/ZFS#Creating_ZFS_pools[Arch Linux Wiki: ZFS - Creating ZFS Pools]]
++
+[source,sh]
+----
+$ sudo zpool create \
+  -o ashift=12 \
+  -O compression=on \ <1>
+  ext_pool mmc-AB5CD_0x00000001
+----
+<1> Turn on compression by default.
+
+. Configure the system to automatically import the pool on boot.footnote:[https://wiki.archlinux.org/index.php/ZFS#Automatic_Start[Arch Linux Wiki: ZFS - Automatic Start]]
++
+[source,sh]
+----
+$ sudo zpool set cachefile=/etc/zfs/zpool.cache ext_pool
+----
+
+=== Create the Dataset
+
+With the microSD card now managed by ZFS, it is now possible to create the ZFS dataset for storing your music.
+
+. Create the ZFS dataset for your tunes.
++
+[source,sh]
+----
+$ sudo zfs create \
+  -o recordsize=1M \ # <1>
+  -o mountpoint=/home/jordan/Music \
+  ext_pool/music
+----
+<1> A nifty trick here is to use a larger `recordsize` of 1 MiB which more accurately reflects the filesystem operations for large media files.footnote:[https://jrs-s.net/2019/04/03/on-zfs-recordsize/[JRS Systems: About ZFS recordsize]]
+
+. Set the appropriate ownership for the mounted `~/Music` directory.
++
+[source,sh]
+----
+$ sudo chown -R jordan:jordan /home/jordan/Music
+----
+
+=== Copy
+
+Now, just copy the music files from wherever they happen to be to the dataset.
+The simplest way is to copy the files over the network.
+Since the pool is on an SD card, you might just want to pop it out and carry it between machines, so I describe that here.
+
+. Export the pool from the Pinebook Pro.
++
+[source,sh]
+----
+$ sudo zpool export ext_pool
+----
+
+. Pop-out the microSD card and pop it into the machine with all of the music.
+
+. Import the pool.
++
+[source,sh]
+----
+$ sudo zpool import ext_pool
+cannot mount '/home/jordan/Music': directory is not empty
+----
+
+. Change where the music dataset is mounted.
++
+--
+I keep my music in `~/Music`, so I have to mount the dataset somewhere else.
+
+[source,sh]
+----
+$ sudo zfs set mountpoint=/media/jordan/Music ext_pool/music
+----
+--
+
+. Mount the dataset to the updated location.
++
+[source,sh]
+----
+$ sudo zfs mount ext_pool/music
+----
+
+. Set the appropriate ownership for the mounted directory.
++
+[source,sh]
+----
+$ sudo chown jordan:jordan /media/jordan/Music
+----
+
+. Copy over the music.
++
+[source,sh]
+----
+$ tar cfC - /home/jordan/Music . | tar xpfC - /media/jordan/Music
+----
+
+. Then change the mount location back to `~/Music`.
++
+[source,sh]
+----
+$ sudo zfs set mountpoint=/home/jordan/Music ext_pool/music
+cannot mount '/home/jordan/Music': directory is not empty
+property may be set but unable to remount filesystem
+----
+
+. Export the pool from the machine.
++
+[source,sh]
+----
+$ sudo zpool export ext_pool
+----
+
+. Now place the SD card back into the Pinebook Pro, and import the pool again.
++
+[source,sh]
+----
+$ sudo zpool import ext_pool
+----
+
+=== Verify
+
+If everything is successful, your music should now be available in `~/Music`.
+
+You should also check that the pool and music dataset are automatically mounted at boot.
+
+[source,sh]
+----
+$ sudo reboot
+----
+
+=== Enjoy
+
+You can now enjoy your vast music collection from the comfort of your Pinebook Pro.

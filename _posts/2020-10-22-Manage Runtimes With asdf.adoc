@@ -1,0 +1,178 @@
+= Manage Runtimes With asdf
+:page-layout:
+:page-category: Development
+:page-tags: [asdf, Linux, Ubuntu, Unix]
+
+https://asdf-vm.com/#/[asdf] is a language-agnostic tool for managing multiple runtimes of a specific tool for a particular user.
+While it is able to manage runtime versions for a user, it is particularly helpful for managing runtimes per project.
+Tools like https://github.com/rbenv/rbenv[rbenv], https://github.com/pyenv/pyenv[pyenv], https://github.com/nvm-sh/nvm[nvm], https://github.com/syndbg/goenv[goenv], and the like each solve this problem for a particular language runtime.
+This quickly becomes a headache for the polyglot.
+
+Enter asdf, a single tool with a plugin architecture which makes management of various language runtimes a breeze.
+Its plugin architecture provides plugins for more than just language runtimes.
+I use it in {cpp} projects to manage various build dependencies, including https://ccache.dev/[ccache], https://cmake.org/[CMake], and https://ninja-build.org/[ninja].
+
+== How It Works
+
+Like it's language specific counterparts mentioned previously, asdf determines the appropriate runtime version to use by integrating with a user's shell and inserting https://en.wikipedia.org/wiki/Shim_(computing)[shims] into the user's `PATH`.
+Each shim executable, such as the `ruby` shim, defers the call of the actual program to asdf, which then executes the appropriate version.
+
+asdf determines the version from the first configuration information it finds searching three specific places.
+
+.asdf Version Selection
+. _shell_: The environment variable `ASDF_${LANG}_VERSION` is checked for the version of a particular asdf plugin.
+. _local_: The current directory, followed by subsequent parent directories, are searched for the special `.tool_versions` file.
+. _global_: Versions are configured for a particular user in a `.tool_versions` file in her home directory.
+
+== Tutorial
+
+This tutorial describes the basics for managing a project's runtimes with asdf.
+This is accomplished on an https://ubuntu.com/[Ubuntu] 20.04 system.
+While these instructions are for specifically for the https://fishshell.com/[fish shell], the https://asdf-vm.com/#/core-manage-asdf[asdf documentation] contains the necessary steps for other shells.
+This tutorial assumes you are comfortable with https://git-scm.com/[Git], package installation on Ubuntu, and the command-line on Unix-like systems.
+
+=== Install
+
+. Install the dependencies needed for asdf.
++
+[source,sh]
+----
+➜ sudo apt -y install curl git
+----
+
+. Pull down the https://github.com/asdf-vm/asdf[asdf repository] in to your home directory.
++
+[source,sh]
+----
+➜ git clone https://github.com/asdf-vm/asdf.git ~/.asdf
+----
+
+. Checkout the latest version of asdf.
++
+[source,sh]
+----
+➜ git -C ~/.asdf switch --detach (git -C ~/.asdf describe --abbrev=0 --tags)
+HEAD is now at c6145d0 Update version to 0.8.0
+----
+
+. Enable asdf for the fish shell.
++
+[source,sh]
+----
+➜ mkdir -p ~/.config/fish/conf.d; and echo "source ~/.asdf/asdf.fish" > ~/.config/fish/conf.d/asdf.fish
+----
+
+. Install shell completions for asdf.
++
+[source,sh]
+----
+➜ mkdir -p ~/.config/fish/completions; and ln -s ~/.asdf/completions/asdf.fish ~/.config/fish/completions
+----
+
+. To make asdf available, restart your terminal.
+
+. Add plugins for managing the desired runtimes, such as the https://github.com/asdf-vm/asdf-ruby[Ruby plugin] described here.
++
+--
+Plugins may require certain dependencies be installed on the system, so be sure to check their documentation.
+In the case of the Ruby plugin, install its dependencies with the following command.
+
+
+[source,sh]
+----
+➜ sudo apt -y install autoconf bison build-essential libssl-dev libyaml-dev \
+  libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm6 libgdbm-dev \
+  libdb-dev
+----
+
+Then add the Ruby plugin with the `asdf plugin add` command.
+
+[source,sh]
+----
+➜ asdf plugin add ruby
+----
+--
+
+=== Configure the Project
+
+Now that asdf is installed, it's time to configure a project to use a specific version of a runtime.
+
+. First, install the desired version of said runtime.
++
+--
+[source,sh]
+----
+➜ asdf install ruby latest
+----
+
+TIP: A specific version number can be provided or the `latest` keyword can be used to automatically install the latest version available.
+--
+
+. Next, change to the root directory of the project.
+
+. Set the specific runtime's version for a project with `asdf local`.
++
+--
+[source,sh]
+----
+➜ asdf local ruby (asdf latest ruby)
+----
+
+The `asdf local` command records the appropriate version for a runtime in a `.tool-versions` file in the current directory, creating it if it does not exist.
+At the time of this writing, the latest https://www.ruby-lang.org/en/[Ruby] version available is 2.7.2, so the previous command creates the following file.
+
+[source]
+..tool-versions
+----
+ruby 2.7.2
+----
+--
+
+NOTE: Rinse, wash, and repeat for each runtime you wish to configure for your project.
+
+=== Initialize
+
+The previous sections result in a complete setup of asdf and the runtime.
+No more is needed.
+What about starting with a configured project in a new environment?
+This is the case when setting up a new machine or when a new developer gets started on the project.
+The necessary work flow is described step-by-step below.
+
+. Install asdf and the required plugins according to the <<Install>> section above.
+
+. Change into the project directory.
+
+. Install all required runtimes.
++
+[source,sh]
+----
+➜ asdf install
+----
+
+=== Update
+
+Updates are important, so the necessary commands to update asdf and its plugins are provided below.
+
+. Update asdf with ease.
++
+[source,sh]
+----
+➜ asdf update
+----
+
+. Update the plugins.
++
+[source,sh]
+----
+➜ asdf plugin update --all
+----
+
+[TIP]
+====
+Automatic updates can be configured with https://systemd.io/[systemd].
+See my post <<automatically-update-antigen#,Automatically Update Antigen>> for achieving this in a similar scenario.
+====
+
+== Conclusion
+
+You should now understand the basics of how asdf operates, and how to manage runtimes for a project with it.

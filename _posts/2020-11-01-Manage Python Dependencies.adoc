@@ -1,0 +1,827 @@
+= Manage Python Dependencies
+:page-layout:
+:page-category: Development
+:page-tags: [asdf, direnv, Linux, Pipenv, Python, Ubuntu, Unix]
+
+Making https://www.python.org/[Python] dependency management reproducible is complicated.
+Bringing Python dependency management to mere mortals who can't remember where they put their shoes, let alone remember to source shell scripts every time they start working on a project is even more complicated.
+So, here's a quick breakdown of how it works followed by a much lengthier section on how to fit all of the various pieces together to manage a single Python dependency used to build a project.
+
+== How it Works
+
+There are three primary components required for reproducing the runtime environment for a Python project.
+
+.Components of a Reproducible Python Runtime
+Python Interpreter:: The exact same version of the Python interpreter must be used.
+The https://github.com/pyenv/pyenv[Pyenv] and https://asdf-vm.com/#/[asdf] utilities provide a great solution for managing the version of the Python interpreter on a per-project basis.footnote:[The asdf Python plugin really just uses Pyenv underneath the covers.]
+Virtual Environment:: Virtual Python environments isolate installed Python packages from the rest of the system.
+The older https://virtualenv.pypa.io/en/latest/[virtualenv] and more recent https://docs.python.org/3/library/venv.html[venv] are used to create and manage these virtual environments.
+However, managing these manually with these tools is cumbersome.
+There many different solutions for making these tools less taxing, including https://virtualenvwrapper.readthedocs.io/en/latest/[virtualenvwrapper], https://virtualfish.readthedocs.io/en/latest/[virtualfish], https://direnv.net/[direnv], and couple which also handle package management described below. 
+Python Packages:: Each package and its exact version must be recorded.
+While the native Python package manager, https://pip.pypa.io/en/stable/[pip], can do this with a `requirements.txt` file, there are some important ways in which this method is lacking.
+That's why https://pipenv.pypa.io/en/latest/[Pipenv], https://python-poetry.org/[Poetry], and https://github.com/jazzband/pip-tools[pip-tools] use more robust methods of dependency management.
+The first two also manage virtual environments.
+
+[NOTE]
+====
+The tools recommended here assume a typical Unix-like shell on the command-line.
+Both Pipenv and Poetry work under Windows, and there is a port of pyenv to Windows, https://pyenv-win.github.io/pyenv-win/[pyenv-win].
+Unfortunately, asdf and direnv are not available for Windows proper.
+Windows users can still access these tools through https://multipass.run/[Multipass], https://docs.microsoft.com/en-us/windows/wsl/about[WSL], https://www.cygwin.com/[Cygwin], and https://www.cygwin.com/[MSYS2].
+====
+
+== How to Make it Work
+
+The question that naturally follows this explanation is how in tarnation to make all this work?
+
+First, you need something to manage the Python interpreter.
+You should probably use asdf.
+It can manage more runtimes than just Python, so polyglots don't need to fuss with a million tools ending with "env" in their name, i.e. https://github.com/rbenv/rbenv[rbenv], https://github.com/syndbg/goenv[goenv], etc.
+
+For a minimal solution, it's possible to just combine pip with either virtualenv or venv.
+You should also consider the pip-tools package which, while minimal, provides some nice benefits and eases dependency management with pip.
+
+For a robust solution, use either Pipenv or Poetry.
+Poetry is a great fit for anyone wishing to package up and publish a Python project.
+On the other hand, Pipenv makes more sense for Python or mixed language projects which won't produce their own Python packages.
+
+Whichever solution you choose, for teams still consisting primarily of _humans_ I recommend a wrapper to automatically configure a project's virtual environment when entering the project directory on the command-line.
+The most compelling solution for this is direnv which supports the broadest range of shells and is simple to configure.
+For minimalists, https://github.com/direnv/direnv/wiki/Python#venv-stdlib-module[direnv's venv integration] is quite appropriate.
+For developers only using the https://fishshell.com/[fish shell], I must recommend virtualfish for managing virtual environments.
+It's fantastic.
+For Pipenv or Poetry, direnv offers support out-of-the-box.
+
+[TIP]
+====
+If you choose to use both asdf and direnv, I highly recommend using the https://github.com/asdf-community/asdf-direnv[asdf direnv plugin].
+Not only does it make installing and controlling the direnv version a breeze but it will update executable shims for Python packages.
+No need to run `asdf reshim` manually after updating or removing Python packages which provide executables.
+====
+
+[TIP]
+====
+Users of the fish shell might be interested in an alternative to direnv for automating the Pipenv work flow.
+Check out the https://github.com/sentriz/fish-pipenv[fish-pipenv] plugin.
+====
+
+It's probably only a small fraction of developers using the command-line for all their work.
+It's important to take into account how well the tooling you choose integrates with IDE's and code editors.
+These will need to be aware of the appropriate interpreter and virtual environment to use for your project.
+While it's usually possible to configure these things manually, think _humans_, remember?
+Many IDE's and code editors integrate well with setups using the built-in Python tooling.
+Pipenv boasts https://pipenv.pypa.io/en/latest/advanced/#community-integrations[community-maintained extensions] for several popular IDE's and code editors.
+Even direnv works with many graphical editors through plugins.
+
+For official, up-to-date information on this topic and related utilities, consult the https://packaging.python.org/tutorials/managing-dependencies/[Managing Application Dependencies] tutorial and the https://packaging.python.org/guides/tool-recommendations/[Tool recommendations] guide.
+
+== Tutorial
+
+The genesis of this blog post is in incorporating a {cpp} package manager written in Python, https://conan.io[Conan], into a {cpp} project, where reproducibility and ease-of-use are both important.
+This tutorial describes how to incorporate the Conan Python package in to a project via asdf, Pipenv, and direnv.
+The Python runtime is managed by asdf and the https://github.com/danhper/asdf-python[asdf Python plugin].
+Pipenv takes care of Conan and its dependencies as well as providing a virtual environment for the project.
+The last bits, direnv and the https://github.com/asdf-community/asdf-direnv[asdf direnv plugin], smooth out the rough edges for developers.
+
+This tutorial uses https://ubuntu.com/[Ubuntu] 20.04 as the reference system, though these instructions should transfer relatively easily to any Unix-like platform.
+You should be familiar with Python, shells, Linux, and https://git-scm.com/[Git].
+Instructions are provided for fish, https://www.gnu.org/software/bash/[Bash], and https://www.zsh.org/[ZSH].
+
+The first section details how to install these tools, the second section describes the steps to configure a project, the third section describes how to initialize the environment for a previously configured project, and the last section of the tutorial describes how to handle updates for Python, Python packages, and these utilities.
+Without further ado, let's begin.
+
+=== Install
+
+The instructions in this section will install asdf and Pipenv.
+Integration for direnv will also be added, even though it will be installed in either the <<Configure>> section or the <<Initialize>> section via asdf.
+
+. Install the dependencies needed for asdf.
++
+[source,sh]
+----
+➜ sudo apt -y install curl git
+----
+
+. Pull down the https://github.com/asdf-vm/asdf[asdf repository] in to your home directory.
++
+[source,sh]
+----
+➜ git clone https://github.com/asdf-vm/asdf.git ~/.asdf
+Cloning into '/home/ubuntu/.asdf'...
+remote: Enumerating objects: 145, done.
+remote: Counting objects: 100% (145/145), done.
+remote: Compressing objects: 100% (85/85), done.
+remote: Total 5782 (delta 76), reused 93 (delta 59), pack-reused 5637
+Receiving objects: 100% (5782/5782), 1.09 MiB | 6.01 MiB/s, done.
+Resolving deltas: 100% (3293/3293), done.
+----
+
+. Checkout the latest version of asdf.
++
+[source,sh]
+----
+# fish
+➜ git -C ~/.asdf switch --detach (git -C ~/.asdf describe --abbrev=0 --tags)
+HEAD is now at c6145d0 Update version to 0.8.0
+
+# Bash / ZSH
+➜ git -C ~/.asdf switch --detach $(git -C ~/.asdf describe --abbrev=0 --tags)
+HEAD is now at c6145d0 Update version to 0.8.0
+----
+
+. Enable asdf in your shell.
++
+[source,sh]
+----
+# fish
+➜ mkdir -p ~/.config/fish/conf.d; and echo "source ~/.asdf/asdf.fish" > ~/.config/fish/conf.d/asdf.fish
+
+# Bash
+➜ echo '. $HOME/.asdf/asdf.sh' >> ~/.bashrc
+
+# ZSH
+➜ echo '. $HOME/.asdf/asdf.sh' >> ~/.zshrc
+----
+
+. Install shell completions for asdf.
++
+[source,sh]
+----
+# fish
+➜ mkdir -p ~/.config/fish/completions; and ln -s ~/.asdf/completions/asdf.fish ~/.config/fish/completions
+
+# Bash
+➜ echo '. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
+
+# ZSH
+➜ echo -e 'fpath=(${ASDF_DIR}/completions $fpath)\nautoload -Uz compinit\ncompinit' >> ~/.zshrc
+----
+
+. To make asdf available, reload your shell.
++
+[source,sh]
+----
+# fish
+➜ exec fish
+
+# Bash
+➜ source ~/.bashrc
+
+# ZSH
+➜ source ~/.zshrc
+----
+
+. Install the necessary dependencies to build Python which are helpfully documented in the https://github.com/pyenv/pyenv/wiki#suggested-build-environment[Pyenv Wiki].
++
+[source,sh]
+----
+➜ sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev \
+  libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils \
+  tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+----
+
+. Add the https://github.com/danhper/asdf-python[Python plugin] to asdf.
++
+[source,sh]
+----
+➜ asdf plugin add python
+initializing plugin repository...
+Cloning into '/home/ubuntu/.asdf/repository'...
+remote: Enumerating objects: 2450, done.
+remote: Total 2450 (delta 0), reused 0 (delta 0), pack-reused 2450
+Receiving objects: 100% (2450/2450), 553.27 KiB | 3.57 MiB/s, done.
+Resolving deltas: 100% (1140/1140), done.
+----
+
+. Before installing Pipenv, configure the default _global_ Python version for the user.
++
+--
+You can use the system version of Python by default or another version of your choice.
+
+IMPORTANT: Whenever the user's global version of Python is updated, Pipenv must be reinstalled which may require that all virtual environments be rebuilt.
+--
+
+** Use the system's Python as the default.
+
+... Ubuntu installs Python as either `python2` or `python3` on the system.
++
+--
+This means that asdf won't be able to detect the system version of python.
+Install the Python package `python-is-python3` to install a `python` executable for the system which uses `python3`.
+
+[source,sh]
+----
+➜ sudo apt -y install python-is-python3
+----
+--
+
+... Install pip and venv because they are not installed by default on Ubuntu.
++
+[source,sh]
+----
+➜ sudo apt -y install python3-pip python3-venv
+----
+
+... Set the user's Python to the system-wide version.
++
+[source,sh]
+----
+➜ asdf global python system
+----
+
+** Or, you can use another version of Python for your user such as the latest and greatest version.
+
+... Build and install the latest version of Python.
++
+[source,sh]
+----
+➜ asdf install python latest
+----
+
+... Set the user's Python to the latest version available at this time.
++
+[source,sh]
+----
+# fish
+➜ asdf global python (asdf latest python)
+
+# Bash / ZSH
+➜ asdf global python (asdf latest python)
+----
+
+. Install https://pipxproject.github.io/pipx/[pipx] for installing Pipenv in an isolated environment.
++
+[source,sh]
+----
+➜ python -m pip install --user pipx
+Collecting pipx
+  Downloading pipx-0.15.6.0-py3-none-any.whl (43 kB)
+     |████████████████████████████████| 43 kB 636 kB/s 
+Collecting argcomplete<2.0,>=1.9.4
+  Downloading argcomplete-1.12.1-py2.py3-none-any.whl (38 kB)
+Collecting packaging>=20.0
+  Downloading packaging-20.4-py2.py3-none-any.whl (37 kB)
+Collecting userpath>=1.4.1
+  Downloading userpath-1.4.1-py2.py3-none-any.whl (14 kB)
+Collecting pyparsing>=2.0.2
+  Downloading pyparsing-2.4.7-py2.py3-none-any.whl (67 kB)
+     |████████████████████████████████| 67 kB 1.4 MB/s 
+Requirement already satisfied: six in /usr/lib/python3/dist-packages (from packaging>=20.0->pipx) (1.14.0)
+Requirement already satisfied: click in /usr/lib/python3/dist-packages (from userpath>=1.4.1->pipx) (7.0)
+Requirement already satisfied: distro; platform_system == "Linux" in /usr/lib/python3/dist-packages (from userpath>=1.4.1->pipx) (1.4.0)
+Installing collected packages: argcomplete, pyparsing, packaging, userpath, pipx
+  WARNING: The script userpath is installed in '/home/ubuntu/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The script pipx is installed in '/home/ubuntu/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+Successfully installed argcomplete-1.12.1 packaging-20.4 pipx-0.15.6.0 pyparsing-2.4.7 userpath-1.4.1
+----
+
+. Add the directory where pip installs executables for the local user to `PATH`.
++
+[source,sh]
+----
+➜ python -m pipx ensurepath
+Success! Added /home/ubuntu/.local/bin to the PATH environment
+    variable.
+/home/ubuntu/.local/bin has been been added to PATH, but you need to
+    open a new terminal or re-login for this PATH change to take
+    effect.
+
+Consider adding shell completions for pipx. Run 'pipx completions' for
+instructions.
+
+You will need to open a new terminal or re-login for the PATH changes
+to take effect.
+
+Otherwise pipx is ready to go! ✨ 🌟 ✨
+----
+
+. To make executables installed by pipx available, reload your shell.
++
+[source,sh]
+----
+# fish
+➜ exec fish
+
+# Bash
+➜ source ~/.bashrc
+
+# ZSH
+➜ source ~/.zshrc
+----
+
+. Install Pipenv.
++
+[source,sh]
+----
+➜ python -m pipx install pipenv
+  installed package pipenv 2020.8.13, Python 3.8.5
+  These apps are now globally available
+    - pipenv
+    - pipenv-resolver
+done! ✨ 🌟 ✨
+----
+
+. Add the direnv plugin to asdf.
++
+[source,sh]
+----
+➜ asdf plugin add direnv
+----
+
+. Integrate direnv with your shell.
++
+[source,sh]
+----
+# fish
+➜ mkdir -p ~/.config/fish/conf.d; and echo "asdf exec direnv hook fish | source" > ~/.config/fish/conf.d/direnv.fish
+
+# Bash
+➜ echo 'eval "$(asdf exec direnv hook bash)"' >> ~/.bashrc
+
+# ZSH
+➜ echo 'eval "$(asdf exec direnv hook zsh)"' >> ~/.zshrc
+----
+
+. Make the asdf feature, i.e. the command `use asdf`, available in direnv.
++
+--
+[source,sh]
+----
+# fish
+➜ mkdir -p ~/.config/direnv; and echo 'source "$(asdf direnv hook asdf)"' >> ~/.config/direnv/direnvrc
+
+# Bash / ZSH
+➜ mkdir -p ~/.config/direnv; echo 'source "$(asdf direnv hook asdf)"' >> ~/.config/direnv/direnvrc
+----
+
+NOTE: The `direnvrc` file should only use Bash syntax.
+--
+
+. Add completions for Pipenv to your shell.
++
+[source,sh]
+----
+# fish
+➜ echo "eval (pipenv --completion)" > ~/.config/fish/completions/pipenv.fish
+
+# Bash
+➜ echo 'eval "$(pipenv --completion)"' >> ~/.bashrc
+
+# ZSH
+➜ echo 'eval "$(pipenv --completion)"' >> ~/.zshrc
+----
+
+=== Configure
+
+These instructions configure a project with a specific version of the Python interpreter, a specific version of direnv, and the versions of the Conan package and all of its dependencies.
+Additionally, automatic loading of the virtual environment is configured through direnv.
+
+. Install asdf and Pipenv as described in the <<Install>> section.
+
+. Create a directory for the project.
++
+[source,sh]
+----
+➜ mkdir -p ~/Source/MyProject
+----
+
+. Change into the root directory of the project.
++
+[source,sh]
+----
+➜ cd ~/Source/MyProject
+----
+
+. Initialize a Git repository for the project.
++
+[source,sh]
+----
+➜ git init
+Initialized empty Git repository in /home/ubuntu/Source/MyProject/.git/
+----
+
+. Install version of Python to use for the project.
++
+[source,sh]
+----
+➜ asdf install python latest
+Downloading python-build...
+Cloning into '/home/ubuntu/.asdf/plugins/python/pyenv'...
+remote: Enumerating objects: 19, done.
+remote: Counting objects: 100% (19/19), done.
+remote: Compressing objects: 100% (16/16), done.
+remote: Total 18370 (delta 3), reused 10 (delta 2), pack-reused 18351
+Receiving objects: 100% (18370/18370), 3.70 MiB | 5.98 MiB/s, done.
+Resolving deltas: 100% (12507/12507), done.
+python-build 3.9.0 /home/ubuntu/.asdf/installs/python/3.9.0
+Downloading Python-3.9.0.tar.xz...
+-> https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tar.xz
+Installing Python-3.9.0...
+Installed Python-3.9.0 to /home/ubuntu/.asdf/installs/python/3.9.0
+----
+
+. Set the project's version of Python.
++
+[source,sh]
+----
+# fish
+➜ asdf local python (asdf current python | awk '{print $2}')
+
+# Bash / ZSH
+➜ asdf local python $(asdf current python | awk '{print $2}')
+----
+
+. Install the latest version of direnv.
++
+--
+[source,sh]
+----
+➜ asdf install direnv latest
+∗ Downloading and installing direnv...
+The installation was successful!
+----
+
+[TIP]
+====
+If you haven't set the default global version of direnv, now is a good time to do so.
+
+[source,sh]
+----
+# fish
+➜ asdf global direnv (asdf latest direnv)
+
+# Bash / ZSH
+➜ asdf global direnv $(asdf latest direnv)
+----
+====
+--
+
+. Set the project to use the latest version of direnv.
++
+[source,sh]
+----
+# fish
+➜ asdf local direnv (asdf latest direnv)
+
+# Bash / ZSH
+➜ asdf local direnv $(asdf latest direnv)
+----
+
+. The previous `asdf local` commands place version information in the `.tool-versions` file, so add this file to version control.
++
+[source,sh]
+----
+➜ git add .tool-versions
+----
+
+. Install Conan with Pipenv.
++
+[source,sh]
+----
+➜ pipenv install conan
+Creating a virtualenv for this project…
+Pipfile: /home/ubuntu/Source/MyProject/Pipfile
+Using /home/ubuntu/.asdf/installs/python/3.9.0/bin/python3 (3.9.0) to create virtualenv…
+⠦ Creating virtual environment...created virtual environment CPython3.9.0.final.0-64 in 1681ms
+  creator CPython3Posix(dest=/home/ubuntu/.local/share/virtualenvs/MyProject-6C2lAvdi, clear=False, global=False)
+  seeder FromAppData(download=False, pip=bundle, setuptools=bundle, wheel=bundle, via=copy, app_data_dir=/home/ubuntu/.local/share/virtualenv)
+    added seed packages: pip==20.2.4, setuptools==50.3.2, wheel==0.35.1
+  activators BashActivator,CShellActivator,FishActivator,PowerShellActivator,PythonActivator,XonshActivator
+
+✔ Successfully created virtual environment! 
+Virtualenv location: /home/ubuntu/.local/share/virtualenvs/MyProject-6C2lAvdi
+Creating a Pipfile for this project…
+Installing conan…
+Adding conan to Pipfile's [packages]…
+✔ Installation Succeeded 
+Pipfile.lock not found, creating…
+Locking [dev-packages] dependencies…
+Locking [packages] dependencies…
+Building requirements...
+Resolving dependencies...
+✔ Success! 
+Updated Pipfile.lock (df42de)!
+Installing dependencies from Pipfile.lock (df42de)…
+  🐍   ▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉ 0/0 — 00:00:00
+To activate this project's virtualenv, run pipenv shell.
+Alternatively, run a command inside the virtualenv with pipenv run.
+----
+
+. Add both the `Pipfile` and `Pipfile.lock` files generated by Pipenv to version control.
++
+[source,sh]
+----
+➜ git add Pipfile Pipfile.lock
+----
+
+. In the root of the project directory, create the file `.envrc` with the lines `use asdf` and `layout pipenv` to automatically use both asdf and Pipenv.
++
+[source]
+----
+# fish
+➜ echo > .envrc "\
+use asdf
+layout pipenv"
+
+# Bash / ZSH
+➜ echo -e "use asdf\nlayout pipenv" > .envrc
+----
+
+. Add the `.envrc` file to version control.
++
+[source,sh]
+----
+➜ git add .envrc
+----
+
+. Reload your shell for direnv to be available.
++
+[source,sh]
+----
+# fish
+➜ exec fish
+direnv: error /home/ubuntu/Source/MyProject/.envrc is blocked. Run `direnv allow` to approve its content
+
+# Bash
+➜ source ~/.bashrc
+direnv: error /home/ubuntu/Source/MyProject/.envrc is blocked. Run `direnv allow` to approve its content
+
+# ZSH
+➜ source ~/.zshrc
+direnv: error /home/ubuntu/Source/MyProject/.envrc is blocked. Run `direnv allow` to approve its content
+----
+
+. Enable automatic loading of the project's environment.
++
+[source,sh]
+----
+➜ direnv allow
+direnv: loading ~/Source/MyProject/.envrc
+direnv: using asdf
+direnv: Creating env file /home/ubuntu/.asdf/installs/direnv/2.23.1/env/3889178603-777313312-1073271181-2768066085
+direnv: loading ~/.asdf/installs/direnv/2.23.1/env/3889178603-777313312-1073271181-2768066085
+direnv: using asdf python 3.9.0
+direnv: using asdf direnv 2.23.1
+direnv: export +PIPENV_ACTIVE +VIRTUAL_ENV ~PATH
+----
+
+. Check that the virtual environment is automatically loaded and that the Conan executable resides within the virtual environment.
++
+[source,sh]
+----
+➜ which conan
+/home/ubuntu/.local/share/virtualenvs/MyProject-6C2lAvdi/bin/conan
+----
+
+=== Initialize
+
+To initialize a previously configured project in a fresh environment, follow these steps.
+
+. Install asdf, Pipenv, and the related direnv functionality as described in the <<Install>> section.
+
+. Change to the project directory.
++
+[source,sh]
+----
+➜ cd ~/Source/MyProject
+----
+
+. Run asdf to automatically install Python and direnv.
++
+--
+[source,sh]
+----
+➜ asdf install
+∗ Downloading and installing direnv...
+The installation was successful!
+Downloading python-build...
+Cloning into '/home/ubuntu/.asdf/plugins/python/pyenv'...
+remote: Enumerating objects: 19, done.
+remote: Counting objects: 100% (19/19), done.
+remote: Compressing objects: 100% (16/16), done.
+remote: Total 18370 (delta 3), reused 10 (delta 2), pack-reused 18351
+Receiving objects: 100% (18370/18370), 3.70 MiB | 6.55 MiB/s, done.
+Resolving deltas: 100% (12507/12507), done.
+python-build 3.9.0 /home/ubuntu/.asdf/installs/python/3.9.0
+Downloading Python-3.9.0.tar.xz...
+-> https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tar.xz
+Installing Python-3.9.0...
+Installed Python-3.9.0 to /home/ubuntu/.asdf/installs/python/3.9.0
+----
+
+[TIP]
+====
+If you haven't set a default global version of direnv, you should do so now.
+
+[source,sh]
+----
+# fish
+➜ asdf global direnv (asdf list ruby | awk 'FNR <= 1')
+
+# Bash / ZSH
+➜ asdf global direnv $(asdf list ruby | awk 'FNR <= 1')
+----
+====
+--
+
+. Reload your shell for direnv to be available.
++
+[source,sh]
+----
+# fish
+➜ exec fish
+direnv: error /home/ubuntu/Source/MyProject/.envrc is blocked. Run `direnv allow` to approve its content
+
+# Bash
+➜ source ~/.bashrc
+direnv: error /home/ubuntu/Source/MyProject/.envrc is blocked. Run `direnv allow` to approve its content
+
+# ZSH
+➜ source ~/.zshrc
+direnv: error /home/ubuntu/Source/MyProject/.envrc is blocked. Run `direnv allow` to approve its content
+----
+
+. Enable automatic loading of the project's environment.
++
+[source,sh]
+----
+➜ direnv allow
+direnv: loading ~/Source/MyProject/.envrc
+direnv: using asdf
+direnv: Creating env file /home/ubuntu/.asdf/installs/direnv/2.23.1/env/3889178603-777313312-2662766433-906191085
+direnv: loading ~/.asdf/installs/direnv/2.23.1/env/3889178603-777313312-2662766433-906191085
+direnv: using asdf direnv 2.23.1
+direnv: using asdf python 3.9.0
+Creating a virtualenv for this project…
+Pipfile: /home/ubuntu/Source/MyProject/Pipfile
+Using /home/ubuntu/.asdf/installs/python/3.9.0/bin/python3.9 (3.9.0) to create virtualenv…
+⠧ Creating virtual environment...direnv: ([/home/ubuntu/.asdf/installs/direnv/2.23.1/bin/direnv export bash]) is taking a while to execute. Use CTRL-C to give up.
+⠦ Creating virtual environment...created virtual environment CPython3.9.0.final.0-64 in 1759ms
+  creator CPython3Posix(dest=/home/ubuntu/.local/share/virtualenvs/MyProject-6C2lAvdi, clear=False, global=False)
+  seeder FromAppData(download=False, pip=bundle, setuptools=bundle, wheel=bundle, via=copy, app_data_dir=/home/ubuntu/.local/share/virtualenv)
+    added seed packages: pip==20.2.4, setuptools==50.3.2, wheel==0.35.1
+  activators BashActivator,CShellActivator,FishActivator,PowerShellActivator,PythonActivator,XonshActivator
+
+✔ Successfully created virtual environment! 
+Virtualenv location: /home/ubuntu/.local/share/virtualenvs/MyProject-6C2lAvdi
+Installing dependencies from Pipfile.lock (df42de)…
+  🐍   ▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉ 26/26 — 00:01:09
+To activate this project's virtualenv, run pipenv shell.
+Alternatively, run a command inside the virtualenv with pipenv run.
+direnv: export +PIPENV_ACTIVE +VIRTUAL_ENV ~PATH
+----
+
+. Check that the virtual environment is properly setup and loaded, which can be verified by checking that the Conan executable resides within the virtual environment.
++
+[source,sh]
+----
+➜ which conan
+/home/ubuntu/.local/share/virtualenvs/MyProject-6C2lAvdi/bin/conan
+----
+
+=== Update
+
+If you're going to the trouble to make your Python runtime reproducible, then you are probably planning on updating different aspects of it.
+Steps for updating the various software components follow.
+
+=== asdf
+
+. Update asdf to the latest stable version.
++
+[source,sh]
+----
+➜ asdf update
+----
+
+. Update an individual asdf plugin by providing the plugin name to the `asdf plugin update` command or update all plugins at once by providing the `--all` flag as shown here.
++
+[source,sh]
+----
+➜ asdf plugin update --all
+----
+
+=== direnv
+
+. Install the desired version of direnv.
++
+[source,sh]
+----
+➜ asdf install direnv latest
+----
+
+. Update the project's version to reflect this newly installed version of direnv.
++
+[source,sh]
+----
+# fish
+➜ asdf local direnv (asdf latest direnv)
+
+# Bash / ZSH
+➜ asdf local direnv $(asdf latest direnv)
+----
+
+=== Pipenv
+
+There are two ways to go about upgrading Pipenv, depending on whether you want to update the global Python version.
+If the global Python version isn't changing, just <<Update Pipenv>>.
+Otherwise, <<Upgrade the Global Python Version and Install Pipenv>>.
+
+==== Update Pipenv
+
+. Update pipx.
++
+[source,sh]
+----
+➜ python -m pip install --user -U pipx
+----
+
+. Update Pipenv.
++
+[source,sh]
+----
+➜ python -m pipx upgrade pipenv
+----
+
+TIP: If you want to upgrade all packages managed by pipx, just run `pipx upgrade-all`.
+
+==== Upgrade the Global Python Version and Install Pipenv
+
+. Build and install the newer version of Python.
++
+[source,sh]
+----
+➜ asdf install python latest
+----
+
+. Update the global Python version for the user.
++
+[source,sh]
+----
+# fish
+➜ asdf global python (asdf latest python)
+
+# Bash / ZSH
+➜ asdf global python $(asdf latest python)
+----
+
+. Install pipx for installing Pipenv in an isolated environment.
++
+[source,sh]
+----
+➜ python -m pip install --user pipx
+----
+
+. Install Pipenv.
++
+[source,sh]
+----
+➜ python -m pipx install pipenv
+----
+
+=== Python
+
+Update the project's Python version with these instructions.
+
+. Install the desired version of Python.
++
+[source,sh]
+----
+➜ asdf install python latest
+----
+
+. Set the Python version for the project to the desired version.
++
+[source,sh]
+----
+# fish
+➜ asdf local python (asdf latest python)
+
+# Bash / ZSH
+➜ asdf local python $(asdf latest python)
+----
+
+. Wait while direnv and Pipenv automatically install dependencies and rebuild the virtual environment.
+
+=== Python Packages
+
+. Check for outdated Python packages with pipenv.
++
+[source,sh]
+----
+➜ pipenv update --outdated
+----
+
+. Update a single package by providing the name of the package or omit the package name to update all packages, as shown here.
++
+[source,sh]
+----
+➜ pipenv update
+----
+
+== Conclusion
+
+You should now have a thorough understanding of the requirements for reproducible dependency management in Python.
+Additionally, you also understand how to use several tools to accomplish this: asdf, direnv, and Pipenv.
