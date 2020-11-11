@@ -1,0 +1,18 @@
+language: ruby
+cache: bundler
+script: bundle exec jekyll build
+
+branches:
+  only:
+    - master
+
+deploy:
+  provider: pages:git
+  cleanup: false
+  token: $GITHUB_TOKEN
+  local_dir: _site
+  repo: jwillikers/jwillikers.github.io
+  target_branch: master
+  fqdn: www.jwillikers.com
+  keep_history: true
+  edge: true

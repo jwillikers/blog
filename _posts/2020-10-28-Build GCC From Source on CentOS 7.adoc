@@ -1,0 +1,234 @@
+= Build GCC From Source on CentOS 7
+:page-layout:
+:page-category: Development
+:page-tags: [C, {cpp}, CentOS, Fortran, Linux, Compiler, GCC]
+
+CentOS has a pretty old compiler.
+While the Software Collections repository contains newer versions, it still has a considerable lag-time.
+So, why not build https://gcc.gnu.org/[GCC] from source?
+As it turns out, it's not actually that hard.
+
+== Tutorial
+
+This tutorial provides the steps necessary to compile and install a newer version of GCC, version 10.2.0 to be specific, on CentOS 7.
+The GCC front-ends for C, {cpp}, and Fortran are included.
+You should be familiar with command-line tools, CentOS, and the compiling and installing software on Linux.
+Shell commands are provided in both https://www.gnu.org/software/bash/[Bash], the native shell on CentOS 7, and https://fishshell.com/[fish] because it has standards.
+
+. If you aren't using the https://rpm-software-management.github.io/[DNF] package manager yet, grab that.
++
+[source,sh]
+----
+➜ sudo yum -y install dnf
+----
+
+. Install the dependencies necessary to build GCC.
++
+[source,sh]
+----
+➜ sudo dnf -y install bzip2 wget gcc gcc-c++ gmp-devel mpfr-devel libmpc-devel make
+----
+
+. Download the latest release, GCC 10.2.0 in this case, available https://ftp.gnu.org/gnu/gcc/[here].
++
+[source,sh]
+----
+➜ wget https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz
+----
+
+. Download the corresponding signature file.
++
+[source,sh]
+----
+➜ wget https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz.sig
+----
+
+. Verify the archive's signature.
++
+--
+[source,sh]
+----
+➜ gpg --keyserver-options auto-key-retrieve gcc-10.2.0.tar.xz.sig
+gpg: Signature made Thu 23 Jul 2020 01:57:41 AM CDT using RSA key ID FC26A641
+gpg: requesting key FC26A641 from hkp server keys.gnupg.net
+gpg: key 981C74C7: public key "Richard Guenther <richard.guenther@gmail.com>" imported
+gpg: no ultimately trusted keys found
+gpg: Total number processed: 1
+gpg:               imported: 1
+gpg: Good signature from "Richard Guenther <richard.guenther@gmail.com>"
+gpg:                 aka "Richard Guenther (Work) <rguenther@suse.de>"
+gpg:                 aka "Richard Guenther <richard.guenther@gmx.net>"
+gpg:                 aka "Richard Guenther (GCC) <rguenth@gcc.gnu.org>"
+gpg: WARNING: This key is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+Primary key fingerprint: 1397 5A70 E63C 361C 73AE  69EF 6EEB 81F8 981C 74C7
+     Subkey fingerprint: 7F74 F97C 1034 68EE 5D75  0B58 3AB0 0996 FC26 A641
+----
+
+Here, the option `--keyserver-options auto-key-retrieve` will automatically import the signing key from the default key server.
+The signature is valid if `Good signature` is output.
+Otherwise, the signature is bad and you must re-download the source archive.
+
+CAUTION: There are potential privacy concerns when automatically downloading the key this way, as described for the `auto-key-retrieve` option in https://www.freebsd.org/cgi/man.cgi?query=gpg&manpath=CentOS+7.1[gpg2(1)].
+--
+
+. Extract the archive.
++
+[source,sh]
+----
+➜ tar xf gcc-10.2.0.tar.xz
+----
+
+. Make a build directory.
++
+[source,sh]
+----
+➜ mkdir gcc-10.2.0-build
+----
+
+. Change into the build directory.
++
+[source,sh]
+----
+➜ cd gcc-10.2.0-build
+----
+
+. Run the https://www.gnu.org/prep/standards/html_node/Configuration.html[configure script] to prepare the build.
++
+--
+[source,sh]
+----
+➜ ../gcc-10.2.0/configure --enable-languages=c,c++,fortran \
+  --disable-multilib --prefix=$HOME/.gcc/10.2.0
+----
+
+NOTE: GCC is configured to install to the user's home directory here, but can easily be set to install elsewhere on the system by changing the value for the `--prefix` option.
+--
+
+. Build GCC.
++
+[source,sh]
+----
+# Bash
+➜ make -j$(nproc)
+
+# fish
+➜ make -j(nproc)
+----
+
+. Wait patiently for GCC to finish compiling itself.
+
+. Install GCC.
++
+[source,sh]
+----
+➜ make install
+----
+
+. Change out of the build directory.
++
+[source,sh]
+----
+➜ cd ..
+----
+
+. Free up some disk space by deleting the remaining source and build artifacts.
++
+[source,sh]
+----
+➜ rm -rf gcc-10.2.0 gcc-10.2.0-build gcc-10.2.0.tar.xz
+----
+
+=== Environment Variables
+
+Setting the relevant environment variables should cause most build tools to recognize find the new compilers as well as link to the relevant libraries.
+The shell variables are configured to persist across shell sessions below.
+
+. Set the `CC` variable to the path to the C compiler.
++
+[source,sh]
+----
+# Bash
+➜ echo "export CC=$HOME/.gcc/10.2.0/bin/gcc" >> ~/.bashrc
+➜ source ~/.bashrc
+
+# fish
+➜ set -Ux CC ~/.gcc/10.2.0/bin/gcc
+----
+
+. Set the `CXX` variable to the path of the {cpp} compiler.
++
+[source,sh]
+----
+# Bash
+➜ echo "export CXX=$HOME/.gcc/10.2.0/bin/g++" >> ~/.bashrc
+➜ source ~/.bashrc
+
+# fish
+➜ set -Ux CXX ~/.gcc/10.2.0/bin/g++
+----
+
+. Set the `FC` variable to the path of the Fortran compiler.
++
+[source,sh]
+----
+# Bash
+➜ echo "export FC=$HOME/.gcc/10.2.0/bin/gfortran" >> ~/.bashrc
+➜ source ~/.bashrc
+
+# fish
+➜ set -Ux FC ~/.gcc/10.2.0/bin/gfortran
+----
+
+. Prepend the compiler's executable directory, `bin`, to the `PATH` environment variable.
++
+[source,sh]
+----
+# Bash
+➜ echo "export PATH=$HOME/.gcc/10.2.0/bin:$PATH" >> ~/.bashrc
+➜ source ~/.bashrc
+
+# fish
+➜ set -pU fish_user_paths ~/.gcc/10.2.0/bin
+----
+
+. Prepend the compiler's library directory, `lib64`, to the `LD_LIBRARY_PATH` environment variable.
++
+[source,sh]
+----
+# Bash
+➜ echo "export LD_LIBRARY_PATH=$HOME/.gcc/10.2.0/lib64:$LD_LIRBARY_PATH" >> ~/.bashrc
+➜ source ~/.bashrc
+
+# fish
+➜ set -pUx LD_LIBRARY_PATH ~/.gcc/10.2.0/lib64
+----
+
+=== CMake
+
+When using https://cmake.org/[CMake], it is also possible to set certain CMake variables instead of the environment variables.
+This isolates the potential effects from setting environment variables globally, which may incidentally effect other builds.
+Set these variables in the CMake cache like so.
+
+[source,sh]
+----
+➜ cmake \
+  -DCMAKE_C_COMPILER=$HOME/.gcc/10.2.0/bin/gcc \
+  -DCMAKE_CXX_COMPILER=$HOME/.gcc/10.2.0/bin/g++ \
+  -DCMAKE_Fortran_COMPILER=$HOME/.gcc/10.2.0/bin/gfortran \
+  -DCMAKE_PREFIX_PATH=$HOME/.gcc/10.2.0 \
+  -B build -S .
+----
+
+[NOTE]
+====
+When building artifacts that will be deployed elsewhere, take care to ensure that the relevant standard libraries are available to the binary.
+This is usually accomplished by linking them in statically.
+====
+
+== Conclusion
+
+Rejoice!
+You now have an up-to-date version of the GCC compiler on your effectively ancient CentOS system.footnote:[That's right, CentOS 7 uses the pre-{cpp}11 ABI.]
+Now, what are you waiting for?
+Start using https://en.cppreference.com/w/cpp/container/span[`std::span`]!

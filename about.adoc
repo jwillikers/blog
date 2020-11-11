@@ -1,0 +1,78 @@
+= About
+:page-layout:
+
+Welcome to jwillikers.com, where I like to put all of my handy admin and dev guides from my myriad of tinkering.
+My posts serve as convenient references for myself, but my hope is that they will help you as well.
+
+== Me
+
+This is my personal developer blog, so I'm taking the opportunity to talk a bit about myself.
+
+=== Career
+
+The reasons I pursue a career in software, engineering have continued to grow and evolve over time. 
+Suffice it to say that I enjoy participating as part of a team to solve real and interesting problems in order to positively impact the lives of others.
+
+As a software engineer, I strive to write the least amount of simple and safe code required to complete a given task.
+Ideally, this amounts to writing no code at all because I'm able to discover that a perfectly adequate and tenable solution already exists.
+
+In the sections which follow I describe my experience in the field.
+
+==== Cross-platform Application Development
+
+At my current day job, I wrangle https://isocpp.org/[{cpp}] and https://cmake.org/[CMake] code to create functional, cross-platform graphical applications.
+Developing at a small company, my hands are in just about everything from project management to cross-platform application development to systems administration to licensing compliance.
+My focus here has been to learn how to write good {cpp} code, to improve the build system, and to implement both standard software engineering practices and agile development models.
+
+It has been challenging to implement better practices and processes while both maintaining a large, legacy code-base lacking any standards what-so-ever and adding high-quality code for new features.
+This is has been a phenomenal learning opportunity, but mostly in a trial-by-fire sort of way.
+Such circumstances have bred in me a deep appreciation of the software engineering principles which foster the production of maintainable code.
+This endeavor has also lead me to understand how the process of writing good code is impacted by management, project planning, collaboration, communication, and even company culture.
+
+==== Software Engineering Intern
+
+Previously, I interned at a cyber security company which developed log-analyzing security software.
+This was my first real introduction to software engineering, where I had the privilege to be a part of the backend developer team.
+This is where I learned first-hand how the fundamental software engineering practices such as version control, testing, code-reviews, continuous integration, and deployment all fit together.
+My work their included Java, Python, and Awk development as well as work on the Gradle build-system and integrating deployment to Docker.
+I even underwent certification as a https://www.scrum.org/[Scrum] master.
+
+==== Data Analyst
+
+Before that, I interned as a data analyst at a healthcare institution.
+This lead to lots of SQL development and digging through backend databases.
+I became proficient at writing complex SQL queries, but most importantly, I was forced to think critically.
+I constantly had to question, "Where is this data coming from?" and, "What does this _really_ mean?" at all times.
+
+=== Education
+
+I graduated with a bachelor's degree in Computer Science with a concentration in Information Insurance.
+Although I prefer the applied, a degree in the more theoretical aspects of Computer Science was quite rewarding, stretching me to understand the underpinning aspects of computing.
+The experience in cyber security brought with it a cautious and proactive mindset, which influences how I think about and write code today.
+
+=== Development Preferences
+
+I like writing code to make people's lives easier.
+Unfortunately, I've learned from experience that poor code has a tendency to make the lives of everyone more difficult, especially for developers.
+This has ingrained in me strong convictions for utilizing standard software engineering practices, high-quality open source software, and the best tooling available to create safe and maintainable code.
+
+There is also nothing like having fun and learning new things while solving a challenging problem.
+This is why languages which pursue safety and simplicity, such as Rust and Go, are my favorites.
+They tend allow me to focus on the problem at hand rather than frustrate me with issues and complexities inherent in the language.
+
+=== Interests
+
+If you haven't figured it out yet, I'm big proponent of open-source software where high-quality solutions to common problems abound.
+I enjoy collaborating with other developers to improve open-source software for everyone.
+
+* Desktop Linux, namely https://ubuntu.com/download/desktop[Ubuntu] and https://www.gnome.org/[GNOME]
+* Open-hardware mobile devices (and relevant software), such as the https://www.pine64.org/pinebook-pro/[Pinebook Pro], https://www.pine64.org/pinephone/[PinePhone], and https://www.pine64.org/pinetab/[PineTab] developed by https://www.pine64.org/[Pine64]
+* Safe, simple, and easy-to-use programming languages like https://www.rust-lang.org/[Rust] and https://golang.org/[Go]
+* https://www.openbsd.org/[OpenBSD]
+* https://www.freebsd.org/[FreeBSD]
+* https://openzfs.org/wiki/Main_Page[OpenZFS]
+* https://riscv.org/[RISC-V]
+
+=== Hobbies
+
+As for hobbies outside of tech, I enjoy spending time with my wife, yoga, cooking, socializing, listening to podcasts and books, hiking, and generally getting outside whenever possible.

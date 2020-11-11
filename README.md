@@ -1,2 +1,0 @@
-# blog
-My developer blog.

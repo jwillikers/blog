@@ -1,0 +1,77 @@
+= Update U-Boot on the PinePhone
+:page-layout:
+:page-category: Systems
+:page-tags: [ArchLinux, Linux, Manjaro, PinePhone, UBoot]
+
+As I big fan of https://www.gnome.org/[GNOME], I really wanted a similar experience on the https://www.pine64.org/pinephone/[PinePhone].
+That's why I opted for running https://osdn.net/projects/manjaro-arm/[Manjaro ARM]'s alpha for the PinePhone, which comes in a GNOME-like https://developer.puri.sm/Librem5/Software_Reference/Environments/Phosh.html[Phosh] flavor.
+It's been running from the SD card great so far, but I thought to update the internal https://gitlab.manjaro.org/manjaro-arm/packages/core/uboot-pinephone-crust[U-Boot] as <<update-u-boot-on-the-pinebook-pro#,I did on the Pinebook Pro>>.
+
+== Tutorial
+
+This tutorial provides instructions for updating the PinePhone's bootloader from Manjaro running off of a microSD card.
+This tutorial presumes you are comfortable using the command-line on Linux and the default https://gitlab.gnome.org/ZanderBrown/kgx[Terminal app].
+
+=== Steps
+
+. First, ensure the system is up-to-date.
++
+[source,shell]
+----
+$ sudo pacman -Syuu
+:: Synchronizing package databases...
+  core is up to date
+  extra is up to date
+  community is up to date
+:: Starting full system upgrade...
+ there is nothing to do
+----
+
+. Next, determine which device is the onboard eMMC module.
++
+--
+[source,shell]
+----
+$ lsblk
+NAME         MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+loop0          7:0    0 275.7M  1 loop /var/lib/anbox/rootfs
+mmcblk0      179:0    0 238.5G  0 disk # <1>
+├─mmcblk0p1  179:1    0 213.6M  0 part /boot
+└─mmcblk0p2  179:2    0 238.3G  0 part /
+mmcblk2      179:32   0  14.7G  0 disk  # <2>
+├─mmcblk2p1  179:33   0   1.9M  0 part
+├─mmcblk2p2  179:34   0     1M  0 part
+├─mmcblk2p3  179:35   0     8M  0 part
+├─mmcblk2p4  179:36   0    64M  0 part
+├─mmcblk2p5  179:37   0  64.3M  0 part
+├─mmcblk2p6  179:38   0  63.9M  0 part
+├─mmcblk2p7  179:39   0  63.9M  0 part
+├─mmcblk2p8  179:40   0   2.4G  0 part
+├─mmcblk2p9  179:41   0   2.4G  0 part
+└─mmcblk2p10 179:42   0   8.6G  0 part
+mmcblk2boot0 179:64   0     4M  1 disk
+mmcblk2boot1 179:96   0     4M  1 disk
+----
+<1> `mmcblk0` is the 250 GB SD card running Manjaro.
+<2> `mmcblk2` is the internal 16 GB eMMC module.
+
+[CAUTION]
+====
+Flashing to the wrong device could destroy your data.
+====
+--
+
+. Flash the `bin` file to the eMMC.footnote:[https://gitlab.manjaro.org/manjaro-arm/packages/core/uboot-pinephone-crust[Manjaro ARM Gitlab: uboot-pinephone-crust]]
++
+[source,shell]
+----
+$ sudo dd if=/boot/u-boot-sunxi-with-spl-pinephone.bin of=/dev/mmcblk2 bs=8k seek=1
+88+1 records in
+88+1 records out
+725712 bytes (726 kB, 709 KiB) copied, 0.0612089 s, 11.9 MB/s
+----
+
+=== Conclusion
+
+That's all.
+You should now have the latest U-Boot booting your PinePhone!

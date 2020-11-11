@@ -1,0 +1,128 @@
+= Configure ZSH
+:page-layout:
+:page-category: Command-Line
+:page-tags: [Antigen, Debian, Linux, oh-my-zsh, Ubuntu, ZSH]
+
+I've been using https://www.zsh.org/[ZSH] for years now as my shell.
+In that time, I've learned a few niceties to make the experience better.
+Namely, I've found the minimal https://ohmyz.sh/[oh-my-zsh] prompt keeps out of the way and the git aliases super convenient.
+Plugins for https://github.com/zsh-users/zsh-autosuggestions[autosuggestions], like in the https://fishshell.com/[fish shell], and https://github.com/zsh-users/zsh-syntax-highlighting[syntax highlighting] are also quite helpful.
+http://antigen.sharats.me/[Antigen] makes keeping plugins up-to-date a breeze.
+
+== Tutorial
+
+This tutorial explains how to install ZSH and set it as your default shell on Ubuntu 20.04.
+Plus, it details how to install and configure Antigen, oh-my-zsh, autosuggestions, and syntax highlighting.
+
+. Install ZSH.footnote:[https://github.com/ohmyzsh/ohmyzsh/wiki/Installing-ZSH[oh-my-zsh Wiki: Installing ZSH]]
++
+[source,sh]
+----
+$ sudo apt -y install zsh
+----
+
+. Register `/usr/bin/zsh` as a login shell by adding its path to https://manpages.ubuntu.com/manpages/en/man5/shells.5.html[`/etc/shells`].
++
+--
+Debian provides a convenient https://manpages.ubuntu.com/manpages/en/man8/add-shell.8.html[`add-shell`] command to accomplish this.
+
+[source,sh]
+----
+➜ sudo add-shell /usr/bin/zsh
+----
+--
+
+. Set the default shell to `zsh`.
++
+[source,sh]
+----
+$ chsh -s `which zsh`
+Changing shell for jordan.
+Password:
+Shell changed.
+----
+
+. Now, open up a fresh terminal session to start using .
+
+. Download and install Antigen.footnote:[https://github.com/zsh-users/antigen/wiki/Installation[Antigen Wiki: Installation]]
+There is a https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=906757[bug] in the https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=zsh-antigen;dist=unstable[debian package] at this time, so manually download and install it.footnote:[There is also an https://bugs.launchpad.net/ubuntu/+source/zsh-antigen/+bug/1770915[Ubuntu bug report] and an https://github.com/zsh-users/antigen/issues/659[Antigen bug report.]]
++
+--
+[source,sh]
+----
+$ wget -q git.io/antigen
+$ sudo mkdir /usr/share/zsh-antigen
+$ sudo mv antigen /usr/share/zsh-antigen/antigen.zsh
+----
+
+[NOTE]
+====
+When the bug is fixed, you can simply install the package with https://wiki.debian.org/Aptitude[Aptitude] as follows.
+
+[source,sh]
+----
+$ sudo apt -y install zsh-antigen
+----
+====
+--
+
+. Create the `.antigenrc` configuration file.footnote:[https://github.com/zsh-users/antigen/wiki/Quick-start#configure-zshrc[Antigen Wiki: Quich start - Configure `.zshrc`]]
++
+.~/.antigenrc
+[source,bash]
+----
+# Load the oh-my-zsh library
+antigen use oh-my-zsh
+
+antigen bundles <<EOBUNDLES
+    # Bundles from the default repo (robbyrussell's oh-my-zsh)
+    git
+
+    # Fish-like auto suggestions
+    zsh-users/zsh-autosuggestions
+
+    # Extra zsh completions
+    zsh-users/zsh-completions
+
+    # Syntax highlighting bundle.
+    zsh-users/zsh-syntax-highlighting
+EOBUNDLES
+
+# Load the theme
+antigen theme robbyrussell
+
+# Tell antigen that you're done
+antigen apply
+----
+
+. Now, from the `.zshrc` file load Antigen and the `.antigenrc` configuration file.
++
+.~/.zshrc
+[source,sh]
+----
+# Load Antigen
+source /usr/share/zsh-antigen/antigen.zsh
+
+# Load Antigen configurations
+antigen init ~/.antigenrc
+----
+
+. Load the updated `.zshrc` configuration file.
++
+[source,sh]
+----
+$ source ~/.zshrc
+----
+
+. Update the plugins as needed.footnote:[https://github.com/zsh-users/antigen/wiki/Commands#antigen-update[Antigen Wiki: Commands - antigen update]]
++
+[source,sh]
+----
+$ antigen update
+----
+
+== Conclusion
+
+You should now be able to install and configure ZSH as your default shell in Ubuntu.
+You should also be able to setup Antigen to use oh-my-zsh and a couple of convenient plugins.
+If you want to automate updating your Antigen plugins with https://www.freedesktop.org/wiki/Software/systemd/[systemd], checkout the post <<automatically-update-antigen#,Automatically Update Antigen>>.

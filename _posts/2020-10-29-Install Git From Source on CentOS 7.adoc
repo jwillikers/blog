@@ -1,0 +1,467 @@
+= Install Git From Source on CentOS 7
+:page-layout:
+:page-category: Development
+:page-tags: [CentOS, Git, Linux]
+
+To get the latest version of https://git-scm.com/[Git] on CentOS 7, it is possible to compile it directly from source.
+
+== Tutorial 
+
+This is a quick tutorial showing the necessary steps to install Git from source on CentOS 7.
+Further documentation is available in the https://git-scm.com/book/en/v2/Getting-Started-Installing-Git[Git Book].
+This tutorial assumes familiarity with CentOS 7 packages management, source code compilation, and the command-line.
+Where an instruction applies to a specific shell, the instruction will be shown for both https://www.gnu.org/software/bash/[Bash], the default shell on CentOS 7, and https://fishshell.com/[fish], the better shell everywhere.footnote:[It's not like I'm biased or anything.]
+To account for two distinct yet equally important use cases, instructions are provided for installing Git for the current user as well as system-wide.
+
+. If you aren't using the https://rpm-software-management.github.io/[DNF] package manager yet, grab that.
++
+[source,sh]
+----
+➜ sudo yum -y install dnf
+----
+
+. Add the https://fedoraproject.org/wiki/EPEL[EPEL] repository for retrieving necessary dependencies.
++
+[source,sh]
+----
+➜ sudo dnf -y install \
+  https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+----
+
+. Install the build dependencies.
++
+[source,sh]
+----
+➜ sudo dnf -y install asciidoc curl-devel dh-autoreconf docbook2X expat-devel \
+  gettext-devel openssl-devel perl-devel xmlto zlib-devel
+----
+
+. Account the different name of an executable on RPM-based distributions.
++
+[source,sh]
+----
+➜ sudo ln -s /usr/bin/db2x_docbook2texi /usr/bin/docbook2x-texi
+----
+
+. Download the source code of the latest release.
++
+--
+[source,sh]
+----
+➜ wget -L https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.29.2.tar.xz
+----
+
+[NOTE]
+====
+Instead of using https://www.gnu.org/software/wget/[Wget], you could technically install an older version of Git from the CentOS repositories and use that to fetch the source code for the latest release.
+The method used here describes where to grab the latest source code releases and lines up with the Git Book's example.
+====
+--
+
+. Download the corresponding signature file.
++
+[source,sh]
+----
+➜ wget -L https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.29.2.tar.sign
+----
+
+. Decompress the archive.
++
+[source,sh]
+----
+➜ unxz git-2.29.2.tar.xz
+----
+
+. Verify the archive's signature.
++
+--
+[source,sh]
+----
+➜ gpg --keyserver-options auto-key-retrieve git-2.29.2.tar.sign
+gpg: Signature made Thu 29 Oct 2020 05:14:01 PM CDT using RSA key ID 96AFE6CB
+gpg: requesting key 96AFE6CB from hkp server keys.gnupg.net
+gpg: key 713660A7: public key "Junio C Hamano <gitster@pobox.com>" imported
+gpg: no ultimately trusted keys found
+gpg: Total number processed: 1
+gpg:               imported: 1  (RSA: 1)
+gpg: Good signature from "Junio C Hamano <gitster@pobox.com>"
+gpg:                 aka "Junio C Hamano <jch@google.com>"
+gpg:                 aka "Junio C Hamano <junio@pobox.com>"
+gpg: Note: This key has expired!
+Primary key fingerprint: 96E0 7AF2 5771 9559 80DA  D100 20D0 4E5A 7136 60A7
+     Subkey fingerprint: E1F0 36B1 FEE7 221F C778  ECEF B0B5 E886 96AF E6CB
+----
+
+Here, the option `--keyserver-options auto-key-retrieve` will automatically import the signing key from the default key server.
+The signature is valid if `Good signature` is output.
+Otherwise, the signature is bad and you must re-download the source archive.
+
+CAUTION: There are potential privacy concerns when automatically downloading the key this way, as described for the `auto-key-retrieve` option in https://www.freebsd.org/cgi/man.cgi?query=gpg&manpath=CentOS+7.1[gpg2(1)].
+--
+
+. Extract the source code from the archive.
++
+[source,sh]
+----
+➜ tar -xf git-2.29.2.tar
+----
+
+. Change into the source directory.
++
+[source,sh]
+----
+➜ cd git-2.29.2
+----
+
+. Build the configure script.
++
+[source,sh]
+----
+➜ make configure
+GIT_VERSION = 2.29.2
+    GEN configure
+----
+
+. Configure the build.
++
+--
+User::
+
+[NOTE]
+====
+The https://www.freedesktop.org/software/systemd/man/file-hierarchy.html#~/.local/bin/[Freedesktop File-hierarchy specification] designates the directory `~/.local/bin` for user's executables.
+As the specification also notes, this can be problematic for architecture dependent executables, aka anything compiled down to assembly code, like Git here.
+Unfortunately, the specification provides no method for mediating this problem.
+Luckily, compilers already have fairly standard methods for describing the system for which code is compiled.footnote:[See Clang's documentation on https://clang.llvm.org/docs/CrossCompilation.html[Cross Compilation] for more info.]
+We are just going to steal this convention for naming a subdirectory within `~/.local` where anything specific to that architecture is installed.
+Your shell can then handle updating your path to correspond to the architecture you're running at this time.
+This should probably be described in detail in another blog post more... but that's the gist.
+====
+
+_fish_:::
+[source,sh]
+----
+➜ ./configure --prefix=$HOME/.local/(gcc -dumpmachine)
+----
+
+_Bash_:::
+[source,sh]
+----
+➜ ./configure --prefix=$HOME/.local/$(gcc -dumpmachine)
+----
+
+System-wide::
+[source,sh]
+----
+➜ ./configure
+----
+
+NOTE: The configure script will arrange for installation under the `/usr/local` directory by default.
+--
+
+. Build Git.
++
+--
+_fish_::
+[source,sh]
+----
+➜ make all doc info -j(nproc)
+----
+
+_Bash_::
+[source,sh]
+----
+➜ make all doc info -j$(nproc)
+----
+--
+
+. Install Git.
++
+--
+User::
+[source,sh]
+----
+➜ make install install-doc install-html install-info
+----
+
+System-wide::
+[source,sh]
+----
+➜ sudo make install install-doc install-html install-info
+----
+--
+
+. Because CentOS doesn't add `/usr/local/bin` or `~/.local/*/bin` to your `PATH` by default, add the relevant directory yourself.
++
+--
+User::
+_fish_:::
+[source,sh]
+----
+➜ mkdir -p ~/.config/fish/conf.d; and \
+  echo 'set -p fish_user_paths ~/.local/(gcc -dumpmachine)/bin' > \
+    ~/.config/fish/conf.d/machine_paths.fish
+➜ exec fish
+----
+
+_Bash_:::
+[source,sh]
+----
+➜ echo 'export PATH=$HOME/.local/$(gcc -dumpmachine)/bin:$PATH' >> ~/.bashrc
+➜ source ~/.bashrc
+----
+
+System-wide::
+_fish_:::
+[source,sh]
+----
+➜ set -pU fish_user_paths /usr/local/bin
+----
+
+_Bash_:::
+[source,sh]
+----
+➜ echo "export PATH=/usr/local/bin:$PATH" >> ~/.bashrc
+➜ source ~/.bashrc
+----
+--
+
+. Update the `MANPATH` environment variable to be able to read the man pages.
++
+--
+User::
+_fish_:::
+[source,sh]
+----
+➜ mkdir -p ~/.config/fish/conf.d; and \
+  echo 'set -gx MANPATH ~/.local/(gcc -dumpmachine)/share/man:' >> \
+    ~/.config/fish/conf.d/machine_paths.fish
+➜ exec fish
+----
+
+_Bash_:::
+[source,sh]
+----
+➜ echo 'export MANPATH=$HOME/.local/$(gcc -dumpmachine)/share/man:' >> ~/.bashrc
+➜ source ~/.bashrc
+----
+
+// todo Is this correct?
+System-wide::
+_fish_:::
+[source,sh]
+----
+➜ set -Ux MANPATH /usr/local/share/man:
+----
+
+_Bash_:::
+[source,sh]
+----
+➜ echo "export MANPATH=/usr/local/share/man:" >> ~/.bashrc
+➜ source ~/.bashrc
+----
+--
+
+. Update the `INFOPATH` environment variable as well.
++
+--
+User::
+_fish_:::
+[source,sh]
+----
+➜ mkdir -p ~/.config/fish/conf.d; and \
+  echo 'set -gpx INFOPATH ~/.local/(gcc -dumpmachine)/share/info' >> \
+    ~/.config/fish/conf.d/machine_paths.fish
+➜ exec fish
+----
+
+_Bash_:::
+[source,sh]
+----
+➜ echo 'export INFOPATH=$HOME/.local/$(gcc -dumpmachine)/share/info:$INFOPATH' >> ~/.bashrc
+➜ source ~/.bashrc
+----
+
+System-wide::
+_fish_:::
+[source,sh]
+----
+➜ set -pUx INFOPATH /usr/local/share/info
+----
+
+_Bash_:::
+[source,sh]
+----
+➜ echo "export INFOPATH=/usr/local/share/info:$INFOPATH" >> ~/.bashrc
+➜ source ~/.bashrc
+----
+--
+
+. Change out of the source directory.
++
+[source,sh]
+----
+➜ cd ..
+----
+
+. Cleanup the source directory and tarball now that are no longer needed.
++
+[source,sh]
+----
+➜ rm -rf git-2.29.1 git-2.29.2.tar git-2.29.2.tar.sign
+----
+
+== Update
+
+Now that Git has been installed, you can build newer versions of Git directly from Git's Git repository.
+
+. Checkout Git's source code repository.
++
+--
+[source,sh]
+----
+➜ git clone git://git.kernel.org/pub/scm/git/git.git
+Cloning into 'git'...
+remote: Enumerating objects: 9545, done.
+remote: Counting objects: 100% (9545/9545), done.
+remote: Compressing objects: 100% (722/722), done.
+remote: Total 295465 (delta 9052), reused 9110 (delta 8807), pack-reused 285920
+Receiving objects: 100% (295465/295465), 70.24 MiB | 5.36 MiB/s, done.
+Resolving deltas: 100% (223939/223939), done.
+----
+
+[TIP]
+====
+Keep organized.
+I recommend installing source code repositories in a directory in your home folder such as `~/Source`.
+====
+
+[TIP]
+====
+For reference purposes, you might place source code in `/usr/local/src` for system-wide installs.
+Just make sure not to generate any build artifacts in `/usr/local/src`.
+You should still do that from within your home directory.
+====
+--
+
+. Change into the source directory.
++
+[source,sh]
+----
+➜ cd git
+----
+
+. Checkout the latest version of git.
++
+--
+_fish_::
+[source,sh]
+----
+➜ git switch --detach (git describe --abbrev=0 --tags)
+HEAD is now at b927c80531 Git 2.29.2
+----
+
+_Bash_::
+[source,sh]
+----
+➜ git switch --detach $(git describe --abbrev=0 --tags)
+HEAD is now at b927c80531 Git 2.29.2
+----
+--
+
+. Build the configure script.
++
+[source,sh]
+----
+➜ make configure
+GIT_VERSION = 2.29.2
+    GEN configure
+----
+
+. Create a build directory to avoid cluttering the sourced directory.
++
+[source,sh]
+----
+➜ mkdir build
+----
+
+. Change into the build directory.
++
+[source,sh]
+----
+➜ cd build
+----
+
+. Configure the build.
++
+--
+User::
+_fish_:::
+[source,sh]
+----
+➜ ../configure --prefix=~/.local/(gcc -dumpmachine)
+----
+
+_Bash_:::
+[source,sh]
+----
+➜ ../configure --prefix=~/.local/$(gcc -dumpmachine)
+----
+
+System-wide::
+[source,sh]
+----
+➜ ../configure
+----
+--
+
+. Build Git.
++
+--
+_fish_::
+[source,sh]
+----
+➜ make all doc info -j(nproc)
+----
+
+_Bash_::
+[source,sh]
+----
+➜ make all doc info -j$(nproc)
+----
+--
+
+. Install Git.
++
+--
+User::
+[source,sh]
+----
+➜ make install install-doc install-html install-info
+----
+
+System-wide::
+[source,sh]
+----
+➜ sudo make install install-doc install-html install-info
+----
+--
+
+. Change out of the build directory.
++
+[source,sh]
+----
+➜ cd ..
+----
+
+. Clean up the lingering build artifacts by deleting the `build` directory.
++
+[source,sh]
+----
+➜ rm -rf build
+----
+
+== Conclusion
+
+You now have access to a much newer version of Git.
+Enjoy!

@@ -1,0 +1,159 @@
+= Backup Docker Data
+:page-layout:
+:page-category: Systems
+:page-tags: [Containers, Docker, Linux, Ubuntu, Ubuntu2004]
+
+Backups are super helpful, especially when you like to blow everything away fairly often.
+Backing up the data from a Docker container can help you quickly get things up and running again.
+
+== Tutorial
+
+My <<unifi-controller#,recent post>> detailed how to setup a UniFi Controller in a Docker container.
+This tutorial uses that container as an example for creating and restoring backups of data volumes.
+
+=== Backup
+
+. Creating backups is done by producing an archive of the important files on the host filesystem from the container's data volume.
++
+[source,sh]
+----
+$ docker run \
+  --rm \ # <1>
+  --volumes-from unifi-controller \ # <2>
+  -v $(pwd):/backup \ # <3>
+  ubuntu tar cvWf /backup/unifi-controller_backup_$(date +%F).tar -C /config unifi-controller # <4>
+----
+<1> Remove the container when finished.
+<2> Attach the data volumes for the container named _unifi-controller_.
+<3> Mount the current directory to `/backup` in the container.
+<4> Using an Ubuntu image, create an archive of the directory `/config/unifi-controller` in the `/backup` directory.
+
+. Compress the backup.
++
+[source,sh]
+----
+$ xz unifi-controller_backup_2020-07-01.tar
+----
+
+=== Restore
+
+To restore from a backup, just reverse the backup process.
+
+. Decompress the backup.
++
+[source,sh]
+----
+$ unxz unifi-controller_backup_2020-07-01.tar.xz
+----
+
+. Restore the contents of the archive to the data volume.
++
+[source,sh]
+----
+$ docker run
+  --rm \ # <1>
+  --volumes-from unifi-controller \ # <2>
+   -v $(pwd):/backup \ # <3>
+   ubuntu tar xvf /backup/unifi-controller_backup_2020-07-01.tar -C / # <4>
+----
+<1> Remove the container when finished.
+<2> Attach the data volumes for the container named _unifi-controller_.
+<3> Mount the current directory to `/backup` in the container.
+<4> Using an Ubuntu image, expand the archive in the `/` directory.
+
+=== Verify
+
+It's always important to test your backups.
+The simplest way to check the backup is with a fresh instance of the container.
+For the UniFi Controller, this is trivially accomplished.
+
+. First, copy the compose file to another directory and give the container a new name.
++
+[source,sh]
+----
+$ mkdir unifi-controller2
+$ cp unifi-controller/docker-compose.yml unifi-controller2
+$ cd unifi-controller2
+----
+
+. Modify the yaml file to match the following.
++
+.docker-compose.yml
+[source,dockerfile]
+----
+---
+version: "2.1"
+services:
+  unifi-controller:
+    image: linuxserver/unifi-controller
+    container_name: unifi-controller2 # <1>
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - MEM_LIMIT=1024M #optional
+    volumes:
+      - data:/config
+    ports:
+      - 3478:3478/udp
+      - 10001:10001/udp
+      - 8080:8080
+      - 8081:8081
+      - 8443:8443
+      - 8843:8843
+      - 8880:8880
+      - 6789:6789
+    restart: unless-stopped
+
+volumes:
+  data:
+----
+<1> Name the container _unifi-controller2_.
+
+. Initialize the container.
++
+[source,sh]
+----
+$ docker-compose up --no-start
+----
+
+. Decompress the backup.
++
+[source,sh]
+----
+$ unxz unifi-controller_backup_2020-07-01.tar.xz
+----
+
+. Restore the contents of the archive to the new container's data volume.
++
+--
+[source,sh]
+----
+$ docker run
+  --rm \
+  --volumes-from unifi-controller2 \ # <1>
+   -v $(pwd):/backup \
+   ubuntu tar xvf /backup/unifi-controller_backup_2020-07-01.tar -C /
+----
+<1> Attach the data volumes for the new _unifi-controller2_ container.
+
+That's it!
+The data from your original container should now be duplicated in _unifi-controller2_.
+--
+
+. Now, start _unifi-controller2_.
++
+[source,sh]
+----
+$ docker-compose up -d
+----
+
+. Then, open the UniFi Controller's web UI.
++
+[source,sh]
+----
+$ xdg-open http://127.0.0.1:8443
+----
+
+. Login just as you would on the _unifi-controller_ container and verify that your restored controller's configuration matches the original.
+
+You have now learned how to back up and restore the data in a Docker container's data volume.

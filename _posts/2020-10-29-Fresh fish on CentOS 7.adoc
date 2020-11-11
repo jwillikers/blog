@@ -1,0 +1,156 @@
+= Fresh fish on CentOS 7
+:page-layout:
+:page-category: Command-Line
+:page-tags: [CentOS, fish, Linux, shell]
+
+Are you desperate for the freshest https://fishshell.com/[fish]?
+Well, you've come to the right place.
+
+== Tutorial
+
+The instructions herein describe how to install a much newer version of the fish shell, version 3.1.2, from source on https://www.gnu.org/software/bash/[CentOS] 7.
+Further instructions for building fish are available from the https://github.com/fish-shell/fish-shell/#building[fish documentation].
+For this tutorial to make a lick of sense, you should be familiar with the command-line, Linux, installing packages, and building projects from source.
+
+. If you aren't using the https://rpm-software-management.github.io/[DNF] package manager yet, grab that.
++
+[source,sh]
+----
+➜ sudo yum -y install dnf
+----
+
+. Add the https://fedoraproject.org/wiki/EPEL[EPEL] repository for retrieving necessary dependencies.
++
+[source,sh]
+----
+➜ sudo dnf -y install \
+  https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+----
+
+. Install the build dependencies.
++
+[source,sh]
+----
+➜ sudo dnf -y install cmake3 gettext-devel git ncurses-devel ninja-build \
+  pcre2-devel
+----
+
+. Pull down the fish repository. 
++
+[source,sh]
+----
+➜ git clone https://github.com/fish-shell/fish-shell.git
+----
+
+. Checkout the latest release tag.
++
+[source,sh]
+----
+➜ git -C fish-shell switch --detach (git -C fish-shell describe --abbrev=0 --tags)
+HEAD is now at 0314b0f1d Release 3.1.2
+----
+
+. Configure CMake in the directory `fish-shell/build`.
++
+[source,sh]
+----
+➜ cmake3 -GNinja -B fish-shell/build -S fish-shell
+----
+
+. Build fish.
++
+[source,sh]
+----
+➜ cmake3 --build fish-shell/build
+----
+
+. Install fish.
++
+[source,sh]
+----
+➜ sudo cmake3 --install fish-shell/build
+-- Install configuration: "RelWithDebInfo"
+----
+
+. Register the shell in https://www.freebsd.org/cgi/man.cgi?query=shells&manpath=CentOS+7.1[`/etc/shells`].
++
+[source,sh]
+----
+➜ echo /usr/local/bin/fish | sudo tee -a /etc/shells
+/usr/local/bin/fish
+----
+
+. Change your login shell to fish.
++
+[source,sh]
+----
+➜ chsh -s /usr/local/bin/fish
+Changing shell for jordan.
+Password: 
+Shell changed.
+----
+
+. Log out and back in to complete the switch to fish.
+
+. Because it is CentOS, add `/usr/local/bin` to your `PATH`.
++
+[source,sh]
+----
+➜ set -pU fish_user_paths /usr/local/bin
+----
+
+=== Update
+
+To update to the latest version of fish, just checkout the latest version release, build, and install.
+For completeness, the instructions to update fish are provided below.
+
+. Checkout the latest release tag.
++
+[source,sh]
+----
+➜ git -C fish-shell switch --detach (git -C fish-shell describe --abbrev=0 --tags)
+HEAD is now at 0314b0f1d Release 3.1.2
+----
+
+. Configure CMake in the directory `fish-shell/build`.
++
+[source,sh]
+----
+➜ cmake3 -GNinja -B fish-shell/build -S fish-shell
+----
+
+. Build fish.
++
+[source,sh]
+----
+➜ cmake3 --build fish-shell/build
+----
+
+. Install fish.
++
+[source,sh]
+----
+➜ sudo cmake3 --install fish-shell/build
+-- Install configuration: "RelWithDebInfo"
+----
+
+=== Troubleshooting
+
+Packages on CentOS 7 might assume you are using a https://www.gnu.org/software/bash/[Bash]-compatible login shell.
+For instance, the https://www.qt.io/[Qt] 5 development packages work fine when using a Bash shell.
+After switching to fish, building a Qt 5 application failed because it could not find the `xcb` plugin.
+Setting the `QT_QPA_PLATFORM_PLUGIN_PATH` to as shown below resolved this issue.
+
+[source,sh]
+----
+➜ set -Ux QT_QPA_PLATFORM_PLUGIN_PATH /usr/lib64/qt5/plugins/platforms
+----
+
+The moral of the story is to check any Bash-specific initialization in places such as the `/etc/profile` file and the `/etc/profile.d` directory.
+Otherwise, it's entirely possible to use Bash as she login shell and and just execute fish from your `~/.bashrc` initialization file.
+There's also a fish plugin called https://github.com/edc/bass[Bass] which can handle sourcing Bash files such as `/etc/profile` directly.
+Refer to the fish page's section https://wiki.gentoo.org/wiki/Fish#Alternative_to_fish_as_the_login_shell[_Alternative to fish as the login shell_] on the https://wiki.gentoo.org/wiki/Main_Page[Gentoo Wiki] for the exact implementation details for these workarounds.
+
+== Conclusion
+
+You should notice enhanced cognitive performance from the incredible omega-3 fatty acid profile that only the freshest fish has to offer!
