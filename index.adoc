@@ -1,4 +1,7 @@
-= JWillikers
-:page-description:
-:page-layout: home
-:page-author_profile: true
+---
+description:
+layout: home
+author_profile: true
+pagination:
+    enabled: true
+---
