@@ -1,120 +1,331 @@
-= Jekyll AsciiDoc Quickstart
-:toc:
+= Blog
+Jordan Williams <jordan@jwillikers.com>
+:experimental:
+:icons: font
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
 
-The Jekyll AsciiDoc Quickstart project is a leg-up in starting your own website hosted on GitHub with content based in AsciiDoc.  This project combines the power of AsciiDoc with a beautiful CSS framework and blog-ready template on top of GitHub's existing publishing infrastructure.
+My developer blog containing handy admin and dev guides from my myriad of tinkering.
+Content is written primarily in https://asciidoctor.org/[Asciidoctor].
+https://jekyllrb.com/[Jekyll] generates a static website from the content which is then deployed with https://pages.github.com/[GitHub Pages].
+The website is available at https://jwillikers.com[jwillikers.com].
 
-== Directions
+== Contributing
 
-The goal of this procedure set is to configure a Travis CI job to listen for commits on the _master_ branch, automatically run the Jekyll build, and push the generated content to the _gh-pages_ branch.
+Contributions in the form of issues, feedback, and even pull requests are welcome.
+I really appreciate pointing out typos, incorrect instructions, and ways to improve or simplify posts.
+Considering this my personal blog, you will want to create an issue or contact me before making any significant pull request.
+Make sure to adhere to the project's link:CODE_OF_CONDUCT.adoc[Code of Conduct].
+If you wish to test the website locally, please see <<Getting Started>>.
 
-=== {counter:directions}. Install Minimum Jekyll Requirements
+== Getting Started
 
-You must install some software to execute commands in subsequent procedures. The Requirements on the http://jekyllrb.com/docs/installation/[Jekyll Installation] page describe how to install both ruby and rubygems.
+The steps below will create an environment for generating the website locally.
+These steps assume you are on https://ubuntu.com/[Ubuntu] and familiar with the Linux command-line and https://git-scm.com/[Git].
+Instructions are provided for the https://www.gnu.org/software/bash/[Bash], https://fishshell.com/[fish], and https://www.zsh.org/[ZSH] shells.
 
-For yum-based package managers, the command to run is:
-
-  $ sudo yum install ruby rubygems
-
-=== {counter:directions}. Install Travis Gem
-
-When you install rubygems, you can use the gem internal package management system to install the Travis CI gem. This gem contains--among other things--a command-line tool for easily encrypting GitHub tokens.
-
-Run the following command to install the Travis gem:
-
-  $ gem install travis
-
-=== {counter:directions}. Fork this Repository and Clone
-
-To create your own copy of this repository, start by clicking the fork button in the upper right corner of the GitHub page.
-
-Next, open a command line window and make a clone of your new repository:
-
-  $ git clone https://github.com/YOUR-USERNAME/jekyll-asciidoc-quickstart
-
-=== {counter:directions}. Enable Travis CI
-
-Travis CI is configured initially through a browser.
-
-To activate Travis CI for the Repository:
-
-. Open https://travis-ci.org and create an account.
-. Open your https://travis-ci.org/profile/[profile page] on Travis.
-. Find the Jekyll repository, and turn on the switch.
-. Click on repository settings (next to the switch) and enable “Build only if .travis.yml is present.”
-
-=== {counter:directions}. Generate a GitHub Personal Access Token
-
-Once the repository is activated in Travis, you need a GitHub token to pass into the Travis keytool.
-
-To generate a new personal access token on GitHub:
-
-. Open https://github.com/settings/tokens/new.
-. Select the scope _public_repository_, and add a terse description.
-. Confirm and save the settings.
-
-=== {counter:directions}. Encrypt the GitHub Token for Travis CI
-
-With the GitHub token created, you can now pass it to the Travis command-line tool, which adds the encrypted value to a file in your repository.
-
-To encrypt the token and add it to the `.travis.yml` file in your cloned repository:
-
-. Move into the same directory as `.travis.yml`.
-. Run the following command, replacing `<token>` with the GitHub token from the previous step.
-
-  $ travis encrypt GH_TOKEN=<token> --add env.global
-
-. Verify the script added the `secure` global environment variable to `.travis.yml`:
+. Clone the blog's repository.
 +
-[source, yaml]
+[source,sh]
 ----
-env:
-  global:
-    secure: [YOUR-ENCRYPTED-TOKEN]
+➜ git clone git@github.com:jwillikers/blog.git
 ----
+
+. Change into the blog's directory.
 +
-. Commit all changes, and push to GitHub.
+[source,sh]
+----
+➜ cd blog
+----
 
-  $ git push
+. Install the dependencies needed for asdf.
++
+[source,sh]
+----
+➜ sudo apt -y install curl git
+----
 
-=== {counter:directions}. Verify the Configuration
+. Pull down the https://github.com/asdf-vm/asdf[asdf repository] in to your home directory.
++
+[source,sh]
+----
+➜ git clone https://github.com/asdf-vm/asdf.git ~/.asdf
+Cloning into '/home/ubuntu/.asdf'...
+remote: Enumerating objects: 145, done.
+remote: Counting objects: 100% (145/145), done.
+remote: Compressing objects: 100% (85/85), done.
+remote: Total 5782 (delta 76), reused 93 (delta 59), pack-reused 5637
+Receiving objects: 100% (5782/5782), 1.09 MiB | 6.01 MiB/s, done.
+Resolving deltas: 100% (3293/3293), done.
+----
 
-To verify if you have configured the repository correctly, open https://travis-ci.org and verify that Travis starts, and subsequently finishes processing the job.
+. Checkout the latest version of asdf.
++
+--
+_fish_::
++
+[source,sh]
+----
+➜ git -C ~/.asdf switch --detach (git -C ~/.asdf describe --abbrev=0 --tags)
+HEAD is now at c6145d0 Update version to 0.8.0
+----
 
-Travis should place the built site into the _gh-pages_ branch upon completion.
+_Bash / ZSH_::
++
+[source,bash]
+----
+➜ git -C ~/.asdf switch --detach $(git -C ~/.asdf describe --abbrev=0 --tags)
+HEAD is now at c6145d0 Update version to 0.8.0
+----
+--
 
-== Summary
+. Enable asdf in your shell.
++
+--
+_fish_::
++
+[source,sh]
+----
+➜ mkdir -p ~/.config/fish/conf.d; and echo "source ~/.asdf/asdf.fish" > ~/.config/fish/conf.d/asdf.fish
+----
 
-If you can load the `[username].github.io/jekyll-asciidoc-quickstart` home page, you have successfully completed basic configuration.
+_Bash_::
++
+[source,bash]
+----
+➜ echo '. $HOME/.asdf/asdf.sh' >> ~/.bashrc
+----
 
-Start writing blog posts and enjoy the AsciiDoc difference, regardless of what device you choose: computer, tablet, or mobile.
+_ZSH_::
++
+[source,zsh]
+----
+➜ echo '. $HOME/.asdf/asdf.sh' >> ~/.zshrc
+----
+--
 
-If would you like to work offline first, consider to check your `Gemfile` for the versions of your gem sources. As the case may be, your `jekyll serve` will fail. So make sure to check your gem sources with `gem list --local | grep "jekyll"`.
+. Install shell completions for asdf.
++
+--
+_fish_::
++
+[source,sh]
+----
+➜ mkdir -p ~/.config/fish/completions; and ln -s ~/.asdf/completions/asdf.fish ~/.config/fish/completions
+----
 
-= Details
+_Bash_::
++
+[source,bash]
+----
+➜ echo '. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
+----
 
-== GitHub Pages and AsciiDoc
+_ZSH_::
++
+[source,zsh]
+----
+➜ echo -e 'fpath=(${ASDF_DIR}/completions $fpath)\nautoload -Uz compinit\ncompinit' >> ~/.zshrc
+----
+--
 
-GitHub Pages does not (yet) whitelist the jekyll-asciidoc plug-in, so you can not write `.adoc` posts and have them instantly publish like Markdown posts do.
+. Reload fish to make asdf available.
++
+--
+_fish_::
++
+[source,sh]
+----
+➜ exec fish
+----
 
-Unlike some "fork and write" repositories that exist for Markdown blogs, you need to initially configure this repository fork with a computer to publish using AsciiDoc.
+_Bash_::
++
+[source,bash]
+----
+➜ source ~/.bashrc
+----
 
-=== How We Work Around The Limitation
+_ZSH_::
++
+[source,zsh]
+----
+➜ source ~/.zshrc
+----
+--
 
-For this repository, the https://travis-ci.org/[Travis CI] Continuous Integration (CI) server emulates GitHub Pages staging automation, and pushes your blog live upon committing any change to the repository.
+. Install the requisite packages for building Ruby.
++
+[source,sh]
+----
+➜ sudo apt -y install autoconf bison build-essential libssl-dev libyaml-dev \
+  libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm6 libgdbm-dev \
+  libdb-dev
+----
 
-After initially configuring the repository, you can use Git command-line on your computer, or even a Git client on your tablet or smartphone to write, commit, and automatically publish blog posts.
+. Add asdf plugins for direnv, Bundler, and Ruby.
++
+[source,sh]
+----
+➜ asdf plugin add bundler direnv ruby
+----
 
-=== Help Get AsciiDoc Whitelisted for GitHub Pages
+. Integrate direnv with your shell.
++
+--
+_fish_::
++
+[source,sh]
+----
+➜ mkdir -p ~/.config/fish/conf.d; \
+  and echo "asdf exec direnv hook fish | source" > ~/.config/fish/conf.d/direnv.fish
+----
 
-You can help change the lack of native AsciiDoc support by creating a support case through http://github.com/support.
+_Bash_::
++
+[source,bash]
+----
+➜ echo 'eval "$(asdf exec direnv hook bash)"' >> ~/.bashrc
+----
 
-Tell the GitHub team that you want the choice to write in AsciiDoc, and have it handled the same way Markdown is when pushed to your GitHub Page.
+_ZSH_::
++
+[source,zsh]
+----
+➜ echo 'eval "$(asdf exec direnv hook zsh)"' >> ~/.zshrc
+----
+--
 
-Your voice counts: make it heard!
+. Make the asdf feature, i.e. the command `use asdf`, available in direnv.
++
+--
+_fish_::
++
+[source,sh]
+----
+➜ mkdir -p ~/.config/direnv; \ 
+  and echo 'source "$(asdf direnv hook asdf)"' >> ~/.config/direnv/direnvrc
+----
 
-== Repository Structure
+_Bash / ZSH_::
++
+[source,bash]
+----
+➜ mkdir -p ~/.config/direnv; \
+  echo 'source "$(asdf direnv hook asdf)"' >> ~/.config/direnv/direnvrc
+----
 
-The repository requires the following structure to work correctly:
+NOTE: The `direnvrc` file should only use Bash syntax.
+--
 
-* **master**, for markup sources and configuration. This branch can be named anything you choose, however **master** is a general standard used in Jekyll blogs.
-* **gh-pages**, for the generated static content produced by Travis CI. This branch is the username.github.io GitHub Pages domain, which is created automatically for you when the Travis CI job runs.
+. Install the project's asdf dependencies.
++
+[source,sh]
+----
+➜ asdf install
+----
+
+. Allow direnv to alter the environment for the project directory.
++
+[source,sh]
+----
+➜ direnv allow
+----
+
+. Install the required Ruby gems.
++
+[source,sh]
+----
+➜ bundle
+----
+
+== Test
+
+Jekyll supports running a web server on the local machine, which can be used to preview and test changes to the website.
+The steps below describe how to do this below, assuming you are in the project directory running Ubuntu with the GNOME desktop.
+
+. Run the `jekyll` executable with the `s` subcommand, i.e. _serve_.
++
+[source,sh]
+----
+➜ jekyll s
+Configuration file: /home/jordan/Source/blog/_config.yml
+            Source: /home/jordan/Source/blog
+       Destination: /home/jordan/Source/blog/_site
+ Incremental build: disabled. Enable with --incremental
+      Generating... 
+       Jekyll Feed: Generating feed for posts
+ Auto-regeneration: enabled for '/home/jordan/Source/blog'
+    Server address: http://127.0.0.1:4000/
+  Server running... press ctrl-c to stop.
+----
+
+. Open the server address provided in the previous output with your web browser of choice.
++
+[source,sh]
+----
+➜ gnome-www-browser http://127.0.0.1:4000/
+----
+
+. When finished testing, type kbd:[Ctrl+C] to stop the local web server.
+
+== Build
+
+The website can be generated locally by passing the `b` subcommand, i.e. _build_, to Jekyll.
+
+[source,sh]
+----
+➜ jekyll b
+----
+
+== Deploy
+
+Continuous integration is configured through https://travis-ci.org/[Travis CI].
+Trigger the CI to build and deploy by pushing changes to the `master` branch on the GitHub remote.
+
+[source,sh]
+----
+➜ git push
+----
+
+The updated website is deployed to https://jwillikers.com[jwillikers.com].
+
+== Open Source Software
+
+This project is built on the hard work of countless open source contributors.
+Several of these projects are enumerated below.
+
+* https://asciidoctor.org/[asciidoctor]
+* https://asdf-vm.com/#/[asdf]
+* https://github.com/jonathanmorley/asdf-bundler[asdf-bundler]
+* https://github.com/asdf-community/asdf-direnv[asdf-direnv]
+* https://github.com/asdf-vm/asdf-ruby[asdf-ruby]
+* https://bundler.io/[Bundler]
+* https://direnv.net/[direnv]
+* https://git-scm.com/[Git]
+* https://jekyllrb.com/[Jekyll]
+* https://github.com/asciidoctor/jekyll-asciidoc[jekyll-asciidoc]
+* https://mmistakes.github.io/minimal-mistakes/[Minimal Mistakes]
+* https://rouge.jneen.net/[Rouge]
+* https://www.ruby-lang.org/en/[Ruby]
+
+== Code of Conduct
+
+The project's Code of Conduct is available in the link:CODE_OF_CONDUCT.adoc[] file.
+
+== License
+
+This repository is licensed under the https://www.gnu.org/licenses/gpl-3.0.html[GPLv3], available in the link:LICENSE.adoc[] file.
+
+The website's content is licensed under a http://creativecommons.org/licenses/by-sa/4.0/[Creative Commons Attribution-ShareAlike 4.0 International License].
+
+© 2020 Jordan Williams
+
+== Authors
+
+mailto:{email}[{author}]
