@@ -1,5 +1,6 @@
 = About
-:page-layout:
+:page-layout: single
+:page-permalink: /about/
 
 Welcome to jwillikers.com, where I like to put all of my handy admin and dev guides from my myriad of tinkering.
 My posts serve as convenient references for myself, but my hope is that they will help you as well.
