@@ -129,7 +129,7 @@ asciidoctor:
   base_dir: :docdir
   safe: unsafe
 
-breadcrumbs: true
+breadcrumbs: false
 
 rss-description: Handy admin and dev guides from my myriad of tinkering
 
