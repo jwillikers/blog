@@ -13,7 +13,7 @@ email: jordan@jwillikers.com
 description: Handy admin and dev guides from my myriad of tinkering
 baseurl: ""
 url: "https://jwillikers.com"
-repository: "jwillikers/blog2"
+repository: "jwillikers/blog"
 name: >-
   Jordan Williams
   <br />
@@ -118,7 +118,7 @@ footer:
   links:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      url: "https://github.com/jwillikers/blog2"
+      url: "https://github.com/jwillikers/blog"
 
 theme: minimal-mistakes-jekyll
 minimal_mistakes_skin: "dark"
