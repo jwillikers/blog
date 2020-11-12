@@ -9,6 +9,9 @@ author:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/jwillikers"
+    - label: "Stack Overflow"
+      icon: "fab fa-fw fa-stack-overflow"
+      url: "https://stackoverflow.com/users/9835303/jwillikers"
 email: jordan@jwillikers.com
 description: Handy admin and dev guides from my myriad of tinkering
 baseurl: ""
@@ -28,7 +31,7 @@ name: >-
     is licensed under a 
     <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
     Creative Commons Attribution-ShareAlike 4.0 International License</a>
-github_username:  jwillikers
+github_username: jwillikers
 permalink: /:slug
 highlighter: rouge
 
@@ -38,7 +41,7 @@ include:
 collections:
   posts:
     output: true
-    
+
 pagination:
   enabled: true
   per_page: 5
@@ -125,12 +128,8 @@ asciidoctor:
     pygments-css: style
   base_dir: :docdir
   safe: unsafe
-breadcrumbs: true
 
-social-network-links:
-  email: "jordan@jwillikers.com"
-  github: jwillikers
-  stackoverflow: "9835303/jwillikers"
+breadcrumbs: true
 
 rss-description: Handy admin and dev guides from my myriad of tinkering
 
