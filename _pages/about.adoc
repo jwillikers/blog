@@ -3,16 +3,18 @@
 :page-permalink: /about/
 
 Welcome to jwillikers.com, where I like to put all of my handy admin and dev guides from my myriad of tinkering.
-My posts serve as convenient references for myself, but my hope is that they will help you as well.
+My posts serve not only as convenient references for my future self, but also force me to learn and understand the different technologies I end up touching.
+Hopefully, the content here will help other tinkerers, technologists, and developers.
 
 == Me
 
-This is my personal developer blog, so I'm taking the opportunity to talk a bit about myself.
+Here I take the opportunity to talk a bit about myself, my development experience, and interests.
 
 === Career
 
-The reasons I pursue a career in software, engineering have continued to grow and evolve over time. 
-Suffice it to say that I enjoy participating as part of a team to solve real and interesting problems in order to positively impact the lives of others.
+The reasons I pursue a career in software engineering have continued to grow and evolve over time. 
+Suffice it to say that I enjoy participating as part of a team to solve real and interesting problems.
+I find it important and fulfilling that these solutions positively impact the lives of others.
 
 As a software engineer, I strive to write the least amount of simple and safe code required to complete a given task.
 Ideally, this amounts to writing no code at all because I'm able to discover that a perfectly adequate and tenable solution already exists.
@@ -22,12 +24,12 @@ In the sections which follow I describe my experience in the field.
 ==== Cross-platform Application Development
 
 At my current day job, I wrangle https://isocpp.org/[{cpp}] and https://cmake.org/[CMake] code to create functional, cross-platform graphical applications.
-Developing at a small company, my hands are in just about everything from project management to cross-platform application development to systems administration to licensing compliance.
+Developing at a small company, my hands are in just about everything from project management and cross-platform application development to systems administration and licensing compliance.
 My focus here has been to learn how to write good {cpp} code, to improve the build system, and to implement both standard software engineering practices and agile development models.
 
-It has been challenging to implement better practices and processes while both maintaining a large, legacy code-base lacking any standards what-so-ever and adding high-quality code for new features.
-This is has been a phenomenal learning opportunity, but mostly in a trial-by-fire sort of way.
-Such circumstances have bred in me a deep appreciation of the software engineering principles which foster the production of maintainable code.
+It has been challenging to implement better practices and processes while both maintaining a large, legacy code-bas elacking any standards what-so-ever and adding high-quality code for new features.
+This is has been a phenomenal learning opportunity, in a trial-by-fire way.
+Such circumstances have bred in me a deep appreciation of the software engineering principles and development practices which foster the production of maintainable code.
 This endeavor has also lead me to understand how the process of writing good code is impacted by management, project planning, collaboration, communication, and even company culture.
 
 ==== Software Engineering Intern
@@ -60,6 +62,86 @@ This has ingrained in me strong convictions for utilizing standard software engi
 There is also nothing like having fun and learning new things while solving a challenging problem.
 This is why languages which pursue safety and simplicity, such as Rust and Go, are my favorites.
 They tend allow me to focus on the problem at hand rather than frustrate me with issues and complexities inherent in the language.
+
+=== Technologies
+
+Below I enumerate the technologies with which I am familiar.
+
+Operating Systems::
+* Ubuntu
+* OpenBSD
+* Red Hat Enterprise Linux
+* CentOS
+* Manjaro
+* Gentoo
+* openSUSE
+* macOS
+* Windows
+
+Languages::
+* C
+* {cpp} (Standards including 98, 11, 14, 17, 20)
+* Go
+* Java
+* Python
+* TOML
+
+Frameworks::
+* Django
+* Gtkmm
+* Qt5
+
+Compilers::
+* GCC
+* LLVM Clang
+* MSVC
+
+Build Tooling::
+* asdf
+* ccache
+* CMake
+* Conan
+* Ninja
+* Pipenv
+
+Code Quality::
+* Approval Tests.cpp
+* Boost Test
+* Boost μt
+* Catch2
+* Clang Tidy
+* Clang Format
+* Google Benchmark
+* Google Sanitizers
+* Google Test
+* Valgrind
+
+Libraries::
+* Boost Asio
+* Boost Concepts
+* Boost Concepts
+* Boost Contracts
+* Boost Filesystem
+* Boost Interprocess
+* Boost Process
+* Boost Spirit X3
+* fmt
+* Microsoft GSL
+* tomlplusplus
+
+Editors and IDEs::
+* Atom
+* Eclipse
+* JetBrains CLion
+* JetBrains Intellij
+* Sublime Merge
+* Sublime Text
+* Vim
+* Visual Studio Code
+* VSCodium
+
+Version Control::
+* Git
 
 === Interests
 
