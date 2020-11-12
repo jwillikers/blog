@@ -17,7 +17,7 @@ The https://github.com/pyenv/pyenv[Pyenv] and https://asdf-vm.com/#/[asdf] utili
 Virtual Environment:: Virtual Python environments isolate installed Python packages from the rest of the system.
 The older https://virtualenv.pypa.io/en/latest/[virtualenv] and more recent https://docs.python.org/3/library/venv.html[venv] are used to create and manage these virtual environments.
 However, managing these manually with these tools is cumbersome.
-There many different solutions for making these tools less taxing, including https://virtualenvwrapper.readthedocs.io/en/latest/[virtualenvwrapper], https://virtualfish.readthedocs.io/en/latest/[virtualfish], https://direnv.net/[direnv], and couple which also handle package management described below. 
+There are many different solutions for making these tools less taxing, including https://virtualenvwrapper.readthedocs.io/en/latest/[virtualenvwrapper], https://virtualfish.readthedocs.io/en/latest/[virtualfish], https://direnv.net/[direnv], and more.
 Python Packages:: Each package and its exact version must be recorded.
 While the native Python package manager, https://pip.pypa.io/en/stable/[pip], can do this with a `requirements.txt` file, there are some important ways in which this method is lacking.
 That's why https://pipenv.pypa.io/en/latest/[Pipenv], https://python-poetry.org/[Poetry], and https://github.com/jazzband/pip-tools[pip-tools] use more robust methods of dependency management.
@@ -119,58 +119,98 @@ Resolving deltas: 100% (3293/3293), done.
 
 . Checkout the latest version of asdf.
 +
+--
+_fish_::
++
 [source,sh]
 ----
-# fish
 ➜ git -C ~/.asdf switch --detach (git -C ~/.asdf describe --abbrev=0 --tags)
 HEAD is now at c6145d0 Update version to 0.8.0
+----
 
-# Bash / ZSH
+_Bash / ZSH_::
++
+[source,bash]
+----
 ➜ git -C ~/.asdf switch --detach $(git -C ~/.asdf describe --abbrev=0 --tags)
 HEAD is now at c6145d0 Update version to 0.8.0
 ----
+--
 
 . Enable asdf in your shell.
 +
+--
+_fish_::
++
 [source,sh]
 ----
-# fish
 ➜ mkdir -p ~/.config/fish/conf.d; and echo "source ~/.asdf/asdf.fish" > ~/.config/fish/conf.d/asdf.fish
+----
 
-# Bash
+_Bash_::
++
+[source,bash]
+----
 ➜ echo '. $HOME/.asdf/asdf.sh' >> ~/.bashrc
+----
 
-# ZSH
+_ZSH_::
++
+[source,zsh]
+----
 ➜ echo '. $HOME/.asdf/asdf.sh' >> ~/.zshrc
 ----
+--
 
 . Install shell completions for asdf.
 +
-[source,sh]
-----
-# fish
-➜ mkdir -p ~/.config/fish/completions; and ln -s ~/.asdf/completions/asdf.fish ~/.config/fish/completions
-
-# Bash
-➜ echo '. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
-
-# ZSH
-➜ echo -e 'fpath=(${ASDF_DIR}/completions $fpath)\nautoload -Uz compinit\ncompinit' >> ~/.zshrc
-----
-
-. To make asdf available, reload your shell.
+--
+_fish_::
 +
 [source,sh]
 ----
-# fish
+➜ mkdir -p ~/.config/fish/completions; and ln -s ~/.asdf/completions/asdf.fish ~/.config/fish/completions
+----
+
+_Bash_::
++
+[source,bash]
+----
+➜ echo '. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
+----
+
+_ZSH_::
++
+[source,zsh]
+----
+➜ echo -e 'fpath=(${ASDF_DIR}/completions $fpath)\nautoload -Uz compinit\ncompinit' >> ~/.zshrc
+----
+--
+
+. To make asdf available, reload your shell.
++
+--
+_fish_::
++
+[source,sh]
+----
 ➜ exec fish
+----
 
-# Bash
+_Bash_::
++
+[source,bash]
+----
 ➜ source ~/.bashrc
+----
 
-# ZSH
+_ZSH_::
++
+[source,zsh]
+----
 ➜ source ~/.zshrc
 ----
+--
 
 . Install the necessary dependencies to build Python which are helpfully documented in the https://github.com/pyenv/pyenv/wiki#suggested-build-environment[Pyenv Wiki].
 +
@@ -241,14 +281,21 @@ Install the Python package `python-is-python3` to install a `python` executable 
 
 ... Set the user's Python to the latest version available at this time.
 +
+--
+_fish_::
++
 [source,sh]
 ----
-# fish
-➜ asdf global python (asdf latest python)
-
-# Bash / ZSH
 ➜ asdf global python (asdf latest python)
 ----
+
+_Bash / ZSH_::
++
+[source,bash]
+----
+➜ asdf global python (asdf latest python)
+----
+--
 
 . Install https://pipxproject.github.io/pipx/[pipx] for installing Pipenv in an isolated environment.
 +
@@ -300,17 +347,28 @@ Otherwise pipx is ready to go! ✨ 🌟 ✨
 
 . To make executables installed by pipx available, reload your shell.
 +
+--
+_fish_::
++
 [source,sh]
 ----
-# fish
 ➜ exec fish
+----
 
-# Bash
+_Bash_::
++
+[source,bash]
+----
 ➜ source ~/.bashrc
+----
 
-# ZSH
+_ZSH_::
++
+[source,zsh]
+----
 ➜ source ~/.zshrc
 ----
+--
 
 . Install Pipenv.
 +
@@ -333,27 +391,43 @@ done! ✨ 🌟 ✨
 
 . Integrate direnv with your shell.
 +
+--
+_fish_::
++
 [source,sh]
 ----
-# fish
 ➜ mkdir -p ~/.config/fish/conf.d; and echo "asdf exec direnv hook fish | source" > ~/.config/fish/conf.d/direnv.fish
+----
 
-# Bash
+_Bash_::
++
+[source,bash]
+----
 ➜ echo 'eval "$(asdf exec direnv hook bash)"' >> ~/.bashrc
+----
 
-# ZSH
+_ZSH_::
++
+[source,zsh]
+----
 ➜ echo 'eval "$(asdf exec direnv hook zsh)"' >> ~/.zshrc
 ----
+--
 
 . Make the asdf feature, i.e. the command `use asdf`, available in direnv.
 +
 --
+_fish_::
++
 [source,sh]
 ----
-# fish
 ➜ mkdir -p ~/.config/direnv; and echo 'source "$(asdf direnv hook asdf)"' >> ~/.config/direnv/direnvrc
+----
 
-# Bash / ZSH
+_Bash / ZSH_::
++
+[source,bash]
+----
 ➜ mkdir -p ~/.config/direnv; echo 'source "$(asdf direnv hook asdf)"' >> ~/.config/direnv/direnvrc
 ----
 
@@ -362,17 +436,28 @@ NOTE: The `direnvrc` file should only use Bash syntax.
 
 . Add completions for Pipenv to your shell.
 +
+--
+_fish_::
++
 [source,sh]
 ----
-# fish
 ➜ echo "eval (pipenv --completion)" > ~/.config/fish/completions/pipenv.fish
+----
 
-# Bash
+_Bash_::
++
+[source,bash]
+----
 ➜ echo 'eval "$(pipenv --completion)"' >> ~/.bashrc
+----
 
-# ZSH
+_ZSH_::
++
+[source,zsh]
+----
 ➜ echo 'eval "$(pipenv --completion)"' >> ~/.zshrc
 ----
+--
 
 === Configure
 
@@ -425,14 +510,21 @@ Installed Python-3.9.0 to /home/ubuntu/.asdf/installs/python/3.9.0
 
 . Set the project's version of Python.
 +
+--
+_fish_::
++
 [source,sh]
 ----
-# fish
 ➜ asdf local python (asdf current python | awk '{print $2}')
+----
 
-# Bash / ZSH
+_Bash / ZSH_::
++
+[source,bash]
+----
 ➜ asdf local python $(asdf current python | awk '{print $2}')
 ----
+--
 
 . Install the latest version of direnv.
 +
@@ -448,12 +540,17 @@ The installation was successful!
 ====
 If you haven't set the default global version of direnv, now is a good time to do so.
 
+_fish_::
++
 [source,sh]
 ----
-# fish
 ➜ asdf global direnv (asdf latest direnv)
+----
 
-# Bash / ZSH
+_Bash / ZSH_::
++
+[source,bash]
+----
 ➜ asdf global direnv $(asdf latest direnv)
 ----
 ====
@@ -461,14 +558,21 @@ If you haven't set the default global version of direnv, now is a good time to d
 
 . Set the project to use the latest version of direnv.
 +
+--
+_fish_::
++
 [source,sh]
 ----
-# fish
 ➜ asdf local direnv (asdf latest direnv)
+----
 
-# Bash / ZSH
+_Bash / ZSH_::
++
+[source,bash]
+----
 ➜ asdf local direnv $(asdf latest direnv)
 ----
+--
 
 . The previous `asdf local` commands place version information in the `.tool-versions` file, so add this file to version control.
 +
@@ -519,16 +623,23 @@ Alternatively, run a command inside the virtualenv with pipenv run.
 
 . In the root of the project directory, create the file `.envrc` with the lines `use asdf` and `layout pipenv` to automatically use both asdf and Pipenv.
 +
-[source]
+--
+_fish_::
++
+[source,sh]
 ----
-# fish
 ➜ echo > .envrc "\
 use asdf
 layout pipenv"
+----
 
-# Bash / ZSH
+_Bash / ZSH_::
++
+[source,bash]
+----
 ➜ echo -e "use asdf\nlayout pipenv" > .envrc
 ----
+--
 
 . Add the `.envrc` file to version control.
 +
@@ -539,20 +650,32 @@ layout pipenv"
 
 . Reload your shell for direnv to be available.
 +
+--
+_fish_::
++
 [source,sh]
 ----
 # fish
 ➜ exec fish
 direnv: error /home/ubuntu/Source/MyProject/.envrc is blocked. Run `direnv allow` to approve its content
+----
 
-# Bash
+_Bash_::
++
+[source,bash]
+----
 ➜ source ~/.bashrc
 direnv: error /home/ubuntu/Source/MyProject/.envrc is blocked. Run `direnv allow` to approve its content
+----
 
-# ZSH
+_ZSH_::
++
+[source,zsh]
+----
 ➜ source ~/.zshrc
 direnv: error /home/ubuntu/Source/MyProject/.envrc is blocked. Run `direnv allow` to approve its content
 ----
+--
 
 . Enable automatic loading of the project's environment.
 +
@@ -616,12 +739,17 @@ Installed Python-3.9.0 to /home/ubuntu/.asdf/installs/python/3.9.0
 ====
 If you haven't set a default global version of direnv, you should do so now.
 
+_fish_::
++
 [source,sh]
 ----
-# fish
 ➜ asdf global direnv (asdf list ruby | awk 'FNR <= 1')
+----
 
-# Bash / ZSH
+_Bash / ZSH_::
++
+[source,sh]
+----
 ➜ asdf global direnv $(asdf list ruby | awk 'FNR <= 1')
 ----
 ====
@@ -629,20 +757,31 @@ If you haven't set a default global version of direnv, you should do so now.
 
 . Reload your shell for direnv to be available.
 +
+--
+_fish_::
++
 [source,sh]
 ----
-# fish
 ➜ exec fish
 direnv: error /home/ubuntu/Source/MyProject/.envrc is blocked. Run `direnv allow` to approve its content
+----
 
-# Bash
+_Bash_::
++
+[source,bash]
+----
 ➜ source ~/.bashrc
 direnv: error /home/ubuntu/Source/MyProject/.envrc is blocked. Run `direnv allow` to approve its content
+----
 
-# ZSH
+_ZSH_::
++
+[source,zsh]
+----
 ➜ source ~/.zshrc
 direnv: error /home/ubuntu/Source/MyProject/.envrc is blocked. Run `direnv allow` to approve its content
 ----
+--
 
 . Enable automatic loading of the project's environment.
 +
@@ -714,14 +853,21 @@ Steps for updating the various software components follow.
 
 . Update the project's version to reflect this newly installed version of direnv.
 +
+--
+_fish_::
++
 [source,sh]
 ----
-# fish
 ➜ asdf local direnv (asdf latest direnv)
+----
 
-# Bash / ZSH
+_Bash / ZSH_::
++
+[source,bash]
+----
 ➜ asdf local direnv $(asdf latest direnv)
 ----
+--
 
 === Pipenv
 
@@ -758,14 +904,21 @@ TIP: If you want to upgrade all packages managed by pipx, just run `pipx upgrade
 
 . Update the global Python version for the user.
 +
+--
+_fish_::
++
 [source,sh]
 ----
-# fish
 ➜ asdf global python (asdf latest python)
+----
 
-# Bash / ZSH
+_Bash / ZSH_::
++
+[source,sh]
+----
 ➜ asdf global python $(asdf latest python)
 ----
+--
 
 . Install pipx for installing Pipenv in an isolated environment.
 +
@@ -794,14 +947,21 @@ Update the project's Python version with these instructions.
 
 . Set the Python version for the project to the desired version.
 +
+--
+_fish_::
++
 [source,sh]
 ----
-# fish
 ➜ asdf local python (asdf latest python)
+----
 
-# Bash / ZSH
+_Bash / ZSH_::
++
+[source,bash]
+----
 ➜ asdf local python $(asdf latest python)
 ----
+--
 
 . Wait while direnv and Pipenv automatically install dependencies and rebuild the virtual environment.
 
