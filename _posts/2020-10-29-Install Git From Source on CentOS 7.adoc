@@ -212,89 +212,16 @@ _Bash_:::
 ----
 
 System-wide::
-_fish_:::
-[source,sh]
-----
-➜ set -pU fish_user_paths /usr/local/bin
-----
 
-_Bash_:::
-[source,sh]
-----
-➜ echo "export PATH=/usr/local/bin:$PATH" >> ~/.bashrc
-➜ source ~/.bashrc
-----
---
-
-. Update the `MANPATH` environment variable to be able to read the man pages.
+. Ensure that `/usr/local/bin` is on the `PATH` in the `/etc/environment` file used by PAM.
 +
---
-User::
-_fish_:::
 [source,sh]
+./etc/environment
 ----
-➜ mkdir -p ~/.config/fish/conf.d; and \
-  echo 'set -gx MANPATH ~/.local/(gcc -dumpmachine)/share/man:' >> \
-    ~/.config/fish/conf.d/machine_paths.fish
-➜ exec fish
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
 ----
 
-_Bash_:::
-[source,sh]
-----
-➜ echo 'export MANPATH=$HOME/.local/$(gcc -dumpmachine)/share/man:' >> ~/.bashrc
-➜ source ~/.bashrc
-----
-
-// todo Is this correct?
-System-wide::
-_fish_:::
-[source,sh]
-----
-➜ set -Ux MANPATH /usr/local/share/man:
-----
-
-_Bash_:::
-[source,sh]
-----
-➜ echo "export MANPATH=/usr/local/share/man:" >> ~/.bashrc
-➜ source ~/.bashrc
-----
---
-
-. Update the `INFOPATH` environment variable as well.
-+
---
-User::
-_fish_:::
-[source,sh]
-----
-➜ mkdir -p ~/.config/fish/conf.d; and \
-  echo 'set -gpx INFOPATH ~/.local/(gcc -dumpmachine)/share/info' >> \
-    ~/.config/fish/conf.d/machine_paths.fish
-➜ exec fish
-----
-
-_Bash_:::
-[source,sh]
-----
-➜ echo 'export INFOPATH=$HOME/.local/$(gcc -dumpmachine)/share/info:$INFOPATH' >> ~/.bashrc
-➜ source ~/.bashrc
-----
-
-System-wide::
-_fish_:::
-[source,sh]
-----
-➜ set -pUx INFOPATH /usr/local/share/info
-----
-
-_Bash_:::
-[source,sh]
-----
-➜ echo "export INFOPATH=/usr/local/share/info:$INFOPATH" >> ~/.bashrc
-➜ source ~/.bashrc
-----
+. Log out and back in for the change to take effect.
 --
 
 . Change out of the source directory.
