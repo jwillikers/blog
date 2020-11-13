@@ -128,6 +128,7 @@ Compilers::
 
 Build Tooling::
 * https://asdf-vm.com/#/[asdf]
+* [Bundler]
 * https://ccache.dev/[ccache]
 * https://cmake.org/[CMake]
 * https://conan.io/[Conan]
