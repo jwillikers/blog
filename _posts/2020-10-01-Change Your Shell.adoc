@@ -18,16 +18,27 @@ These instructions are exemplified on an Ubuntu 20.04 system for the fish shell 
 ➜ sudo apt -y install fish
 ----
 
-This debian package installs the `fish` executable in `/usr/bin`.
+This Debian package installs the `fish` executable in `/usr/bin`.
 --
 
-. Register fish as a valid login shell by adding its file path to the `/etc/shells` file.footnote:[https://man7.org/linux/man-pages/man5/shells.5.html[shells(5) — Linux manual page]]
+. Register `/usr/bin/fish` as a valid login shell by adding its path to https://manpages.ubuntu.com/manpages/en/man5/shells.5.html[`/etc/shells`].
 +
+--
+Debian provides a convenient https://manpages.ubuntu.com/manpages/en/man8/add-shell.8.html[`add-shell`] command to accomplish this.
+
+[source,sh]
+----
+➜ sudo add-shell /usr/bin/fish
+----
+
+On other systems, simply add the path manually.
+
 [source,sh]
 ----
 ➜ echo /usr/bin/fish | sudo tee -a /etc/shells
 /usr/bin/fish
 ----
+--
 
 . Set the default login shell of the current user to fish.footnote:[https://fishshell.com/docs/current/tutorial.html#switching-to-fish[Fish Shell Tutorial - Switching to fish?]]
 +
