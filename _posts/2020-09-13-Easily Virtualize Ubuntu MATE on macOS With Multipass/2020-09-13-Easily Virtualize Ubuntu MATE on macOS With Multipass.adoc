@@ -3,9 +3,9 @@
 :page-category: Systems
 :page-tags: [Homebrew, Linux, macOS, MacPorts, MATE, Multipass, Ubuntu, Ubuntu2004, Virtualization]
 
-.It's Always Greener on the MATE Side
 [caption=""]
-image::virtualize_ubuntu_mate_on_macos_with_multipass_compressed.jpg[An Ubuntu MATE Desktop Displayed in an RDP Client on macOS Catalina]
+.It's Always Greener on the MATE Side
+image::virtualize_ubuntu_mate_on_macos_with_multipass_compressed.jpg[An Ubuntu MATE Desktop Displayed in an RDP Client on macOS Catalina,role="text-center"]
 
 '''
 

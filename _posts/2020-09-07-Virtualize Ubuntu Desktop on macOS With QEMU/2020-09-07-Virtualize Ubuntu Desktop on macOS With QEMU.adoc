@@ -3,9 +3,9 @@
 :page-category: Systems
 :page-tags: [Homebrew, Linux, macOS, MacPorts, QEMU, Ubuntu, Ubuntu2004, virtio, Virtualization]
 
-.The Focal Fossa nestles in on Santa Catalina Island
 [caption=""]
-image::virtualize_ubuntu_desktop_on_macos_with_qemu_compressed.jpg[An Ubuntu Desktop on macOS Catalina]
+.The Focal Fossa nestles in on Santa Catalina Island
+image::virtualize_ubuntu_desktop_on_macos_with_qemu_compressed.jpg[An Ubuntu Desktop on macOS Catalina,role="text-center"]
 
 '''
 

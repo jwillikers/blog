@@ -3,9 +3,9 @@
 :page-category: Networking
 :page-tags: [OpenSSH, SSH, X11]
 
-.A Remote Instance of GNOME Terminal Viewed on macOS Catalina
 [caption=""]
-image::X11 Forwarding GNOME Terminal on macOS Catalina.png[A Remote Instance of GNOME Terminal Viewed on macOS Catalina]
+.A Remote Instance of GNOME Terminal Viewed on macOS Catalina
+image::X11 Forwarding GNOME Terminal on macOS Catalina.png[A Remote Instance of GNOME Terminal Viewed on macOS Catalina,role="text-center"]
 
 '''
 
