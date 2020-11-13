@@ -93,6 +93,7 @@ Operating Systems::
 * https://www.gentoo.org/[Gentoo]
 * https://manjaro.org/[Manjaro]
 * https://www.opensuse.org/[openSUSE]
+* https://openwrt.org/[OpenWrt]
 * macOS
 * Windows
 
@@ -195,9 +196,13 @@ Virtualization::
 Networking::
 * https://www.openssh.com/[OpenSSH]
 * https://www.openbsd.org/faq/pf/index.html[PF]
+* https://www.unbound.org/[Unbound]
+* https://www.wireguard.com/[WireGuard]
 
 System Utilities::
+* https://en.wikipedia.org/wiki/Cron[cron]
 * https://opensource.apple.com/tarballs/launchd/[launchd]
+* https://en.wikipedia.org/wiki/Pluggable_authentication_module[PAM]
 * https://systemd.io/[Systemd]
 * https://www.sudo.ws/[Sudo]
 
