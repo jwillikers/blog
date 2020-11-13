@@ -16,9 +16,6 @@ It is expected you are already familiar using GnuPG from the command-line and ha
 
 === Backup
 
-https://unix.stackexchange.com/a/482559
-https://wiki.archlinux.org/index.php/GnuPG#Backup_your_private_key
-
 . First, determine which key to backup.
 +
 --
