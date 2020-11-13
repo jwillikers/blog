@@ -3,7 +3,9 @@ span.icon > .fa {
 }
 .admonitionblock td.icon {
   text-align: center;
+  height: 80px;
   width: 80px;
+
 }
 .admonitionblock td.icon [class^="fa icon-"] {
   font-size: 2.5em;
