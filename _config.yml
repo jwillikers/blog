@@ -44,7 +44,7 @@ collections:
 
 pagination:
   enabled: true
-  per_page: 5
+  per_page: 7
   permalink: '/page:num/'
   title: ':title | :num of :max'
   limit: 0
