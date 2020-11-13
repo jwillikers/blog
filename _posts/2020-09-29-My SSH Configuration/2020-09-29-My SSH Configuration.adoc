@@ -10,21 +10,22 @@ I've put off learning the ins and outs of its configuration for far too long.
 I learned that a little bit of know-how can simplify my day-to-day use of SSH.
 That's exactly why I've written this post to exemplify the configuration options I'm now using.
 
-== SSH Configuration
+== SSH Client Configuration
 
-The file `~/.ssh/config` contains a user's SSH configuration.
+The file `~/.ssh/config` contains settings for a user's SSH client.
+System-wide SSH client settings are placed in `/etc/ssh/ssh_config`.
 Settings here can be defined per-host.
 General configuration options include aliases, SSH agent behavior, and jump hosts to name a few.
 Different sections of a sample `~/.ssh/config` are discussed in detail below.
 Further documentation is available from the https://man.openbsd.org/ssh_config[`ssh_config` manpage].
 This article assumes the reader is familiar with the basics of SSH and the syntax of SSH configuration files.
 
-=== Localhost
+=== localhost
 
 The first option does not reside in a https://man.openbsd.org/ssh_config#Host[`Host`] or https://man.openbsd.org/ssh_config#Match[`Match`] block because it only refers to one host, `localhost` on the current machine.
 
-.~/.ssh/config
 [source,ssh,indent=0]
+.~/.ssh/config
 ----
 include::config[tag=localhost]
 ----
@@ -49,8 +50,8 @@ See the section below on `HostKeyAlias` for such a use case.
 The following section contains only one option which applies to `vm_host`.
 As an example, `vm_host` represents a computer dedicated for running multiple virtual machines.
 
-.~/.ssh/config
 [source,ssh,indent=0]
+.~/.ssh/config
 ----
 include::config[tag=vm_host]
 ----
@@ -62,8 +63,8 @@ The alias `vm_host` can be used on the command-line instead of having to type ou
 
 Next, several configuration options are given for the hosts `vm1` and `vm2`.
 
-.~/.ssh/config
 [source,ssh,indent=0]
+.~/.ssh/config
 ----
 include::config[tag=vm1_vm2]
 ----
@@ -87,8 +88,8 @@ According to the https://man.openbsd.org/ssh_config#HostKeyAlias[`ssh_config` ma
 
 The following configuration accommodates the variability of the IP address associated with a given hostname on networks using http://www.multicastdns.org/[multicast DNS].
 
-.~/.ssh/config
 [source,ssh,indent=0]
+.~/.ssh/config
 ----
 include::config[tag=mdns]
 ----
@@ -102,8 +103,8 @@ NOTE: It might be worth setting this option for all users in the system-wide con
 
 The last section contains a few defaults for all hosts, which boil down to a few quality-of-life improvements.
 
-.~/.ssh/config
 [source,ssh,indent=0]
+.~/.ssh/config
 ----
 include::config[tag=defaults]
 ----
@@ -117,6 +118,11 @@ https://man.openbsd.org/ssh_config#IdentityFile[`IdentityFile`]:: Provides the p
 The private key file is often provided for this option, but providing the public key works when storing the private key itself directly within KeePassXC.footnote:[https://keepassxc.org/docs/#faq-ssh-agent-auth-errors[KeePassXC FAQ: SSH Agent - I'm getting a "Too many authentication failures" error, what shall I do?]].
 https://man.openbsd.org/ssh_config#PreferredAuthentications[`PreferredAuthentications`]:: Sets the order of preference for the various authentication methods.
 Here, public key cryptography is preferred first because I use this most often.
+https://man.openbsd.org/ssh_config.5#ServerAliveInterval[`ServerAliveInterval`]:: The amount of time in seconds between sending successive SSH keepalives to the SSH server.
+Setting this option enables SSH server keepalives, which are helpful for keeping existing SSH connections open.
+A value of 90 here results in a keepalive being sent every 90 seconds.
+https://man.openbsd.org/ssh_config.5#ServerAliveCountMax[`ServerAliveCountMax`]:: The number of successive keepalives the SSH server must fail to respond to before terminating the connection.
+With a max count of four and a `ServerAliveInterval` of 90 seconds, the session will be terminated after six minutes where no response from the SSH server is received.
 `UseKeychain`:: On macOS, this allows storing and accessing keys from the user's Keychain so they are automatically available after logging on.footnote:[https://apple.stackexchange.com/a/250572/361122[AskDifferent: How can I permanently add my SSH private key to Keychain so it is automatically available to ssh?]]
 
 ==== SSH Agent Forwarding
@@ -124,8 +130,8 @@ Here, public key cryptography is preferred first because I use this most often.
 It is possible to forward the SSH Agent to avoid typing passwords so much.
 You can forward the SSH Agent by setting https://man.openbsd.org/ssh_config#ForwardAgent[`ForwardAgent`] to `yes`, shown in the following example.
 
-.~/.ssh/ssh_config
 [source,ssh]
+.~/.ssh/ssh_config
 ----
 Host server
   ForwardAgent yes
@@ -137,9 +143,27 @@ Be wary when using agent forwarding.
 Those with administrative access on the forwarded machine will be able to use the keys from your agent to authenticate as you.footnote:[https://smallstep.com/blog/ssh-agent-explained/[smallstep Blog: SSH Agent Explained]]
 ====
 
+== SSH Sever Configuration
+
+The SSH server is configured in `/etc/ssh/sshd_config`.
+I explain my typical server options here.
+
+[source,ssh]
+./etc/ssh/sshd_config
+----
+ClientAliveInterval 90
+ClientAliveCountMax 4
+----
+
+https://man.openbsd.org/sshd_config.5#ClientAliveInterval[`ClientAliveInterval`]:: The amount of time in seconds between sending successive SSH keepalives to the SSH client.
+Setting this option enables SSH client keepalives, which are helpful for keeping existing SSH connections open.
+A value of 90 here results in a keepalive being sent every 90 seconds.
+https://man.openbsd.org/sshd_config.5#ClientAliveCountMax[`ClientAliveCountMax`]:: The number of successive keepalives an SSH client must fail to respond to before terminating the connection.
+With a max count of four and a `ClientAliveInterval` of 90 seconds, the session will be terminated after six minutes where no response from the SSH client is received.
+
 == Conclusion
 
 That was a bit of configuration.
 Assuming I didn't just cover topics you already knew, you should have a better understanding of SSH and its configuration options.
-Hopefully you'll be able to capitalize on this knowledge by simplifying your SSH workflow.
+Hopefully you'll be able to capitalize on this knowledge by simplifying your SSH work flow.
 If you're interested in smoothing out even more wrinkles in your SSH use, you might checkout the https://mosh.org/[Mosh] project.
