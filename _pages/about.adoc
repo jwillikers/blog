@@ -63,86 +63,6 @@ There is also nothing like having fun and learning new things while solving a ch
 This is why languages which pursue safety and simplicity, such as Rust and Go, are my favorites.
 They tend allow me to focus on the problem at hand rather than frustrate me with issues and complexities inherent in the language.
 
-=== Technologies
-
-Below I enumerate the technologies with which I am familiar.
-
-Operating Systems::
-* Ubuntu
-* OpenBSD
-* Red Hat Enterprise Linux
-* CentOS
-* Manjaro
-* Gentoo
-* openSUSE
-* macOS
-* Windows
-
-Languages::
-* C
-* {cpp} (Standards including 98, 11, 14, 17, 20)
-* Go
-* Java
-* Python
-* TOML
-
-Frameworks::
-* Django
-* Gtkmm
-* Qt5
-
-Compilers::
-* GCC
-* LLVM Clang
-* MSVC
-
-Build Tooling::
-* asdf
-* ccache
-* CMake
-* Conan
-* Ninja
-* Pipenv
-
-Code Quality::
-* Approval Tests.cpp
-* Boost Test
-* Boost μt
-* Catch2
-* Clang Tidy
-* Clang Format
-* Google Benchmark
-* Google Sanitizers
-* Google Test
-* Valgrind
-
-Libraries::
-* Boost Asio
-* Boost Concepts
-* Boost Concepts
-* Boost Contracts
-* Boost Filesystem
-* Boost Interprocess
-* Boost Process
-* Boost Spirit X3
-* fmt
-* Microsoft GSL
-* tomlplusplus
-
-Editors and IDEs::
-* Atom
-* Eclipse
-* JetBrains CLion
-* JetBrains Intellij
-* Sublime Merge
-* Sublime Text
-* Vim
-* Visual Studio Code
-* VSCodium
-
-Version Control::
-* Git
-
 === Interests
 
 If you haven't figured it out yet, I'm big proponent of open-source software where high-quality solutions to common problems abound.
@@ -159,3 +79,138 @@ I enjoy collaborating with other developers to improve open-source software for 
 === Hobbies
 
 As for hobbies outside of tech, I enjoy spending time with my wife, yoga, cooking, socializing, listening to podcasts and books, hiking, and generally getting outside whenever possible.
+
+=== Technologies
+
+Below I enumerate the technologies with which I am familiar.
+
+Operating Systems::
+* https://ubuntu.com/[Ubuntu]
+* https://www.openbsd.org/[OpenBSD]
+* https://elementary.io/[elementaryOS]
+* https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux[Red Hat Enterprise Linux]
+* https://www.centos.org/[CentOS]
+* https://www.gentoo.org/[Gentoo]
+* https://manjaro.org/[Manjaro]
+* https://www.opensuse.org/[openSUSE]
+* macOS
+* Windows
+
+Languages::
+* https://asciidoctor.org/[Asciidoctor]
+* https://www.gnu.org/software/gawk/manual/gawk.html[awk]
+* https://www.gnu.org/software/bash/[Bash]
+* http://www.open-std.org/jtc1/sc22/wg14/[C]
+* https://isocpp.org/[{cpp}] (Standards including 98, 11, 14, 17, 20)
+* https://fishshell.com/[fish]
+* https://golang.org/[Go]
+* https://golang.org/[Java]
+* https://www.python.org/[Python]
+* https://www.microsoft.com/en-us/sql-server[SQL Server]
+* https://toml.io/en/[TOML]
+* https://www.zsh.org/[ZSH]
+
+Frameworks::
+* https://www.djangoproject.com/[Django]
+* https://www.gtkmm.org/en/[Gtkmm]
+* https://www.qt.io/[Qt5]
+* https://jekyllrb.com/[Jekyll]
+* https://gohugo.io/[Hugo]
+
+Compilers::
+* https://gcc.gnu.org/[GCC]
+* https://clang.llvm.org/[LLVM Clang]
+* https://visualstudio.microsoft.com/vs/features/cplusplus/[MSVC]
+
+Build Tooling::
+* https://asdf-vm.com/#/[asdf]
+* https://ccache.dev/[ccache]
+* https://cmake.org/[CMake]
+* https://conan.io/[Conan]
+* https://ninja-build.org/[Ninja]
+* https://pipenv.pypa.io/en/latest/[Pipenv]
+* https://docs.microsoft.com/en-us/cpp/build/vcpkg?view=msvc-160[vcpkg]
+
+Packaging::
+* https://appimage.org/[AppImage]
+* https://manpages.debian.org/unstable/dpkg-dev/deb.5.en.html[deb]
+* https://github.com/linuxdeploy/linuxdeploy[linuxdeploy]
+* https://en.wikipedia.org/wiki/Bundle_(macOS)[macOS Bundle]
+* https://nsis.sourceforge.io/Main_Page[NSIS]
+* https://rpm.org/[RPM]
+
+Code Quality / Correctness::
+* https://approvaltestscpp.readthedocs.io/en/latest/[Approval Tests.cpp]
+* https://www.boost.org/doc/libs/1_74_0/libs/test/doc/html/index.html[Boost.Test]
+* https://boost-ext.github.io/ut/[[Boost::ext\].μt]
+* https://github.com/catchorg/Catch2[Catch2]
+* https://clang.llvm.org/extra/clang-tidy/[Clang-Tidy]
+* http://clang.llvm.org/docs/ClangFormat.html[ClangFormat]
+* https://github.com/google/benchmark[Google Benchmark]
+* https://github.com/google/sanitizers[Google Sanitizers]
+* https://github.com/google/googletest[Google Test]
+* https://valgrind.org/[Valgrind]
+
+Libraries::
+* https://www.boost.org/doc/libs/1_74_0/doc/html/boost_asio.html[Boost.Asio]
+* https://www.boost.org/doc/libs/1_74_0/libs/concept_check/concept_check.htm[The Boost Concept Check Library]
+* https://www.boost.org/doc/libs/1_74_0/libs/contract/doc/html/index.html[Boost.Contract]
+* https://www.boost.org/doc/libs/1_74_0/libs/filesystem/doc/index.htm[Boost Filesystem]
+* https://www.boost.org/doc/libs/1_74_0/doc/html/interprocess.html[Boost.Interprocess]
+* https://www.boost.org/doc/libs/1_74_0/doc/html/process.html[Boost.Process]
+* https://www.boost.org/doc/libs/1_74_0/libs/spirit/doc/x3/html/index.html[Boost Spirit X3]
+* https://fmt.dev/latest/index.html[fmt]
+* https://github.com/microsoft/GSL[Microsoft GSL]
+* https://www.openmp.org/[OpenMP]
+* https://www.open-mpi.org/[OpenMPI]
+* https://marzer.github.io/tomlplusplus/[tomlplusplus]
+
+Editors and IDEs::
+* https://atom.io/[Atom]
+* https://godbolt.org/[Compiler Explorer]
+* https://www.eclipse.org/downloads/[Eclipse]
+* https://www.jetbrains.com/clion/[JetBrains CLion]
+* https://www.jetbrains.com/idea/[JetBrains Intellij]
+* https://www.sublimemerge.com/[Sublime Merge]
+* https://www.sublimetext.com/[Sublime Text]
+* https://www.vim.org/[Vim]
+* https://code.visualstudio.com/[Visual Studio Code]
+* https://vscodium.com/[VSCodium]
+
+Continuous Integration::
+* https://www.jenkins.io/[Jenkins]
+* https://travis-ci.org/[Travis CI]
+
+Virtualization::
+* https://www.docker.com/[Docker]
+* https://wiki.gnome.org/Apps/Boxes[GNOME Boxes]
+* https://libvirt.org/[libvirt]
+* https://multipass.run/[Multipass]
+* https://www.qemu.org/[QEMU]
+* https://www.vagrantup.com/[Vagrant]
+* https://virt-manager.org/[Virtual Machine Manager]
+* https://www.virtualbox.org/[VirtualBox]
+* https://www.virtualbox.org/[VMWare Fusion]
+
+Networking::
+* https://www.openssh.com/[OpenSSH]
+* https://www.openbsd.org/faq/pf/index.html[PF]
+
+System Utilities::
+* https://opensource.apple.com/tarballs/launchd/[launchd]
+* https://systemd.io/[Systemd]
+* https://www.sudo.ws/[Sudo]
+
+Filesystems::
+* https://openzfs.org/wiki/Main_Pag[OpenZFS]
+
+Services::
+* https://nextcloud.com/[Nextcloud]
+* https://syncthing.net/[Syncthing]
+
+Version Control::
+* https://git-scm.com/[Git]
+
+Currently Learning::
+* https://www.ansible.com/[Ansible]
+* https://www.rust-lang.org/[Rust]
