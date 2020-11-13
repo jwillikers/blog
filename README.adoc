@@ -208,7 +208,7 @@ _fish_::
 +
 [source,sh]
 ----
-➜ mkdir -p ~/.config/direnv; \ 
+➜ mkdir -p ~/.config/direnv; \
   and echo 'source "$(asdf direnv hook asdf)"' >> ~/.config/direnv/direnvrc
 ----
 
@@ -258,7 +258,7 @@ Configuration file: /home/jordan/Source/blog/_config.yml
             Source: /home/jordan/Source/blog
        Destination: /home/jordan/Source/blog/_site
  Incremental build: disabled. Enable with --incremental
-      Generating... 
+      Generating...
        Jekyll Feed: Generating feed for posts
  Auto-regeneration: enabled for '/home/jordan/Source/blog'
     Server address: http://127.0.0.1:4000/
