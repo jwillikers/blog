@@ -63,7 +63,7 @@ TIP: Enable compression when using X11 forwarding with the `-C` flag, as done he
 ➜ ssh -CY helms-deep
 ----
 
-CAUTION: Your keypresses can be captured on the remote machine so make sure you actually trust it.
+CAUTION: Your key presses can be captured on the remote machine so make sure you actually trust it.
 --
 
 . From the terminal, execute a graphical application, and it will be displayed locally so long as nothing goes awry.
@@ -89,7 +89,7 @@ ForwardX11 yes
 ForwardX11Trusted yes
 ----
 
-CAUTION: Never indescriminately enbale X11 forwarding.
+CAUTION: Never indiscriminately enable X11 forwarding.
 --
 
 . Optionally, background the SSH process when running a remote X11 application.
