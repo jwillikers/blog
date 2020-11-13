@@ -31,6 +31,8 @@ Host *
   IdentitiesOnly yes
   IdentityFile ~/.ssh/id_rsa_catalina-build.pub
   PreferredAuthentications publickey,keyboard-interactive,password,gssapi-with-mic,hostbased
+  ServerAliveInterval 90
+  ServerAliveCountMax 4
 
   # Specific to macOS
   UseKeychain yes
