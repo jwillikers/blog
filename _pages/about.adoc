@@ -12,7 +12,7 @@ Here I take the opportunity to talk a bit about myself, my development experienc
 
 === Career
 
-The reasons I pursue a career in software engineering have continued to grow and evolve over time. 
+The reasons I pursue a career in software engineering have continued to grow and evolve over time.
 Suffice it to say that I enjoy participating as part of a team to solve real and interesting problems.
 I find it important and fulfilling that these solutions positively impact the lives of others.
 
@@ -90,8 +90,11 @@ Operating Systems::
 * https://elementary.io/[elementaryOS]
 * https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux[Red Hat Enterprise Linux]
 * https://www.centos.org/[CentOS]
+* https://www.debian.org/[Debian]
+* https://getfedora.org/[Fedora]
 * https://www.gentoo.org/[Gentoo]
 * https://manjaro.org/[Manjaro]
+* https://mobian-project.org/[Mobian]
 * https://www.opensuse.org/[openSUSE]
 * https://openwrt.org/[OpenWrt]
 * macOS
