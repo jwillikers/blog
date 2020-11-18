@@ -24,14 +24,21 @@ This guide assumes you have familiarity with the command-line, virtual machines,
 
 . Pull down the https://www.qemu.org/download/#macos[qemu package].
 +
+--
+Homebrew::
++
 [source,sh]
 ----
-# For Homebrew
 $ brew install qemu
+----
 
-# For MacPorts
+MacPorts::
++
+[source,sh]
+----
 $ sudo port install qemu
 ----
+--
 
 . Create a 60 Gigabyte image to use as the VMs hard disk.
 +
