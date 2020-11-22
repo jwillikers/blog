@@ -293,7 +293,7 @@ _Bash / ZSH_::
 +
 [source,bash]
 ----
-➜ asdf global python (asdf latest python)
+➜ asdf global python $(asdf latest python)
 ----
 --
 
@@ -304,7 +304,7 @@ _Bash / ZSH_::
 ➜ python -m pip install --user pipx
 Collecting pipx
   Downloading pipx-0.15.6.0-py3-none-any.whl (43 kB)
-     |████████████████████████████████| 43 kB 636 kB/s 
+     |████████████████████████████████| 43 kB 636 kB/s
 Collecting argcomplete<2.0,>=1.9.4
   Downloading argcomplete-1.12.1-py2.py3-none-any.whl (38 kB)
 Collecting packaging>=20.0
@@ -313,7 +313,7 @@ Collecting userpath>=1.4.1
   Downloading userpath-1.4.1-py2.py3-none-any.whl (14 kB)
 Collecting pyparsing>=2.0.2
   Downloading pyparsing-2.4.7-py2.py3-none-any.whl (67 kB)
-     |████████████████████████████████| 67 kB 1.4 MB/s 
+     |████████████████████████████████| 67 kB 1.4 MB/s
 Requirement already satisfied: six in /usr/lib/python3/dist-packages (from packaging>=20.0->pipx) (1.14.0)
 Requirement already satisfied: click in /usr/lib/python3/dist-packages (from userpath>=1.4.1->pipx) (7.0)
 Requirement already satisfied: distro; platform_system == "Linux" in /usr/lib/python3/dist-packages (from userpath>=1.4.1->pipx) (1.4.0)
@@ -595,18 +595,18 @@ Using /home/ubuntu/.asdf/installs/python/3.9.0/bin/python3 (3.9.0) to create vir
     added seed packages: pip==20.2.4, setuptools==50.3.2, wheel==0.35.1
   activators BashActivator,CShellActivator,FishActivator,PowerShellActivator,PythonActivator,XonshActivator
 
-✔ Successfully created virtual environment! 
+✔ Successfully created virtual environment!
 Virtualenv location: /home/ubuntu/.local/share/virtualenvs/MyProject-6C2lAvdi
 Creating a Pipfile for this project…
 Installing conan…
 Adding conan to Pipfile's [packages]…
-✔ Installation Succeeded 
+✔ Installation Succeeded
 Pipfile.lock not found, creating…
 Locking [dev-packages] dependencies…
 Locking [packages] dependencies…
 Building requirements...
 Resolving dependencies...
-✔ Success! 
+✔ Success!
 Updated Pipfile.lock (df42de)!
 Installing dependencies from Pipfile.lock (df42de)…
   🐍   ▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉ 0/0 — 00:00:00
@@ -804,7 +804,7 @@ Using /home/ubuntu/.asdf/installs/python/3.9.0/bin/python3.9 (3.9.0) to create v
     added seed packages: pip==20.2.4, setuptools==50.3.2, wheel==0.35.1
   activators BashActivator,CShellActivator,FishActivator,PowerShellActivator,PythonActivator,XonshActivator
 
-✔ Successfully created virtual environment! 
+✔ Successfully created virtual environment!
 Virtualenv location: /home/ubuntu/.local/share/virtualenvs/MyProject-6C2lAvdi
 Installing dependencies from Pipfile.lock (df42de)…
   🐍   ▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉ 26/26 — 00:01:09
