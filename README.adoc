@@ -168,11 +168,25 @@ _ZSH_::
   libdb-dev
 ----
 
-. Add asdf plugins for direnv, Bundler, and Ruby.
+. Add the Bundler plugin for asdf.
 +
 [source,sh]
 ----
-➜ asdf plugin add bundler direnv ruby
+➜ asdf plugin add bundler
+----
+
+. Add the direnv plugin for asdf.
++
+[source,sh]
+----
+➜ asdf plugin add direnv
+----
+
+. Add the Ruby plugin for asdf.
++
+[source,sh]
+----
+➜ asdf plugin add ruby
 ----
 
 . Integrate direnv with your shell.
