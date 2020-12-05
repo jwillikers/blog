@@ -1,0 +1,111 @@
+= Snapping on the Pinebook Pro
+:page-layout:
+:page-category: Packaging
+:page-tags: [arm64, Armbian, Linux, LXC, PinebookPro, Snapcraft, Ubuntu]
+
+https://snapcraft.io/about[Snaps] are an incredible new packaging format for Linux from https://canonical.com/[Canonical].footnote:[Yes, https://flatpak.org/[Flatpaks] are great too.]
+They offer application confinement and increased portability while also simplifying the development workflow.
+Recently I submitted a https://github.com/snapcrafters/sublime-merge/pull/5[pull-request] to extend the https://github.com/snapcrafters/sublime-merge[Sublime Merge snap] with support for arm64 so that I could use it on my https://www.pine64.org/pinebook-pro/[Pinebook Pro].
+Testing the snap locally required I figure out the process on the arm64 architecture.
+There is a little bit of tweaking required as its still early days for this, but that's why I made this tutorial!
+
+== Tutorial
+
+This tutorial is run on https://linuxcontainers.org/[Armbian's] release of Ubuntu 20.04 Focal Fossa for the Pinebook Pro.footnote:[This isn't legitimate Ubuntu, as the kernel is maintained by the Armbian project, fyi.]
+Your mileage may vary a little bit on other distributions.
+You should be comfortable using the command-line on Linux, managing Unix group membership, executing privileged commands with https://www.sudo.ws/[Sudo], packaging and installing snaps, and obtaining source with https://git-scm.com/[Git].
+That was a mouthful, wasn't it?
+If you made it this far you probably know all of that stuff anyways, so let's jump right into it!
+
+. Install https://www.sudo.ws/[Snapcraft].
++
+[source,sh]
+----
+➜ sudo snap install --classic snapcraft
+----
+
+. It's still early days for https://linuxcontainers.org/lxd/[LXD] on the 64-bit ARM architecture, so install the latest candidate release.
++
+[source,sh]
+----
+➜ sudo snap install lxd --channel candidate
+----
+
+. To avoid having to use root for LXD, add your user to the _lxd_ group.
++
+--
+[source,sh]
+----
+➜ sudo usermod -a -G lxd $USER
+----
+
+WARNING: Only place users you trust with root access in the _lxd_ group.footnote:[https://github.com/lxc/lxd#security[LXD README: Security]]
+--
+
+. Now that LXD is installed, it must be initialized.
++
+[source,sh]
+----
+➜ lxd init --auto
+----
+
+. Get the snapcraft YAML file for an application that supports building on the _arm64_ architecture, such as the https://github.com/ubuntu-core/hello-snapcraftio[hello-snapcraftio] example project.
++
+--
+[source,sh]
+----
+➜ git clone https://github.com/ubuntu-core/hello-snapcraftio.git
+----
+--
+
+. Change into the project root or the directory containing the Snapcraft YAML file, usually located in a _snap_ directory.
++
+[source,sh]
+----
+➜ cd hello-snapcraftio
+----
+
+. Build the snap, using LXD to drive the containers.
++
+--
+[source,sh]
+----
+➜ snapcraft --use-lxd
+----
+
+****
+Snapcraft usually manages containers with https://multipass.run[Multipass].
+Unfortunately, Multipass has outstanding issues on the 64-bit ARM architecture.
+This can be worked around by using LXD to handle the underlying containers.
+****
+
+TIP: If you run into issues with LXD here, you might try a good old fashioned restart.
+--
+
+. Now, install the _.snap_ file created in the current directory by the previous command.
++
+[source,sh]
+----
+➜ sudo snap install --devmode --dangerous hello_*.snap
+hello 2.10 installed
+----
+
+. And the magic moment, run your new snap!
++
+[source,sh]
+----
+➜ snap run hello
+Hello, world!
+----
+
+. To clean things up, remove the _hello_ snap.
++
+[source,sh]
+----
+➜ sudo snap remove hello
+----
+
+== Conclusion
+
+Now you know how to get up and running with building your snap packages locally on a 64-bit ARM device.
+Happy snapping!
