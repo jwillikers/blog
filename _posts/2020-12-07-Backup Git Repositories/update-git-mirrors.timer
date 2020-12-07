@@ -1,0 +1,9 @@
+[Unit]
+Description=Regularly refresh my Git mirrors
+
+[Timer]
+Persistent=true
+OnCalendar=daily
+
+[Install]
+WantedBy=timers.target
