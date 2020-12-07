@@ -1,0 +1,10 @@
+[Unit]
+Description=Update my Git mirrors
+
+[Service]
+Environment=fish_function_path=/etc/fish/functions
+ExecStart=/usr/bin/fish -c 'update_git_mirrors /home/jordan/Source'
+Type=oneshot
+
+[Install]
+WantedBy=default.target

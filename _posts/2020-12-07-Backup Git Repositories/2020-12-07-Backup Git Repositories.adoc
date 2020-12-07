@@ -1,0 +1,179 @@
+= Backup Git Repositories
+:page-layout:
+:page-category: Systems
+:page-tags: [Backups, fish, Git, Linux, systemd, Ubuntu]
+
+If you have any source code repositories hosted online, you probably don't want to lose those.
+Just yesterday I converted my professional resume from the http://opendocumentformat.org/[OpenDocument Format] to a version controlled https://asciidoctor.org/[Asciidoctor] project.
+This prompted me to do an important task I'd been putting off for some time, backing up my https://git-scm.com/[Git] repositories hosted on https://github.com/[GitHub].
+Below is my solution.
+
+== Tutorial
+
+The reference system will of course be the latest https://ubuntu.com/[Ubuntu] LTS, 20.04 at the time of this writing.
+You will need to be familiar with Git and Unix shells.
+The https://fishshell.com/[fish shell] in particular is used here.
+This tutorial will demonstrate how to automate these backups with https://systemd.io/[systemd].
+
+. Install the fish shell.
++
+[source,sh]
+----
+➜ sudo apt -y install fish
+----
+
+. Create a backup directory for storing your Git repositories.
++
+[source,sh]
+----
+➜ mkdir ~/Source
+----
+
+. Create mirrors for each repository you wish to backup in this directory, making sure each repository's name is suffixed with _.git_.
++
+--
+Here, I mirror this blog's repository in the _Source_ directory in my home folder.
+
+[source,sh]
+----
+➜ git clone --mirror https://github.com/jwillikers/blog.git ~/Source/blog.git
+----
+--
+
+. Place the following update script in _/etc/fish/functions_ where it will be autoloaded by fish.footnote:[See the https://fishshell.com/docs/current/#autoloading-functions[Autoloading functions] documentation for more details.]
++
+--
+[source,sh]
+./etc/fish/functions/update_git_mirrors.fish
+----
+include::update_git_mirrors.fish[]
+----
+
+This script takes a number of directories as arguments.
+Each of these directories is searched for directories ending with _.git_ in their name.
+Each of these is treated as a Git mirror and updated appropriately.
+
+****
+Placing the function definition in _/etc/fish/functions_ provides a stronger guarantee for reproducibility compared to placing the function in the user's directory _~/.config/fish/functions_.
+If you don't have root access or use https://systemd.io/HOME_DIRECTORY/[systemd-homed] and want to migrate this function with your home directory, it makes more sense to place the function in _~/.config/fish/functions_.
+****
+--
+
+. Test the script by executing `update_git_mirrors` from within a fish shell.
++
+--
+Since I use fish as my default shell, it's as easy as running the function directly from my shell.
+
+[source,sh]
+----
+➜ update_git_mirrors ~/Source
+Updated /home/jordan/Source/blog.git
+----
+
+If you don't use fish as your shell - and don't want to bother converting this code for your shell - you can test the function by calling it with `fish -c`.
+
+[source,sh]
+----
+➜ fish -c 'update_git_mirrors ~/Source'
+Updated /home/jordan/Source/blog.git
+----
+--
+
+. Create the systemd user configuration directory.
++
+[source,sh]
+----
+➜ mkdir -p ~/.config/systemd/user
+----
+
+. Create a systemd unit to refresh the mirrors.
++
+--
+.~/.config/systemd/user/update-git-mirrors.service
+[source,systemd]
+----
+include::update-git-mirrors.service[]
+----
+
+The command-line here calls the fish function just created, `update_git_mirrors` to update the mirrors found in the directory _/home/jordan/Source_.
+The _Environment_ setting protects the function from being overloaded by a function of the same name placed in another autoloaded directory, such as the user's _~/.config/fish/functions_ directory.
+Remove this line if you placed the function definition in the _~/.config/fish/functions_ directory instead of _/etc/fish/functions_.
+
+Be aware of what protocols your repositories are using to authenticate when connecting to private repositories.
+If you use SSH with an encrypted private key to access any private repositories, your key must be unlocked and available in your SSH agent before running this unit.
+When using the timer described below, you will want your directory to automatically be unlocked at login for this to work.
+
+[TIP]
+====
+Configure a dedicated backup key with read-only access to your Git repositories for extra safety.
+You could even use a dedicated user account for these backups to isolate this functionality, but I've kept this simple for users that just want to get backups working.
+====
+--
+
+. Test run the new systemd unit.
++
+[source,sh]
+----
+➜ systemctl --user start update-git-mirrors.service
+----
+
+. Check the output of the command to make sure everything worked.
++
+[source,sh]
+----
+➜ systemctl --user status update-git-mirrors.service
+● update-git-mirrors.service - Update my Git mirrors
+     Loaded: loaded (/home/jordan/.config/systemd/user/update-git-mirrors.service; disabled; vendor preset: enabled)
+     Active: inactive (dead)
+
+Dec 07 06:28:27 latitude fish[56735]: Updated /home/jordan/Source/blog.git
+Dec 07 06:28:31 latitude systemd[4148]: update-git-mirrors.service: Succeeded.
+Dec 07 06:28:31 latitude systemd[4148]: Finished Update my Git mirrors.
+----
+
+. Add a systemd timer to update the mirrors every day.
++
+--
+.~/.config/systemd/user/update-git-mirrors.timer
+[source,systemd]
+----
+include::update-git-mirrors.timer[]
+----
+
+This timer has `Persistent=true` to account for the situation when the timer would fire but the user has no session running.
+When this happens, the timer will just fire the next time the user logs on.
+--
+
+. Activate the timer automatically when logging in.footnote:[https://wiki.archlinux.org/index.php/Systemd/User#Basic_setup[Arch Wiki: systemd/user - Basic Setup]]
++
+[source,sh]
+----
+➜ systemctl --user enable update-git-mirrors.timer
+Created symlink /home/jordan/.config/systemd/user/timers.target.wants/update-git-mirrors.timer → /home/jordan/.config/systemd/user/update-git-mirrors.timer.
+----
+
+. Check when your timer's schedule with the `systemctl --user list-timers` command.
++
+--
+[source,sh]
+----
+➜ systemctl --user list-timers update-git-mirrors
+NEXT                        LEFT     LAST PASSED UNIT                     ACTIVATES
+Tue 2020-12-08 00:00:00 CST 16h left n/a  n/a    update-git-mirrors.timer update-git-mirrors.service
+
+1 timers listed.
+Pass --all to see loaded but inactive timers, too.
+----
+
+The above output indicates that the timer should fire for the first time tomorrow.
+--
+
+[TIP]
+====
+Make sure to regularly verify that your backups are running properly.
+Tools like https://www.nagios.org/[Nagios] can make this monitoring easier.
+====
+
+== Conclusion
+
+You should now have a good idea as to how to go about backing up your Git repositories locally and automating the task with systemd.
