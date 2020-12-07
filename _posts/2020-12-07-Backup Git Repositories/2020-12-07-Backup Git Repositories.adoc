@@ -1,7 +1,7 @@
 = Backup Git Repositories
 :page-layout:
 :page-category: Systems
-:page-tags: [Backups, fish, Git, Linux, systemd, Ubuntu]
+:page-tags: [Backup, fish, Git, Linux, SSH, systemd, Ubuntu]
 
 If you have any source code repositories hosted online, you probably don't want to lose those.
 Just yesterday I converted my professional resume from the http://opendocumentformat.org/[OpenDocument Format] to a version controlled https://asciidoctor.org/[Asciidoctor] project.
