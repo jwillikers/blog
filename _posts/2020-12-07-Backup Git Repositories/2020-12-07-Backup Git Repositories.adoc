@@ -98,6 +98,7 @@ include::update-git-mirrors.service[]
 The command-line here calls the fish function just created, `update_git_mirrors` to update the mirrors found in the directory _/home/jordan/Source_.
 The _Environment_ setting protects the function from being overloaded by a function of the same name placed in another autoloaded directory, such as the user's _~/.config/fish/functions_ directory.
 Remove this line if you placed the function definition in the _~/.config/fish/functions_ directory instead of _/etc/fish/functions_.
+The https://www.freedesktop.org/software/systemd/man/systemd.exec.html#Nice=[_Nice_] directive designates a low scheduling priority, 14, for the CPU.
 
 Be aware of what protocols your repositories are using to authenticate when connecting to private repositories.
 If you use SSH with an encrypted private key to access any private repositories, your key must be unlocked and available in your SSH agent before running this unit.
