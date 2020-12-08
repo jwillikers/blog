@@ -1,0 +1,301 @@
+= A Multi-Boot USB With Ventoy
+:page-layout:
+:page-category: Systems
+:page-tags: [Boot, Disk, GNOME, Linux, Installer, ISO, Ubuntu, udisks, USB, Ventoy, Windows, Windows10]
+
+My daily driver predates Dell's support for the https://fwupd.org/[Linux Vendor Firmware Service], usually abbreviated _LVFS_.
+The only way to update my motherboard's https://en.wikipedia.org/wiki/Unified_Extensible_Firmware_Interface#Das_U-Boot[UEFI] is through Windows, which I means I'll need a Windows 10 USB installer.
+
+Creating a USB installer on Ubuntu is typically as easy as opening https://wiki.gnome.org/Apps/Disks[GNOME Disks], selecting the desired USB disk, clicking btn:[Restore Disk Image...], and selecting the ISO or image file.
+Unfortunately, creating a Windows installer is not that simple.
+The best solution for this has got to be https://www.ventoy.net/[Ventoy].
+Not only does it support booting more that just a single operating system, it allows booting from as many disk images as you can cram on to your drive.
+The https://www.ventoy.net/en/isolist.html[long list of tested images] is also quite nice.
+Runner ups include https://linuxhint.com/create-a-bootable-windows-10-usb-drive-in-linux/[GNOME Disks _plus workarounds_] and https://github.com/WoeUSB/WoeUSB-ng[WoeUSB-ng].
+
+== Tutorial
+
+Ventoy is a project for booting any number of arbitrary ISO's off of a single flash drive.
+Once a flash drive is set up, you can just drag and drop ISO images on to the flash drive and presto!
+This tutorial is broken in to three parts, creating a Ventoy flash drive, adding an ISO image to it, and updating the Ventoy flash drive.
+For reference, I use https://ubuntu.com/[Ubuntu] 20.04 here, but these options will work across many Linux distributions.
+This tutorial assumes you are familiar with the command-line and Linux systems.
+
+=== Create a Ventoy Flash Drive
+
+The first step is, of course, to setup the flash drive with Ventoy.
+
+. Insert a flash drive in to your computer.
+
+. Locate the device associated with your USB by using the https://manpages.ubuntu.com/manpages/focal/man8/lsblk.8.html[lsblk(8)] command.footnote:[Or, use https://manpages.ubuntu.com/manpages/focal/en/man8/fdisk.8.html[fdisk(8)], via `sudo fdisk -l`, if you prefer.]
++
+[source,sh]
+----
+➜ lsblk
+NAME             MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+sda                8:0    0 465.8G  0 disk
+├─sda1             8:1    0   512M  0 part  /boot/efi
+├─sda2             8:2    0     2G  0 part
+│ └─cryptoswap   253:1    0     2G  0 crypt [SWAP]
+├─sda3             8:3    0     2G  0 part
+└─sda4             8:4    0 461.3G  0 part
+sdb                8:16   1  29.9G  0 disk # <1>
+zd0              230:0    0   500M  0 disk
+└─keystore-rpool 253:0    0   484M  0 crypt /run/keystore/rpool
+----
+<1> _sdb_ here is the 32 Gigabyte flash drive I've plugged in to my laptop.
+
+. Ensure that nothing important is on the flash drive since it will be overwritten in a minute.
+
+. Download the latest release for Linux, available on https://github.com/ventoy/Ventoy/releases[Ventoy's GitHub Releases page].
++
+--
+Download the latest release directly from the command-line with the following command.
+
+[source,sh]
+----
+➜ wget -q -nv -O - https://api.github.com/repos/ventoy/Ventoy/releases/latest \
+  | awk -F': ' '/browser_download_url/ && /\.tar\.gz/ \
+  {gsub(/"/, "", $(NF)); system("wget -qi -L " $(NF))}'
+----
+--
+
+. Use the https://manpages.ubuntu.com/manpages/focal/en/man1/tar.1.html[tar(1)] command to extract the archive.
++
+[source,sh]
+----
+➜ tar xf ventoy-*-linux.tar.gz
+----
+
+. Install Ventoy on the flash drive by running the `Ventoy2Disk.sh` shell script as _root_, passing the `-i` flag and device.
++
+--
+Since my target system uses UEFI, I include support for https://en.wikipedia.org/wiki/Unified_Extensible_Firmware_Interface#SECURE-BOOT[secure boot] with the `-s` flag and use a https://en.wikipedia.org/wiki/GUID_Partition_Table[GUID partition table] by passing the `-g` flag.
+When targeting systems using legacy https://en.wikipedia.org/wiki/BIOS[BIOS] or depending on your target device, you may want to omit one or both of these flags.
+
+NOTE: Some one-time setup, documented https://www.ventoy.net/en/doc_secure.html[here], is required for secure boot when booting the flash drive for the first time on a machine.
+
+[source,sh]
+----
+➜ sudo ventoy-*/Ventoy2Disk.sh -i -s -g /dev/sdb
+
+**********************************************
+      Ventoy: 1.0.29
+      longpanda admin@ventoy.net
+      https://www.ventoy.net
+**********************************************
+
+Disk : /dev/sdb
+Model: Samsung Flash Drive FIT (scsi)
+Size : 29 GB
+Style: GPT
+----
+--
+
+. When prompted, take a deep breath, read the message, double-check the device is correct, and type kbd:[Y] if everything checks out and you still think this is a good idea.
++
+[source,sh]
+----
+Attention:
+You will install Ventoy to /dev/sdb.
+All the data on the disk /dev/sdb will be lost!!!
+
+Continue? (y/n) y
+----
+
+. Repeat as necessary.
++
+[source,sh]
+----
+All the data on the disk /dev/sdb will be lost!!!
+Double-check. Continue? (y/n) y
+
+Create partitions on /dev/sdb by parted in GPT style ...
+Done
+mkfs on disk partitions ...
+create efi fat fs /dev/sdb2 ...
+mkfs.fat 4.1 (2017-01-24)
+success
+mkexfatfs 1.3.0
+Creating... done.
+Flushing... done.
+File system created successfully.
+writing data to disk ...
+sync data ...
+esp partition processing ...
+
+Install Ventoy to /dev/sdb successfully finished.
+----
+
+. That's all that is required of the downloaded Ventoy files for this tutorial, so delete them if you like.
++
+[source,sh]
+----
+➜ rm -rf ventoy-*
+----
+
+=== Add Images
+
+Now that the flash drive has been configured, you just have to place any desired images on to the storage partition.
+Here, I walk through each step necessary to add a Windows 10 ISO to the flash drive.
+
+. Download the https://www.microsoft.com/en-gb/software-download/windows10ISO[Windows 10 ISO].
+
+. Mount the Ventoy flash drive with the https://manpages.ubuntu.com/manpages/focal/en/man1/udisksctl.1.html[udisksctl(1)] command.
++
+--
+[NOTE]
+====
+Usually a USB drive is mounted automatically and you can skip this step.
+If you've just created the flash drive, you'll have to manually mount it.footnote:[Or just unplug the flash drive and plug it back in.]
+If you are wondering whether it is mounted or not, well, the following command won't hurt.
+====
+
+By default, Ventoy labels the storage partition on the USB drive _ventoy_ and the boot partition _VTOYEFI_.
+Here, I mount the _ventoy_ partition by label.
+
+[source,sh]
+----
+➜ udisksctl mount --no-user-interaction -b /dev/disk/by-label/ventoy
+Mounted /dev/sdb1 at /media/jordan/ventoy
+----
+--
+
+. Now just drag and drop the ISO in the _ventoy_ partition use https://manpages.ubuntu.com/manpages/focal/en/man1/cp.1posix.html[cp(1)] as shown here.
++
+--
+Unless Ventoy's label for the storage partition has been changed from its default, it will be mounted at _/media/$USER/ventoy_, where `$USER` represents your username.
+
+[source,sh]
+----
+➜ cp ~/Downloads/Win10_20H2_English_x64.iso /media/$USER/ventoy
+----
+--
+
+. Before unplugging the flash drive, remember to unmount the filesystems.
+
+.. Unmount the _ventoy_ storage partition.
++
+[source,sh]
+----
+➜ udisksctl unmount -b /dev/disk/by-label/ventoy
+Unmounted /dev/sdb1.
+----
+
+.. Unmount the _VTOYEFI_ boot partition.
++
+[source,sh]
+----
+➜ udisksctl unmount -b /dev/disk/by-label/VTOYEFI
+Unmounted /dev/sdb2.
+----
+
+. Now remove the flash drive and it's ready for use!
+
+=== Update
+
+Ventoy regularly releases updates which may include bug fixes and new features.
+Typically, minor updates can be applied to an existing Ventoy flash drive without erasing your ISO files on the USB drive.
+These instructions explain how to go about updating a Ventoy flash drive.
+
+. Plug the Ventoy flash drive in to your computer.
+
+. Find the your flash drive with https://manpages.ubuntu.com/manpages/focal/man8/lsblk.8.html[lsblk(8)] command.
++
+[source,sh]
+----
+➜ lsblk
+NAME             MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+sda                8:0    0 465.8G  0 disk
+├─sda1             8:1    0   512M  0 part  /boot/efi
+├─sda2             8:2    0     2G  0 part
+│ └─cryptoswap   253:1    0     2G  0 crypt [SWAP]
+├─sda3             8:3    0     2G  0 part
+└─sda4             8:4    0 461.3G  0 part
+sdb                8:16   1  29.9G  0 disk # <1>
+├─sdb1             8:17   1  29.8G  0 part /media/jordan/ventoy
+└─sdb2             8:18   1    32M  0 part /media/jordan/VTOYEFI
+zd0              230:0    0   500M  0 disk
+└─keystore-rpool 253:0    0   484M  0 crypt /run/keystore/rpool
+----
+<1> _sdb_ here is the 32 Gigabyte Ventoy flash drive I've plugged in to my laptop.
+
+. Download the latest release for Linux from https://github.com/ventoy/Ventoy/releases[Ventoy's GitHub Releases page].
++
+[source,sh]
+----
+➜ wget -q -nv -O - https://api.github.com/repos/ventoy/Ventoy/releases/latest \
+  | awk -F': ' '/browser_download_url/ && /\.tar\.gz/ \
+  {gsub(/"/, "", $(NF)); system("wget -qi -L " $(NF))}'
+----
+
+. Extract the archive with https://manpages.ubuntu.com/manpages/focal/en/man1/tar.1.html[tar(1)].
++
+[source,sh]
+----
+➜ tar xf ventoy-*-linux.tar.gz
+----
+
+. Update the Ventoy flash drive by running the `Ventoy2Disk.sh` shell script as root with the `-u` flag and the path to the flash drive.
++
+--
+NOTE: Currently Ventoy won't persist the secure boot setting, so it must be enabled explicitly when updating to keep it enabled.
+
+[source,sh]
+----
+➜ sudo ventoy-*/Ventoy2Disk.sh -u -s /dev/sdb
+
+**********************************************
+      Ventoy: 1.0.29
+      longpanda admin@ventoy.net
+      https://www.ventoy.net
+**********************************************
+----
+--
+
+. Ventoy will prompt for confirmation after indicating whether the operation is safe or dangerous.
++
+--
+Enter kbd:[Y] to continue with the update.
+
+[source,sh]
+----
+Upgrade operation is safe, all the data in the 1st partition (iso files and other) will be unchanged!
+
+Update Ventoy  1.0.29 ===> 1.0.29   Continue? (y/n)y
+
+Update Ventoy to /dev/sdb successfully finished.
+----
+--
+
+. Before unplugging the flash drive, remember to unmount the filesystems.
+
+.. Unmount the _ventoy_ storage partition.
++
+[source,sh]
+----
+➜ udisksctl unmount -b /dev/disk/by-label/ventoy
+Unmounted /dev/sdb1.
+----
+
+.. Unmount the _VTOYEFI_ boot partition.
++
+[source,sh]
+----
+➜ udisksctl unmount -b /dev/disk/by-label/VTOYEFI
+Unmounted /dev/sdb2.
+----
+
+. Now remove the flash drive and it's ready for use again!
+
+. If you are finished with the downloaded Ventoy files, clean them up now.
++
+[source,sh]
+----
+➜ rm -rf ventoy-*
+----
+
+== Conclusion
+
+Ventoy is really, really helpful for booting all kinds of operating systems off of a single USB drive.
+Take advantage of that increased disk space on flash drives now-a-days for storing more than just one image at a time.
