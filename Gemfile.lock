@@ -83,7 +83,7 @@ GEM
     launchy (2.4.3)
       addressable (~> 2.3)
     liquid (4.0.3)
-    listen (3.3.0)
+    listen (3.3.3)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
     mercenary (0.4.0)
