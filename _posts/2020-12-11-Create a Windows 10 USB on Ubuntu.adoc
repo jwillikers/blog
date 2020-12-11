@@ -1,0 +1,177 @@
+= Create a Windows 10 USB on Ubuntu
+:page-layout:
+:page-category: Disks
+:page-tags: [Boot, Disks, gdisk, GNOME, gnome-disk-image-mounter, Installer, ISO, Linux, sgdisk, Ubuntu, Ubuntu2004, udisks, USB, Windows, Windows10]
+:cgdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/cgdisk.8.html[cgdisk(8)]
+:create-a-bootable-windows-10-usb-drive-in-linux: https://linuxhint.com/create-a-bootable-windows-10-usb-drive-in-linux/[How to Create a Bootable Windows 10 USB Drive in Linux]
+:fdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/fdisk.8.html[fdisk(8)]
+:gdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/gdisk.8.html[gdisk(8)]
+:GNOME: https://www.gnome.org/[GNOME]
+:gnome-disk-image-mounter: https://manpages.ubuntu.com/manpages/focal/en/man1/gnome-disk-image-mounter.1.html[gnome-disk-image-mounter(1)]
+:guid-partition-tables: https://en.wikipedia.org/wiki/GUID_Partition_Table[GUID partition tables]
+:loop-device: https://en.wikipedia.org/wiki/Loop_device[loop device]
+:lsblk: https://manpages.ubuntu.com/manpages/focal/man8/lsblk.8.html[lsblk(8)]
+:master-boot-records: https://en.wikipedia.org/wiki/Master_boot_record[master boot records]
+:mkntfs: https://manpages.ubuntu.com/manpages/focal/man8/mkntfs.8.html[mkntfs(8)]
+:NTFS: https://en.wikipedia.org/wiki/NTFS[NTFS]
+:sgdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/sgdisk.8.html[sgdisk(8)]
+:Ubuntu: https://ubuntu.com/[Ubuntu]
+:udisksctl: https://manpages.ubuntu.com/manpages/focal/en/man1/udisksctl.1.html[udisksctl(1)]
+:Ventoy: https://www.ventoy.net/en/index.html[Ventoy]
+:windows-10-iso: https://www.microsoft.com/en-gb/software-download/windows10ISO[Windows 10 ISO]
+
+I needed a to install Windows 10 from a USB recently.
+I've described my preferred method of accomplishing this in my recent post <<a-multi-boot-usb-with-ventoy#,A Multi-Boot USB With Ventoy>>.
+Before I thought to use {Ventoy}, I created such an installer following this nifty article {create-a-bootable-windows-10-usb-drive-in-linux}.
+I was surprised by how simple it is do this using functionality built into {Ubuntu} and {GNOME}.
+This made me curious.
+How exactly do the underlying components function to do this?
+So, I converted that tutorial to a command-line only version here.
+
+== Tutorial
+
+This tutorial documents the steps required to create a Windows 10 USB installer on {Ubuntu} 20.04 from the command-line.
+As such, you should be familiar with Linux and the command-line to get the most out of this tutorial.
+
+. Insert a spare flash drive in to your computer.
+
+. Locate the device associated with your USB by using the {lsblk} command.footnote:[Or, use `sudo fdisk -l` if you prefer.]
++
+[source,sh]
+----
+➜ lsblk
+NAME             MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+sda                8:0    0 465.8G  0 disk
+├─sda1             8:1    0   512M  0 part  /boot/efi
+├─sda2             8:2    0     2G  0 part
+│ └─cryptoswap   253:1    0     2G  0 crypt [SWAP]
+├─sda3             8:3    0     2G  0 part
+└─sda4             8:4    0 461.3G  0 part
+sdb                8:16   1  29.9G  0 disk # <1>
+└─sdb1             8:17   1  29.9G  0 part  /media/jordan/MyUSB
+zd0              230:0    0   500M  0 disk
+└─keystore-rpool 253:0    0   484M  0 crypt /run/keystore/rpool
+----
+<1> _sdb_ here is the 32 Gigabyte flash drive I've plugged in to my laptop.
+
+. Before proceeding, ensure that nothing important is on the flash drive since it will be overwritten in a minute.
+
+. Unmount any mounted partitions on the flash drive.
++
+--
+As shown in the previous output, _sdb1_ is mounted at _/media/jordan/MyUSB_.
+I unmount this partition with the {udisksctl} command here.
+
+[source,sh]
+----
+➜ udisksctl unmount -b /dev/sdb1 --no-user-interaction
+Unmounted /dev/sdb1.
+----
+--
+
+. Wipe any existing partition tables on the flash drive and generate a new one.
++
+--
+The set of _gdisk_ commands, consisting of {cgdisk}, {gdisk}, and {sgdisk}, manipulate {guid-partition-tables}, also known as _GPTs_.
+Older {master-boot-records}, _MBRs_, are instead managed with {fdisk} and its similarly named friends.
+Here, the {sgdisk} command is used to partition the flash drive using the newer _GPT_ format without requiring any user interaction.
+
+[source,sh]
+----
+➜ sudo sgdisk -Z -n 0:0:0 /dev/sdb
+Creating new GPT entries in memory.
+GPT data structures destroyed! You may now partition the disk using fdisk or
+other utilities.
+The operation has completed successfully.
+----
+
+The `-Z` flag _zaps_ any existing MBR and GPT partition tables into oblivion.
+Then, the `-n` flag creates a new partition given the partition number, starting sector, and ending sector separated by colons.
+Zeros used here represent default values.
+The first zero sets the partition number to the next available number, which is one since this is the first partition on the flash drive.
+The next two zeros designate the starting sector of the largest block and the last sector of that same block, creating a single partition which effectively takes up the entirety of the flash drive.
+
+[NOTE]
+====
+The program deceptively prints out what it does in the wrong order.
+Just know that it does indeed wipe the existing MBR and GPT partitions before creating the new one.
+====
+--
+
+. Format the partition as {NTFS} with the {mkntfs} tool.
++
+[source,sh]
+----
+➜ mkntfs -QL Windows10 /dev/sdb1
+Cluster size has been automatically set to 4096 bytes.
+Creating NTFS volume structures.
+mkntfs completed successfully. Have a nice day.
+----
+
+. Mount the newly created partition with {udisksctl}.
++
+[source,sh]
+----
+➜ udisksctl mount -b /dev/sdb1 --no-user-interaction
+Mounted /dev/sdb1 at /media/jordan/Windows10
+----
+
+. Download the {windows-10-iso}.
+
+. Mount the Windows 10 ISO in order to access its contents.
++
+--
+{gnome-disk-image-mounter} makes this a piece of cake and only requires a single argument, the path to the ISO file to mount.
+
+[source,sh]
+----
+➜ gnome-disk-image-mounter ~/Downloads/Win10_20H2_English_x64.iso
+----
+--
+
+. Use {lsblk} again in order to find where the ISO is mounted.
++
+[source,sh]
+----
+➜ lsblk
+NAME            MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+loop53            7:53   0   5.7G  1 loop  /media/jordan/CCCOMA_X64FRE_EN-US_DV9 # <1>
+sda               8:0    0 465.8G  0 disk  
+├─sda1            8:1    0   512M  0 part  /boot/efi
+├─sda2            8:2    0     2G  0 part  
+│ └─cryptoswap  253:1    0     2G  0 crypt [SWAP]
+├─sda3            8:3    0     2G  0 part  
+└─sda4            8:4    0 461.3G  0 part  
+zd0             230:0    0   500M  0 disk  
+└─keystore-rpool
+                253:0    0   484M  0 crypt /run/keystore/rpool
+----
+<1> Yep, that's the ISO file mounted as a {loop-device}.
+
+
+. Copy all files from the ISO to the flash drive.
++
+[source,sh]
+----
+➜ cp -r /media/jordan/CCCOMA_X64FRE_EN-US_DV9/* /media/jordan/Windows10
+----
+
+. Unmount the ISO.
++
+[source,sh]
+----
+➜ udisksctl unmount -b /dev/loop53 --no-user-interaction
+Unmounted /dev/loop53.
+----
+
+. Unmount the flash drive.
++
+[source,sh]
+----
+➜ udisksctl unmount -b /dev/sdb1 --no-user-interaction
+Unmounted /dev/sdb1.
+----
+
+== Conclusion
+
+You should now have a better idea of some of the underlying components at work when creating a Windows 10 USB installer.
