@@ -1,7 +1,7 @@
 = Update U-Boot on the PinePhone
 :page-layout:
 :page-category: Systems
-:page-tags: [ArchLinux, Linux, Manjaro, PinePhone, UBoot]
+:page-tags: [ArchLinux, Boot, Linux, Manjaro, PinePhone, UBoot]
 
 As I big fan of https://www.gnome.org/[GNOME], I really wanted a similar experience on the https://www.pine64.org/pinephone/[PinePhone].
 That's why I opted for running https://osdn.net/projects/manjaro-arm/[Manjaro ARM]'s alpha for the PinePhone, which comes in a GNOME-like https://developer.puri.sm/Librem5/Software_Reference/Environments/Phosh.html[Phosh] flavor.
