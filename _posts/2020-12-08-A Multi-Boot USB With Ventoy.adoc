@@ -1,7 +1,7 @@
 = A Multi-Boot USB With Ventoy
 :page-layout:
-:page-category: Systems
-:page-tags: [Boot, Disk, GNOME, Linux, Installer, ISO, Ubuntu, udisks, USB, Ventoy, Windows, Windows10]
+:page-category: Disks
+:page-tags: [Boot, Disk, GNOME, Linux, Installer, ISO, Ubuntu, Ubuntu2004, udisks, USB, Ventoy, Windows, Windows10]
 
 My daily driver predates Dell's support for the https://fwupd.org/[Linux Vendor Firmware Service], usually abbreviated _LVFS_.
 The only way to update my motherboard's https://en.wikipedia.org/wiki/Unified_Extensible_Firmware_Interface#Das_U-Boot[UEFI] is through Windows, which I means I'll need a Windows 10 USB installer.
@@ -156,7 +156,7 @@ Here, I mount the _ventoy_ partition by label.
 
 [source,sh]
 ----
-➜ udisksctl mount --no-user-interaction -b /dev/disk/by-label/ventoy
+➜ udisksctl mount -b /dev/disk/by-label/ventoy --no-user-interaction
 Mounted /dev/sdb1 at /media/jordan/ventoy
 ----
 --
@@ -178,7 +178,7 @@ Unless Ventoy's label for the storage partition has been changed from its defaul
 +
 [source,sh]
 ----
-➜ udisksctl unmount -b /dev/disk/by-label/ventoy
+➜ udisksctl unmount -b /dev/disk/by-label/ventoy --no-user-interaction
 Unmounted /dev/sdb1.
 ----
 
@@ -186,7 +186,7 @@ Unmounted /dev/sdb1.
 +
 [source,sh]
 ----
-➜ udisksctl unmount -b /dev/disk/by-label/VTOYEFI
+➜ udisksctl unmount -b /dev/disk/by-label/VTOYEFI --no-user-interaction
 Unmounted /dev/sdb2.
 ----
 
@@ -274,7 +274,7 @@ Update Ventoy to /dev/sdb successfully finished.
 +
 [source,sh]
 ----
-➜ udisksctl unmount -b /dev/disk/by-label/ventoy
+➜ udisksctl unmount -b /dev/disk/by-label/ventoy --no-user-interaction
 Unmounted /dev/sdb1.
 ----
 
@@ -282,7 +282,7 @@ Unmounted /dev/sdb1.
 +
 [source,sh]
 ----
-➜ udisksctl unmount -b /dev/disk/by-label/VTOYEFI
+➜ udisksctl unmount -b /dev/disk/by-label/VTOYEFI --no-user-interaction
 Unmounted /dev/sdb2.
 ----
 
