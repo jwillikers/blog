@@ -1,6 +1,6 @@
 = Grow Disk Space on a CentOS 7 VM Using QEMU, LVM, and XFS
 :page-layout:
-:page-category: Systems
+:page-category: Disks
 :page-tags: [CentOS, disk, filesystem, Linux, LVM, QEMU, XFS]
 
 Sometimes you just need some more disk space.
