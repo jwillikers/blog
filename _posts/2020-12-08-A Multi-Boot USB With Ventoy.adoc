@@ -238,20 +238,16 @@ zd0              230:0    0   500M  0 disk
 
 . Update the Ventoy flash drive by running the `Ventoy2Disk.sh` shell script as root with the `-u` flag and the path to the flash drive.
 +
---
-NOTE: Currently Ventoy won't persist the secure boot setting, so it must be enabled explicitly when updating to keep it enabled.
-
 [source,sh]
 ----
-➜ sudo ventoy-*/Ventoy2Disk.sh -u -s /dev/sdb
+➜ sudo ventoy-*/Ventoy2Disk.sh -u /dev/sdb
 
 **********************************************
-      Ventoy: 1.0.29
+      Ventoy: 1.0.30
       longpanda admin@ventoy.net
       https://www.ventoy.net
 **********************************************
 ----
---
 
 . Ventoy will prompt for confirmation after indicating whether the operation is safe or dangerous.
 +
@@ -262,7 +258,7 @@ Enter kbd:[Y] to continue with the update.
 ----
 Upgrade operation is safe, all the data in the 1st partition (iso files and other) will be unchanged!
 
-Update Ventoy  1.0.29 ===> 1.0.29   Continue? (y/n)y
+Update Ventoy  1.0.29 ===> 1.0.30   Continue? (y/n)y
 
 Update Ventoy to /dev/sdb successfully finished.
 ----
