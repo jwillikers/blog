@@ -63,6 +63,7 @@ defaults:
       comments: true
       share: true
       related: true
+      comments: true
   # _pages
   - scope:
       path: "_pages"
@@ -95,6 +96,11 @@ footer:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/jwillikers/blog"
+
+comments:
+  provider: "discourse"
+  discourse:
+    server: "forum.discourse.org"
 
 theme: minimal-mistakes-jekyll
 minimal_mistakes_skin: "dark"
