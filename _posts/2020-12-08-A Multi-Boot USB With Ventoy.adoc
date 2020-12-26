@@ -80,7 +80,7 @@ NOTE: Some one-time setup, documented https://www.ventoy.net/en/doc_secure.html[
 ➜ sudo ventoy-*/Ventoy2Disk.sh -i -s -g /dev/sdb
 
 **********************************************
-      Ventoy: 1.0.29
+      Ventoy: 1.0.31
       longpanda admin@ventoy.net
       https://www.ventoy.net
 **********************************************
@@ -151,20 +151,20 @@ If you've just created the flash drive, you'll have to manually mount it.footnot
 If you are wondering whether it is mounted or not, well, the following command won't hurt.
 ====
 
-By default, Ventoy labels the storage partition on the USB drive _ventoy_ and the boot partition _VTOYEFI_.
-Here, I mount the _ventoy_ partition by label.
+By default, Ventoy labels the storage partition on the USB drive _Ventoy_ and the boot partition _VTOYEFI_.
+Here, I mount the _Ventoy_ partition by label.
 
 [source,sh]
 ----
-➜ udisksctl mount -b /dev/disk/by-label/ventoy --no-user-interaction
-Mounted /dev/sdb1 at /media/jordan/ventoy
+➜ udisksctl mount -b /dev/disk/by-label/Ventoy --no-user-interaction
+Mounted /dev/sdb1 at /media/jordan/Ventoy
 ----
 --
 
-. Now just drag and drop the ISO in the _ventoy_ partition use https://manpages.ubuntu.com/manpages/focal/en/man1/cp.1posix.html[cp(1)] as shown here.
+. Now just drag and drop the ISO in the _Ventoy_ partition or use https://manpages.ubuntu.com/manpages/focal/en/man1/cp.1posix.html[cp(1)] as shown here.
 +
 --
-Unless Ventoy's label for the storage partition has been changed from its default, it will be mounted at _/media/$USER/ventoy_, where `$USER` represents your username.
+Unless Ventoy's label for the storage partition has been changed from its default, it will be mounted at _/media/$USER/Ventoy_, where `$USER` represents your username.
 
 [source,sh]
 ----
@@ -174,11 +174,11 @@ Unless Ventoy's label for the storage partition has been changed from its defaul
 
 . Before unplugging the flash drive, remember to unmount the filesystems.
 
-.. Unmount the _ventoy_ storage partition.
+.. Unmount the _Ventoy_ storage partition.
 +
 [source,sh]
 ----
-➜ udisksctl unmount -b /dev/disk/by-label/ventoy --no-user-interaction
+➜ udisksctl unmount -b /dev/disk/by-label/Ventoy --no-user-interaction
 Unmounted /dev/sdb1.
 ----
 
@@ -213,7 +213,7 @@ sda                8:0    0 465.8G  0 disk
 ├─sda3             8:3    0     2G  0 part
 └─sda4             8:4    0 461.3G  0 part
 sdb                8:16   1  29.9G  0 disk # <1>
-├─sdb1             8:17   1  29.8G  0 part /media/jordan/ventoy
+├─sdb1             8:17   1  29.8G  0 part /media/jordan/Ventoy
 └─sdb2             8:18   1    32M  0 part /media/jordan/VTOYEFI
 zd0              230:0    0   500M  0 disk
 └─keystore-rpool 253:0    0   484M  0 crypt /run/keystore/rpool
@@ -243,7 +243,7 @@ zd0              230:0    0   500M  0 disk
 ➜ sudo ventoy-*/Ventoy2Disk.sh -u /dev/sdb
 
 **********************************************
-      Ventoy: 1.0.30
+      Ventoy: 1.0.31
       longpanda admin@ventoy.net
       https://www.ventoy.net
 **********************************************
@@ -258,7 +258,7 @@ Enter kbd:[Y] to continue with the update.
 ----
 Upgrade operation is safe, all the data in the 1st partition (iso files and other) will be unchanged!
 
-Update Ventoy  1.0.29 ===> 1.0.30   Continue? (y/n)y
+Update Ventoy  1.0.30 ===> 1.0.31   Continue? (y/n)y
 
 Update Ventoy to /dev/sdb successfully finished.
 ----
@@ -266,11 +266,11 @@ Update Ventoy to /dev/sdb successfully finished.
 
 . Before unplugging the flash drive, remember to unmount the filesystems.
 
-.. Unmount the _ventoy_ storage partition.
+.. Unmount the _Ventoy_ storage partition.
 +
 [source,sh]
 ----
-➜ udisksctl unmount -b /dev/disk/by-label/ventoy --no-user-interaction
+➜ udisksctl unmount -b /dev/disk/by-label/Ventoy --no-user-interaction
 Unmounted /dev/sdb1.
 ----
 
