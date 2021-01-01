@@ -1,0 +1,121 @@
+= GNOME Keyring in KDE Plasma
+:page-layout:
+:page-category: Developer
+:page-tags: [GNOME, GPG, KDE, Keyring, Manjaro, PinebookPro, Plasma, SSH]
+:fish: https://fishshell.com/[fish]
+:gnome: https://www.gnome.org/[GNOME]
+:gnome-keyring: https://wiki.gnome.org/Projects/GnomeKeyring[GNOME Keyring]
+:gpg: https://gnupg.org/[GPG]
+:kde-plasma: https://kde.org/plasma-desktop/[KDE Plasma]
+:kwallet: https://github.com/KDE/kwallet[KWallet]
+:manjaro-pbp-kde: https://manjaro.org/download/#pinebook-pro-kde-plasma[Manjaro Pinebook Pro KDE Plasma edition]
+:openssh: https://www.openssh.com/[OpenSSH]
+:pinebook-pro: https://www.pine64.org/pinebook-pro/[Pinebook Pro]
+:seahorse: https://wiki.gnome.org/Apps/Seahorse[Seahorse]
+
+I love {gnome}, but on my {pinebook-pro}, I use the extremely well-supported {manjaro-pbp-kde}.
+One of the biggest gripes I have with {kde-plasma} is that it doesn't automatically manage my {openssh} and {gpg} keys.
+I'm used to having my SSH and GPG key unlocked automatically when I login in.
+As a developer who uses these constantly, this is very convenient.
+KDE Plasma works very well on the Pinebook Pro, but this is one feature I just had to figure out.
+While I attempted to make this work with {kwallet}, I gave up and switched to using {gnome-keyring}.
+If you wish to obtain this convenience within KDE then read on.
+
+== Tutorial
+
+This tutorial describes how to enable GNOME Keyring within Manjaro KDE to automically unlock your keyring, including SSH and GPG keys on login.
+For reference, this tutorial uses {manjaro-pbp-kde} version 20.12.
+This tutorial provides instructions specific to the {fish} shell.
+Most of the steps here were taken directly from the https://wiki.archlinux.org/index.php/GNOME/Keyring[Arch Wiki's GNOME/Keyring page].
+Refer there for more information.
+You should be familiar with Manjaro, KDE Plasma, and the fish shell to get the most out of this tutorial.
+
+. Install GNOME Keyring.
++
+[source,sh]
+----
+➜ pacman -S gnome-keyring
+----
+
+. Optionally, install the graphical {seahorse} application to help manage your GNOME Keyring.
++
+[source,sh]
+----
+➜ pacman -S seahorse
+----
+
+. Add the GNOME Keyring's PAM module to `/etc/pam.d/login` to unlock the GNOME Keyring on login.
++
+--
+[source]
+./etc/pam.d/login
+----
+#%PAM-1.0
+ 
+auth       required     pam_securetty.so
+auth       requisite    pam_nologin.so
+auth       include      system-local-login
+auth       optional     pam_gnome_keyring.so # <1>
+account    include      system-local-login
+session    include      system-local-login
+session    optional     pam_gnome_keyring.so auto_start # <2>
+----
+<1> Add the `auth` type here.
+<2> And add the `session` type here.
+
+NOTE: For this to work, your keyring must use the same password you use to login.
+--
+
+. Autostart SSH and Secrets components of the GNOME keyring on login by copying their autostart files to your `~/.config/autostart` directory.
++
+[source,sh]
+----
+➜ cp /etc/xdg/autostart/{gnome-keyring-secrets.desktop,gnome-keyring-ssh.desktop} ~/.config/autostart/
+----
+
+. Strip out the `OnlyShowIn` line from the autostart file for the Secrets component.
++
+[source,sh]
+----
+➜ sed -i '/^OnlyShowIn.*$/d' ~/.config/autostart/gnome-keyring-secrets.desktop
+----
+
+. Also strip out the `OnlyShowIn` line from the autostart file for the SSH component.
++
+[source,sh]
+----
+➜ sed -i '/^OnlyShowIn.*$/d' ~/.config/autostart/gnome-keyring-ssh.desktop
+----
+
+. Create the `conf.d` configuration directory for fish startup scripts in order to keep things tidy.
++
+[source,sh]
+----
+➜ mkdir ~/.config/fish/conf.d
+----
+
+. Export the `SSH_AUTH_SOCK` environment variable to GNOME Keyring's ssh-agent in a shell startup file to make it available in your terminal.
++
+[source,sh]
+.~/.config/fish/conf.d/gnome-keyring-ssh-agent.fish
+----
+if test -n "$DESKTOP_SESSION"
+    set -x (gnome-keyring-daemon --start | string split "=")
+end
+----
+
+. Configure GnuPG to use GNOME Keyring to manage passphrase prompts.
++
+[source,sh]
+.~/.gnupg/gpg-agent.conf
+----
+pinentry-program /usr/bin/pinentry-gnome3
+----
+
+. Log out and log back in for the changes to take effect.
+
+. When asked to unlock your SSH and GPG keys, select the option to save them to your keyring and they'll be available for you on subsequent logins!
+
+== Conclusion
+
+You should now be able to have your GPG and SSH keys unlocked automatically when you login to your KDE environment.
