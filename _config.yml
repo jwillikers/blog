@@ -103,7 +103,7 @@ footer:
 comments:
   provider: "discourse"
   discourse:
-    server: "forum.discourse.org"
+    server: "forum.jwillikers.com"
 
 theme: minimal-mistakes-jekyll
 minimal_mistakes_skin: "dark"
