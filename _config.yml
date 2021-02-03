@@ -15,6 +15,9 @@ author:
     - label: "Stack Overflow"
       icon: "fab fa-fw fa-stack-overflow"
       url: "https://stackoverflow.com/users/9835303/jwillikers"
+    - label: "Stack Exchange"
+      icon: "fab fa-fw fa-stack-exchange"
+      url: "https://elementaryos.stackexchange.com/users/20782"
 email: jordan@jwillikers.com
 description: Handy admin and dev guides from my myriad of tinkering
 baseurl: ""
