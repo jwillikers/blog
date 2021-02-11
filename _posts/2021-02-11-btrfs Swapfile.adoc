@@ -1,0 +1,177 @@
+= btrfs Swapfile
+:page-layout:
+:page-category: Disks
+:page-tags: [btrfs, linux, swap, swapfile]
+:an-introduction-to-swap-space-on-linux-systems: https://opensource.com/article/18/9/swap-space-linux-systems[An Introduction to Swap Space on Linux Systems]
+:archwiki-swappiness: https://wiki.archlinux.org/index.php/swap#Swappiness[Swappiness]
+:btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[btrfs]
+:btrfs-wiki-faq: https://btrfs.wiki.kernel.org/index.php/FAQ[btrfs Wiki FAQ]
+:does-btrfs-support-swapfiles: https://btrfs.wiki.kernel.org/index.php/FAQ#Does_btrfs_support_swap_files.3F[Does btrfs support swap files?]
+:elementary-os: https://elementary.io/[elementary OS]
+:fedora: https://getfedora.org/[Fedora]
+:flat-btrfs-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Flat[flat btrfs layout]
+:fish-shell: https://fishshell.com/[fish shell]
+:fstab: https://manpages.ubuntu.com/manpages/focal/man8/fsck.8.html[/etc/fstab]
+:recommended-partitioning-scheme: https://docs.fedoraproject.org/en-US/fedora/f33/install-guide/install/Installing_Using_Anaconda/#sect-installation-gui-manual-partitioning-recommended[Recommended Partitioning Scheme]
+:systemd: https://systemd.io/[systemd]
+:systemd-swap-man: https://www.freedesktop.org/software/systemd/man/systemd.swap.html[systemd.swap(5)]
+:ubuntu: https://opensource.org/licenses/gpl-license[Ubuntu]
+
+Swap space is a standard component of most operating systems.
+It's effectively reserved disk space for accomodating a system when it needs more RAM than it has available.
+I recommend the https://opensource.com/[opensource.com] article _{an-introduction-to-swap-space-on-linux-systems}_ as a great primer on the topic. 
+
+There are two approaches to providing swap space on Linux, swap partitions and https://wiki.archlinux.org/index.php/swap#Swap_file[swapfiles].
+Since version 5.0 of the Linux kernel, btrfs swap files are supported according to the section _{does-btrfs-support-swapfiles}_ in the {btrfs-wiki-faq}.
+Switching to btrfs as my default filesystem, I recently set this up have created this tutorial get yourself a swapfile set up on btrfs.
+
+== Tutorial
+
+This tutorial contains the necessary steps to create a btrfs swapfile.
+The reference system is running {elementary-os} 5.1 and a {flat-btrfs-layout}.
+As a matter of preference, the commands here use the {fish-shell}'s syntax.
+
+[NOTE]
+====
+I have not been able to get hibernation working when using a btrfs swapfile.
+You should consider a dedicated, encrypted swap partition if you desire this feature.
+====
+
+. Mount the root btrfs filesystem to create a subvolume. 
++
+[source,sh]
+----
+➜ sudo mount (df --output=source / | tail -n 1) /mnt
+----
+
+. Create a dedicated btrfs subvolume for swap in order to exclude the swapfile from snapshots.
++
+[source,sh]
+----
+➜ sudo btrfs subvolume create /mnt/swap
+Create subvolume '/mnt/swap'
+----
+
+. Set the appropriate permissions on the swap subvolume so that only the owner, the root user in this case, has access to the subvolume.
++
+[source,sh]
+----
+➜ sudo chmod 700 /mnt/swap
+----
+
+. Create a directory at where the swap subvolume will be mounted.
++
+[source,sh]
+----
+➜ sudo mkdir /swap
+----
+
+. Add the subvolume to _{fstab}_.
++
+[source,sh]
+----
+➜ echo (df --output=source / \
+  | tail -n 1)" /swap btrfs defaults,noatime,subvol=swap 0 0" \
+  | sudo tee -a /etc/fstab
+/dev/mapper/sda2_crypt /swap btrfs defaults,noatime,subvol=swap 0 0
+----
+
+. Now mount the swap subvolume according to the rules just add in `/etc/fstab`.
++
+[source,sh]
+----
+➜ sudo mount /swap
+----
+
+. Create an empty swapfile within the swap subvolume.
++
+[source,sh]
+----
+➜ sudo truncate -s 0 /swap/swapfile
+----
+
+. Disable Copy-on-Write for the swapfile.
++
+[source,sh]
+----
+➜ sudo chattr +C /swap/swapfile
+----
+
+. Make sure to disable compression on the swapfile.
++
+[source,sh]
+----
+➜ sudo btrfs property set /swap/swapfile compression none
+----
+
+. Allocate the file with as much space as there is RAM on the system.footnote:[For better recommendations on the size of your swapfile, refer to the table _Recommended System Swap Space_ in the _{recommended-partitioning-scheme}_ section of Fedora's installation documentation.]
++
+[source,sh]
+----
+➜ sudo fallocate -l (free -h | awk 'NR == 2 {print $2}') /swap/swapfile
+----
+
+. Only allow access to the swapfile by its owner, the root user, to prevent snooping.
++
+[source,sh]
+----
+➜ sudo chmod 600 /swap/swapfile
+----
+
+. Initialize the swapfile.
++
+[source,sh]
+----
+➜ sudo mkswap /swap/swapfile
+Setting up swapspace version 1, size = 7.8 GiB (8355049472 bytes)
+no label, UUID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+----
+
+. Enable the swapile!
++
+[source,sh]
+----
+➜ sudo swapon /swap/swapfile
+----
+
+. Add the swapfile to _/etc/fstab_ so that {systemd} will initialize it automatically when booting the system.footnote:[systemd's handling of swap is documented thoroughly in the corresponding man page: {systemd-swap-man}.]
++
+[source,sh]
+----
+➜ echo "/swap/swapfile none swap defaults 0 0" | sudo tee -a /etc/fstab
+----
+
+. Verify there are no errors in _/etc/fstab_.
++
+[source,sh]
+----
+➜ sudo findmnt --verify --verbose
+----
+
+. Set a lower _swappiness_ in an attempt to improve performance.
++
+--
+This is described in the ArchWiki's page on Swap in the _{archwiki-swappiness}_ section.
+A lower setting as used here advises the kernel to avoid swapping.
+
+[source,sh]
+----
+echo vm.swappiness=10 | sudo tee /etc/sysctl.d/99-swappiness.conf
+vm.swappiness=10
+----
+
+[NOTE]
+====
+This setting will be applied at the next reboot.
+====
+--
+
+== References
+
+https://wiki.archlinux.org/index.php/btrfs#Swap_file[ArchWiki btrfs - Swap file]
+https://wiki.archlinux.org/index.php/Swap#Swap_file_creation[ArchWiki Swap - Swap file creation]
+https://wiki.debian.org/Swap[Debian Wiki Swap]
+
+== Conclusion
+
+You should now know all you need to know to make a btrfs swapfile on Linux.
