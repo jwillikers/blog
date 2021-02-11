@@ -1,0 +1,85 @@
+= Why Choose btrfs
+:page-layout:
+:page-category: Disks
+:page-tags: [bcachefs, btrfs, cow, filesystem, fedora, freebsd, linux, openzfs, opensuse, netbsd, snapshots, zfs]
+:allan-jude: https://github.com/allanjude[Allan Jude]
+:bcachefs: https://bcachefs.org/[bcachefs]
+:btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[btrfs]
+:cow: https://en.wikipedia.org/wiki/Copy-on-write[Copy-on-Write]
+:elementary-os: https://elementary.io/[elementary OS]
+:fedora: https://getfedora.org/[Fedora]
+:freebsd: https://www.freebsd.org/[FreeBSD]
+:freebsd-mastery-zfs: https://www.tiltedwindmillpress.com/product/fmzfs/[FreeBSD Mastery: ZFS]
+:freebsd-mastery-advanced-zfs: https://www.tiltedwindmillpress.com/product/fmaz/[FreeBSD Mastery: Advanced ZFS]
+:michael-w-lucas: https://mwl.io/[Michael W. Lucas]
+:netbsd: https://www.netbsd.org/[NetBSD]
+:opensuse: https://www.opensuse.org/[openSUSE]
+:openzfs: https://openzfs.org/wiki/Main_Page[OpenZFS]
+:ubuntu: https://opensource.org/licenses/gpl-license[Ubuntu]
+
+There are many compelling reasons to use a modern {cow}, _CoW_ for short, filesystem.
+These include low-cost snapshots and incremental backups.
+If that's not compelling, the two most popular open source CoW filesystems, {openzfs} and {btrfs}, offer many more features.
+Compression, redundancy, deduplication, native encryption, online defragmentation, and data integrity checking on every read are just a few.
+
+== _CoW_
+
+Making a case for _CoW_ is easy, but here's why I'm willing to make the change.
+I've been struck by bit rot on a couple of occasions leaving me with corrupted music files.
+This bothered me and my backups all contained the corrupted files.
+_CoW_ solves this problem in two ways.
+It will detect such corruption at the time of reading the file or during a _scrub_ where all data and metadata is verified.
+This would have caught the issue earlier and might have given me a chance to restore the file from a recent backup.
+However, _CoW_ provides a much more robust backup system offering snapshots and incremental sends and receives.
+This makes it easy and relatively cheap to keep backups stretching over an extended period of time.
+Having snapshots of my Music directory dating back two years would likely have allowed me to restore that file.
+That's why I decided to use _CoW_ on my desktop.
+
+=== _CoW_ Filesystems
+
+But what filesystem to choose?
+If you read much of my blog, you'll know that I'm going to be looking at open source solutions.
+This boils down to three serious contenders: OpenZFS, btrfs, and {bcachefs}.
+
+==== OpenZFS
+
+OpenZFS has a proven track record of reliability and is by far the most mature candidate.
+It also benefits from native encryption, great defaults, and a robust, unified interface.
+Unfortunately, its https://github.com/openzfs/zfs/blob/master/LICENSE[CDDL license] is incompatibale with the https://opensource.org/licenses/gpl-license[GPL license] used by the Linux kernel.
+This has lead to the need for less-than ideal workarounds.
+Unless you're on {ubuntu}, {freebsd}, or {netbsd}.
+Ubuntu ships ZFS in its own releases of the Linux kernel.
+Both FreeBSD and NetBSD, having a more permissive license, don't have issues with the CDDL license.
+
+==== btrfs
+
+btrfs is newer but has been around for over a decade at this point.
+It's suffered from reliability issues in the past and doesn't offer native encryption.
+It is licensed under the GPL, however, and therefore available in the kernel of every Linux distribution.
+Recently, {fedora} has begun shipping it as the default filesystem and {opensuse} has been using it as the default since 2014.
+
+==== bcachefs
+
+bcaches is new on the block and not yet mainlined in the Linux kernel.
+It does, however, have a promising feature set already and might offer some powerful performance improvements over btrfs and ZFS.
+Time will tell with this one.
+
+== The Choice
+
+Currently, I have a better familiarity and understanding of ZFS.
+That said, its unified approached to filesystem and storage management plus extensive documentation and literature make it very accessible.footnote:[Thank you {michael-w-lucal} and {allan-jude} for _{freebsd-mastery-zfs}_ and _{freebsd-mastery-advanced-zfs}_].
+
+As for as operating systems go, I'm only going to use one of the BSD's or Linux wherever I have the choice.
+As far as desktops go, Linux has significantly more polish in this respect to the *BSD.footnote:[No. I'm _not_ counting Darwin.]
+I prefer to use {elementary-os} as my primary, stable desktop distribution.
+I'm planning on also having a system running Fedora and want to use the same filesystem configuration on both.
+The idea of mixing filesystems seems unnecessarily complicated, though completely doable. 
+
+The prospect of vendor lock-in to Ubuntu ultimately lead me to btrfs.
+I get the freedom of choice in regards to Linux distribution and only have to manage one filesystem on my machine.
+
+== Conclusion
+
+So far, I'm pretty far into configuring my desktops with btrfs, and I'm happy with the outcomes.
+The default settings had to be tweaked quite a bit and getting all of the tooling in place for snapshot and backup management has been a pain.
+More fodder for the blog, though.
