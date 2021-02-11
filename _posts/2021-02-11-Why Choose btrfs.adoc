@@ -67,7 +67,7 @@ Time will tell with this one.
 == The Choice
 
 Currently, I have a better familiarity and understanding of ZFS.
-That said, its unified approached to filesystem and storage management plus extensive documentation and literature make it very accessible.footnote:[Thank you {michael-w-lucal} and {allan-jude} for _{freebsd-mastery-zfs}_ and _{freebsd-mastery-advanced-zfs}_].
+That said, its unified approached to filesystem and storage management plus extensive documentation and literature make it very accessible.footnote:[Thank you {michael-w-lucas} and {allan-jude} for _{freebsd-mastery-zfs}_ and _{freebsd-mastery-advanced-zfs}_].
 
 As for as operating systems go, I'm only going to use one of the BSD's or Linux wherever I have the choice.
 As far as desktops go, Linux has significantly more polish in this respect to the *BSD.footnote:[No. I'm _not_ counting Darwin.]
