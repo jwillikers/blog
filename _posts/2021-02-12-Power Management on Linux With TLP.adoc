@@ -1,0 +1,53 @@
+= Power Management on Linux With TLP
+:page-layout:
+:page-category: Systems
+:page-tags: [btrfs, elementaryos, linux, tlp, ubuntu]
+:elementary-os: https://elementary.io/[elementary OS]
+:tlp: https://linrunner.de/tlp/#[TLP]
+:tlpui: https://github.com/d4nj1/TLPUI[tlpui]
+:ubuntu: https://opensource.org/licenses/gpl-license[Ubuntu]
+
+{tlp} is a powerful power managmenment utility for Linux.
+It helps conserve battery life on mobile Linux devices by taking advantage of various kernel features.
+It's also super easy to add to a system and requires no extra configuration after installation.
+Though, it does expose quite a bit of configuration settings for those who want fine-grained control.
+
+== Tutorial
+
+This tutorial will get {ubuntu} and derivitives such as {elementary-os} setup with TLP.
+The instructions use the command-line and software-management utilities built into Ubuntu, so you should be familiar with these tools.
+
+. Install the necessary package for easily adding PPA's.
++
+[source,sh]
+----
+➜ sudo apt -y install software-properties-common
+----
+
+. Add the TLP PPA to your system to get the latest version of TLP.
++
+[source,sh]
+----
+➜ sudo apt-add-repository -uy ppa:linrunner/tlp
+----
+
+. Install TLP.
++
+[source,sh]
+----
+➜ sudo apt -y install tlp tlp-rdw
+----
+
+. TLP will start automatically at boot, but to start it now without rebooting, do so manually.
++
+[source,sh]
+----
+➜ sudo tlp start
+----
+
+== Conclusion
+
+That's it.
+Really.
+If you want to tweak the settings, I recommend checking out the graphical user interface provided by {tlpui}.
+You now know how to quickly configure better power-savings on your Linux devices.
