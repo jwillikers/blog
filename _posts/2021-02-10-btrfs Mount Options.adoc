@@ -29,20 +29,20 @@ First, let's look at the `/etc/fstab` file on one of my machines.
 [source]
 ./etc/fstab
 ----
-/dev/mapper/sda2_crypt /                   btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=root 0 0
-UUID=xxxxxxxxxxxxxxxxx /boot               btrfs   defaults,noatime,autodefrag,compress=lzo,commit=120 0 0
-/dev/mapper/sda2_crypt /.snapshots         btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=snapshots 0 0
-/dev/mapper/sda2_crypt /home               btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=home 0 0
-/dev/mapper/sda2_crypt /home/bob           btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=home_bob 0 0
-/dev/mapper/sda2_crypt /home/bob/snapshots btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=home_bob_snapshots 0 0
-/dev/mapper/sda2_crypt /opt                btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=opt 0 0
-/dev/mapper/sda2_crypt /root               btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=home_root 0 0
-/dev/mapper/sda2_crypt /srv                btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=srv 0 0
-/dev/mapper/sda2_crypt /swap               btrfs   defaults,noatime,autodefrag,commit=120,subvol=swap 0 0
-/dev/mapper/sda2_crypt /tmp                btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=tmp 0 0
-/dev/mapper/sda2_crypt /usr/local          btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=usr_local 0 0
-/dev/mapper/sda2_crypt /var                btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=var 0 0
-/swap/swapfile         none                swap    defaults 0 0
+/dev/mapper/sda2_crypt /                    btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=root 0 0
+UUID=xxxxxxxxxxxxxxxxx /boot                btrfs   defaults,noatime,autodefrag,compress=lzo,commit=120 0 0
+/dev/mapper/sda2_crypt /.snapshots          btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=snapshots 0 0
+/dev/mapper/sda2_crypt /home                btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=home 0 0
+/dev/mapper/sda2_crypt /home/bob            btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=home_bob 0 0
+/dev/mapper/sda2_crypt /home/bob/.snapshots btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=home_bob_snapshots 0 0
+/dev/mapper/sda2_crypt /opt                 btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=opt 0 0
+/dev/mapper/sda2_crypt /root                btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=home_root 0 0
+/dev/mapper/sda2_crypt /srv                 btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=srv 0 0
+/dev/mapper/sda2_crypt /swap                btrfs   defaults,noatime,autodefrag,commit=120,subvol=swap 0 0
+/dev/mapper/sda2_crypt /tmp                 btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=tmp 0 0
+/dev/mapper/sda2_crypt /usr/local           btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=usr_local 0 0
+/dev/mapper/sda2_crypt /var                 btrfs   defaults,noatime,autodefrag,compress=zstd,commit=120,subvol=var 0 0
+/swap/swapfile         none                 swap    defaults 0 0
 ----
 
 Wow, there's a bunch going on here!
