@@ -117,16 +117,22 @@ UUID=xxxxxxxxxxxxxxxxx /boot                   btrfs   defaults,noatime,autodefr
 
 === User Layout
 
-The user layout has a significant number of directories to exclude from snapshots.
-It's worth considering an opt-in approach to snapshots as opposed to an opt-out approach for the important data in a user's home directory.
-Home directory structures can be a bit more chaotic compared to the organization of the system's directories and you might find that only snapshotting the necessary directories is the simpler solution.
-Here, I discuss the opt-out approach that I chose because this allows me to avoid the hassle of dealing with snapshotting several directories separately.
-The user's home directory uses a {nested-layout} in contrast to the system layout.
+How to layout a user's home directory should be considered carefully based on the desired functionality required.
+Do you want to be able to rollback a user's home directory, perhaps in the case a botched configuration file won't allow them to login?
+If so, it is critical to separate out the configuration and system software from the user's important data so that such a rollback doesn't undo hours of hard work.
+Do you just want to backup that important user data?
+Well then, go ahead and just create subvolumes for the necessary directories and forget about all the disparate directories that need to be subvolumes just so they can be excluded from snapshots of the entire home directory.
+
+My user layout described here attempts to cover both user configuration and data within home directory snapshots, making this a bad candidate for doing rollbacks of the home directory.
+However, it is a good base for doing exactly that.
+Just separate the important directories such as `Documents` and `Pictures` into their own subvolumes and manage their snapshots separately.
+The layout here is a {nested-layout} in contrast to the system's flat layout.
 
 The {xdg-base-directory-specification} and the https://www.freedesktop.org/software/systemd/man/file-hierarchy.html#Home%20Directory[Home Directory section] from the {systemd} {file-hierarchy} are the best references for the standard directories within a user's home directory.
-Additionally, my setup must account for per-user {flatpak} and {appimage} applications, local virtual machine disk images, and a host of non-compliant development tooling as well my own development workflow.
-I choose to exclude most of these from my home directory snapshots, but you might have good reason to include some of these in your own home directory rollbacks.
-Below is a listing of the directories which I separate out into separate subvolumes within my home directory.
+Home directory structures can be a bit more chaotic compared to the organization of the system's directories, though.
+They tend to be a bit less standardized.
+In additon to the standard directories, my setup accounts for per-user {flatpak} and {appimage} applications, local virtual machine disk images, and a host of non-compliant development tooling as well my own development workflow.
+I choose to exclude most of these from my home directory snapshots, but you might have good reason to include some of these in your own snapshots.
 
 .User Subvolumes
 `{home-cache}`:: Local cache files don't need to be included in snapshots, so they aren't.
