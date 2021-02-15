@@ -24,16 +24,25 @@ Compression, redundancy, deduplication, native encryption, online defragmentatio
 
 == _CoW_
 
-Making a case for _CoW_ is easy, but here's why I'm willing to make the change.
+Making a case for _CoW_ is easy, but why make the change?
+Two key features made this change an inevitable one for me: bit rot protection and the ability to perform low-cost, incremental backups.
+
 I've been struck by bit rot on a couple of occasions leaving me with corrupted music files.
-This bothered me and my backups all contained the corrupted files.
+Unfortunately at the time, all my previous backups held only the corrupted files so the data was lost.
+While this wasn't tragic by any means, it still bothered me.
+How would I know if a stray bit of radiation fried any of my other files?
+Would I notice in time to recover them?
+What are the odds of discovering my tax documents are corrupt during an audit by the IRS?
+
 _CoW_ solves this problem in two ways.
-It will detect such corruption at the time of reading the file or during a _scrub_ where all data and metadata is verified.
-This would have caught the issue earlier and might have given me a chance to restore the file from a recent backup.
-However, _CoW_ provides a much more robust backup system offering snapshots and incremental sends and receives.
-This makes it easy and relatively cheap to keep backups stretching over an extended period of time.
-Having snapshots of my Music directory dating back two years would likely have allowed me to restore that file.
-That's why I decided to use _CoW_ on my desktop.
+It will detect such corruption at the time of reading the file or during a _scrub_, where all data and metadata is verified against the stored checksums.
+In my circumstance, the issue would have been caught much sooner giving me the opportunity to restore the file from a recent backup.
+
+To the other point, _CoW_ provides a robust backup solution through snapshots and incremental sends and receives.
+Taking a snapshot of an entire _CoW_ system is practically no cost.footnote:[Read about the comparison to rsync in the Ars Technica article https://arstechnica.com/information-technology/2015/12/rsync-net-zfs-replication-to-the-cloud-is-finally-here-and-its-fast/[rsync.net: ZFS Replication to the cloud is finally here — and it’s fast].]
+While snapshots shouldn't be confused with backups, they provide the foundation for incremental sends and receives.
+This allows sending only the changes since the last snapshot to an external disk or offsite backup.
+If you want to have fresh backups every ten minutes, no problem.
 
 === _CoW_ Filesystems
 
