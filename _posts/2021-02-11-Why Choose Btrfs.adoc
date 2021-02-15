@@ -4,7 +4,7 @@
 :page-tags: [bcachefs, btrfs, cow, filesystem, fedora, freebsd, linux, openzfs, opensuse, netbsd, snapshots, zfs]
 :allan-jude: https://github.com/allanjude[Allan Jude]
 :bcachefs: https://bcachefs.org/[bcachefs]
-:btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[btrfs]
+:btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
 :cow: https://en.wikipedia.org/wiki/Copy-on-write[Copy-on-Write]
 :elementary-os: https://elementary.io/[elementary OS]
 :fedora: https://getfedora.org/[Fedora]
