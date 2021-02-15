@@ -1,4 +1,4 @@
-= btrfs Layout
+= Btrfs Layout
 :page-layout:
 :page-category: Disks
 :page-tags: [appimage, appimagelauncher, asdf, btrfs, cow, cargo, conan, elementaryos, fhs, filesystem, flatpak, fstab, gnome-boxes, libvirt, linux, opensuse, podman, rust, snapper, snapshots, systemd, ubuntu, xdg-base]
@@ -40,21 +40,21 @@
 :zfs: https://openzfs.org/wiki/Main_Page[ZFS]
 :zsys: https://github.com/ubuntu/zsys[ZSYS]
 
-One of the best features of btrfs is the ability to produce snapshots of data instantaneously.
-Rollbacks take advantage of btrfs to revert the system, or any subvolume, to a previous state like before that major kernel update.
+One of the best features of Btrfs is the ability to produce snapshots of data instantaneously.
+Rollbacks take advantage of Btrfs to revert the system, or any subvolume, to a previous state like before that major kernel update.
 This is an extremely valuable feature.
 Unfortunately, to take advantage of a snapshots and rollbacks properly, the filesystem must be layed out intentionally.
 Certain directories need to be left alone during a rollback.
 You don't want to rollback your system and have your hard-work lost nor do you want to inadvertently destroy critical system logs.
-Unless your on {opensuse}, this just isn't done for you on most popular Linux distributions or at least not yet.footnote:[Ubuntu does this for you with {zfs} and {zsys}, but I'm talking about btrfs here.]
+Unless your on {opensuse}, this just isn't done for you on most popular Linux distributions or at least not yet.footnote:[Ubuntu does this for you with {zfs} and {zsys}, but I'm talking about Btrfs here.]
 Even if you are using openSUSE, it doesn't setup user home directory layouts if you wish to snapshot those.
-That's why I've outlined my btrfs filesystem configurations for both my system and my home directory here.
+That's why I've outlined my Btrfs filesystem configurations for both my system and my home directory here.
 
 == Subvolumes and Snapshots
 
-btrfs uses subvolumes to organize data akin to directories.
+Btrfs uses subvolumes to organize data akin to directories.
 Well, subvolumes are directories, practically speaking.
-Subvolumes have the added benefit of allowing specific btrfs characteristics to be applied.
+Subvolumes have the added benefit of allowing specific Btrfs characteristics to be applied.
 They also provide the only method to exclude data from snapshots.
 When taking a snapshot of a particular subvolume, all subvolumes nested within that subvolume are excluded from the snapshot.
 
@@ -93,7 +93,7 @@ This avoids _CoW_ on _CoW_ per the caution in the {debian-wiki-btrfs-page}.
 ==== `/etc/fstab`
 
 An example `{fstab}` file is provided here as a reference.
-Refer to the post <<btrfs-mount-options#,btrfs Mount Options>> for more information about the various mount options and why they are used.
+Refer to the post <<btrfs-mount-options#,Btrfs Mount Options>> for more information about the various mount options and why they are used.
 
 [source]
 ./etc/fstab
@@ -155,8 +155,8 @@ For Snapper, this subvolume must be owned by the root user.
 
 == Conclusion
 
-This post has laid out examples of btrfs filesystem layouts.
-You should now have a better grasp of the various considerations in configuring a system with btrfs.
+This post has laid out examples of Btrfs filesystem layouts.
+You should now have a better grasp of the various considerations in configuring a system with Btrfs.
 This includes what directories to exclude from snapshots by making them separate subvolumes and particular edge cases such as disk image storage for virtual machines.
 There are also several practical use cases here that can inform you if you have similar circumstances.
 Now that the ground-work is complete, next up is configuring system and user snapshots with Snapper!

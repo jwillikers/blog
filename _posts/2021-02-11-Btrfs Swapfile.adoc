@@ -1,4 +1,4 @@
-= btrfs Swapfile
+= Btrfs Swapfile
 :page-layout:
 :page-category: Disks
 :page-tags: [btrfs, linux, swap, swapfile]
@@ -22,29 +22,29 @@ It's effectively reserved disk space for accomodating a system when it needs mor
 I recommend the https://opensource.com/[opensource.com] article _{an-introduction-to-swap-space-on-linux-systems}_ as a great primer on the topic. 
 
 There are two approaches to providing swap space on Linux, swap partitions and https://wiki.archlinux.org/index.php/swap#Swap_file[swapfiles].
-Since version 5.0 of the Linux kernel, btrfs swap files are supported according to the section _{does-btrfs-support-swapfiles}_ in the {btrfs-wiki-faq}.
-Switching to btrfs as my default filesystem, I recently set this up have created this tutorial get yourself a swapfile set up on btrfs.
+Since version 5.0 of the Linux kernel, Btrfs swap files are supported according to the section _{does-btrfs-support-swapfiles}_ in the {btrfs-wiki-faq}.
+Switching to Btrfs as my default filesystem, I recently set this up have created this tutorial get yourself a swapfile set up on Btrfs.
 
 == Tutorial
 
-This tutorial contains the necessary steps to create a btrfs swapfile.
+This tutorial contains the necessary steps to create a Btrfs swapfile.
 The reference system is running {elementary-os} 5.1 and a {flat-btrfs-layout}.
 As a matter of preference, the commands here use the {fish-shell}'s syntax.
 
 [NOTE]
 ====
-I have not been able to get hibernation working when using a btrfs swapfile.
+I have not been able to get hibernation working when using a Btrfs swapfile.
 You should consider a dedicated, encrypted swap partition if you desire this feature.
 ====
 
-. Mount the root btrfs filesystem to create a subvolume. 
+. Mount the root Btrfs filesystem to create a subvolume. 
 +
 [source,sh]
 ----
 ➜ sudo mount (df --output=source / | tail -n 1) /mnt
 ----
 
-. Create a dedicated btrfs subvolume for swap in order to exclude the swapfile from snapshots.
+. Create a dedicated Btrfs subvolume for swap in order to exclude the swapfile from snapshots.
 +
 [source,sh]
 ----
@@ -168,10 +168,10 @@ This setting will be applied at the next reboot.
 
 == References
 
-https://wiki.archlinux.org/index.php/btrfs#Swap_file[ArchWiki btrfs - Swap file]
+https://wiki.archlinux.org/index.php/btrfs#Swap_file[ArchWiki Btrfs - Swap file]
 https://wiki.archlinux.org/index.php/Swap#Swap_file_creation[ArchWiki Swap - Swap file creation]
 https://wiki.debian.org/Swap[Debian Wiki Swap]
 
 == Conclusion
 
-You should now know all you need to know to make a btrfs swapfile on Linux.
+You should now know all you need to know to make a Btrfs swapfile on Linux.
