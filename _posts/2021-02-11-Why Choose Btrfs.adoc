@@ -1,4 +1,4 @@
-= Why Choose btrfs
+= Why Choose Btrfs
 :page-layout:
 :page-category: Disks
 :page-tags: [bcachefs, btrfs, cow, filesystem, fedora, freebsd, linux, openzfs, opensuse, netbsd, snapshots, zfs]
@@ -39,7 +39,7 @@ That's why I decided to use _CoW_ on my desktop.
 
 But what filesystem to choose?
 If you read much of my blog, you'll know that I'm going to be looking at open source solutions.
-This boils down to three serious contenders: OpenZFS, btrfs, and {bcachefs}.
+This boils down to three serious contenders: OpenZFS, Btrfs, and {bcachefs}.
 
 ==== OpenZFS
 
@@ -51,9 +51,9 @@ Unless you're on {ubuntu}, {freebsd}, or {netbsd}.
 Ubuntu ships ZFS in its own releases of the Linux kernel.
 Both FreeBSD and NetBSD, having a more permissive license, don't have issues with the CDDL license.
 
-==== btrfs
+==== Btrfs
 
-btrfs is newer but has been around for over a decade at this point.
+Btrfs is newer but has been around for over a decade at this point.
 It's suffered from reliability issues in the past and doesn't offer native encryption.
 It is licensed under the GPL, however, and therefore available in the kernel of every Linux distribution.
 Recently, {fedora} has begun shipping it as the default filesystem and {opensuse} has been using it as the default since 2014.
@@ -61,7 +61,7 @@ Recently, {fedora} has begun shipping it as the default filesystem and {opensuse
 ==== bcachefs
 
 bcaches is new on the block and not yet mainlined in the Linux kernel.
-It does, however, have a promising feature set already and might offer some powerful performance improvements over btrfs and ZFS.
+It does, however, have a promising feature set already and might offer some powerful performance improvements over Btrfs and ZFS.
 Time will tell with this one.
 
 == The Choice
@@ -75,11 +75,11 @@ I prefer to use {elementary-os} as my primary, stable desktop distribution.
 I'm planning on also having a system running Fedora and want to use the same filesystem configuration on both.
 The idea of mixing filesystems seems unnecessarily complicated, though completely doable. 
 
-The prospect of vendor lock-in to Ubuntu ultimately lead me to btrfs.
+The prospect of vendor lock-in to Ubuntu ultimately lead me to Btrfs.
 I get the freedom of choice in regards to Linux distribution and only have to manage one filesystem on my machine.
 
 == Conclusion
 
-So far, I'm pretty far into configuring my desktops with btrfs, and I'm happy with the outcomes.
+So far, I'm pretty far into configuring my desktops with Btrfs, and I'm happy with the outcomes.
 The default settings had to be tweaked quite a bit and getting all of the tooling in place for snapshot and backup management has been a pain.
 More fodder for the blog, though.

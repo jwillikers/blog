@@ -1,4 +1,4 @@
-= btrfs Mount Options
+= Btrfs Mount Options
 :page-layout:
 :page-category: Disks
 :page-tags: [btrfs, fstab, Linux, mount]
@@ -12,15 +12,15 @@
 
 So, let's say you've installed a fresh system on {btrfs}.
 Now what?
-Well, btrfs doesn't ship with optimal default settings.
+Well, Btrfs doesn't ship with optimal default settings.
 Many popular Linux distributions don't improve the situation, either.
-That leaves it up to the administrator to fine tune btrfs for its particular use case.
+That leaves it up to the administrator to fine tune Btrfs for its particular use case.
 
-The primary way to tune btrfs is through {btrfs-mount-options} which are commonly enumerated in `{fstab}` for each volume on the system.
-I use a flat layout in my `/etc/fstab` for the separate btrfs subvolumes on each system.
+The primary way to tune Btrfs is through {btrfs-mount-options} which are commonly enumerated in `{fstab}` for each volume on the system.
+I use a flat layout in my `/etc/fstab` for the separate Btrfs subvolumes on each system.
 Subvolumes within a user's home directory, besides perhaps a standard `.snapshots` subvolume, are left out of my `/etc/fstab` to give users greater flexibility in managing their own home subvolume.
 
-I'm planning on using btrfs for all of my Linux machines, but these are all used as desktop computers and the mount options I selected reflect this.
+I'm planning on using Btrfs for all of my Linux machines, but these are all used as desktop computers and the mount options I selected reflect this.
 
 == fstab
 
@@ -47,17 +47,17 @@ UUID=xxxxxxxxxxxxxxxxx /boot                btrfs   defaults,noatime,autodefrag,
 
 Wow, there's a bunch going on here!
 This setup contains many separate subvolumes to facilitate snapshots of the root directory and users' home directories.
-It also includes a btrfs swapfile.
+It also includes a <<btrfs-swapfile#,Btrfs Swapfile>>.
 These aspects of the file will be discussed in future posts. 😉
 
 Notice that each subvolume specified here, except for `/boot`, explicitly states the mount options.
 These subvolumes use a {flat-layout} as opposed to a {nested-layout}.
 With the exception of the `/boot` subvolume which resides on a separate partition, they are all located at the root of `/dev/mapper/sda2_crypt`.
-When using btrfs, nested subvolumes inherit the mount options of their parents and are automatically mounted.
+When using Btrfs, nested subvolumes inherit the mount options of their parents and are automatically mounted.
 They don't need to be included in `/etc/fstab` but they are restricted to using the exact mount options of their parents.
 The {flat-layout} used here has the advantage of making it easy to view how system subvolumes are organized.
 
-Since btrfs does it's own integrity checking, {fsck} should be disabled.
+Since Btrfs does it's own integrity checking, {fsck} should be disabled.
 The integer in the last column of each row indicates the fsck value and setting it to zero disables fsck.
 
 == Mount Options
@@ -66,10 +66,10 @@ Listed below are descriptions of each particular mount option.
 
 .Mount Options
 _defaults_:: Use default options: _rw_, _suid_, _dev_, _exec_, _auto_, _nouser_, and _async_.
-These are not btrfs-specific.
+These are not Btrfs-specific.
 _noatime_:: Do  not  update  inode  access  times  on  this  filesystem.
 This speeds up reads since the access time metadata is not updated.
-This option isn't specific to btrfs either.
+This option isn't specific to Btrfs either.
 _autodefrag_:: Enable automatic file defragmentation.
 This automatically defragments small random writes into files.
 _compress_:: Filesystem-level compression is a beautiful thing.
@@ -90,4 +90,4 @@ The _ssd_ option is omitted since these settings are applied automatically when 
 
 == Conclusion
 
-Hopefully you have a better idea of some of the available mount options for optimizing btrfs for your particular use case.
+Hopefully you have a better idea of some of the available mount options for optimizing Btrfs for your particular use case.

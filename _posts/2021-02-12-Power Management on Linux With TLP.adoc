@@ -1,7 +1,7 @@
 = Power Management on Linux With TLP
 :page-layout:
 :page-category: Systems
-:page-tags: [btrfs, elementaryos, linux, tlp, ubuntu]
+:page-tags: [Btrfs, elementaryos, linux, tlp, ubuntu]
 :elementary-os: https://elementary.io/[elementary OS]
 :tlp: https://linrunner.de/tlp/#[TLP]
 :tlpui: https://github.com/d4nj1/TLPUI[tlpui]
