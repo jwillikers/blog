@@ -1,0 +1,299 @@
+= Btrfs Snapshot Management With Snapper
+:page-layout:
+:page-category: Disks
+:page-tags: [btrbk, btrfs, elementaryos, linux, snapper, snapshots, timeshift, ubuntu]
+:arch-wiki-snapper-change-frequencies: https://wiki.archlinux.org/index.php/snapper#Change_snapshot_and_cleanup_frequencies[Change snapshot and cleanup frequencies]
+:btrbk: https://github.com/digint/btrbk[Btrbk]
+:btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
+:btrfs-maintenance-toolbox: https://github.com/kdave/btrfsmaintenance[Btrfs maintenance toolbox]
+:btrfs-wiki-faq: https://btrfs.wiki.kernel.org/index.php/FAQ[Btrfs Wiki FAQ]
+:elementary-os: https://elementary.io/[elementary OS]
+:fedora: https://getfedora.org/[Fedora]
+:flat-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Flat[flat layout]
+:fish-shell: https://fishshell.com/[fish shell]
+:fstab: https://manpages.ubuntu.com/manpages/focal/man8/fsck.8.html[/etc/fstab]
+:mlocate: http://manpages.ubuntu.com/manpages/bionic/en/man1/mlocate.1.html[mlocate(1)]
+:nested-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Nested[nested layout]
+:recommended-partitioning-scheme: https://docs.fedoraproject.org/en-US/fedora/f33/install-guide/install/Installing_Using_Anaconda/#sect-installation-gui-manual-partitioning-recommended[Recommended Partitioning Scheme]
+:snapper: http://snapper.io/[Snapper]
+:snapper-gui: https://github.com/ricardomv/snapper-gui[snapper-gui]
+:systemd: https://systemd.io/[systemd]
+:timeshift: https://github.com/teejee2008/timeshift[Timeshift]
+:tuning-periodic-snapshotting: https://github.com/kdave/btrfsmaintenance#tuning-periodic-snapshotting[Tuning Periodic Snapshotting]
+:ubuntu: https://opensource.org/licenses/gpl-license[Ubuntu]
+:updatedbconf: http://manpages.ubuntu.com/manpages/xenial/en/man5/updatedb.conf.5.html[updatedb.conf(5)]
+
+Manually taking snapshots with {btrfs} is easy.
+Managing said snapshots is not.
+This is why several tools exist for the task.
+The most prominent are {btrbk}, {snapper}, and {timeshift}.
+Each of these automate taking, naming, and cleaning up snapshots.
+Btrbk is highly configurable and flexible while also offering incremental backups.
+It doesn't handle rollbacks, however.
+Timeshift is _only_ designed for rolling back a system's root subvolume and not arbitrary subvolumes.
+It is rather inflexible, but provides a fantastic graphical interface right out of the box and makes rollbacks quick and easy.
+Snapper is very configurable, makes rollbacks a breeze, has been around a while, and is quite popular.
+It's a bit biased towards openSUSE, it being their tool and all, but packaged for all major Linux distributions nonetheless.
+My choice was mostly between Btrbk and Snapper.
+Timeshift won't snapshot all of the subvolumes I have.
+I landed on Snapper because it allows users to control their own snapshots and rollbacks without superuser privileges.
+Btrbk's additional ability for managing backups makes it a very tempting alternative.
+
+== Tutorial
+
+This tutorial contains the necessary steps to setup a recent version of Snapper to take automatic snapshots of a system's root directory and a user's home directory using Btrfs.
+The reference system is running {elementary-os} 5.1 and uses a {flat-btrfs-layout} for the system's subvolumes.
+The layout is discussed extensively in <<btrfs-layout#,Btrfs Layout>>.
+For this tutorial, you should understand the command-line, Btrfs, and the filesystem layout used in Linux.
+As a matter of preference, the commands here use the {fish-shell}'s syntax.
+
+=== Installation
+
+The version of Snapper packaged by my distribution lags significantly behind the upstream version.
+Fortunately, Snapper makes newer versions readily available through its own PPA.
+To install Snapper this way, follow these instructions.
+
+. Install the necessary package for easily adding PPA's.
++
+[source,sh]
+----
+➜ sudo apt -y install software-properties-common
+----
+
+. Add the Snapper repository for Ubuntu 18.04, off which elementaryOS Hera 5.1 is based, to the system's sources.
++
+[source,sh]
+----
+➜ echo 'deb http://download.opensuse.org/repositories/filesystems:/snapper/xUbuntu_18.04/ /' \
+  | sudo tee /etc/apt/sources.list.d/filesystems:snapper.list
+deb http://download.opensuse.org/repositories/filesystems:/snapper/xUbuntu_18.04/ /
+----
+
+. Trust the repository's GPG key. 
++
+[source,sh]
+----
+➜ wget -qO - https://download.opensuse.org/repositories/filesystems:/snapper/xUbuntu_18.04/Release.key \
+  | gpg --dearmor \
+  | sudo tee /etc/apt/trusted.gpg.d/filesystems_snapper.gpg > /dev/null
+----
+
+. Refresh the package sources.
++
+[source,sh]
+----
+➜ sudo apt update
+----
+
+. Install Snapper.
++
+[source,sh]
+----
+➜ sudo apt -y install snapper
+----
+
+. To avoid potential slowdowns, exclude any `.snapshots` subvolumes in `{updatedbconf}` so that they aren't indexed by `{mlocate}`.
++
+[source]
+./etc/updatedb.conf
+----
+PRUNENAMES = ".snapshots"
+----
+
+=== Snapshots Subvolume
+
+For each subvolume you want to snapshot, create a separate subvolume within it to hold the snapshots.
+This prevents snaphots being included in snapshots.
+Snapper uses a `.snapshots` subvolume by convention.
+The steps below create a `.snapshots` subvolume in which to keep snapshots of the root subvolume.
+The subvolume is created according to a {flat-layout}, so it exists at the top-level of the Btrfs volume and is mounted explicitly in `{fstab}`.
+
+. Mount the volume containing the root subvolume to `/mnt`.
++
+[source,sh]
+----
+➜ sudo mount (df --output=source / | tail -n 1) /mnt
+----
+
+. Create a btrfs subvolume where the snapshots will be stored.
++
+--
+Here the subvolume will be named `snapshots`.
+If you prefer to prefix the name with `@`, be my guest.
+
+[source,sh]
+----
+➜ sudo btrfs subvolume create /mnt/snapshots
+----
+--
+
+. Add an entry in {fstab} to mount the snapshots subvolume.
++
+[source,sh]
+----
+➜ echo (df --output=source / | tail -n 1)" /.snapshots btrfs defaults,autodefrag,compress=zstd,commit=120,noatime,subvol=snapshots 0 0" \
+  | tee -a /etc/fstab
+----
+
+. Mount the snapshots subvolume.
++
+[source,sh]
+----
+➜ sudo mount /.snapshots
+----
+
+. Unmount _/mnt_.
++
+[source,sh]
+----
+➜ sudo umount /mnt
+----
+
+=== Configure
+
+Configuration of Snapper is done through a config file.
+One config file is used for each subvolume that Snapper will be snapshotting.
+Typically, a new Snapper configuration is generated with a single command given the name for the config and the path of the subvolume to snapshot. 
+A configuration for the root subvolume, aptly named _root_, would be generated as shown here.
+
+[source,sh]
+----
+➜ sudo snapper -c root create-config /
+----
+
+Due to some sort of misconfiguration or bug, the `create-config` subcommand fails.
+The instructions below create a config manually as a workaround.
+
+. Create a _root_ config file by copying the template file to the configs directory.
++
+[source,sh]
+----
+➜ cp /etc/snapper/config-templates/default /etc/snapper/configs/root
+----
+
+. Edit the config file to your liking.
++
+--
+Below is an example of a root config which uses the timeline features of Snapper to create and cleanup snapshots.
+The entire configuration file is included but the `TIMELINE_` variables are the most important.
+They enable automatically creating and removing snapshots and designate how many snapshots to retain for a particular period.
+
+[source,indent=0]
+./etc/snapper/configs/root
+----
+include::root[]
+----
+
+This configuration keeps one snapshot for each of the previous 24 hours, 10 days, and 3 weeks.
+I could retain snapshots for months and years, but for my desktop's root filesystem this just isn't unnecessary.
+Refer to {tuning-periodic-snapshotting} from the {btrfs-maintenance-toolbox} for good rules of thumb.
+--
+
+. Now that the config is ready, enable it by adding it to the list of Snapper configs in `/etc/sysconfig/snapper`.
++
+[source]
+./etc/sysconfig/snapper
+----
+SNAPPER_CONFIGS="root"
+----
+
+=== User Snapshots
+
+One of the features of Snapper is that users can manage snapshots within their home directory.
+This introduces a nice separation of concerns and responsibilities.
+A PAM module is also provided which can take snapshots whenever a user logs in and subsequently logs out.
+
+==== Snapshots Subvolume
+
+In contrast to the previous configuration, the snapshots directory created for the user's home directory follows a {nested-layout}.
+This is much simpler.
+
+Create a subvolume for snapshots in the user's home directory.
+
+[source,sh]
+----
+➜ sudo btrfs subvolume create ~/.snapshots
+----
+
+[NOTE]
+====
+The `~/.snapshots` subvolume must be owned by root otherwise Snapper will throw an error.
+====
+
+==== Configure
+
+The steps outlined here configure snapshots for a user's home directory.
+This configuration assumes that the user's home directory resides on a dedicated subvolume.
+
+. Create a Snapper configuration file for the user's home directory.
++
+[source,sh]
+----
+➜ sudo cp /etc/snapper/config-templates/default /etc/snapper/configs/home_jordan
+----
+
+. Edit the template as necessary.
++
+--
+There are two important distinctions from the root fileystem configuration.
+First, the `ALLOW_USERS` parameter includes the name of the user.
+This permits the user to work with the config.
+Second, `SYNC_ACL` is enabled, allowing the user to work with the snapshots in the `~.snapshots` directory.
+
+[source,indent=0]
+./etc/snapper/configs/home_jordan
+----
+include::home_jordan[]
+----
+
+This configuration keeps one snapshot for each of the previous 48 hours, 14 days, 8 weeks, 12 months, and 2 years.
+This is quite extensive, but for preserving critical data in a user's home directory it's sensible.
+--
+
+. Enable the `home_jordan` Snapper config by adding to the `SNAPPER_CONFIGS` list.
++
+[source]
+./etc/sysconfig/snapper
+----
+SNAPPER_CONFIGS="root home_jordan"
+----
+
+==== Snapper PAM
+
+If you wish to take snapshots of a user's home directory upon log in and log out, you'll need to install the PAM module.
+The user's home directory must be its own subvolume and must have an enabled Snapper config such as the one created previously.
+The steps necessary to install Snapper's PAM module follow.
+
+. Install Snapper's PAM module.
++
+[source,sh]
+----
+➜ sudo apt -y install libpam-snapper
+----
+
+. Add the `pam_snapper.so` module to the PAM configuration for the `session` type.
++
+--
+[source]
+./etc/pam.d/common-session
+----
+session    optional    pam_snapper.so ignoreroot cleanup=timeline
+----
+
+[CAUTION]
+====
+You will almost certainly want to set a cleanup algorithm as done here otherwise old snapshots won't be deleted automatically.
+====
+--
+
+== A Graphical Interface
+
+Snapper doesn't provide a graphical user interface, but that doesn't mean there isn't one.
+Checkout the {snapper-gui} project if you'd like one!
+
+== Conclusion
+
+This post has given a walkthrough of managing Btrfs snapshots with Snapper.
+You should now be able to create Snapper configurations at both the system and user levels.
+Now you'll probably want to backup those snapshots in case there's a catastrophic failure or some such.
+Stay tuned for an upcoming tutorial on configuring backups plus more posts on getting the most out of Snapper!
