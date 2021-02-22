@@ -1,0 +1,815 @@
+= Adjust Mount Options
+:page-layout:
+:page-category: Disks
+:page-tags: [btrfs, elementaryos, fstab, linux, mount, systemd, ubuntu, udev, udisks2]
+:bash: https://www.gnu.org/software/bash/[Bash]
+:btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
+:btrfs-wiki-faq: https://btrfs.wiki.kernel.org/index.php/FAQ[Btrfs Wiki FAQ]
+:cryptsetup: https://gitlab.com/cryptsetup/cryptsetup[Cryptsetup]
+:elementary-os: https://elementary.io/[elementary OS]
+:fedora: https://getfedora.org/[Fedora]
+:flat-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Flat[flat layout]
+:fish-shell: https://fishshell.com/[fish shell]
+:fstab: https://manpages.ubuntu.com/manpages/bionic/man5/fstab.5.html[fstab(5)]
+:mount: https://manpages.ubuntu.com/manpages/bionic/man8/mount.8.html[mount(8)]
+:nested-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Nested[nested layout]
+:systemd: https://systemd.io/[systemd]
+:systemd-automount: https://manpages.ubuntu.com/manpages/bionic/man5/systemd.automount.5.html[systemd.automount(5)]
+:systemd-device: https://manpages.ubuntu.com/manpages/bionic/man5/systemd.device.5.html[systemd.device(5)]
+:systemd-mount-unit: https://manpages.ubuntu.com/manpages/bionic/man5/systemd.mount.5.html[systemd.mount(5)]
+:systemd-mount-command: https://www.freedesktop.org/software/systemd/man/systemd-mount.html[systemd-mount(1)]
+:systemd-umount: https://www.freedesktop.org/software/systemd/man/systemd-umount.html[systemd.mount(5)]
+:systemd-udevd: https://manpages.ubuntu.com/manpages/bionic/man8/systemd-udevd.service.8.html[systemd-udevd(8)]
+:ubuntu: https://opensource.org/licenses/gpl-license[Ubuntu]
+:udev: https://manpages.ubuntu.com/manpages/bionic/en/man7/udev.7.html[udev(7)]
+:udevadm: https://manpages.ubuntu.com/manpages/bionic/man8/udevadm.8.html[udevadm(8)]
+:udisks2: http://storaged.org/doc/udisks2-api/latest/[udisks2]
+:udisks2-mount-options: http://storaged.org/doc/udisks2-api/latest/mount_options.html[udisks2 Mount Options]
+:udisksctl: https://manpages.ubuntu.com/manpages/bionic/en/man1/udisksctl.1.html[udisksctl(1)]
+:umount: https://manpages.ubuntu.com/manpages/bionic/man8/umount.8.html[umount(8)]
+
+Mounting filesystems on Linux is simple, right?
+Just use {mount}, specify the recurring stuff in {fstab}, and everything's peachy.
+For both better and worse, there's more to it than that.
+Filesystem dependencies are handled by {systemd} and tools like {udev} and {udisks2} provide userspace access to devices.
+Imagine not having to be root to access your flash drive?
+Okay, you're probably aware that root isn't necessary for such a thing, but that's because there's tools that take care of that for you.
+
+I've been working through understanding the different components of this for a while now, but recently put most of it together addressing an important concept.
+That is mount options.
+Switching to {btrfs} as my default filesystem and using it for my backups, I wanted to improve the default mount options.
+And I wanted to these defaults used in userspace, not just in {fstab} or when using {mount}.
+I've accumulated my knowledge on the subject here and describe exactly how to set Btrfs mount options to your liking, whichever way you might want.
+
+== Tutorial
+
+This tutorial walks through the menagery of methods for mounting a Btrfs volume with a specific set of mount options.
+The reference operating system is {ubuntu} 18.04.
+It will underscore several available approaches specific to the kernel and userspace levels.
+You should have a fairly strong understanding of Linux, the command-line, and filesystems.
+I expect you to understand mount options.
+
+=== Setup
+
+This walkthrough uses a mount point under the standard mount directory for your user.
+The mount point is `/run/media/$USER/backups`.
+This mount point must exist before we begin.
+Create this directory as follows.
+
+[source,sh]
+----
+➜ sudo mkdir -p /run/media/$USER/backups
+----
+
+The rest of the tutorial will use `$USER` to substitute your username on the command-line.
+Command-line output will use my username, _jordan_, instead to reflect the output when I run the command.
+Your username will appear instead of _jordan_.
+
+This tutorial also uses a USB connected storage device which appears as `sdb`.
+Your device could be under the same name in the device tree or it might use a different name.
+To locate your USB device, examine the output of lsblk.
+
+[source,sh]
+----
+➜ lsblk
+NAME           MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+sda              8:0    0   1.8T  0 disk  
+├─sda1           8:1    0   976M  0 part  /boot
+└─sda2           8:2    0   1.8T  0 part  
+  └─sda2_crypt 253:0    0   1.8T  0 crypt /opt
+sdb              8:16   0 931.5G  0 disk  # <1>
+└─sdb1           8:17   0 931.5G  0 part  
+sr0             11:0    1  1024M  0 rom  
+----
+<1> This is my 1 TB external hard drive.
+
+The device used in the examples has a single partition, `sdb1`, formatted as Btrfs.
+If you would like to follow along with your own device, you can format your device as follows.
+
+[WARNING]
+====
+This will effectively obfuscate any data on the drive making it very difficult or impossible to recover.
+====
+
+. Wipe any existing partition tables on the flash drive and generate a new one.
++
+--
+The set of _gdisk_ commands, consisting of {cgdisk}, {gdisk}, and {sgdisk}, manipulate {guid-partition-tables}, also known as _GPTs_.
+Older {master-boot-records}, _MBRs_, are instead managed with {fdisk} and its similarly named friends.
+Here, the {sgdisk} command is used to partition the flash drive using the newer _GPT_ format without requiring any user interaction.
+
+[source,sh]
+----
+➜ sudo sgdisk -Z -n 0:0:0 -c 0:"Black WD HDD" /dev/sdb
+GPT data structures destroyed! You may now partition the disk using fdisk or
+other utilities.
+Setting name!
+partNum is 0
+The operation has completed successfully.
+----
+
+The `-Z` flag _zaps_ any existing MBR and GPT partition tables into oblivion.
+Then, the `-n` flag creates a new partition given the partition number, starting sector, and ending sector separated by colons.
+Zeros used here represent default values.
+The first zero sets the partition number to the next available number, which is one since this is the first partition on the flash drive.
+The next two zeros designate the starting sector of the largest block and the last sector of that same block, creating a single partition which effectively takes up the entirety of the flash drive.
+The `-c` flag labels the new partition which is indicated by the `0:`.
+The label here provides a basic description of the disk.
+--
+
+. Format the partition with Btrfs.
++
+--
+Here I label the volume with a descriptive name of the disk and its purpose.
+
+[source,sh]
+----
+➜ sudo mkfs -t btrfs -L "Black WD EasyStore External HDD - My Backups" /dev/sdb1
+btrfs-progs v4.15.1
+See http://btrfs.wiki.kernel.org for more information.
+
+Label:              Black WD EasyStore External HDD - My Backups
+UUID:               13177899-cb85-45b7-99b6-b76e2fc41f44 # <1>
+Node size:          16384
+Sector size:        4096
+Filesystem size:    931.48GiB
+Block group profiles:
+  Data:             single            8.00MiB
+  Metadata:         DUP               1.00GiB
+  System:           DUP               8.00MiB
+SSD detected:       no
+Incompat features:  extref, skinny-metadata
+Number of devices:  1
+Devices:
+   ID        SIZE  PATH
+    1   931.48GiB  /dev/sdb1
+----
+<1> Note the _UUID_ here for use in later examples.
+--
+
+. Then mount the volume.
++
+[source,sh]
+----
+➜ sudo mount -o noatime,autodefrag,compress=zstd,commit=120 \
+  /dev/sdb1 \
+  /run/media/$USER/backups
+----
+
+. Create a subvolume for storing backups.
++
+[source,sh]
+----
+➜ sudo btrfs subvolume create /run/media/$USER/backups/my-backups
+Create subvolume '/run/media/jordan/backups/my-backups'
+----
+
+. Set the current user as the owner of the subvolume.
++
+[source,sh]
+----
+➜ sudo chown $USER:$USER /run/media/$USER/backups/my-backups
+----
+
+. Umount the volume.
++
+[source,sh]
+----
+➜ sudo umount /run/media/$USER/backups
+----
+
+. If you didn't note your volume's UUID, you can do so with the following command.
++
+[source,sh]
+----
+➜ lsblk -no uuid /dev/sdb1
+13177899-cb85-45b7-99b6-b76e2fc41f44
+----
+
+=== System-level Mounting
+
+At the system-level, the primary ways to management mounts are {mount}, {fstab}, and {systemd}.
+Each of these is discussed below.
+
+==== mount
+
+Old faithful and ever present, {mount} is ubiquitous.
+Use it to mount a filesystem as root giving it a comma-separated list of options preceded by the `-o` flag, the device, and the mountpoint.
+To mount the Btrfs subvolume named `backups` on the block device `/dev/sdb1` to `/run/media/$USER/backups` with several mount options, use the following command.
+
+[source,sh]
+----
+➜ sudo mount -o noatime,autodefrag,compress=zstd,commit=120,subvol=my-backups \
+  '/dev/disk/by-label/Black\x20WD\x20EasyStore\x20External\x20HDD\x20-\x20My\x20Backups' \
+  /run/media/$USER/backups
+----
+
+To unmount the device, use the umount command with the device path or the path of the mount point.
+Here, the previously mounted device is unmounted.
+
+[source,sh]
+----
+➜ sudo umount /run/media/$USER/backups
+----
+
+Easy, right?
+
+==== fstab
+
+To automatically mount something, {fstab} is the de facto standard.
+The previous command can be translated to the following entry in fstab.
+
+[source]
+----
+UUID=13177899-cb85-45b7-99b6-b76e2fc41f44 /run/media/jordan/backups btrfs defaults,nofail,noauto,noatime,autodefrag,compress=zstd,commit=120,subvol=my-backups 0 0
+----
+
+[TIP]
+====
+To avoid throwing a wrench in the entire boot process, include the `nofail` mount option if this is a removable drive of some kind.
+This tells the system it's okay if the drive is missing when its booting up.
+The `defaults` option includes the `auto` option which mounts the volume automatically while booting.
+Adding the `noauto` option disables this.
+====
+
+Now this subvolume will be mounted with the appropriate options when the system is booted up.
+Or, atleast, it should...
+Always verify your fstab file after modifying it with `findmnt --verify`.
+Here I include the `--verbose` flag as well and abbreviate the output.
+
+[source,sh]
+----
+➜ findmnt --verify --verbose
+/
+   [ ] target exists
+   [ ] VFS options: noatime
+   [ ] FS options: autodefrag,compress=zstd,commit=120,subvol=root
+   [ ] source /dev/mapper/sda2_crypt exists
+   [W] cannot detect on-disk filesystem type
+   [W] recommended root FS passno is 1 (current is 0)
+
+...
+
+/run/media/jordan/backups
+   [ ] target exists
+   [ ] VFS options: noatime
+   [ ] FS options: autodefrag,compress=zstd,commit=120,subvol=my-backups
+   [ ] userspace options: nofail,noauto
+   [ ] UUID=13177899-cb85-45b7-99b6-b76e2fc41f44 translated to /dev/sdb1
+   [ ] source /dev/sdb1 exists
+   [W] cannot detect on-disk filesystem type
+
+0 parse errors, 0 errors, 17 warnings
+----
+
+There's no errors and the warnings don't appear to be anything serious.
+Everything should be alright.
+
+Previously when using the mount command, each mount option had to be specified.
+When mounting a matching entry in fstab, the mount options in fstab are applied automatically.
+The following command will mount the volume using the mount options specified in fstab for `/run/media/$USER/backups`.
+
+[source,sh]
+----
+➜ sudo mount /run/media/$USER/backups
+----
+
+==== systemd
+
+This is where things start to get complicated.
+systemd handles dependencies among all sorts of services whether that's during boot or during runtime.
+Some things require mounting filesystems, so systemd exposes an interface for specifying and managing these dependencies.
+The primary unit file for this is the {systemd-mount-unit} unit.
+
+A companion unit file type exists {systemd-automount} which, if created, controls automatically mounting the mount point.
+The automount functionality will automatically mount a volume in an on-demand fashion.
+When the volume is first accessed, it is mounted as necessary.
+A timeout may be specified to automatically unmount the volume after a period of time.
+
+An important aspect the mount unit convention is the required naming scheme.
+The file names of mount and automount units must correspond to the mount point of where the volume will be mounted.
+The file name is appropriately transformed to remove troubelesome characters.
+Most notably, `/`'s are replaced with `-`'s.
+
+===== Generated
+
+systemd integrates nicely enough with fstab such that it automatically generates these mount units from their entries.
+Being able to inspect the mount units on a system can come in handy, so here's how.
+
+Having just edited fstab, systemd will not generate an entry for `/run/media/jordan/backups` until the system reboots.
+I don't want to reboot, so I'll just reload the necessary components before examining the generated unit files.
+
+. Reload systemd.
++
+[source,sh]
+----
+➜ sudo systemctl daemon-reload
+----
+
+. Restart the _local-fs_ target.
++
+[source,sh]
+----
+➜ sudo systemctl restart local-fs.target
+----
+
+. Use the `systemctl` subcommand `list-unit-files` and specify the `mount` type with the `-t` flag to list all mount unit files.
++
+[source,sh]
+----
+➜ systemctl list-unit-files -t mount
+UNIT FILE                      STATE    
+-.mount                        generated
+\x2esnapshots.mount            generated
+boot.mount                     generated
+dev-hugepages.mount            static   
+dev-mqueue.mount               static   
+home.mount                     generated
+run-media-jordan-backups.mount generated # <1>
+opt.mount                      generated
+proc-sys-fs-binfmt_misc.mount  static   
+root.mount                     generated
+srv.mount                      generated
+swap.mount                     generated
+sys-fs-fuse-connections.mount  static   
+sys-kernel-config.mount        static   
+sys-kernel-debug.mount         static   
+tmp.mount                      generated
+usr-local.mount                generated
+var.mount                      generated
+
+18 unit files listed.
+----
+<1> The mount unit `run-media-jordan-backups.mount` corresponds to the mount point `/run/media/jordan/backups` and the corresponding fstab entry added previously.
+
+To view the contents of a mount unit file, pass the name of the unit to `systemctl` after the subcommand `cat`.
+The following command displays the contents of the mount unit file generated for `/dev/sdb1`.
+
+[source,sh]
+----
+➜ systemctl cat run-media-$USER-backups.mount
+# /run/systemd/generator/run-media-jordan-backups.mount
+# Automatically generated by systemd-fstab-generator
+
+[Unit]
+SourcePath=/etc/fstab
+Documentation=man:fstab(5) man:systemd-fstab-generator(8)
+Before=local-fs.target
+
+[Mount]
+Where=/run/media/jordan/backups
+What=/dev/disk/by-uuid/13177899-cb85-45b7-99b6-b76e2fc41f44
+Type=btrfs
+Options=defaults,nofail,noauto,noatime,autodefrag,compress=zstd,commit=120,subvol=my-backups
+----
+
+[TIP]
+====
+A {systemd-automount} can be generated automatically for an entry in {fstab} by adding the `x-systemd.automount` mount option.
+You can pair this option with `noauto` if you wish to prevent the volume from being mounted automatically at boot.
+The `x-systemd.idle-timeout` mount option for automount units is handy for specifying how many seconds before an idle drive should be unmounted from the filesystem.
+====
+
+===== systemd-mount
+
+Mount units can be generated on the fly by mounting volumes with {systemd-mount-command}.
+The systemd-mount command to mount `/dev/sdb1` with the desired Btrfs options appears suspiciously like the corresponding mount command.
+
+[source,sh]
+----
+➜ sudo systemd-mount -o noatime,autodefrag,compress=zstd,commit=120,subvol=my-backups /dev/sdb1 /run/media/$USER/backups
+Started unit run-media-jordan-backups.mount for mount point: /run/media/jordan/backups
+----
+
+It's possible to eschew the mount point and let systemd decide where to mount the volume.
+By default, this will mount the volume underneath the directory `/run/media/system/<label>` where `<label>` is a placeholder for the filesystem's label or other identifier.
+Mount `/dev/sdb1` to the default systemd location as follows.
+
+[source,sh]
+----
+➜ sudo systemd-mount -o noatime,autodefrag,compress=zstd,commit=120,subvol=my-backups /dev/sdb1
+Started unit run-media-system-backups.mount for mount point: /run/media/system/backups
+----
+
+[TIP]
+====
+Use the `-A` flag to generate a corresponding systemd automount unit when mounting a volume.
+====
+
+Likewise, use {systemd-umount} to unmount the volume by providing either the device or the path to the mount point.
+This command unmounts the device `/dev/sdb1` mounted with either or both of the previous two commmands.
+
+[source,sh]
+----
+➜ sudo systemd-umount /dev/sdb1
+Stopped unit run-media-system-backups.mount for mount point: /run/media/system/backups
+----
+
+===== Manual
+
+Practically speaking, it shouldn't be necessary to create mount units outright.
+It's still completely possible.
+The steps to do so our outlined below.
+
+. Create a mount unit to mount the volume.
++
+--
+[source,systemd]
+./etc/systemd/system/run-media-jordan-backups.mount
+----
+[Unit]
+Description=Additional drive
+
+[Mount]
+What=/dev/sdb1
+Where=/run/media/jordan/backups
+Type=btrfs
+Options=defaults,nofail,noauto,noatime,autodefrag,compress=zstd,commit=120,subvol=my-backups
+
+[Install]
+WantedBy=multi-user.target
+----
+
+[IMPORTANT]
+====
+The name of the mount unit must reflect the path of the mount point.
+====
+--
+
+. Enable the mount unit with `systemctl`.
++
+[source,sh]
+----
+➜ sudo systemctl enable run-media-$USER-backups.mount
+----
+
+A corresponding automount unit for the mount unit defined above would be as follows.
+
+[source,systemd]
+./etc/systemd/system/run-media-jordan-backups.automount
+----
+Description=Automount drive
+
+[Automount]
+Where=/run/media/jordan/backups
+
+[Install]
+WantedBy=multi-user.target
+----
+
+=== Usesrpace Mounting
+
+Mounting filesystems without root privileges is less straightforward.
+While accomadations can be made for mount and systemd offers such functionality, the best tool to use is {udisks2} which ships with most mainstream distributions.
+Each of these is discussed below.
+
+==== mount
+
+Given that fstab contains an entry with the `user` or `users` mount options, that entry can be mounted by the user without root privileges.
+This still requires support from someone with superuser access on the system, which is impractical for those users who just want to be able to mount a flash drive.
+This method doesn't allow the user to mount the filesystem with any special mount options on the command-line.
+Mount options may only be specified within fstab.
+
+The fstab entry below allows a user to mount `/dev/sdb1` to `/run/media/$USER/backups`.
+
+[source]
+./etc/fstab
+----
+/dev/sdb1 /run/media/jordan/backups btrfs defaults,user,nofail,noauto,noatime,autodefrag,compress=zstd,commit=120,subvol=my-backups 0 0
+----
+
+Now, a user can mount the volume with the device path _or_ the mount point as done here.
+
+[source,sh]
+----
+➜ mount /run/media/$USER/backups
+----
+
+[NOTE]
+====
+Attempting to provide _both_ the device and mount point to the mount command as a user will result in an error.
+Here mount doesn't like the fact that I gave it the device and the mount point.
+
+[source,sh]
+----
+➜ mount /dev/sdb1 /run/media/$USER/backups
+mount: only root can do that
+----
+====
+
+A user can also unmount the entry they have mounted when it is set with the `user` option.
+
+[source,sh]
+----
+➜ umount /run/media/$USER/backups
+----
+
+When the `users` option is provided, it allows any user to unmount the drive regardless of which user mounted it.
+This difffers from the `user` option which only allows the user that mounted the volume to unmount it.
+
+==== systemd
+
+While systemd provides user-level services, including mounting, its abilities are limited to that of the mount command.
+And to that end, its practically usesless for userspace mounting.
+After trying all sorts of workarounds, the mount command just isn't called correctly to allow non-root users the ability to mount filesystems.
+A corresponding fstab entry with the `user` or `users` mount option has no effect.
+This is because systemd hard-codes the mount command with both the device and the mount point.
+This was shown to end with an error when run as a normal user previously.
+
+The _only_ sensible way to make this possible is by using a {systemd-service} unit rather than a systemd mount unit.
+A correcly formed mount command will succeed when executed by the user.
+Given the entry for `/run/media/jordan/backups` has the `user` or `users` mount option set in fstab, a user service file to mount it would look like the following.
+
+[source,systemd]
+.~/.config/systemd/user/mount-run-media-jordan-backups.service
+----
+[Unit]
+Description=Mount my backups
+
+[Service]
+ExecStart=/bin/mount /run/media/jordan/backups
+ExecStop=/bin/umount /run/media/jordan/backups
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target
+----
+
+[NOTE]
+====
+User units are placed in different directories than system units.
+The `~/.config/systemd/user/` directory is a standard directory for user units.
+No root privileges are required to create units here.
+====
+
+To mount the volume, start the service.
+
+[source,sh]
+----
+➜ systemctl --user start mount-run-media-$USER-backups.service
+----
+
+Unmounting the volume is just a matter of stopping the service.
+Do this like so.
+
+[source,sh]
+----
+➜ systemctl --user stop mount-run-media-$USER-backups.service
+----
+
+If you want to mount automatically when logging in, use the `enable` subcommand instead of `start`.
+
+[source,sh]
+----
+➜ systemctl --user enable mount-run-media-$USER-backups.service
+----
+
+To take this a step, further, it's possible to create an instantiable systemd unit.
+This is a fancy way of saying that variable information can be provided in the file name after the `@` symbol and before the units extension.
+This allows creating a single unit file to accomodate a variety of situations.
+It effectively introduces a variable which can be used to customize the unit.
+
+The previous unit can be made into a generic, instantiable unit which allows mounting a variety of volumes.
+Thanks goes to https://unix.stackexchange.com/a/316991/395084[_byly's_ answer] on the https://unix.stackexchange.com/[Unix & Linux Stack Exchange] for introducing me to this nifty approach.
+To follow conventions, the unit will mount the volume under `/run/media/$USER`.
+The mount point will be encoded in the name of the service, i.e. sandwhiched between the `@` and `.service` suffix.
+This user service unit, dubbed `mount@`, looks like this.
+
+[source,sh]
+.~/.config/systemd/user/mount@.service
+----
+[Unit]
+Description=Mount volumes for a user which have the `user` or `users` mount options defined
+
+[Service]
+ExecStart=/bin/mount /run/media/%u/%I
+ExecStop=/bin/umount /run/media/%u/%I
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target
+----
+
+This unit uses wildcards, letters prefixed with `%`.
+Wildcards are substited with the appropriate information when the unit is enabled.
+`%u` stands for the username of the user using the unit.
+`%I` represents the instantiable component provided in the unit's name.
+
+[TIP]
+====
+With superuser access, the file can placed in the directory `/etc/systemd/user/` instead of `~/.config/systemd/user/` to provide this user service to all users.
+Of course, you'll probably want to use a path which doesn't include the username, `/run/media` for instance, if you want to avoid creating an entry for each individual user in fstab.
+====
+
+To use the instantiable unit, the directory for the mount point must exist in `/run/media/$USER`.
+Additionally, an entry in fstab that mounts to that mount point must set the `user` or `users` mount option.
+Given those requirements, use the instantiable service as demonstrated here.
+To mount `/run/media/run/$USER/backups`, start the service with the name `mount@backups`.
+
+[source,sh]
+----
+➜ systemctl --user start mount@backups.service
+----
+
+Unmount it by stopping the service of the same name.
+
+[source,sh]
+----
+➜ systemctl --user stop mount@backups.service
+----
+
+Now it's time to move on to a more practical tool for mounting volumes from userspace.
+
+==== udisks2
+
+There's a tool for easily mounting volumes in userspace.
+It's udisk2 and it streamlines userspace mounting and changing up those default mount options.
+If you're accustomed to a desktop environment on Linux, you've likely benefitted from udisks2.
+That's because it's what graphical applications such as file managers use to mount drives on your behalf.
+
+Mounting and unmounting are done with the `udisksctl` command.
+To mount a volume, use the `mount` subcommand.
+Unlike the mount program, only the block device is specified.
+The mount point is determined by udisks2.
+Depending on how udisks2 was compiled, the volume will be mounted in a subdirectory of either be `/run/media/` or `/media/`.
+Use the `-b` flag before the block device.
+Mount options should be provided as a comma-separated list following the `--options` flag.
+
+Here, I mount `/dev/sdb1` with specific Btrfs mount options.
+
+[source,sh]
+----
+➜ udisksctl mount -b /dev/sdb1 --options noatime,autodefrag,compress=zstd,commit=120,subvol=my-backups
+Mounted /dev/sdb1 at /run/media/jordan/backups
+----
+
+[NOTE]
+----
+This may not work for you yet depending on the version of udisks2 on your system and its configuration.
+If it doesn't work, don't worry.
+Configuring the global Btrfs mount options appropriately, as in a following sectsion, should quell any errors.
+----
+
+Unmount the volume using the `unmount` subcommand followed by the `-b` flag and the block device.
+
+[NOTE]
+====
+The subcommand is the word _unmount_ not _umount_.
+====
+
+[source,sh]
+----
+➜ udisksctl unmount -b /dev/sdb1
+Unmounted /dev/sdb1.
+----
+
+===== Changing the Default Mount Options
+
+The udisks2 exposes the ability to change the default mount options.
+This is done through a global configuration file or udev rules.
+Options can be tweaked for specific filesystems, device classes, and individual devices.
+
+====== Global Config File
+
+The easiest way to change the default mount options for all devices is through the global configuration file which lives at `/etc/udisks2/mount_options.conf`.
+The file uses a simple INI format.
+The section `[defaults]` contains settings for the default and allowed mount options.
+These settings are further divided among default and allowed mount options for all filesystems and for each particular type of filesystem.
+The default and allowed options for all filesystems are set with the `defaults` and `allow` keys respectively.
+The filesystem-specific versions of these keys come from prefixing `_defaults` and `_allow` with the filesystem type used by {mount}, such as `vfat`, `ntfs`, `ext4`, and `btrfs`.
+Thus, the default mount options for btrfs use the key `btrfs_defaults` and the allowed options use the key `btrfs_allow`.
+The sample configuration here demonstrates how to set the general default and allowed options as well as those for `vfat`, `ntfs`, and `btrfs`.
+
+[source,ini]
+./etc/udisks2/mount_options.conf
+----
+[defaults]
+# common options, applied to any filesystem, always merged with specific filesystem type options
+defaults=ro
+allow=commit,exec,noexec,nodev,nosuid,atime,noatime,nodiratime,ro,rw,sync,dirsync,noload
+
+# specific filesystem type options
+vfat_defaults=uid=$UID,gid=$GID,shortname=mixed,utf8=1,showexec,flush
+vfat_allow=uid=$UID,gid=$GID,flush,utf8,shortname,umask,dmask,fmask,codepage,iocharset,usefree,showexec
+ntfs_defaults=uid=$UID,gid=$GID,windows_names
+ntfs_allow=uid=$UID,gid=$GID,umask,dmask,fmask,locale,norecover,ignore_case,windows_names
+
+btrfs_defaults=autodefrag,compress=zstd
+btrfs_allow=autodefrag,compress,compress-force,datacow,nodatacow,datasum,nodatasum,degraded,device,discard,nodiscard,subvol,subvolid,space_cache
+----
+
+Generally, you should start with the default settings stated in the documentation for udisks2's {udisks2-mount-options}.
+You'll also need to make sure that any default options are specified in the corresponding allowed set.
+The Btrfs notably allows the `autodefrag` option in addition to the default udisk2 settings and defaults to using it and zstd compression.
+
+The configuration file also provides functionality to specify defaults for particular devices.
+To do so, a device section named after the block device is followed by the general and filesystem-specific `default` keys discussed previously.
+Here, the defaults for the vfat filesystem are modified for two devices.
+One device is specified by its UUID and another the other by its label.
+
+[source,ini]
+./etc/udisks2/mount_options.conf
+----
+[/dev/disk/by-uuid/13177899-cb85-45b7-99b6-b76e2fc41f44]
+btrfs_defaults=autodefrag,compress=zstd
+
+[/dev/disk/by-label/Black\\x20WD\\x20EasyStore\\x20External\\x20HDD\\x20-\\x20My\\x20Backups]
+btrfs_defaults=autodefrag,compress=zstd
+----
+
+[CAUTION]
+====
+For security reasons, prefer udev rules for setting device-specific mount options.
+It's easy to falsify the device symlinks used to define the sections.
+====
+
+==== udev Rules
+
+{udev} is the subsystem for handling device events on Linux.
+It is a robust method for triggering certain actions when devices are detected.
+udev rules can be used with udisks2 to specify the allowed or default mount options for specific devices.
+This can be for an individual device, a class of devices or some other subset of devices.
+
+A system's udev rules reside in _rules_ files in standard directories, such as `/etc/udev/rules.d`.
+To create a new rule, create a new file in this directory.
+udisks2 recommends using the prefix `99-` to ensure that the rule runs last.
+
+udev rules pretty much boil down to matching on a device on certain criteria.
+To work with udisks2, there is a required format including a specific header for block devices and a closing `LABEL`.
+Modifying the mount options is done through a few variables used in the same way as the keys in the configuration file.
+The variables are named differently than the keys, but follow the same naming convention.
+Defaults are set with the variable `UDISKS_MOUNT_OPTIONS_DEFAULTS` and allowed options with `UDISKS_MOUNT_OPTIONS_ALLOW`.
+Filesystem-specific variables place the filesystem type in all caps in between the `UDISKS_MOUNT_OPTIONS` portion at the beginning and the `_ALLOW` or `_DEFAULTS` part at the end.
+Btrfs defaults can be changed by setting the variable `UDISKS_MOUNT_OPTIONS_BTRFS_DEFAULTS`.
+When setting filesystem-specific options, you should match the rule on the filesystem type provided by the variable `ID_FS_TYPE`.
+There's more to it that that, but this isn't supposed to be a udev tutorial so I'll show a couple of examples.
+
+The udev rule here applies specific Btrfs default mount options to all USB devices.
+These are the same defaults set above in the global configuration file.
+This also mounts USB devices as read-write.
+
+[source]
+./etc/udev/rules.d/99-udisks2-btrfs-usb.rules
+----
+# Skip if not a block device or if requested by other rules
+#
+SUBSYSTEM!="block", GOTO="udisks_mount_options_end"
+ENV{DM_MULTIPATH_DEVICE_PATH}=="1", GOTO="udisks_mount_options_end"
+ENV{DM_UDEV_DISABLE_OTHER_RULES_FLAG}=="?*", GOTO="udisks_mount_options_end"
+
+# Mount all USB devices read-only
+SUBSYSTEMS="usb", ENV{ID_FS_USAGE}=="filesystem", \
+    ENV{UDISKS_MOUNT_OPTIONS_DEFAULTS}="rw", \
+    ENV{ID_FS_TYPE}=="btrfs", \
+    ENV{UDISKS_MOUNT_OPTIONS_BTRFS_DEFAULTS}="autodefrag,compress=zstd", \
+    ENV{UDISKS_MOUNT_OPTIONS_BTRFS_ALLOW}="autodefrag,compress,compress-force,datacow,nodatacow,datasum,nodatasum,degraded,device,discard,nodiscard,subvol,subvolid,space_cache"
+
+LABEL="udisks_mount_options_end"
+----
+
+To enable a new rule, either reboot your system or reload the udev daemon as demonstrated by the command here.
+
+[source,sh]
+----
+➜ udevadm control --reload-rules
+----
+
+The following rule matches on an exact USB device and applies the same default Btrfs options.
+
+[source]
+./etc/udev/rules.d/99-udisks2-btrfs-backups-usb.rules
+----
+SUBSYSTEM!="block", GOTO="udisks_mount_options_end"
+ENV{DM_MULTIPATH_DEVICE_PATH}=="1", GOTO="udisks_mount_options_end"
+ENV{DM_UDEV_DISABLE_OTHER_RULES_FLAG}=="?*", GOTO="udisks_mount_options_end"
+
+ENV{ID_VENDOR}=="WD", ENV{ID_MODEL}=="easystore_25FC", \
+    ENV{ID_SERIAL_SHORT}=="000000000000000000000001", \
+    ENV{UDISKS_MOUNT_OPTIONS_DEFAULTS}="rw", \
+    ENV{UDISKS_MOUNT_OPTIONS_BTRFS_DEFAULTS}="autodefrag,compress=zstd",subvol=my-backups, \
+    ENV{UDISKS_MOUNT_OPTIONS_BTRFS_ALLOW}="autodefrag,compress,compress-force,datacow,nodatacow,datasum,nodatasum,degraded,device,discard,nodiscard,subvol,subvolid,space_cache"
+
+LABEL="udisks_mount_options_end"
+----
+
+To determine the id attributes for your hardware, query the information with udevadm.
+Here I filter the output of such a query for `/dev/sdb1` to just show the `ID_VENDOR`, `ID_MODEL`, and `ID_SERIAL_SHORT` attributes.
+
+[source,sh]
+----
+➜ udevadm info --query=all --name=/dev/sdb \
+  | awk -F'=' '/ID_VENDOR=/ || /ID_MODEL=/ || /ID_SERIAL_SHORT=/ {print $2}'
+WD
+easystore_25FC
+000000000000000000000001
+----
+
+For more examples and information, refer to the udisks2 documentation.
+
+== Conclusion
+
+If you've made it this far, you now understand way more about mounting filesystems in Linux then you probably ever wanted too.
+You should now know the different ways to control mounting a filesystem whether that's as a normal user or as the superuser.
+If you're using Btrfs, you should now be able to specify those pesky mount options properly now, too.
+Interested in mounting encrypted volumes or automatically mounting devices?
+Keep an eye on this space for upcoming posts on these topics.
