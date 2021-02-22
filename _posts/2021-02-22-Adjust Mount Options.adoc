@@ -14,6 +14,7 @@
 :fish-shell: https://fishshell.com/[fish shell]
 :fstab: https://manpages.ubuntu.com/manpages/bionic/man5/fstab.5.html[fstab(5)]
 :gdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/gdisk.8.html[gdisk(8)]
+:guid-partition-tables: https://en.wikipedia.org/wiki/GUID_Partition_Table[GUID partition tables]
 :mount: https://manpages.ubuntu.com/manpages/bionic/man8/mount.8.html[mount(8)]
 :nested-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Nested[nested layout]
 :sgdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/sgdisk.8.html[sgdisk(8)]
@@ -24,7 +25,7 @@
 :systemd-mount-command: https://www.freedesktop.org/software/systemd/man/systemd-mount.html[systemd-mount(1)]
 :systemd-umount: https://www.freedesktop.org/software/systemd/man/systemd-umount.html[systemd.mount(5)]
 :systemd-udevd: https://manpages.ubuntu.com/manpages/bionic/man8/systemd-udevd.service.8.html[systemd-udevd(8)]
-:ubuntu: https://opensource.org/licenses/gpl-license[Ubuntu]
+:ubuntu: https://ubuntu.com/[Ubuntu]
 :udev: https://manpages.ubuntu.com/manpages/bionic/en/man7/udev.7.html[udev(7)]
 :udevadm: https://manpages.ubuntu.com/manpages/bionic/man8/udevadm.8.html[udevadm(8)]
 :udisks2: http://storaged.org/doc/udisks2-api/latest/[udisks2]
@@ -464,7 +465,7 @@ WantedBy=multi-user.target
 === Usesrpace Mounting
 
 Mounting filesystems without root privileges is less straightforward.
-While accomadations can be made for mount and systemd offers such functionality, the best tool to use is {udisks2} which ships with most mainstream distributions.
+While accommodations can be made for mount and systemd offers such functionality, the best tool to use is {udisks2} which ships with most mainstream distributions.
 Each of these is discussed below.
 
 ==== mount
@@ -509,7 +510,7 @@ A user can also unmount the entry they have mounted when it is set with the `use
 ----
 
 When the `users` option is provided, it allows any user to unmount the drive regardless of which user mounted it.
-This difffers from the `user` option which only allows the user that mounted the volume to unmount it.
+This differs from the `user` option which only allows the user that mounted the volume to unmount it.
 
 ==== systemd
 
@@ -521,7 +522,7 @@ This is because systemd hard-codes the mount command with both the device and th
 This was shown to end with an error when run as a normal user previously.
 
 The _only_ sensible way to make this possible is by using a {systemd-service} unit rather than a systemd mount unit.
-A correcly formed mount command will succeed when executed by the user.
+A correctly formed mount command will succeed when executed by the user.
 Given the entry for `/run/media/jordan/backups` has the `user` or `users` mount option set in fstab, a user service file to mount it would look like the following.
 
 [source,systemd]
@@ -570,13 +571,13 @@ If you want to mount automatically when logging in, use the `enable` subcommand 
 
 To take this a step, further, it's possible to create an instantiable systemd unit.
 This is a fancy way of saying that variable information can be provided in the file name after the `@` symbol and before the units extension.
-This allows creating a single unit file to accomodate a variety of situations.
+This allows creating a single unit file to accommodate a variety of situations.
 It effectively introduces a variable which can be used to customize the unit.
 
 The previous unit can be made into a generic, instantiable unit which allows mounting a variety of volumes.
 Thanks goes to https://unix.stackexchange.com/a/316991/395084[_byly's_ answer] on the https://unix.stackexchange.com/[Unix & Linux Stack Exchange] for introducing me to this nifty approach.
 To follow conventions, the unit will mount the volume under `/run/media/$USER`.
-The mount point will be encoded in the name of the service, i.e. sandwhiched between the `@` and `.service` suffix.
+The mount point will be encoded in the name of the service, i.e. sandwiched between the `@` and `.service` suffix.
 This user service unit, dubbed `mount@`, looks like this.
 
 [source,sh]
@@ -595,7 +596,7 @@ WantedBy=default.target
 ----
 
 This unit uses wildcards, letters prefixed with `%`.
-Wildcards are substited with the appropriate information when the unit is enabled.
+Wildcards are substituted with the appropriate information when the unit is enabled.
 `%u` stands for the username of the user using the unit.
 `%I` represents the instantiable component provided in the unit's name.
 
@@ -627,7 +628,7 @@ Now it's time to move on to a more practical tool for mounting volumes from user
 ==== udisks2
 
 There's a tool for easily mounting volumes in userspace.
-It's udisk2 and it streamlines userspace mounting and changing up those default mount options.
+It's udisks2 and it streamlines userspace mounting and changing up those default mount options.
 If you're accustomed to a desktop environment on Linux, you've likely benefitted from udisks2.
 That's because it's what graphical applications such as file managers use to mount drives on your behalf.
 
@@ -644,14 +645,18 @@ Here, I mount `/dev/sdb1` with specific Btrfs mount options.
 [source,sh]
 ----
 ➜ udisksctl mount -b /dev/sdb1 --options noatime,autodefrag,compress=zstd,commit=120,subvol=my-backups
-Mounted /dev/sdb1 at /run/media/jordan/backups
+Error mounting /dev/sdb1: GDBus.Error:org.freedesktop.UDisks2.Error.OptionNotPermitted: Mount option `autodefrag' is not allowed
 ----
 
-[NOTE]
+Drat.
+udisks2 doesn't allow the options I want.
+In version 2.9.0 of udisks2, a newer version than ships with Ubuntu 18.04, it's possible to configure the allowed and default mount options as described in the following sections.
+It turns out the only allowed mount option is `noatime`, so use the simpler command below.
+
+[source,sh]
 ----
-This may not work for you yet depending on the version of udisks2 on your system and its configuration.
-If it doesn't work, don't worry.
-Configuring the global Btrfs mount options appropriately, as in a following sectsion, should quell any errors.
+➜ udisksctl mount -b /dev/sdb1 --options noatime
+Mounted /dev/sdb1 at /run/media/jordan/backups
 ----
 
 Unmount the volume using the `unmount` subcommand followed by the `-b` flag and the block device.
@@ -667,9 +672,9 @@ The subcommand is the word _unmount_ not _umount_.
 Unmounted /dev/sdb1.
 ----
 
-===== Changing the Default Mount Options
+===== Changing the Default and Allowed Mount Options
 
-The udisks2 exposes the ability to change the default mount options.
+The udisks2 exposes the ability to change the default mount options since version 2.9.0.
 This is done through a global configuration file or udev rules.
 Options can be tweaked for specific filesystems, device classes, and individual devices.
 
@@ -688,18 +693,35 @@ The sample configuration here demonstrates how to set the general default and al
 ./etc/udisks2/mount_options.conf
 ----
 [defaults]
-# common options, applied to any filesystem, always merged with specific filesystem type options
-defaults=ro
-allow=commit,exec,noexec,nodev,nosuid,atime,noatime,nodiratime,ro,rw,sync,dirsync,noload
+allow=exec,noexec,nodev,nosuid,atime,noatime,nodiratime,relatime,strictatime,lazytime,ro,rw,sync,dirsync,noload,acl,nosymfollow
 
-# specific filesystem type options
 vfat_defaults=uid=$UID,gid=$GID,shortname=mixed,utf8=1,showexec,flush
 vfat_allow=uid=$UID,gid=$GID,flush,utf8,shortname,umask,dmask,fmask,codepage,iocharset,usefree,showexec
+
+# common options for both the native kernel driver and exfat-fuse
+exfat_defaults=uid=$UID,gid=$GID,iocharset=utf8,errors=remount-ro
+exfat_allow=uid=$UID,gid=$GID,dmask,errors,fmask,iocharset,namecase,umask
+
 ntfs_defaults=uid=$UID,gid=$GID,windows_names
-ntfs_allow=uid=$UID,gid=$GID,umask,dmask,fmask,locale,norecover,ignore_case,windows_names
+ntfs_allow=uid=$UID,gid=$GID,umask,dmask,fmask,locale,norecover,ignore_case,windows_names,compression,nocompression,big_writes
+
+iso9660_defaults=uid=$UID,gid=$GID,iocharset=utf8,mode=0400,dmode=0500
+iso9660_allow=uid=$UID,gid=$GID,norock,nojoliet,iocharset,mode,dmode
+
+udf_defaults=uid=$UID,gid=$GID,iocharset=utf8
+udf_allow=uid=$UID,gid=$GID,iocharset,utf8,umask,mode,dmode,unhide,undelete
+
+hfsplus_defaults=uid=$UID,gid=$GID,nls=utf8
+hfsplus_allow=uid=$UID,gid=$GID,creator,type,umask,session,part,decompose,nodecompose,force,nls
 
 btrfs_defaults=autodefrag,compress=zstd
 btrfs_allow=autodefrag,compress,compress-force,datacow,nodatacow,datasum,nodatasum,degraded,device,discard,nodiscard,subvol,subvolid,space_cache
+
+f2fs_allow=discard,nodiscard,compress_algorithm,compress_log_size,compress_extension,alloc_mode
+
+xfs_allow=discard,nodiscard,inode32,largeio,wsync
+
+reiserfs_allow=hashed_relocation,no_unhashed_relocation,noborder,notail
 ----
 
 Generally, you should start with the default settings stated in the documentation for udisks2's {udisks2-mount-options}.
