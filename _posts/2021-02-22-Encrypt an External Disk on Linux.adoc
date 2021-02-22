@@ -1,0 +1,201 @@
+= Encrypt an External Disk on Linux
+:page-layout:
+:page-category: Disks
+:page-tags: [backups, Btrfs, Cryptsetup, elementary, encryption, fstab, Linux, systemd, Ubuntu]
+:Bash: https://www.gnu.org/software/bash/[Bash]
+:Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
+:Btrfs-Wiki-FAQ: https://btrfs.wiki.kernel.org/index.php/FAQ[Btrfs Wiki FAQ]
+:Cryptsetup: https://gitlab.com/cryptsetup/cryptsetup[Cryptsetup]
+:elementary-OS: https://elementary.io/[elementary OS]
+:Fedora: https://getfedora.org/[Fedora]
+:flat-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Flat[flat layout]
+:fish-shell: https://fishshell.com/[fish shell]
+:fstab: https://manpages.ubuntu.com/manpages/bionic/man5/fstab.5.html[/etc/fstab]
+:GNOME-Disks: https://wiki.gnome.org/Apps/Disks[GNOME Disks]
+:GUID-partition-tables: https://en.wikipedia.org/wiki/GUID_Partition_Table[GUID partition tables]
+:nested-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Nested[nested layout]
+:sgdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/sgdisk.8.html[sgdisk(8)]
+:systemd: https://systemd.io/[systemd]
+:systemd-mount: https://manpages.ubuntu.com/manpages/bionic/man5/systemd.mount.5.html[systemd.mount(5)]
+:Ubuntu: https://ubuntu.com/[Ubuntu]
+
+Encrypting your data is pretty much a must anyone who is privacy or security conscious.
+I find it quite handy for not only protecting my data in use, but also the best way to make recycling old disks secure and simple.
+I keep local backups on an external hard drive, which I keep encrypted.
+Encrypting a drive is pretty easy on Linux, especially with applications like {GNOME-Disks}, which go so far as to make this possible without requiring superuser privileges.
+It's even pretty straightforward on the command-line, and that's what I demonstrate here.
+
+== Tutorial
+
+This tutorial describes the steps necessary to encrypt an external disk, such as a hard drive or flash drive, from the command-line using {Cryptsetup}.
+The encrypted filesystem will use {Btrfs}.
+The reference operating system is {Ubuntu} 18.04.
+Root access on the machine is required.
+Knowledge of Linux, filesystems, and the command-line is assumed.
+
+. Install the Cryptsetup package.
++
+[source,sh]
+----
+➜ sudo apt -y install cryptsetup
+----
+
+. Locate the disk's device path.
++
+--
+[source,sh]
+----
+➜ lsblk
+NAME           MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+sda              8:0    0   1.8T  0 disk  
+├─sda1           8:1    0   976M  0 part  /boot
+└─sda2           8:2    0   1.8T  0 part  
+  └─sda2_crypt 253:0    0   1.8T  0 crypt /var
+sdb              8:16   0 931.5G  0 disk  
+└─sdb1           8:17   0 931.5G  0 part  # <1>
+sr0             11:0    1  1024M  0 rom 
+----
+<1> `sdb` is the 1 TB external drive I'm going to encrypt.
+
+If your device appears under a different name, use that name instead of `sdb` in the following commands.
+--
+
+. Overwrite any existing partition tables on the disk with a new one.
++
+--
+[WARNING]
+====
+The following command will effectively obfuscate any data on the drive making it very difficult or impossible to recover.
+====
+
+Here, I instruct {sgdisk} to completely destroy any existing partition tables and create a new {GPT} partition table.
+The partition table includes a singular partition taking up the entirety of the disk.
+A descriptive label, _BlackWDExtHDD_, is attached to the partition.
+
+[source,sh]
+----
+➜ sudo sgdisk -Z -n 0:0:0 -c 0:"BlackWDExtHDD" /dev/sdb
+GPT data structures destroyed! You may now partition the disk using fdisk or
+other utilities.
+Setting name!
+partNum is 0
+The operation has completed successfully.
+----
+--
+
+. Encrypt the partition.
++
+--
+[source,sh]
+----
+➜ sudo cryptsetup luksFormat --type luks2 /dev/sdb1
+
+WARNING!
+========
+This will overwrite data on /dev/sdb irrevocably.
+
+Are you sure? (Type uppercase yes): YES
+Enter passphrase for /dev/sdb: 
+Verify passphrase: 
+----
+
+[NOTE]
+====
+Only versions of Cryptsetup prior to version 2.3.4 need to explicitly specify the type as `luks2`.
+====
+--
+
+. Open the encrypted volume.
++
+--
+[source,sh]
+----
+➜ sudo cryptsetup open /dev/sdb1 MyUSB
+Enter passphrase for /dev/sdb1:
+----
+
+The `open` subcommand creates a new device in the device tree under `/dev/mapper` using the name provided.
+In this case, the device appears at `/dev/mapper/MyUSB`.
+--
+
+. Create a Btrfs filesystem on top of the encrypted volume.
++
+[source,sh]
+----
+➜ sudo mkfs -t btrfs -L Private /dev/mapper/MyUSB
+btrfs-progs v4.15.1
+See http://btrfs.wiki.kernel.org for more information.
+
+Label:              Private
+UUID:               2eb01d94-9aa1-4bd1-8c99-950be806f449
+Node size:          16384
+Sector size:        4096
+Filesystem size:    931.48GiB
+Block group profiles:
+  Data:             single            8.00MiB
+  Metadata:         DUP               1.00GiB
+  System:           DUP               8.00MiB
+SSD detected:       no
+Incompat features:  extref, skinny-metadata
+Number of devices:  1
+Devices:
+   ID        SIZE  PATH
+    1   931.48GiB  /dev/mapper/MyUSB
+----
+
+. Now mount the Btrfs volume.
++
+--
+// todo Mount using Btrfs mount options when using udisks2 >= 2.9.0: -o noatime,autodefrag,compress=zstd
+User::
++
+[source,sh]
+----
+➜ udisksctl mount -b /dev/mapper/MyUSB
+Mounted /dev/mapper/MyUSB at /run/media/jordan/Private
+----
+
+Superuser::
++
+[source,sh]
+----
+➜ sudo systemd-mount -o noatime,autodefrag,compress=zstd /dev/mapper/MyUSB
+Started unit run-media-system-Private.mount for mount point: /run/media/system/Private
+----
+
+[NOTE]
+====
+For more information on mounting, see the post <<adjust-mount-options#,Adjust Mount Options>>.
+====
+--
+
+. Unmount the Btrfs volume.
++
+--
+User::
++
+[source,sh]
+----
+➜ udisksctl unmount -b /dev/mapper/MyUSB
+Unmounted /dev/mapper/MyUSB.
+----
+
+Superuser::
++
+[source,sh]
+----
+➜ sudo systemd-umount /run/media/system/Private
+Stopped unit run-media-system-Private.mount for mount point: /run/media/system/Private
+----
+--
+
+. Use the `close` subcommand to remove the existing device mapping lock the encrypted device.
++
+[source,sh]
+----
+➜ sudo cryptsetup close MyUSB
+----
+
+== Conclusion
+
+You can now create, open, and close an encrypted partition on Linux.
