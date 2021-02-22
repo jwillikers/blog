@@ -1,25 +1,26 @@
 = Why Choose Btrfs
 :page-layout:
 :page-category: Disks
-:page-tags: [bcachefs, btrfs, cow, filesystem, fedora, freebsd, linux, openzfs, opensuse, netbsd, snapshots, zfs]
-:allan-jude: https://github.com/allanjude[Allan Jude]
+:page-tags: [bcachefs, Btrfs, CoW, filesystem, Fedora, FreeBSD, Linux, OpenZFS, openSUSE, NetBSD, snapshots, ZFS]
+:Allan-Jude: https://github.com/allanjude[Allan Jude]
 :bcachefs: https://bcachefs.org/[bcachefs]
-:btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
-:cow: https://en.wikipedia.org/wiki/Copy-on-write[Copy-on-Write]
-:elementary-os: https://elementary.io/[elementary OS]
-:fedora: https://getfedora.org/[Fedora]
-:freebsd: https://www.freebsd.org/[FreeBSD]
-:freebsd-mastery-zfs: https://www.tiltedwindmillpress.com/product/fmzfs/[FreeBSD Mastery: ZFS]
-:freebsd-mastery-advanced-zfs: https://www.tiltedwindmillpress.com/product/fmaz/[FreeBSD Mastery: Advanced ZFS]
-:michael-w-lucas: https://mwl.io/[Michael W. Lucas]
-:netbsd: https://www.netbsd.org/[NetBSD]
-:opensuse: https://www.opensuse.org/[openSUSE]
-:openzfs: https://openzfs.org/wiki/Main_Page[OpenZFS]
-:ubuntu: https://opensource.org/licenses/gpl-license[Ubuntu]
+:Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
+:CoW: https://en.wikipedia.org/wiki/Copy-on-write[Copy-on-Write]
+:elementary-OS: https://elementary.io/[elementary OS]
+:Fedora: https://getfedora.org/[Fedora]
+:FreeBSD: https://www.freebsd.org/[FreeBSD]
+:FreeBSD-Mastery-ZFS: https://www.tiltedwindmillpress.com/product/fmzfs/[FreeBSD Mastery: ZFS]
+:FreeBSD-Mastery-Advanced-ZFS: https://www.tiltedwindmillpress.com/product/fmaz/[FreeBSD Mastery: Advanced ZFS]
+:GPL: https://opensource.org/licenses/gpl-license[GPL]
+:Michael-W-Lucas: https://mwl.io/[Michael W. Lucas]
+:NetBSD: https://www.netbsd.org/[NetBSD]
+:openSUSE: https://www.opensuse.org/[openSUSE]
+:OpenZFS: https://openzfs.org/wiki/Main_Page[OpenZFS]
+:Ubuntu: https://opensource.org/licenses/gpl-license[Ubuntu]
 
-There are many compelling reasons to use a modern {cow}, _CoW_ for short, filesystem.
+There are many compelling reasons to use a modern {CoW}, _CoW_ for short, filesystem.
 These include low-cost snapshots and incremental backups.
-If that's not compelling, the two most popular open source CoW filesystems, {openzfs} and {btrfs}, offer many more features.
+If that's not compelling, the two most popular open source CoW filesystems, {OpenZFS} and {Btrfs}, offer many more features.
 Compression, redundancy, deduplication, native encryption, online defragmentation, and data integrity checking on every read are just a few.
 
 == _CoW_
@@ -54,9 +55,9 @@ This boils down to three serious contenders: OpenZFS, Btrfs, and {bcachefs}.
 
 OpenZFS has a proven track record of reliability and is by far the most mature candidate.
 It also benefits from native encryption, great defaults, and a robust, unified interface.
-Unfortunately, its https://github.com/openzfs/zfs/blob/master/LICENSE[CDDL license] is incompatibale with the https://opensource.org/licenses/gpl-license[GPL license] used by the Linux kernel.
+Unfortunately, its https://github.com/openzfs/zfs/blob/master/LICENSE[CDDL license] is incompatible with the {GPL} license used by the Linux kernel.
 This has lead to the need for less-than ideal workarounds.
-Unless you're on {ubuntu}, {freebsd}, or {netbsd}.
+Unless you're on {Ubuntu}, {FreeBSD}, or {NetBSD}.
 Ubuntu ships ZFS in its own releases of the Linux kernel.
 Both FreeBSD and NetBSD, having a more permissive license, don't have issues with the CDDL license.
 
@@ -65,7 +66,7 @@ Both FreeBSD and NetBSD, having a more permissive license, don't have issues wit
 Btrfs is newer but has been around for over a decade at this point.
 It's suffered from reliability issues in the past and doesn't offer native encryption.
 It is licensed under the GPL, however, and therefore available in the kernel of every Linux distribution.
-Recently, {fedora} has begun shipping it as the default filesystem and {opensuse} has been using it as the default since 2014.
+Recently, {Fedora} has begun shipping it as the default filesystem and {openSUSE} has been using it as the default since 2014.
 
 ==== bcachefs
 
@@ -76,11 +77,11 @@ Time will tell with this one.
 == The Choice
 
 Currently, I have a better familiarity and understanding of ZFS.
-That said, its unified approached to filesystem and storage management plus extensive documentation and literature make it very accessible.footnote:[Thank you {michael-w-lucas} and {allan-jude} for _{freebsd-mastery-zfs}_ and _{freebsd-mastery-advanced-zfs}_].
+That said, its unified approached to filesystem and storage management plus extensive documentation and literature make it very accessible.footnote:[Thank you {Michael-W-Lucas} and {Allan-Jude} for _{FreeBSD-Mastery-ZFS}_ and _{FreeBSD-Mastery-Advanced-ZFS}_].
 
 As for as operating systems go, I'm only going to use one of the BSD's or Linux wherever I have the choice.
 As far as desktops go, Linux has significantly more polish in this respect to the *BSD.footnote:[No. I'm _not_ counting Darwin.]
-I prefer to use {elementary-os} as my primary, stable desktop distribution.
+I prefer to use {elementary-OS} as my primary, stable desktop distribution.
 I'm planning on also having a system running Fedora and want to use the same filesystem configuration on both.
 The idea of mixing filesystems seems unnecessarily complicated, though completely doable. 
 

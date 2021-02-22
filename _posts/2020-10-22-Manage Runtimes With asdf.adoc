@@ -110,7 +110,7 @@ TIP: A specific version number can be provided or the `latest` keyword can be us
 
 . Next, change to the root directory of the project.
 
-. Set the specific runtime's version for a project with `asdf local`.
+. Set the specific runtime version for a project with `asdf local`.
 +
 --
 [source,sh]

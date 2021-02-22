@@ -1,18 +1,22 @@
 = Adjust Mount Options
 :page-layout:
 :page-category: Disks
-:page-tags: [btrfs, elementaryos, fstab, linux, mount, systemd, ubuntu, udev, udisks2]
+:page-tags: [Btrfs, elementary, fstab, Linux, mount, systemd, Ubuntu, udev, udisks2]
 :bash: https://www.gnu.org/software/bash/[Bash]
 :btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
 :btrfs-wiki-faq: https://btrfs.wiki.kernel.org/index.php/FAQ[Btrfs Wiki FAQ]
+:cgdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/cgdisk.8.html[cgdisk(8)]
 :cryptsetup: https://gitlab.com/cryptsetup/cryptsetup[Cryptsetup]
 :elementary-os: https://elementary.io/[elementary OS]
+:fdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/fdisk.8.html[fdisk(8)]
 :fedora: https://getfedora.org/[Fedora]
 :flat-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Flat[flat layout]
 :fish-shell: https://fishshell.com/[fish shell]
 :fstab: https://manpages.ubuntu.com/manpages/bionic/man5/fstab.5.html[fstab(5)]
+:gdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/gdisk.8.html[gdisk(8)]
 :mount: https://manpages.ubuntu.com/manpages/bionic/man8/mount.8.html[mount(8)]
 :nested-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Nested[nested layout]
+:sgdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/sgdisk.8.html[sgdisk(8)]
 :systemd: https://systemd.io/[systemd]
 :systemd-automount: https://manpages.ubuntu.com/manpages/bionic/man5/systemd.automount.5.html[systemd.automount(5)]
 :systemd-device: https://manpages.ubuntu.com/manpages/bionic/man5/systemd.device.5.html[systemd.device(5)]
@@ -43,7 +47,7 @@ I've accumulated my knowledge on the subject here and describe exactly how to se
 
 == Tutorial
 
-This tutorial walks through the menagery of methods for mounting a Btrfs volume with a specific set of mount options.
+This tutorial walks through the menagerie of methods for mounting a Btrfs volume with a specific set of mount options.
 The reference operating system is {ubuntu} 18.04.
 It will underscore several available approaches specific to the kernel and userspace levels.
 You should have a fairly strong understanding of Linux, the command-line, and filesystems.
@@ -51,7 +55,7 @@ I expect you to understand mount options.
 
 === Setup
 
-This walkthrough uses a mount point under the standard mount directory for your user.
+This walk-through uses a mount point under the standard mount directory for your user.
 The mount point is `/run/media/$USER/backups`.
 This mount point must exist before we begin.
 Create this directory as follows.
@@ -94,8 +98,8 @@ This will effectively obfuscate any data on the drive making it very difficult o
 . Wipe any existing partition tables on the flash drive and generate a new one.
 +
 --
-The set of _gdisk_ commands, consisting of {cgdisk}, {gdisk}, and {sgdisk}, manipulate {guid-partition-tables}, also known as _GPTs_.
-Older {master-boot-records}, _MBRs_, are instead managed with {fdisk} and its similarly named friends.
+The set of _gdisk_ commands, consisting of {cgdisk}, {gdisk}, and {sgdisk}, manipulate {guid-partition-tables}, also known as _GPT_'s.
+Older {master-boot-records}, _MBR_'s, are instead managed with {fdisk} and its similarly named friends.
 Here, the {sgdisk} command is used to partition the flash drive using the newer _GPT_ format without requiring any user interaction.
 
 [source,sh]
@@ -233,7 +237,7 @@ Adding the `noauto` option disables this.
 ====
 
 Now this subvolume will be mounted with the appropriate options when the system is booted up.
-Or, atleast, it should...
+Or, at least, it should...
 Always verify your fstab file after modifying it with `findmnt --verify`.
 Here I include the `--verbose` flag as well and abbreviate the output.
 
@@ -288,7 +292,7 @@ A timeout may be specified to automatically unmount the volume after a period of
 
 An important aspect the mount unit convention is the required naming scheme.
 The file names of mount and automount units must correspond to the mount point of where the volume will be mounted.
-The file name is appropriately transformed to remove troubelesome characters.
+The file name is appropriately transformed to remove troublesome characters.
 Most notably, `/`'s are replaced with `-`'s.
 
 ===== Generated
@@ -382,7 +386,7 @@ Started unit run-media-jordan-backups.mount for mount point: /run/media/jordan/b
 ----
 
 It's possible to eschew the mount point and let systemd decide where to mount the volume.
-By default, this will mount the volume underneath the directory `/run/media/system/<label>` where `<label>` is a placeholder for the filesystem's label or other identifier.
+By default, this will mount the volume underneath the directory `/run/media/system/<label>` where `<label>` is a placeholder for the filesystem label or other identifier.
 Mount `/dev/sdb1` to the default systemd location as follows.
 
 [source,sh]
@@ -397,7 +401,7 @@ Use the `-A` flag to generate a corresponding systemd automount unit when mounti
 ====
 
 Likewise, use {systemd-umount} to unmount the volume by providing either the device or the path to the mount point.
-This command unmounts the device `/dev/sdb1` mounted with either or both of the previous two commmands.
+This command unmounts the device `/dev/sdb1` mounted with either or both of the previous two commands.
 
 [source,sh]
 ----
@@ -700,7 +704,7 @@ btrfs_allow=autodefrag,compress,compress-force,datacow,nodatacow,datasum,nodatas
 
 Generally, you should start with the default settings stated in the documentation for udisks2's {udisks2-mount-options}.
 You'll also need to make sure that any default options are specified in the corresponding allowed set.
-The Btrfs notably allows the `autodefrag` option in addition to the default udisk2 settings and defaults to using it and zstd compression.
+The Btrfs notably allows the `autodefrag` option in addition to the default udisks2 settings and defaults to using it and zstd compression.
 
 The configuration file also provides functionality to specify defaults for particular devices.
 To do so, a device section named after the block device is followed by the general and filesystem-specific `default` keys discussed previously.

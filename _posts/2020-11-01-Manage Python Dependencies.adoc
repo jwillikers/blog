@@ -37,7 +37,7 @@ The question that naturally follows this explanation is how in tarnation to make
 
 First, you need something to manage the Python interpreter.
 You should probably use asdf.
-It can manage more runtimes than just Python, so polyglots don't need to fuss with a million tools ending with "env" in their name, i.e. https://github.com/rbenv/rbenv[rbenv], https://github.com/syndbg/goenv[goenv], etc.
+It can manage more than just the Python runtime, so polyglots don't need to fuss with a million tools ending with "env" in their name, i.e. https://github.com/rbenv/rbenv[rbenv], https://github.com/syndbg/goenv[goenv], etc.
 
 For a minimal solution, it's possible to just combine pip with either virtualenv or venv.
 You should also consider the pip-tools package which, while minimal, provides some nice benefits and eases dependency management with pip.

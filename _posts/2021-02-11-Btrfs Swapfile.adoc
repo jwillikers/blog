@@ -1,10 +1,10 @@
 = Btrfs Swapfile
 :page-layout:
 :page-category: Disks
-:page-tags: [btrfs, linux, swap, swapfile]
+:page-tags: [Btrfs, Linux, swap, swapfile]
 :an-introduction-to-swap-space-on-linux-systems: https://opensource.com/article/18/9/swap-space-linux-systems[An Introduction to Swap Space on Linux Systems]
 :archwiki-swappiness: https://wiki.archlinux.org/index.php/swap#Swappiness[Swappiness]
-:btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
+:Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
 :btrfs-wiki-faq: https://btrfs.wiki.kernel.org/index.php/FAQ[Btrfs Wiki FAQ]
 :does-btrfs-support-swapfiles: https://btrfs.wiki.kernel.org/index.php/FAQ#Does_btrfs_support_swap_files.3F[Does Btrfs support swap files?]
 :elementary-os: https://elementary.io/[elementary OS]
@@ -18,11 +18,11 @@
 :ubuntu: https://opensource.org/licenses/gpl-license[Ubuntu]
 
 Swap space is a standard component of most operating systems.
-It's effectively reserved disk space for accomodating a system when it needs more RAM than it has available.
+It's effectively reserved disk space for accommodating a system when it needs more RAM than it has available.
 I recommend the https://opensource.com/[opensource.com] article _{an-introduction-to-swap-space-on-linux-systems}_ as a great primer on the topic. 
 
 There are two approaches to providing swap space on Linux, swap partitions and https://wiki.archlinux.org/index.php/swap#Swap_file[swapfiles].
-Since version 5.0 of the Linux kernel, Btrfs swap files are supported according to the section _{does-btrfs-support-swapfiles}_ in the {btrfs-wiki-faq}.
+Since version 5.0 of the Linux kernel, {Btrfs} swap files are supported according to the section _{does-btrfs-support-swapfiles}_ in the {btrfs-wiki-faq}.
 Switching to Btrfs as my default filesystem, I recently set this up have created this tutorial get yourself a swapfile set up on Btrfs.
 
 == Tutorial
@@ -127,14 +127,14 @@ Setting up swapspace version 1, size = 7.8 GiB (8355049472 bytes)
 no label, UUID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 ----
 
-. Enable the swapile!
+. Enable the swapfile!
 +
 [source,sh]
 ----
 ➜ sudo swapon /swap/swapfile
 ----
 
-. Add the swapfile to _/etc/fstab_ so that {systemd} will initialize it automatically when booting the system.footnote:[systemd's handling of swap is documented thoroughly in the corresponding man page: {systemd-swap-man}.]
+. Add the swapfile to _/etc/fstab_ so that {systemd} will initialize it automatically when booting the system.footnote:[How systemd handles swap is documented thoroughly in the corresponding man page: {systemd-swap-man}.]
 +
 [source,sh]
 ----

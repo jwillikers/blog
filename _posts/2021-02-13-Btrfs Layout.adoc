@@ -1,14 +1,14 @@
 = Btrfs Layout
 :page-layout:
 :page-category: Disks
-:page-tags: [appimage, appimagelauncher, asdf, btrfs, cow, cargo, conan, elementaryos, fhs, filesystem, flatpak, fstab, gnome-boxes, libvirt, linux, opensuse, podman, rust, snapper, snapshots, systemd, ubuntu, xdg-base]
-:appimagelauncher: https://assassinate-you.net/tags/appimagelauncher/[AppImageLauncher]
-:appimage: https://appimage.org/[AppImage]
+:page-tags: [AppImage, AppImageLauncher, asdf, Btrfs, CoW, Cargo, Conan, elementary, FHS, filesystem, Flatpak, fstab, Gnome-Boxes, libvirt, Linux, openSUSE, Podman, Rust, Snapper, snapshots, systemd, Ubuntu, xdg-base]
+:AppImageLauncher: https://assassinate-you.net/tags/appimagelauncher/[AppImageLauncher]
+:AppImage: https://appimage.org/[AppImage]
 :asdf: https://asdf-vm.com/#/[asdf]
-:btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
+:Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
 :boot: https://refspecs.linuxfoundation.org/FHS_3.0/fhs-3.0.html#bootStaticFilesOfTheBootLoader[/boot]
-:cargo: https://doc.rust-lang.org/stable/cargo/[Cargo]
-:conan: https://conan.io/[Conan]
+:Cargo: https://doc.rust-lang.org/stable/cargo/[Cargo]
+:Conan: https://conan.io/[Conan]
 :debian-wiki-btrfs-page: https://wiki.debian.org/Btrfs[Debian Wiki's page on Btrfs]
 :default-subvolumes: https://en.opensuse.org/SDB:BTRFS#Default_Subvolumes[Default Subvolumes]
 :elementary-os: https://elementary.io/[elementary OS]
@@ -23,7 +23,7 @@
 :home-cache: https://www.freedesktop.org/software/systemd/man/file-hierarchy.html#~/.cache/[.cache]
 :libvirt: https://libvirt.org/[libvirt]
 :nested-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Nested[nested layout]
-:opensuse: https://www.opensuse.org/[openSUSE]
+:openSUSE: https://www.opensuse.org/[openSUSE]
 :opt: https://refspecs.linuxfoundation.org/FHS_3.0/fhs-3.0.html#optAddonApplicationSoftwarePackages[/opt]
 :podman: https://podman.io/[Podman]
 :recommended-partitioning-scheme: https://docs.fedoraproject.org/en-US/fedora/f33/install-guide/install/Installing_Using_Anaconda/#sect-installation-gui-manual-partitioning-recommended[Recommended Partitioning Scheme]
@@ -37,16 +37,16 @@
 :usr-local: https://refspecs.linuxfoundation.org/FHS_3.0/fhs-3.0.html#usrlocalLocalHierarchy[/usr/local]
 :var: https://refspecs.linuxfoundation.org/FHS_3.0/fhs-3.0.html#purpose31[/var]
 :xdg-base-directory-specification: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html[XDG Base Directory Specification]
-:zfs: https://openzfs.org/wiki/Main_Page[ZFS]
-:zsys: https://github.com/ubuntu/zsys[ZSYS]
+:ZFS: https://openzfs.org/wiki/Main_Page[ZFS]
+:ZSYS: https://github.com/ubuntu/zsys[ZSYS]
 
-One of the best features of Btrfs is the ability to produce snapshots of data instantaneously.
+One of the best features of {Btrfs} is the ability to produce snapshots of data instantaneously.
 Rollbacks take advantage of Btrfs to revert the system, or any subvolume, to a previous state like before that major kernel update.
 This is an extremely valuable feature.
 Unfortunately, to take advantage of a snapshots and rollbacks properly, the filesystem must be layed out intentionally.
 Certain directories need to be left alone during a rollback.
 You don't want to rollback your system and have your hard-work lost nor do you want to inadvertently destroy critical system logs.
-Unless your on {opensuse}, this just isn't done for you on most popular Linux distributions or at least not yet.footnote:[Ubuntu does this for you with {zfs} and {zsys}, but I'm talking about Btrfs here.]
+Unless your on {openSUSE}, this just isn't done for you on most popular Linux distributions or at least not yet.footnote:[Ubuntu does this for you with {ZFS} and {ZSYS}, but I'm talking about Btrfs here.]
 Even if you are using openSUSE, it doesn't setup user home directory layouts if you wish to snapshot those.
 That's why I've outlined my Btrfs filesystem configurations for both my system and my home directory here.
 
@@ -83,7 +83,7 @@ For the root subvolume, I use a {flat-layout} which allows me to use different m
 `{usr-local}`:: The `/usr/local` directory is excluded from rollbacks to avoid uninstalling manually installed software.
 `{var}`:: The `/var` directory contains "variable" data which equates to all sorts of things from logs and caches to virtual machine images and databases.
 The openSUSE project disables Copy-on-Write on this subvolume by default.
-I don't because I prefer not to lose compression and checksumming on everything in here, especially for logfiles.
+I don't because I prefer not to lose compression and checksums on everything in here, especially for log files.
 Instead, I disable certain features on subdirectories of `/var` where necessary.
 `/var/lib/containers`:: This is where {podman} stores its containers, so it is given a dedicated subvolume to allow for rollbacks on this directory.
 `/var/lib/libvirt/images`:: The `/var/lib/libvirt/images` directory is where {libvirt} stores its virtual machine disk images.
@@ -131,7 +131,7 @@ The layout here is a {nested-layout} in contrast to the system's flat layout.
 The {xdg-base-directory-specification} and the https://www.freedesktop.org/software/systemd/man/file-hierarchy.html#Home%20Directory[Home Directory section] from the {systemd} {file-hierarchy} are the best references for the standard directories within a user's home directory.
 Home directory structures can be a bit more chaotic compared to the organization of the system's directories, though.
 They tend to be a bit less standardized.
-In additon to the standard directories, my setup accounts for per-user {flatpak} and {appimage} applications, local virtual machine disk images, and a host of non-compliant development tooling as well my own development workflow.
+In addition to the standard directories, my setup accounts for per-user {flatpak} and {AppImage} applications, local virtual machine disk images, and a host of non-compliant development tooling as well my own development workflow.
 I choose to exclude most of these from my home directory snapshots, but you might have good reason to include some of these in your own snapshots.
 
 .User Subvolumes
@@ -145,13 +145,13 @@ You would do this like so: `chattr +C ~/.local/share/gnome-boxes/images/`.
 `.snapshots`:: The obligatory snapshots directory for the user's home directory.
 For Snapper, this subvolume must be owned by the root user.
 `.var`:: Per-user Flatpak installations are kept in `.var` and so this entire directory excluded from snapshots.
-This is documented in Flatpak's documentation https://docs.flatpak.org/en/latest/conventions.html?highlight=.var#xdg-base-directories[here].
+This is documented in the Flatpak documentation https://docs.flatpak.org/en/latest/conventions.html?highlight=.var#xdg-base-directories[here].
 The config files for each application might be valuable, but I prefer to use Git to save these files out-of-band.
 `.xdg-non-compliant`:: This directory holds everything that violates the XDG specification and should be excluded from snapshots.
-This includes various language-specific package managers such as {asdf}, {cargo}, and {conan}.
+This includes various language-specific package managers such as {asdf}, {Cargo}, and {Conan}.
 Their package caches are an obvious and unfortunate source of snapshot bloat.
 Creating a subvolume for each one's default location is too much work so I configure them to reside in this directory until they are fixed to properly support the XDG Base Directory Specification.
-`Applications`:: I use {appimagelauncher} to integrate AppImages with my desktop.
+`Applications`:: I use {AppImageLauncher} to integrate AppImages with my desktop.
 These applications are stored in an `Applications` directory by default and these shouldn't be rolled back with the home directory.
 `Downloads`:: The `Downloads` directory doesn't usually contain important files but may contain large files occasionally, so I exclude it from snapshots.
 `Projects`:: I use a `Projects` directory for pulling down source code and building all sorts of software.
