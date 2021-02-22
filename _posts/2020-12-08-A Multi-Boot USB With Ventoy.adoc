@@ -156,7 +156,7 @@ Here, I mount the _Ventoy_ partition by label.
 
 [source,sh]
 ----
-➜ udisksctl mount -b /dev/disk/by-label/Ventoy --no-user-interaction
+➜ udisksctl mount -b /dev/disk/by-label/Ventoy
 Mounted /dev/sdb1 at /media/jordan/Ventoy
 ----
 --
@@ -178,7 +178,7 @@ Unless Ventoy's label for the storage partition has been changed from its defaul
 +
 [source,sh]
 ----
-➜ udisksctl unmount -b /dev/disk/by-label/Ventoy --no-user-interaction
+➜ udisksctl unmount -b /dev/disk/by-label/Ventoy
 Unmounted /dev/sdb1.
 ----
 
@@ -186,7 +186,7 @@ Unmounted /dev/sdb1.
 +
 [source,sh]
 ----
-➜ udisksctl unmount -b /dev/disk/by-label/VTOYEFI --no-user-interaction
+➜ udisksctl unmount -b /dev/disk/by-label/VTOYEFI
 Unmounted /dev/sdb2.
 ----
 
@@ -270,7 +270,7 @@ Update Ventoy to /dev/sdb successfully finished.
 +
 [source,sh]
 ----
-➜ udisksctl unmount -b /dev/disk/by-label/Ventoy --no-user-interaction
+➜ udisksctl unmount -b /dev/disk/by-label/Ventoy
 Unmounted /dev/sdb1.
 ----
 
@@ -278,7 +278,7 @@ Unmounted /dev/sdb1.
 +
 [source,sh]
 ----
-➜ udisksctl unmount -b /dev/disk/by-label/VTOYEFI --no-user-interaction
+➜ udisksctl unmount -b /dev/disk/by-label/VTOYEFI
 Unmounted /dev/sdb2.
 ----
 
