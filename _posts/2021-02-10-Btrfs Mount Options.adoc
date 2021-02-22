@@ -1,22 +1,22 @@
 = Btrfs Mount Options
 :page-layout:
 :page-category: Disks
-:page-tags: [btrfs, fstab, Linux, mount]
-:btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[btrfs]
-:btrfs-mount-options: https://btrfs.wiki.kernel.org/index.php/Manpage/btrfs(5)#MOUNT_OPTIONS[mount options]
+:page-tags: [Btrfs, fstab, Linux, mount]
+:Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
+:mount-options: https://btrfs.wiki.kernel.org/index.php/Manpage/btrfs(5)#MOUNT_OPTIONS[mount options]
 :flat-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Flat[flat layout]
 :fsck: https://manpages.ubuntu.com/manpages/focal/man8/fsck.8.html[fsck]
 :fstab: https://manpages.ubuntu.com/manpages/focal/man8/fsck.8.html[/etc/fstab]
 :nested-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Nested[nested layout]
 :zstd: https://facebook.github.io/zstd/[zstd]
 
-So, let's say you've installed a fresh system on {btrfs}.
+So, let's say you've installed a fresh system on {Btrfs}.
 Now what?
 Well, Btrfs doesn't ship with optimal default settings.
 Many popular Linux distributions don't improve the situation, either.
 That leaves it up to the administrator to fine tune Btrfs for its particular use case.
 
-The primary way to tune Btrfs is through {btrfs-mount-options} which are commonly enumerated in `{fstab}` for each volume on the system.
+The primary way to tune Btrfs is through {mount-options} which are commonly enumerated in `{fstab}` for each volume on the system.
 I use a flat layout in my `/etc/fstab` for the separate Btrfs subvolumes on each system.
 Subvolumes within a user's home directory, besides perhaps a standard `.snapshots` subvolume, are left out of my `/etc/fstab` to give users greater flexibility in managing their own home subvolume.
 
@@ -71,11 +71,11 @@ _noatime_:: Do  not  update  inode  access  times  on  this  filesystem.
 This speeds up reads since the access time metadata is not updated.
 This option isn't specific to Btrfs either.
 _autodefrag_:: Enable automatic file defragmentation.
-This automatically defragments small random writes into files.
+This will automatically defragment small random writes into files.
 _compress_:: Filesystem-level compression is a beautiful thing.
 It increases read and write speeds while saving disk space.
 The speed of _{zstd}_ compression makes it my general preference.
-The `/boot` subvolume above is mounted with _lzo_ compression to accomodate an older version of Grub predating _zstd_ support, which appeared in Grub 2.04.
+The `/boot` subvolume above is mounted with _lzo_ compression to accommodate an older version of Grub predating _zstd_ support, which appeared in Grub 2.04.
 _commit_:: The number of seconds between periodic commits to the filesystem.
 This is 30 seconds by default.
 Increasing this value reduces the frequency of periodic writes which can reduce wear on the disk.
@@ -85,7 +85,7 @@ This option is organizational and used for the {flat-layout}.
 
 [NOTE]
 ====
-The _ssd_ option is omitted since these settings are applied automatically when the underying storage media is solid-state.
+The _ssd_ option is omitted since these settings are applied automatically when the underlying storage media is solid-state.
 ====
 
 == Conclusion

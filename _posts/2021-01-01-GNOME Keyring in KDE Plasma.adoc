@@ -7,10 +7,10 @@
 :gnome-keyring: https://wiki.gnome.org/Projects/GnomeKeyring[GNOME Keyring]
 :gpg: https://gnupg.org/[GPG]
 :kde-plasma: https://kde.org/plasma-desktop/[KDE Plasma]
-:kwallet: https://github.com/KDE/kwallet[KWallet]
+:KWallet: https://github.com/KDE/kwallet[KWallet]
 :manjaro-pbp-kde: https://manjaro.org/download/#pinebook-pro-kde-plasma[Manjaro Pinebook Pro KDE Plasma edition]
 :openssh: https://www.openssh.com/[OpenSSH]
-:pinebook-pro: https://www.pine64.org/pinebook-pro/[Pinebook Pro]
+:Pinebook-Pro: https://www.pine64.org/pinebook-pro/[Pinebook Pro]
 :seahorse: https://wiki.gnome.org/Apps/Seahorse[Seahorse]
 
 I love {gnome}, but on my {pinebook-pro}, I use the extremely well-supported {manjaro-pbp-kde}.
@@ -18,12 +18,12 @@ One of the biggest gripes I have with {kde-plasma} is that it doesn't automatica
 I'm used to having my SSH and GPG key unlocked automatically when I login in.
 As a developer who uses these constantly, this is very convenient.
 KDE Plasma works very well on the Pinebook Pro, but this is one feature I just had to figure out.
-While I attempted to make this work with {kwallet}, I gave up and switched to using {gnome-keyring}.
+While I attempted to make this work with {KWallet}, I gave up and switched to using {gnome-keyring}.
 If you wish to obtain this convenience within KDE then read on.
 
 == Tutorial
 
-This tutorial describes how to enable GNOME Keyring within Manjaro KDE to automically unlock your keyring, including SSH and GPG keys on login.
+This tutorial describes how to enable GNOME Keyring within Manjaro KDE to automatically unlock your keyring, including SSH and GPG keys on login.
 For reference, this tutorial uses {manjaro-pbp-kde} version 20.12.
 This tutorial provides instructions specific to the {fish} shell.
 Most of the steps here were taken directly from the https://wiki.archlinux.org/index.php/GNOME/Keyring[Arch Wiki's GNOME/Keyring page].
@@ -44,7 +44,7 @@ You should be familiar with Manjaro, KDE Plasma, and the fish shell to get the m
 ➜ pacman -S seahorse
 ----
 
-. Add the GNOME Keyring's PAM module to `/etc/pam.d/login` to unlock the GNOME Keyring on login.
+. Add the GNOME Keyring PAM module to `/etc/pam.d/login` to unlock the keyring at login.
 +
 --
 [source]
@@ -94,7 +94,7 @@ NOTE: For this to work, your keyring must use the same password you use to login
 ➜ mkdir ~/.config/fish/conf.d
 ----
 
-. Export the `SSH_AUTH_SOCK` environment variable to GNOME Keyring's ssh-agent in a shell startup file to make it available in your terminal.
+. Set the `SSH_AUTH_SOCK` environment variable to the PID of the GNOME Keyring ssh-agent in a shell startup file to make it available in your terminal.
 +
 [source,sh]
 .~/.config/fish/conf.d/gnome-keyring-ssh-agent.fish

@@ -72,8 +72,8 @@ Unmounted /dev/sdb1.
 . Wipe any existing partition tables on the flash drive and generate a new one.
 +
 --
-The set of _gdisk_ commands, consisting of {cgdisk}, {gdisk}, and {sgdisk}, manipulate {guid-partition-tables}, also known as _GPTs_.
-Older {master-boot-records}, _MBRs_, are instead managed with {fdisk} and its similarly named friends.
+The set of _gdisk_ commands, consisting of {cgdisk}, {gdisk}, and {sgdisk}, manipulate {guid-partition-tables}, also known as _GPT_'s.
+Older {master-boot-records}, _MBR_'s, are instead managed with {fdisk} and its similarly named friends.
 Here, the {sgdisk} command is used to partition the flash drive using the newer _GPT_ format without requiring any user interaction.
 
 [source,sh]
