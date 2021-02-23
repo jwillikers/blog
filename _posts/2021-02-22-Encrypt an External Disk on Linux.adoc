@@ -1,7 +1,7 @@
 = Encrypt an External Disk on Linux
 :page-layout:
 :page-category: Disks
-:page-tags: [backups, Btrfs, Cryptsetup, elementary, encryption, fstab, Linux, systemd, Ubuntu]
+:page-tags: [backups, Btrfs, Cryptsetup, elementary, encryption, fstab, Linux, systemd, udisks2, Ubuntu]
 :Bash: https://www.gnu.org/software/bash/[Bash]
 :Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
 :Btrfs-Wiki-FAQ: https://btrfs.wiki.kernel.org/index.php/FAQ[Btrfs Wiki FAQ]
@@ -17,6 +17,7 @@
 :sgdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/sgdisk.8.html[sgdisk(8)]
 :systemd: https://systemd.io/[systemd]
 :systemd-mount: https://manpages.ubuntu.com/manpages/bionic/man5/systemd.mount.5.html[systemd.mount(5)]
+:udisks2: http://storaged.org/doc/udisks2-api/latest/[udisks2]
 :Ubuntu: https://ubuntu.com/[Ubuntu]
 
 Encrypting your data is pretty much a must anyone who is privacy or security conscious.
@@ -28,6 +29,8 @@ It's even pretty straightforward on the command-line, and that's what I demonstr
 == Tutorial
 
 This tutorial describes the steps necessary to encrypt an external disk, such as a hard drive or flash drive, from the command-line using {Cryptsetup}.
+Instructions for unlocking, mounting, unmounting, and locking the filesystem are provided for both Cryptsetup and {udisks2}.
+udisks2 provides userspace access to encrypted filesystems.
 The encrypted filesystem will use {Btrfs}.
 The reference operating system is {Ubuntu} 18.04.
 Root access on the machine is required.
@@ -106,6 +109,23 @@ Only versions of Cryptsetup prior to version 2.3.4 need to explicitly specify th
 --
 
 . Open the encrypted volume.
+
+udisks2::
++
+--
+[source,sh]
+----
+➜ udisksctl unlock -b /dev/sdb1
+Passphrase: 
+Unlocked /dev/sdb1 as /dev/dm-1.
+----
+
+udisks2's `unlock` subcommand creates a new device in the device tree under `/dev/mapper` using the the prefix `luks-` followed by the volume's UUID.
+The device here appears at `/dev/mapper/luks-0cbab673-2b14-40c0-a1f2-522bc7ff7e18`.
+An additional symlink is created at `/dev/dm-1` as mentioned in the command's output.
+--
+
+Cryptsetup::
 +
 --
 [source,sh]
@@ -114,11 +134,38 @@ Only versions of Cryptsetup prior to version 2.3.4 need to explicitly specify th
 Enter passphrase for /dev/sdb1:
 ----
 
-The `open` subcommand creates a new device in the device tree under `/dev/mapper` using the name provided.
+Cryptsetup's `open` subcommand creates a new device in the device tree under `/dev/mapper` using the name provided.
 In this case, the device appears at `/dev/mapper/MyUSB`.
 --
 
 . Create a Btrfs filesystem on top of the encrypted volume.
+
+udisks2::
++
+[source,sh]
+----
+➜ sudo mkfs -t btrfs -L Private /dev/dm-1
+btrfs-progs v4.15.1
+See http://btrfs.wiki.kernel.org for more information.
+
+Label:              Private
+UUID:               2eb01d94-9aa1-4bd1-8c99-950be806f449
+Node size:          16384
+Sector size:        4096
+Filesystem size:    931.48GiB
+Block group profiles:
+  Data:             single            8.00MiB
+  Metadata:         DUP               1.00GiB
+  System:           DUP               8.00MiB
+SSD detected:       no
+Incompat features:  extref, skinny-metadata
+Number of devices:  1
+Devices:
+   ID        SIZE  PATH
+    1   931.48GiB  /dev/dm-1
+----
+
+Cryptsetup::
 +
 [source,sh]
 ----
@@ -144,19 +191,26 @@ Devices:
 ----
 
 . Now mount the Btrfs volume.
+
+udisks2::
 +
 --
-// todo Mount using Btrfs mount options when using udisks2 >= 2.9.0: -o noatime,autodefrag,compress=zstd
-User::
-+
 [source,sh]
 ----
-➜ udisksctl mount -b /dev/mapper/MyUSB
-Mounted /dev/mapper/MyUSB at /run/media/jordan/Private
+➜ udisksctl mount -b /dev/mapper/MyUSB -o noatime
+Mounted /dev/dm-1 at /run/media/jordan/Private
 ----
 
-Superuser::
+[TIP]
+====
+To mount with more desirable Btrfs mount options such as `autodefrag` and `compress=zstd`, a newer version of udisks2 is necessary.
+Refer to <<install-udisks2-from-source#,Install udisks2 From Source>> if you want to install such a version.
+====
+--
+
+Cryptsetup::
 +
+--
 [source,sh]
 ----
 ➜ sudo systemd-mount -o noatime,autodefrag,compress=zstd /dev/mapper/MyUSB
@@ -170,26 +224,34 @@ For more information on mounting, see the post <<adjust-mount-options#,Adjust Mo
 --
 
 . Unmount the Btrfs volume.
-+
---
-User::
+
+udisks2::
 +
 [source,sh]
 ----
-➜ udisksctl unmount -b /dev/mapper/MyUSB
-Unmounted /dev/mapper/MyUSB.
+➜ udisksctl unmount -b /dev/dm-1
+Unmounted /dev/dm-1.
 ----
 
-Superuser::
+Cryptsetup::
 +
 [source,sh]
 ----
 ➜ sudo systemd-umount /run/media/system/Private
 Stopped unit run-media-system-Private.mount for mount point: /run/media/system/Private
 ----
---
 
 . Use the `close` subcommand to remove the existing device mapping lock the encrypted device.
+
+udisks2::
++
+[source,sh]
+----
+➜ udisksctl lock -b /dev/sdb1
+Locked /dev/sdb1.
+----
+
+Cryptsetup::
 +
 [source,sh]
 ----
