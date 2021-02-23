@@ -1,0 +1,222 @@
+= Install udisks2 From Source
+:page-layout:
+:page-category: Disks
+:page-tags: [Btrfs, elementary, Linux, mount, Ubuntu, udisks2]
+:Bash: https://www.gnu.org/software/bash/[Bash]
+:Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
+:Btrfs-Wiki-FAQ: https://btrfs.wiki.kernel.org/index.php/FAQ[Btrfs Wiki FAQ]
+:elementary-OS: https://elementary.io/[elementary OS]
+:fish-shell: https://fishshell.com/[fish shell]
+:fstab: https://manpages.ubuntu.com/manpages/bionic/man5/fstab.5.html[fstab(5)]
+:libblockdev: http://storaged.org/libblockdev/[libblockdev]
+:mount: https://manpages.ubuntu.com/manpages/bionic/man8/mount.8.html[mount(8)]
+:systemd: https://systemd.io/[systemd]
+:Ubuntu: https://ubuntu.com/[Ubuntu]
+:udisks2: http://storaged.org/doc/udisks2-api/latest/[udisks2]
+:udisks2-mount-options: http://storaged.org/doc/udisks2-api/latest/mount_options.html[udisks2 Mount Options]
+:umount: https://manpages.ubuntu.com/manpages/bionic/man8/umount.8.html[umount(8)]
+:ZSH: https://www.zsh.org/[ZSH]
+
+I recently posted <<adjust-mount-options#,Adjust Mount Options>> which explains in detail how to configure mount options for {udisks2}.
+Unfortunately, the reference operating system, {Ubuntu} 18.04, doesn't use a new enough version of udisks2.
+In fact, even Ubuntu 20.04 doesn't contain a new enough version.
+So, what should you do if you want to try out these nifty, new features?
+Build from source, of course!
+
+== Tutorial
+
+This tutorial describes how to install both udisks, version 2.9.2, and its dependency {libblockdev}, version 2.25, from source on an Ubuntu 18.04 system.
+A brief introduction to modifying the global mount options is also included.
+For reference, I'm building on {elementary-OS} 5.1.
+I assume you're familiar with building and installing software on Linux and udisks2.
+The instructions here are intended for the beloved {fish-shell} or {Bash} or {ZSH}.
+
+. Install the dependencies required to build libblockdev.
++
+[source,sh]
+----
+➜ sudo apt -y install build-essential libbytesize-dev libkeyutils-dev \
+  libkmod-dev libcryptsetup-dev libglib2.0-dev libgirepository1.0-dev \
+  libmount-dev libdmraid-dev libndctl-dev libnss3-dev libparted-dev \
+  libudev-dev libvolume-key-dev libyaml-dev pkg-config
+----
+
+. Fetch the latest release tarball from GitHub.
++
+[source,sh]
+----
+➜ wget -qO - https://api.github.com/repos/storaged-project/libblockdev/releases/latest \
+  | awk -F': ' '/browser_download_url/ && /libblockdev-[0-9]+\.[0-9]+\.tar\.gz/ \
+  {gsub(/"/, "", $(NF)); system("wget -qLP ~/Downloads/ " $(NF))}'
+----
+
+. Extract the tarball.
++
+[source,sh]
+----
+➜ tar -C ~/Downloads -xvf ~/Downloads/libblockdev-*.tar.gz
+----
+
+. Change to the extracted directory.
++
+[source,sh]
+----
+➜ cd ~/Downloads/libblockdev-*/
+----
+
+. Prepare the build.
++
+[source,sh]
+----
+➜ ./configure
+----
+
+. Build libblockdev.
+
+_fish_::
++
+[source,sh]
+----
+➜ make -j(nproc)
+----
+
+_Bash / ZSH_::
++
+[source,bash]
+----
+➜ make -j$(nproc)
+----
+
+. Install libblockdev.
++
+[source,sh]
+----
+➜ sudo make install
+----
+
+. Install the dependencies required to build udisks2.
++
+[source,sh]
+----
+➜ sudo apt -y install libacl1-dev libatasmart-dev libgudev-1.0-dev \
+  libpolkit-agent-1-dev libpolkit-gobject-1-dev libsystemd-dev
+----
+
+. Fetch the latest udisks release from GitHub.
++
+[source,sh]
+----
+➜ wget -qO - https://api.github.com/repos/storaged-project/udisks/releases/latest \
+  | awk -F': ' '/browser_download_url/ && /\.tar\.bz2/ \
+  {gsub(/"/, "", $(NF)); system("wget -qLP ~/Downloads/ " $(NF))}'
+----
+
+. Extract the archive.
++
+[source,sh]
+----
+➜ tar -C ~/Downloads -xvf ~/Downloads/udisks-*.tar.bz2
+----
+
+. Change to the extracted directory.
++
+[source,sh]
+----
+➜ cd ~/Downloads/udisks-*/
+----
+
+. Configure the build.
++
+[source,sh]
+----
+➜ ./configure --enable-btrfs --with-systemdsystemunitdir=/usr/local/lib/systemd/system --with-udevdir=/usr/local/lib/udev/rules.d
+----
+
+. Build away.
+
+_fish_::
++
+[source,sh]
+----
+➜ make -j(nproc)
+----
+
+_Bash / ZSH_::
++
+[source,bash]
+----
+➜ make -j$(nproc)
+----
+
+. Install udisks2.
++
+[source,sh]
+----
+➜ sudo make install
+----
+
+. Update the linker's cache for the updated libraries now in `/usr/local/lib`.
++
+[source,sh]
+----
+➜ sudo ldconfig
+----
+
+. Reload the {systemd} unit files to refresh the updated udisks2 service unit.
++
+[source,sh]
+----
+➜ sudo systemctl daemon-reload
+----
+
+. Restart the udisks2 service unit to load the new version.
++
+[source,sh]
+----
+➜ sudo systemctl restart udisks2
+----
+
+. Cleanup the downloaded source files and residual build artifacts. 
++
+[source,sh]
+----
+➜ rm -rf ~/Downloads/libblockdev-* ~/Downloads/udisks-*
+----
+
+[TIP]
+====
+To prefer the newer LUKS2 encryption, change the line `encryption=luks1` to `encryption=luks2` in the udisks2 configuration file, `/usr/local/etc/udisks2/udisks2.conf`.
+====
+
+=== Mount Options
+
+To configure mount options for udisks2, copy the example template to `/usr/local/etc/udisks2/mount_options.conf`.
+
+[source,sh]
+----
+➜ sudo cp /usr/local/etc/udisks2/mount_options.conf.example \
+  /usr/local/etc/udisks2/mount_options.conf
+----
+
+Now modify the configuration file to your liking.
+The template includes lots of helpful comments.
+I tweak the Btrfs defaults in my configuration shown below.
+
+[source]
+./usr/local/etc/udisks2/mount_options.conf
+----
+[defaults]
+btrfs_defaults=autodefrag,compress=zstd
+btrfs_allow=autodefrag,compress,compress-force,datacow,nodatacow,datasum,nodatasum,degraded,device,discard,nodiscard,subvol,subvolid,space_cache
+----
+
+Here, `autodefrag` is allowed by adding it to the default list of allowed options.
+Additionally, automatic defragmentation and zstd compression are enabled by default.
+To learn more check the post <<adjust-mount-options#,Adjust Mount Options>> and the {udisks2-mount-options} documentation.
+
+== Conclusion
+
+That's a wrap.
+You can now enjoy the new features in udisks2 without having to wait for the next Ubuntu LTS release, 22.04.
+Hopefully this doesn't break anything.
+😅
