@@ -679,6 +679,12 @@ The udisks2 exposes the ability to change the default mount options since versio
 Unfortunately, Ubuntu 18.04 doesn't ship with a new enough version.
 To install a version with these capabilities, follow the instructions in the post <<install-udisks2-from-source#,Install udisks2 From Source>>.
 
+[NOTE]
+====
+If you installed from source into the default destination under `/usr/local`, then the configuration file and udev rules will be under `/usr/local` instead of `/usr`.
+Adjust the file paths used in the following examples accordingly.
+====
+
 The configuration of mount options udisks2 is done through a global configuration file or udev rules.
 Options can be tweaked for specific filesystems, device classes, and individual devices.
 
