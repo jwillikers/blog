@@ -1,7 +1,7 @@
 = Adjust Mount Options
 :page-layout:
 :page-category: Disks
-:page-tags: [Btrfs, elementary, fstab, Linux, mount, systemd, Ubuntu, udev, udisks2]
+:page-tags: [Btrfs, elementary, fstab, GIO, Linux, mount, systemd, Ubuntu, udev, udisks2]
 :bash: https://www.gnu.org/software/bash/[Bash]
 :btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
 :btrfs-wiki-faq: https://btrfs.wiki.kernel.org/index.php/FAQ[Btrfs Wiki FAQ]
@@ -14,6 +14,9 @@
 :fish-shell: https://fishshell.com/[fish shell]
 :fstab: https://manpages.ubuntu.com/manpages/bionic/man5/fstab.5.html[fstab(5)]
 :gdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/gdisk.8.html[gdisk(8)]
+:GIO: https://developer.gnome.org/gio/stable/[GIO]
+:GNOME: https://www.gnome.org/[GNOME]
+:GTK: https://www.gtk.org/[GTK]
 :guid-partition-tables: https://en.wikipedia.org/wiki/GUID_Partition_Table[GUID partition tables]
 :mount: https://manpages.ubuntu.com/manpages/bionic/man8/mount.8.html[mount(8)]
 :nested-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Nested[nested layout]
@@ -36,7 +39,7 @@
 Mounting filesystems on Linux is simple, right?
 Just use {mount}, specify the recurring stuff in {fstab}, and everything's peachy.
 For both better and worse, there's more to it than that.
-Filesystem dependencies are handled by {systemd} and tools like {udev} and {udisks2} provide userspace access to devices.
+Filesystem dependencies are handled by {systemd} and tools like {udev}, {udisks2}, and {GIO} provide userspace access to devices.
 Imagine not having to be root to access your flash drive?
 Okay, you're probably aware that root isn't necessary for such a thing, but that's because there's tools that take care of that for you.
 
@@ -842,6 +845,32 @@ easystore_25FC
 ----
 
 For more examples and information, refer to the udisks2 documentation.
+
+==== GIO
+
+{GIO} is a filesystem layer abstraction {GNOME} and {GTK}.
+GTK and GNOME applications use GIO to interact with filesystems.
+GIO also bundles a command-line tool which can be used to mount and unmount filesystems.
+It can't be used to control mount options directly.
+However, since it uses udisks2 to mount physical media, default mount options configured for udisks2 carry over.
+GIO has the added convenience of being able to unlock and mount an encrypted volume in a single command.
+It can also use encryption keys saved in a user's keyring to unlock encrypted volumes without requiring a password every time.
+Follow the steps below to mount and unmount the `/dev/sdb1` volume.
+
+. Mount the volume by passing the device to GIO's _mount_ subcommand via the `-d` flag.
++
+[source,sh]
+----
+➜ gio mount -d /dev/sdb1
+Mounted /dev/sdb1 at /run/media/jordan/backups
+----
+
+. Unmount the volume with the _mount_ command, the `-u` flag, and the mount point.
++
+[source,sh]
+----
+➜ gio mount -u /run/media/jordan/backups
+----
 
 == Conclusion
 
