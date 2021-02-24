@@ -127,10 +127,17 @@ _Bash / ZSH_::
 
 . Configure the build.
 +
+--
 [source,sh]
 ----
-➜ ./configure --enable-btrfs --with-systemdsystemunitdir=/usr/local/lib/systemd/system --with-udevdir=/usr/local/lib/udev/rules.d
+➜ ./configure --enable-btrfs \
+  --with-systemdsystemunitdir=/usr/local/lib/systemd/system \
+  --with-udevdir=/usr/local/lib/udev
 ----
+
+Installing udisks2 from source installs to the systemd and udev directories in `/usr`, overwriting files placed there by your system's installation.
+To avoid interfering with those, the command here puts these files in their corresponding directories under `/usr/local`.
+--
 
 . Build away.
 
@@ -154,6 +161,18 @@ _Bash / ZSH_::
 ----
 ➜ sudo make install
 ----
+
+. On Ubuntu 18.04, symlink the udisks2 udev rules to `/etc/udev/rules.d/80-udisks2.rules`
++
+--
+Ubuntu 18.04 uses an older version of udev which does not load rules from `/usr/local/lib/udev/rules.d/`.
+This functions as a workaround and isn't necessary for newer Ubuntu LTS releases which support udev rules in `/usr/local`.
+
+[source,sh]
+----
+➜ sudo ln -s /usr/local/lib/udev/rules.d/80-udisks2.rules /etc/udev/rules.d/
+----
+--
 
 . Update the linker's cache for the updated libraries now in `/usr/local/lib`.
 +
