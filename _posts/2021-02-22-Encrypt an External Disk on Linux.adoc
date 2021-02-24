@@ -1,13 +1,14 @@
 = Encrypt an External Disk on Linux
 :page-layout:
 :page-category: Disks
-:page-tags: [backups, Btrfs, Cryptsetup, elementary, encryption, fstab, Linux, systemd, udisks2, Ubuntu]
+:page-tags: [backups, Btrfs, Cryptsetup, elementary, encryption, fstab, GIO, Linux, systemd, udisks2, Ubuntu]
 :Bash: https://www.gnu.org/software/bash/[Bash]
 :Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
 :Btrfs-Wiki-FAQ: https://btrfs.wiki.kernel.org/index.php/FAQ[Btrfs Wiki FAQ]
 :Cryptsetup: https://gitlab.com/cryptsetup/cryptsetup[Cryptsetup]
 :elementary-OS: https://elementary.io/[elementary OS]
 :Fedora: https://getfedora.org/[Fedora]
+:GIO: https://developer.gnome.org/gio/stable/[GIO]
 :flat-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Flat[flat layout]
 :fish-shell: https://fishshell.com/[fish shell]
 :fstab: https://manpages.ubuntu.com/manpages/bionic/man5/fstab.5.html[/etc/fstab]
@@ -29,8 +30,9 @@ It's even pretty straightforward on the command-line, and that's what I demonstr
 == Tutorial
 
 This tutorial describes the steps necessary to encrypt an external disk, such as a hard drive or flash drive, from the command-line using {Cryptsetup}.
-Instructions for unlocking, mounting, unmounting, and locking the filesystem are provided for both Cryptsetup and {udisks2}.
-udisks2 provides userspace access to encrypted filesystems.
+Instructions for unlocking, mounting, unmounting, and locking the filesystem are provided for Cryptsetup, {udisks2}, and {GIO}.
+udisks2 allows users to access encrypted filesystems without superuser privileges.
+GIO builds on top of udisks2 to simplify mounting and utilize encryption passphrases from the user's keyring for convenience.
 The encrypted filesystem will use {Btrfs}.
 The reference operating system is {Ubuntu} 18.04.
 Root access on the machine is required.
@@ -257,6 +259,36 @@ Cryptsetup::
 ----
 ➜ sudo cryptsetup close MyUSB
 ----
+
+=== GIO
+
+{GIO} makes accessing encrypted volumes easier.
+It handles both unlocking and mounting the encrypted volume in one command.
+Plus, it can use an encryption passphrase from the user's keyring so that the user doesn't have to enter the passphrase ever again.
+The following instruction demonstrate how to use GIO to easily access your newly encrypted volume.
+
+. Unlock and mount the volume by passing the device to GIO's _mount_ subcommand via the `-d` flag.
++
+[source,sh]
+----
+➜ gio mount -d /dev/sdb1
+Enter a passphrase to unlock the volume
+The passphrase is needed to access encrypted data on WD easystore 25FC (1.0 TB Hard Disk).
+Password: 
+Mounted /dev/sdb1 at /run/media/jordan/Private
+----
+
+. Unmount and lock the volume with the _mount_ command, the `-u` flag, and the mount point.
++
+[source,sh]
+----
+➜ gio mount -u /run/media/jordan/Private
+----
+
+To store the volume's passphrase in your keyring, the easiest method is to open the device in the Files application.
+This will prompt for a password.
+Enter the password and select the desired option for how long to save the password, and that's it.
+GIO will no longer prompt for a password when opening this drive from the command-line.
 
 == Conclusion
 
