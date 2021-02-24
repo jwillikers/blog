@@ -1,32 +1,32 @@
 = Btrfs Snapshot Management With Snapper
 :page-layout:
 :page-category: Disks
-:page-tags: [btrbk, btrfs, elementaryos, linux, snapper, snapshots, timeshift, ubuntu]
+:page-tags: [Btrbk, Btrfs, elementary, Linux, Snapper, snapshots, Timeshift, Ubuntu]
 :arch-wiki-snapper-change-frequencies: https://wiki.archlinux.org/index.php/snapper#Change_snapshot_and_cleanup_frequencies[Change snapshot and cleanup frequencies]
-:btrbk: https://github.com/digint/btrbk[Btrbk]
-:btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
+:Btrbk: https://github.com/digint/btrbk[Btrbk]
+:Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
 :btrfs-maintenance-toolbox: https://github.com/kdave/btrfsmaintenance[Btrfs maintenance toolbox]
 :btrfs-wiki-faq: https://btrfs.wiki.kernel.org/index.php/FAQ[Btrfs Wiki FAQ]
 :elementary-os: https://elementary.io/[elementary OS]
 :fedora: https://getfedora.org/[Fedora]
 :flat-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Flat[flat layout]
 :fish-shell: https://fishshell.com/[fish shell]
-:fstab: https://manpages.ubuntu.com/manpages/focal/man8/fsck.8.html[/etc/fstab]
+:fstab: https://manpages.ubuntu.com/manpages/focal/man8/fsck.8.html[fstab(5)]
 :mlocate: http://manpages.ubuntu.com/manpages/bionic/en/man1/mlocate.1.html[mlocate(1)]
 :nested-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Nested[nested layout]
 :recommended-partitioning-scheme: https://docs.fedoraproject.org/en-US/fedora/f33/install-guide/install/Installing_Using_Anaconda/#sect-installation-gui-manual-partitioning-recommended[Recommended Partitioning Scheme]
-:snapper: http://snapper.io/[Snapper]
+:Snapper: http://snapper.io/[Snapper]
 :snapper-gui: https://github.com/ricardomv/snapper-gui[snapper-gui]
 :systemd: https://systemd.io/[systemd]
-:timeshift: https://github.com/teejee2008/timeshift[Timeshift]
+:Timeshift: https://github.com/teejee2008/timeshift[Timeshift]
 :tuning-periodic-snapshotting: https://github.com/kdave/btrfsmaintenance#tuning-periodic-snapshotting[Tuning Periodic Snapshotting]
 :ubuntu: https://opensource.org/licenses/gpl-license[Ubuntu]
 :updatedbconf: http://manpages.ubuntu.com/manpages/xenial/en/man5/updatedb.conf.5.html[updatedb.conf(5)]
 
-Manually taking snapshots with {btrfs} is easy.
+Manually taking snapshots with {Btrfs} is easy.
 Managing said snapshots is not.
 This is why several tools exist for the task.
-The most prominent are {btrbk}, {snapper}, and {timeshift}.
+The most prominent are {Btrbk}, {Snapper}, and {Timeshift}.
 Each of these automate taking, naming, and cleaning up snapshots.
 Btrbk is highly configurable and flexible while also offering incremental backups.
 It doesn't handle rollbacks, however.
@@ -106,7 +106,7 @@ For each subvolume you want to snapshot, create a separate subvolume within it t
 This prevents snaphots being included in snapshots.
 Snapper uses a `.snapshots` subvolume by convention.
 The steps below create a `.snapshots` subvolume in which to keep snapshots of the root subvolume.
-The subvolume is created according to a {flat-layout}, so it exists at the top-level of the Btrfs volume and is mounted explicitly in `{fstab}`.
+The subvolume is created according to a {flat-layout}, so it exists at the top-level of the Btrfs volume and is mounted explicitly in {fstab}.
 
 . Mount the volume containing the root subvolume to `/mnt`.
 +
@@ -127,7 +127,7 @@ If you prefer to prefix the name with `@`, be my guest.
 ----
 --
 
-. Add an entry in {fstab} to mount the snapshots subvolume.
+. Add an entry in fstab to mount the snapshots subvolume.
 +
 [source,sh]
 ----
@@ -152,7 +152,7 @@ If you prefer to prefix the name with `@`, be my guest.
 === Configure
 
 Configuration of Snapper is done through a config file.
-One config file is used for each subvolume that Snapper will be snapshotting.
+One config file is used for each subvolume that Snapper will snapshot.
 Typically, a new Snapper configuration is generated with a single command given the name for the config and the path of the subvolume to snapshot. 
 A configuration for the root subvolume, aptly named _root_, would be generated as shown here.
 
@@ -235,7 +235,7 @@ This configuration assumes that the user's home directory resides on a dedicated
 . Edit the template as necessary.
 +
 --
-There are two important distinctions from the root fileystem configuration.
+There are two important distinctions from the root filesystem configuration.
 First, the `ALLOW_USERS` parameter includes the name of the user.
 This permits the user to work with the config.
 Second, `SYNC_ACL` is enabled, allowing the user to work with the snapshots in the `~.snapshots` directory.
@@ -293,7 +293,7 @@ Checkout the {snapper-gui} project if you'd like one!
 
 == Conclusion
 
-This post has given a walkthrough of managing Btrfs snapshots with Snapper.
+This post has given a run down of managing Btrfs snapshots with Snapper.
 You should now be able to create Snapper configurations at both the system and user levels.
 Now you'll probably want to backup those snapshots in case there's a catastrophic failure or some such.
 Stay tuned for an upcoming tutorial on configuring backups plus more posts on getting the most out of Snapper!
