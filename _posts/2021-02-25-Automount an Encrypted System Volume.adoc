@@ -1,0 +1,294 @@
+= Automount an Encrypted System Volume
+:page-layout:
+:page-category: Disks
+:page-tags: [automount, Btrfs, Cryptsetup, crypttab, elementary, encryption, fstab, Linux, mount, systemd, Ubuntu]
+:Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
+:crypttab: https://www.freedesktop.org/software/systemd/man/crypttab.html[crypttab]
+:crypttab-discard: https://www.freedesktop.org/software/systemd/man/crypttab.html#discard[discard]
+:crypttab-noauto: https://www.freedesktop.org/software/systemd/man/crypttab.html#noauto[noauto]
+:crypttab-nofail: https://www.freedesktop.org/software/systemd/man/crypttab.html#nofail[nofail]
+:Cryptsetup: https://gitlab.com/cryptsetup/cryptsetup[Cryptsetup]
+:elementary-OS: https://elementary.io/[elementary OS]
+:fish-shell: https://fishshell.com/[fish shell]
+:fstab: https://manpages.ubuntu.com/manpages/bionic/man5/fstab.5.html[fstab(5)]
+:fstab-noauto: https://www.freedesktop.org/software/systemd/man/systemd.mount.html#noauto[noauto]
+:fstab-nofail: https://www.freedesktop.org/software/systemd/man/systemd.mount.html#nofail[nofail]
+:fstab-x-systemd-automount: https://www.freedesktop.org/software/systemd/man/systemd.mount.html#x-systemd.automount[x-systemd.automount]
+:lsblk: http://manpages.ubuntu.com/manpages/bionic/en/man8/lsblk.8.html[lsblk(8)]
+:systemd: https://systemd.io/[systemd]
+:systemd-automount: https://www.freedesktop.org/software/systemd/man/systemd.automount.html[systemd.automount]
+:systemd-cryptsetup: https://www.freedesktop.org/software/systemd/man/systemd-cryptsetup@.service.html[systemd-cryptsetup@.service]
+:systemd-mount-unit: https://www.freedesktop.org/software/systemd/man/systemd.mount.html[systemd.mount]
+:Ubuntu: https://ubuntu.com/[Ubuntu]
+
+If you run an encrypted Linux system, it's helpful to understand how the system handles mounting and decrypting filesystems.
+A Linux desktop user and tinkerer who runs on an encrypted root, might find this knowledge inevitably becomes _practical_.
+The general mechanics used for an encrypted root volume apply to encrypting other system volumes, such as an external hard drive for secure backups.
+While this tutorial won't delve in to details specific to mounting an encrypted root filesystem during boot, it does go through everything necessary to automatically mount and decrypt an external hard drive.
+
+== Tutorial
+
+This tutorial provides instructions for automatically mounting and decrypting encrypted filesystem volumes at the system level.
+To this end, the tutorial will automate mounting and decrypting a {Cryptsetup} encrypted volume residing on an external hard drive.
+A {Cryptsetup} encrypted volume on an external hard drive is required for this tutorial.
+One can be created by following the instructions in the post <<encrypt-an-external-disk-on-linux#,Encrypt an External Disk on Linux>>.
+This tutorial uses {Btrfs} specifically but applies to Linux filesystem in general.
+This tutorial assumes familiarity with Linux, the command-line, encryption, systemd, and filesystem mounting.
+The commands shown use the {fish-shell}, so some syntax may be incompatible if you use a different shell.
+The reference system is {elementary-OS} 5.1 which is based on {Ubuntu} 18.04.
+Let's go!
+
+. Plug in your external drive.
+
+. Locate the drive's device path with {lsblk}.
++
+[source,sh]
+----
+➜ lsblk
+NAME           MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+sda              8:0    0   1.8T  0 disk  
+├─sda1           8:1    0   976M  0 part  /boot
+└─sda2           8:2    0   1.8T  0 part  
+  └─sda2_crypt 253:0    0   1.8T  0 crypt /usr/local
+sdb              8:16   0 931.5G  0 disk  
+└─sdb1           8:17   0 931.5G  0 part  # <1>
+sr0             11:0    1  1024M  0 rom 
+----
+<1> Yup, that's the one.
+
+. Unlock the encrypted volume.
++
+[source,sh]
+----
+➜ sudo cryptsetup open /dev/sdb1 backup_crypt
+Enter passphrase for /dev/sdb1: 
+----
+
+. Mount the now decrypted volume.
++
+--
+[source,sh]
+----
+➜ sudo systemd-mount /dev/mapper/backup_crypt
+Started unit run-media-system-Private.mount for mount point: /run/media/system/Private
+----
+
+[NOTE]
+====
+The mount point here reflects the label of the Btrfs volume, which is "Private" in this case.
+====
+--
+
+. Create a Btrfs subvolume to hold backups of the root filesystem.
++
+[source,sh]
+----
+➜ sudo btrfs subvolume create /run/media/system/Private/root_backups
+Create subvolume '/run/media/system/Private/root_backups'
+----
+
+. Unmount the Btrfs filesystem.
++
+[source,sh]
+----
+➜ sudo systemd-umount /run/media/system/Private
+Stopped unit run-media-system-Private.mount for mount point: /run/media/system/Private
+----
+
+. Ensure that the standard systemd directory for Cryptsetup keyfiles exists.
++
+--
+[source,sh]
+----
+➜ sudo mkdir /etc/cryptsetup-keys.d
+----
+
+This directory is specified in the {systemd-cryptsetup} man page.
+--
+
+. Generate a new keyfile that will be used to decrypt the encrypted volume.
++
+--
+[source,sh]
+----
+➜ sudo dd if=/dev/urandom of=/etc/cryptsetup-keys.d/backup_crypt.key bs=1024 \
+  count=4
+4+0 records in
+4+0 records out
+4096 bytes (4.1 kB, 4.0 KiB) copied, 0.000453177 s, 9.0 MB/s
+----
+
+The keyfile should be named after the associated volume.
+--
+
+. Ensure that only _root_ can read this file.
++
+[source,sh]
+----
+➜ sudo chmod 0400 /etc/cryptsetup-keys.d/backup_crypt.key
+----
+
+. Add the keyfile to the device.
++
+[source,sh]
+----
+➜ sudo cryptsetup luksAddKey /dev/sdb1 /etc/cryptsetup-keys.d/backup_crypt.key
+Enter any existing passphrase: 
+----
+
+. Add an entry in {crypttab} for the device.
++
+--
+[source,sh]
+----
+➜ echo "backup_crypt UUID="(sudo blkid -o value -s UUID /dev/sdb1)" /etc/cryptsetup-keys.d/backup_crypt.key luks,noauto,nofail,discard" \
+  | sudo tee -a /etc/crypttab
+backup_crypt UUID=0cbab673-2b14-40c0-a1f2-522bc7ff7e18 /etc/cryptsetup-keys.d/backup_crypt.key luks,noauto,nofail,discard
+----
+
+crypttab is the equivalent of {fstab} for encrypted volumes.
+The {crypttab-nofail} option is necessary if you want your system to be able to boot without the external hard drive attached.
+To only decrypt the volume when it's required and not at boot or when attached, the {crypttab-noauto} option is included.
+The {crypttab-discard} option passes discard requests to the encrypted device, improving performance on SSD's but not without its own security implications.
+
+systemd will generate the {systemd-cryptsetup} unit `systemd-cryptsetup@backup_crypt.service` corresponding to this entry in crypttab.
+--
+
+. Create a suitable mount point under `/media`.
++
+[source,sh]
+----
+➜ sudo mkdir -p /media/system/backup
+----
+
+. To be on the safe side, restrict access to `/media/system` to the root user only.
++
+[source,sh]
+----
+➜ sudo chmod 0700 /media/system/backup
+----
+
+. Add an entry in {fstab} to mount the Btrfs subvolume with the appropriate mount options.
++
+--
+[source,sh]
+----
+➜ echo "/dev/mapper/backup_crypt /media/system/backup btrfs defaults,nofail,noauto,x-systemd.automount,noatime,autodefrag,compress=zstd,commit=120,subvol=root_backups 0 0" \
+  | sudo tee -a /etc/fstab
+----
+
+The {fstab-nofail} option removes the requirement that the drive be attached at boot time.
+With the options {fstab-noauto} and {fstab-x-systemd-automount}, systemd automatically mounts the drive on-demand.
+
+systemd will generate the {systemd-mount-unit} unit `media-system-backup.mount` and the {systemd-automount} unit `media-system-backup.automount` corresponding to this entry in fstab.
+--
+
+. Verify there aren't any errors in fstab.
++
+[source,sh]
+----
+➜ sudo findmnt --verify --verbose
+...
+/media/system/backup
+   [ ] target exists
+   [ ] VFS options: noatime
+   [ ] FS options: autodefrag,compress=zstd,commit=120,subvol=root_backups
+   [ ] userspace options: nofail,noauto,x-systemd.automount
+   [ ] source /dev/mapper/backup_crypt exists
+   [ ] FS type is btrfs
+
+0 parse errors, 0 errors, 4 warnings
+----
+
+. Lock the encrypted volume.
++
+[source,sh]
+----
+➜ sudo cryptsetup close backup_crypt
+----
+
+. Reload the changes in fstab and crypttab and generate the corresponding unit files.
++
+[source,sh]
+----
+➜ sudo systemctl daemon-reload
+----
+
+. Restart the Cryptsetup target in order to make sure that the volume isn't decrypted automatically.
++
+[source,sh]
+----
+➜ sudo systemctl restart cryptsetup.target
+----
+
+. Now verify that the encrypted volume has not been decrypted yet.
++
+--
+[source,sh]
+----
+➜ sudo systemctl status systemd-cryptsetup@backup_crypt.service
+● systemd-cryptsetup@backup_crypt.service - Cryptography Setup for backup_crypt
+   Loaded: loaded (/etc/crypttab; generated)
+   Active: inactive (dead)
+----
+
+The cryptsetup unit is marked _inactive_, so volume has not been decrypted yet.
+--
+
+. Test that new volume is automatically mounted when accessed by creating a new file under the mount point.
++
+[source,sh]
+----
+➜ sudo touch /media/system/backup/file
+----
+
+. You can now see that the volume has been decrypted because its cryptsetup target is active.
++
+--
+[source,sh]
+----
+➜ sudo systemctl status systemd-cryptsetup@backup_crypt.service
+● systemd-cryptsetup@backup_crypt.service - Cryptography Setup for backup_crypt
+   Loaded: loaded (/etc/crypttab; generated)
+   Active: active (exited) since Thu 2021-02-25 09:38:03 CST; 44s ago
+----
+
+[TIP]
+====
+You can also check the status of the Cryptsetup volume using `cryptsetup status`.
+
+[source,sh]
+----
+➜ sudo cryptsetup status backup_crypt
+/dev/mapper/backup_crypt is active and is in use.
+  type:    LUKS2
+  cipher:  aes-xts-plain64
+  keysize: 256 bits
+  key location: keyring
+  device:  /dev/sdb1
+  sector size:  512
+  offset:  8192 sectors
+  size:    1953447903 sectors
+  mode:    read/write
+  flags:   discards 
+----
+====
+--
+
+. Likewise, the decrypted Btrfs filesystem has been mounted automatically because its mount unit is now active.
++
+[source,sh]
+----
+➜ sudo systemctl status media-system-backup.mount
+● media-system-backup.mount - /media/system/backup
+   Loaded: loaded (/etc/fstab; generated)
+   Active: active (mounted) since Thu 2021-02-25 09:38:03 CST; 2min 1s ago
+    Where: /media/system/backup
+     What: /dev/mapper/backup_crypt
+----
+
+== Conclusion
+
+You should now understand the general flow for how systemd manages encrypted filesystems.
+Specifically, you learned how to configure an external drive to be decrypted with a keyfile on demand by adding the necessary entries to crypttab and fstab.
+You also have an example of what this can look like using Btrfs on the encrypted volume.
