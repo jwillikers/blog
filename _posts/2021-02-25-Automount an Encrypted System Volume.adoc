@@ -70,12 +70,12 @@ Enter passphrase for /dev/sdb1:
 [source,sh]
 ----
 ➜ sudo systemd-mount /dev/mapper/backup_crypt
-Started unit run-media-system-Private.mount for mount point: /run/media/system/Private
+Started unit run-media-system-System_Backups.mount for mount point: /run/media/system/System_Backups
 ----
 
 [NOTE]
 ====
-The mount point here reflects the label of the Btrfs volume, which is "Private" in this case.
+The mount point here reflects the label of the Btrfs volume, which is "System Backups" in this case.
 ====
 --
 
@@ -83,16 +83,16 @@ The mount point here reflects the label of the Btrfs volume, which is "Private" 
 +
 [source,sh]
 ----
-➜ sudo btrfs subvolume create /run/media/system/Private/root_backups
-Create subvolume '/run/media/system/Private/root_backups'
+➜ sudo btrfs subvolume create /run/media/system/System_Backups/root_backups
+Create subvolume '/run/media/system/System_Backups/root_backups'
 ----
 
 . Unmount the Btrfs filesystem.
 +
 [source,sh]
 ----
-➜ sudo systemd-umount /run/media/system/Private
-Stopped unit run-media-system-Private.mount for mount point: /run/media/system/Private
+➜ sudo systemd-umount /run/media/system/System_Backups
+Stopped unit run-media-system-System_Backups.mount for mount point: /run/media/system/System_Backups
 ----
 
 . Ensure that the standard systemd directory for Cryptsetup keyfiles exists.
@@ -154,33 +154,19 @@ The {crypttab-discard} option passes discard requests to the encrypted device, i
 systemd will generate the {systemd-cryptsetup} unit `systemd-cryptsetup@backup_crypt.service` corresponding to this entry in crypttab.
 --
 
-. Create a suitable mount point under `/media`.
-+
-[source,sh]
-----
-➜ sudo mkdir -p /media/system/backup
-----
-
-. To be on the safe side, restrict access to `/media/system` to the root user only.
-+
-[source,sh]
-----
-➜ sudo chmod 0700 /media/system/backup
-----
-
 . Add an entry in {fstab} to mount the Btrfs subvolume with the appropriate mount options.
 +
 --
 [source,sh]
 ----
-➜ echo "/dev/mapper/backup_crypt /media/system/backup btrfs defaults,nofail,noauto,x-systemd.automount,noatime,autodefrag,compress=zstd,commit=120,subvol=root_backups 0 0" \
+➜ echo "/dev/mapper/backup_crypt /run/media/system/System_Backups btrfs defaults,nofail,noauto,x-systemd.automount,noatime,autodefrag,compress=zstd,commit=120,subvol=root_backups 0 0" \
   | sudo tee -a /etc/fstab
 ----
 
 The {fstab-nofail} option removes the requirement that the drive be attached at boot time.
 With the options {fstab-noauto} and {fstab-x-systemd-automount}, systemd automatically mounts the drive on-demand.
 
-systemd will generate the {systemd-mount-unit} unit `media-system-backup.mount` and the {systemd-automount} unit `media-system-backup.automount` corresponding to this entry in fstab.
+systemd will generate the {systemd-mount-unit} unit `run-media-system-System_Backups.mount` and the {systemd-automount} unit `run-media-system-System_Backups.automount` corresponding to this entry in fstab.
 --
 
 . Verify there aren't any errors in fstab.
@@ -189,7 +175,7 @@ systemd will generate the {systemd-mount-unit} unit `media-system-backup.mount` 
 ----
 ➜ sudo findmnt --verify --verbose
 ...
-/media/system/backup
+/run/media/system/System_Backups
    [ ] target exists
    [ ] VFS options: noatime
    [ ] FS options: autodefrag,compress=zstd,commit=120,subvol=root_backups
@@ -239,7 +225,7 @@ The cryptsetup unit is marked _inactive_, so volume has not been decrypted yet.
 +
 [source,sh]
 ----
-➜ sudo touch /media/system/backup/file
+➜ sudo touch /run/media/system/System_Backups/file
 ----
 
 . You can now see that the volume has been decrypted because its cryptsetup target is active.
@@ -279,11 +265,11 @@ You can also check the status of the Cryptsetup volume using `cryptsetup status`
 +
 [source,sh]
 ----
-➜ sudo systemctl status media-system-backup.mount
-● media-system-backup.mount - /media/system/backup
+➜ sudo systemctl status run-media-system-System_Backups.mount
+● run-media-system-System_Backups.mount - /run/media/system/System_Backups
    Loaded: loaded (/etc/fstab; generated)
    Active: active (mounted) since Thu 2021-02-25 09:38:03 CST; 2min 1s ago
-    Where: /media/system/backup
+    Where: /run/media/system/System_Backups
      What: /dev/mapper/backup_crypt
 ----
 
