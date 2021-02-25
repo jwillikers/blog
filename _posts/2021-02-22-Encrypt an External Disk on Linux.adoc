@@ -146,11 +146,11 @@ udisks2::
 +
 [source,sh]
 ----
-➜ sudo mkfs -t btrfs -L Private /dev/dm-1
+➜ sudo mkfs -t btrfs -L "My Backups" /dev/dm-1
 btrfs-progs v4.15.1
 See http://btrfs.wiki.kernel.org for more information.
 
-Label:              Private
+Label:              My Backups
 UUID:               2eb01d94-9aa1-4bd1-8c99-950be806f449
 Node size:          16384
 Sector size:        4096
@@ -171,11 +171,11 @@ Cryptsetup::
 +
 [source,sh]
 ----
-➜ sudo mkfs -t btrfs -L Private /dev/mapper/MyUSB
+➜ sudo mkfs -t btrfs -L "My Backups" /dev/mapper/MyUSB
 btrfs-progs v4.15.1
 See http://btrfs.wiki.kernel.org for more information.
 
-Label:              Private
+Label:              My Backups
 UUID:               2eb01d94-9aa1-4bd1-8c99-950be806f449
 Node size:          16384
 Sector size:        4096
@@ -200,7 +200,7 @@ udisks2::
 [source,sh]
 ----
 ➜ udisksctl mount -b /dev/mapper/MyUSB -o noatime
-Mounted /dev/dm-1 at /run/media/jordan/Private
+Mounted /dev/dm-1 at /run/media/jordan/My_Backups
 ----
 
 [TIP]
@@ -216,7 +216,7 @@ Cryptsetup::
 [source,sh]
 ----
 ➜ sudo systemd-mount -o noatime,autodefrag,compress=zstd /dev/mapper/MyUSB
-Started unit run-media-system-Private.mount for mount point: /run/media/system/Private
+Started unit run-media-system-System_Backups.mount for mount point: /run/media/system/System_Backups
 ----
 
 [NOTE]
@@ -239,8 +239,8 @@ Cryptsetup::
 +
 [source,sh]
 ----
-➜ sudo systemd-umount /run/media/system/Private
-Stopped unit run-media-system-Private.mount for mount point: /run/media/system/Private
+➜ sudo systemd-umount /run/media/system/My_Backups
+Stopped unit run-media-system-System_Backups.mount for mount point: /run/media/system/System_Backups
 ----
 
 . Use the `close` subcommand to remove the existing device mapping lock the encrypted device.
@@ -275,14 +275,14 @@ The following instruction demonstrate how to use GIO to easily access your newly
 Enter a passphrase to unlock the volume
 The passphrase is needed to access encrypted data on WD easystore 25FC (1.0 TB Hard Disk).
 Password: 
-Mounted /dev/sdb1 at /run/media/jordan/Private
+Mounted /dev/sdb1 at /run/media/jordan/My_Backups
 ----
 
 . Unmount and lock the volume with the _mount_ command, the `-u` flag, and the mount point.
 +
 [source,sh]
 ----
-➜ gio mount -u /run/media/jordan/Private
+➜ gio mount -u /run/media/jordan/My_Backups
 ----
 
 To store the volume's passphrase in your keyring, the easiest method is to open the device in the Files application.
