@@ -93,7 +93,7 @@ The operation has completed successfully.
 --
 [source,sh]
 ----
-➜ sudo cryptsetup luksFormat --type luks2 /dev/sdb1
+➜ sudo cryptsetup luksFormat --type luks2 --label BlackWDEasyStore /dev/sdb1
 
 WARNING!
 ========
