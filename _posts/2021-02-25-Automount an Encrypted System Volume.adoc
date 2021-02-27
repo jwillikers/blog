@@ -32,7 +32,7 @@ This tutorial provides instructions for automatically mounting and decrypting en
 To this end, the tutorial will automate mounting and decrypting a {Cryptsetup} encrypted volume residing on an external hard drive.
 A {Cryptsetup} encrypted volume on an external hard drive is required for this tutorial.
 One can be created by following the instructions in the post <<encrypt-an-external-disk-on-linux#,Encrypt an External Disk on Linux>>.
-This tutorial uses {Btrfs} specifically but applies to Linux filesystem in general.
+This tutorial uses {Btrfs} specifically but applies to Linux filesystems in general.
 This tutorial assumes familiarity with Linux, the command-line, encryption, systemd, and filesystem mounting.
 The commands shown use the {fish-shell}, so some syntax may be incompatible if you use a different shell.
 The reference system is {elementary-OS} 5.1 which is based on {Ubuntu} 18.04.
