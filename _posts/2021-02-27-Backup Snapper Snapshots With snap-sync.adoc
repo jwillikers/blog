@@ -64,12 +64,15 @@ snap-sync doesn't handle cleanup yet so you'll have to prune back snapshots on t
   {gsub(/"/, "", $(NF)); system("wget -qLP ~/Downloads/ " $(NF))}'
 ----
 
-. Verify the tarball's signature, automatically importing the GPG as necessary.
+. Verify the tarball's signature.
 +
+--
+The command here does this with the added convenience of importing the signing key for you if you don't already have it.
+
 [source,sh]
 ----
-➜ gpg --verify --auto-key-retrieve --keyserver keyserver.ubuntu.com snap-sync-0.7.tar.gz.sig
-gpg: assuming signed data in 'snap-sync-0.7.tar.gz'
+➜ gpg --verify --auto-key-retrieve --keyserver keyserver.ubuntu.com ~/Downloads/snap-sync-*.tar.gz.sig
+gpg: assuming signed data in '/home/jordan/Downloads/snap-sync-0.7.tar.gz'
 gpg: Signature made Fri 29 Jan 2021 09:19:24 PM CST
 gpg:                using EDDSA key F7B28C61944FE30DABEEB0B01070BCC98C18BD66
 gpg: requesting key 1070BCC98C18BD66 from hkp server keyserver.ubuntu.com
@@ -86,6 +89,10 @@ gpg: WARNING: This key is not certified with a trusted signature!
 gpg:          There is no indication that the signature belongs to the owner.
 Primary key fingerprint: F7B2 8C61 944F E30D ABEE  B0B0 1070 BCC9 8C18 BD66
 ----
+
+`Good signature` in the output signifies that the signature is indeed valid which indicates that the tarball has not been unduly tampered with.
+Assuming, of course, that no unauthorized persons have managed to get their hands on the private signing key.
+--
 
 . Unpack the tarball.
 +
