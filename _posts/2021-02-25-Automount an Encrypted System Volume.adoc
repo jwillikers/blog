@@ -161,6 +161,7 @@ systemd will generate the {systemd-cryptsetup} unit `systemd-cryptsetup@backup_c
 ----
 ➜ echo "/dev/mapper/backup_crypt /run/media/system/System_Backups btrfs defaults,nofail,noauto,x-systemd.automount,noatime,autodefrag,compress=zstd,commit=120,subvol=root_backups 0 0" \
   | sudo tee -a /etc/fstab
+/dev/mapper/backup_crypt /run/media/system/System_Backups btrfs defaults,nofail,noauto,x-systemd.automount,noatime,autodefrag,compress=zstd,commit=120,subvol=root_backups 0 0
 ----
 
 The {fstab-nofail} option removes the requirement that the drive be attached at boot time.
