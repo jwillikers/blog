@@ -1,0 +1,234 @@
+= Backup Snapper Snapshots With snap-sync
+:page-layout:
+:page-category: Disks
+:page-tags: [backups, Btrbk, Btrfs, elementary, encryption, Linux, snap-sync, Snapper, snapshots, systemd, Ubuntu]
+:AccuracySec: https://www.freedesktop.org/software/systemd/man/systemd.timer.html#AccuracySec=[AccuracySec]
+:Bash: https://www.gnu.org/software/bash/[Bash]
+:Btrbk: https://github.com/digint/btrbk[Btrbk]
+:Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
+:Cryptsetup: https://gitlab.com/cryptsetup/cryptsetup[Cryptsetup]
+:elementary-OS: https://elementary.io/[elementary OS]
+:fish-shell: https://fishshell.com/[fish shell]
+:fstab: https://manpages.ubuntu.com/manpages/focal/man8/fsck.8.html[fstab(5)]
+:Persistent: https://www.freedesktop.org/software/systemd/man/systemd.timer.html#Persistent=[Persistent]
+:snap-sync: https://github.com/wesbarnett/snap-sync[snap-sync]
+:Snapper: http://snapper.io/[Snapper]
+:systemd: https://systemd.io/[systemd]
+:systemd-service: https://www.freedesktop.org/software/systemd/man/systemd.service.html[systemd.service]
+:systemd-timer: https://www.freedesktop.org/software/systemd/man/systemd.timer.html[systemd.timer]
+:Ubuntu: https://ubuntu.com/[Ubuntu]
+
+In <<btrfs-snapshot-management-with-snapper#,Btrfs Snapshot Management With Snapper>>, the process is described for automating {Btrfs} snapshots with {Snapper}.
+Why stop there when you can use these snapshots for incremental backups?
+This isn't the most difficult thing to script yourself, but why do more work than you have to?
+The {Bash} script {snap-sync} makes it easy to incrementally back up Snapper snapshots to another hard drive or a remote machine.
+
+[NOTE]
+====
+{Btrbk} already has this capability built-in but Snapper does not, though this may come some day in the future given https://github.com/openSUSE/snapper/issues/368[Snapper issue #368 - Incremental backups].
+If you don't need Snapper and want incremental backups of Btrfs snapshots, checkout Btrbk!
+====
+
+== Tutorial
+
+Bundled here is a lovely tutorial on how to use snap-sync to backup your Snapper snapshots to an external hard drive.
+Building on previous blog posts, this tutorial will demonstrate how to do this at the system level.
+
+It's assumed that you have a Snapper configuration for the system's root filesystem.
+If you haven't set this up, refer to <<btrfs-snapshot-management-with-snapper#,Btrfs Snapshot Management With Snapper>>.
+You will need a {Cryptsetup} encrypted volume on an external hard drive.
+Backing up to an encrypted volume protects your backups in case something happens to your external drive.
+You can setup an encrypted volume on an external hard drive by following the steps in the post <<encrypt-an-external-disk-on-linux#,Encrypt an External Disk on Linux>>.
+Furthermore, this post builds on the work in <<automount-an-encrypted-system-volume#,Automount an Encrypted System Volume>>, which automates the process of unlocking and mounting the encrypted volume.
+For the purposes of this tutorial, we assume the configuration from these previous blog posts.
+The encrypted volume on the external hard drive is `/dev/sdb1`.
+The system is configured to automatically unlock the encrypted volume and mount its Btrfs subvolume `root_backups` at `/run/media/system/System_Backups`.
+It's also recommended to mount the Btrfs filesystem with zstd compression and automatic defragmentation.
+See <<btrfs-mount-options#,Btrfs Mount Options>> and <<adjust-mount-options#,Adjust Mount Options>> for details on the subject.
+
+The reference system is {elementary-OS} 5.1 based on {Ubuntu} 18.04.
+For this tutorial, you should understand the command-line on Linux, Btrfs, filesystems, Cryptsetup, {systemd}, and Snapper.
+As a matter of preference, the commands here use the {fish-shell}'s syntax.
+
+[NOTE]
+====
+snap-sync doesn't handle cleanup yet so you'll have to prune back snapshots on the backup drive yourself for now, or use a more robust tool like {Btrbk}.
+====
+
+. Download the latest snap-sync release.
++
+[source,sh]
+----
+➜ wget -q -nv -O - https://api.github.com/repos/wesbarnett/snap-sync/releases/latest \
+  | awk -F': ' '/browser_download_url/ && /snap-sync-[0-9]\.[0-9]\.tar\.gz/ \
+  {gsub(/"/, "", $(NF)); system("wget -qLP ~/Downloads/ " $(NF))}'
+----
+
+. Verify the tarball's signature, automatically importing the GPG as necessary.
++
+[source,sh]
+----
+➜ gpg --verify --auto-key-retrieve --keyserver keyserver.ubuntu.com snap-sync-0.7.tar.gz.sig
+gpg: assuming signed data in 'snap-sync-0.7.tar.gz'
+gpg: Signature made Fri 29 Jan 2021 09:19:24 PM CST
+gpg:                using EDDSA key F7B28C61944FE30DABEEB0B01070BCC98C18BD66
+gpg: requesting key 1070BCC98C18BD66 from hkp server keyserver.ubuntu.com
+gpg: key 1070BCC98C18BD66: 1 signature not checked due to a missing key
+gpg: key 1070BCC98C18BD66: 3 signatures reordered
+gpg: key 1070BCC98C18BD66: public key "Wes Barnett <wes@barnett.science>" imported
+gpg: marginals needed: 3  completes needed: 1  trust model: pgp
+gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
+gpg: Total number processed: 1
+gpg:               imported: 1
+gpg: Good signature from "Wes Barnett <wes@barnett.science>" [unknown]
+gpg:                 aka "Wes Barnett <wes@wbarnett.us>" [unknown]
+gpg: WARNING: This key is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+Primary key fingerprint: F7B2 8C61 944F E30D ABEE  B0B0 1070 BCC9 8C18 BD66
+----
+
+. Unpack the tarball.
++
+[source,sh]
+----
+➜ tar -C ~/Downloads -xvf ~/Downloads/snap-sync-*.tar.gz
+----
+
+. Install snap-sync.
++
+[source,sh]
+----
+➜ sudo make -C ~/Downloads/snap-sync install
+----
+
+. Remove the snap-sync files since they are no longer needed.
++
+[source,sh]
+----
+➜ rm -rf ~/Downloads/snap-sync*
+----
+
+. Plug in the external hard drive.
+
+. Trigger systemd to unlock and mount the encrypted volume.
++
+--
+[source,sh]
+----
+➜ sudo systemctl start run-media-system-System_Backups.mount
+----
+
+This systemd mount unit comes from the {fstab} entry added in <<automount-an-encrypted-system-volume#,Automount an Encrypted System Volume>>.
+--
+
+. Sync the initial snapshot to the external hard drive.
++
+--
+snap-sync is run manually here because it needs to be configured on the first run of any combination of Snapper config and backup location.
+Subsequent runs using the same configuration and destination won't require user input, allowing snap-sync to be run as a background service.
+The initial sync operation copies the entire root subvolume as part of the first snapshot.
+After this, it will only send the data that has changed since the previous sync operation.
+Some scripting in the command below determines the UUID of the Btrfs filesystem and the id of the subvolume where backups will stored.
+
+[source,sh]
+----
+➜ sudo snap-sync -c root \
+  --UUID (sudo blkid -o value -s UUID /dev/mapper/backup_crypt) \
+  --subvolid (sudo btrfs subvolume show /run/media/system/System_Backups \
+    | awk -F ":[ \t]*" '/Subvolume ID:/ {gsub(//,""); print $2}')
+
+snap-sync version 0.7, Copyright (C) 2016-2021 Wes Barnett
+snap-sync comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions. See the license for more information. 
+
+
+You selected the disk with uuid=2eb01d94-9aa1-4bd1-8c99-950be806f449, subvolid=257.
+The disk is mounted at '/run/media/system/System_Backups'.
+
+No backups have been performed for 'root' on this disk.
+Enter name of subvolume to store backups, relative to /run/media/system/System_Backups (to be created if not existing): 
+This will be the initial backup for snapper configuration 'root' to this disk. This could take awhile.
+Creating new local snapshot for 'root' configuration...
+Will backup //.snapshots/204/snapshot to /run/media/system/System_Backups//root/204//snapshot
+Proceed with backup of 'root' configuration [Y/n]? y
+
+Performing backups...
+
+Sending first snapshot for 'root' configuration...
+At subvol /.snapshots/204/snapshot
+Tagging local snapshot as latest backup for 'root' configuration...
+
+Done!
+----
+--
+
+. Configure a {systemd-service} to backup the root filesystem with snap-sync.
++
+--
+[source,systemd]
+./etc/systemd/system/snap-sync-root.service
+----
+[Unit]
+Description=Backup Snapper snapshots of the root filesystem
+BindsTo=media-run-media-system-System_Backups.mount
+After=media-run-media-system-System_Backups.mount
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/snap-sync -c root --UUID 2eb01d94-9aa1-4bd1-8c99-950be806f449 --subvolid 257 --noconfirm --quiet
+----
+
+This is a fairly straight-forward service unit.
+Of note are the `BindsTo` and `After` keys, which tell systemd that this service should only run while `/run/media/system/System_Backups` is mounted.
+If you yank the drive's connection, the service won't keep running.
+The `UUID` and `subvolid`, taken from the output of the initial snap-sync run, are hard-coded here, and all notifications and prompts are disabled.
+--
+
+. Set up a {systemd-timer} to run the snap-sync backup service every hour.
++
+--
+[source,systemd]
+./etc/systemd/system/snap-sync-root.timer
+----
+[Unit]
+Description=Backup Snapper snapshots of the root filesystem every hour
+
+[Timer]
+OnCalendar=hourly
+AccuracySec=15min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+----
+
+This timer will run the snap-sync systemd service unit configured in the previous step.
+It runs every hour within a 15 minute margin according to the value of `{AccuracySec}`.
+This adds a bit of flexibility for how the timer is scheduled, which can reduce CPU wake-ups and save power.
+If the service can't be run for any reason when the timer fires, the `{Persistent}` option ensures that the service will be run immediately when next possible.
+This comes in handy when backups can't happen while the drive is unplugged or the computer is powered down.
+Once the drive is plugged in or the computer is booted, the latest snapshot is synced to the backup drive.
+--
+
+. Start the timer now and automatically at boot.
++
+[source,sh]
+----
+➜ sudo systemctl enable --now snap-sync-root.timer
+Created symlink /etc/systemd/system/timers.target.wants/snap-sync-root.timer → /etc/systemd/system/snap-sync-root.timer.
+----
+
+. Finally, feel free to check the status of the timer with `systemctl status`.
++
+[source,sh]
+----
+➜ sudo systemctl status snap-sync-root.timer
+----
+
+== Conclusion
+
+You should now have examples of everything you need to get up-and-running with automated Btrfs snapshots and backups to an encrypted, external hard drive.
+From here, it should be trivial to configure snapshots for more than just the root filesystem.
+If you want to configure backups over the network, that shouldn't be too hard with snap-sync, either.
