@@ -24,7 +24,7 @@ For older Ubuntu LTS releases, the Kubic PPA can be used to get Podman which is 
 
 == Tutorial
 
-This tutorial provides the necessary steps to install Podman on {elementary-OS} 5.1 and {Ubuntu} 18.04 as well as the steps to enable the {Btrfs} and {ZFS} storage drivers.
+This tutorial provides the necessary steps to install Podman on {elementary-OS} 5.1 and {Ubuntu} 18.04.
 It is assumed that you are familiar with Linux, Ubuntu, and the command-line.
 
 . Add the Kubic repository for Podman to the system's sources list.
@@ -73,54 +73,13 @@ deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stab
 ➜ systemctl --user restart dbus
 ----
 
-=== Btrfs / ZFS
-
-My systems use Btrfs, so I also enable the Btrfs storage driver for Podman.
-This permits Podman to take advantage of Btrfs-specific features.
-For anyone wanting to take advantage of the ZFS driver, the process is just the same!
-
-. Create the configuration directory.
-+
-[source,sh]
-----
-➜ mkdir -p ~/.config/containers
-----
-
-. Set the storage driver in the storage configuration file.
-
-Btrfs::
-+
-[source,ini]
-.~/.config/containers/storage.conf
-----
-[storage]
-driver = "btrfs"
-----
-
-ZFS::
-+
-[source,ini]
-.~/.config/containers/storage.conf
-----
-[storage]
-driver = "zfs"
-----
-
-. Reset Podman's storage.
-+
---
-[WARNING]
+[TIP]
 ====
-This will delete all existing containers and images.
+If you're using {Btrfs} or {ZFS}, now is a good time to switch over to appropriate driver.
+Just follow the simple steps in <<podman-with-btrfs-and-zfs#,Podman With Btrfs and ZFS>>.
 ====
-
-[source,sh]
-----
-➜ podman system reset
-----
---
 
 == Conclusion
 
-You should now have the power of Podman available to you plus the power of either Btrfs or ZFS.
+You should now have the power of Podman available.
 When you want to use Podman, just use the same Docker command-line but substitute `podman` for `docker`.

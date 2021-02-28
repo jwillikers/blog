@@ -1,0 +1,120 @@
+= Podman With Btrfs and ZFS
+:page-layout:
+:page-category: Disks
+:page-tags: [Btrfs, containers, CoW, filesystem, Linux, Podman, ZFS]
+:Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
+:containers-storage-conf: https://github.com/containers/storage/blob/master/docs/containers-storage.conf.5.md[containers-storage.conf(5)]
+:Podman: https://podman.io/[Podman]
+:podman-issue-9574: https://github.com/containers/podman/issues/9547[Podman issue #9574]
+:podman-rootless-tutorial-storage-conf: https://github.com/containers/podman/blob/master/docs/tutorials/rootless_tutorial.md#storageconf[storage.conf]
+:podman-system-reset: https://docs.podman.io/en/latest/markdown/podman-system-reset.1.html[podman-system-reset(1)]
+:ZFS: https://openzfs.org/wiki/Main_Page[ZFS]
+
+{Podman} has storage backends for both {Btrfs} and {ZFS}.
+Using these backends allows Podman to take full advantage of the underlying _CoW_ filesystem.
+This is a quick guide on enabling these storage drivers.
+
+== Enable the Btrfs and ZFS Storage Drivers for Podman
+
+Below are the necessary steps to enable the {Btrfs} and {ZFS} storage drivers.
+It is assumed that you are familiar with Linux, Podman, and the command-line and that you're running on a Linux system with Podman installed.
+Instructions are provided for both rootless and root configurations.
+
+. Reset Podman's storage with {podman-system-reset} before changing the storage driver.
++
+--
+[WARNING]
+====
+This will delete all existing containers and images.
+====
+
+rootless::
++
+[source,sh]
+----
+➜ podman system reset
+----
+
+root::
++
+[source,sh]
+----
+➜ sudo podman system reset
+----
+--
+
+. Set the storage backend in {containers-storage-conf}.
+To set the storage driver for containers run as root, use the file `/etc/containers/storage.conf`.
+For a user running rootless containers, use `~/.config/containers/storage.conf`.footnote:[To be accurate, the user's config file is located at `$XDG_CONFIG_HOME/containers/storage.conf` when `XDG_CONFIG_HOME` is set but otherwise resides at the aforementioned location.]
++
+[NOTE]
+====
+Certain configuration options are inherited by rootless configurations from `/etc/containers/storage.conf` while others are not.
+For details see the {podman-rootless-tutorial-storage-conf} section in Podman's rootless tutorial.
+For some reason, the storage driver configured in `/etc/containers/storage.conf` is not inherited by rootless configurations even though by all appearances it should be.
+I've opened {podman-issue-9574} to determine the intended behavior.
+Regarding the current behavior, changing the storage driver in the system configuration will have no effect on users' rootless configurations.
+So, configure the storage driver for each independently.
+====
+
+rootless:: When dealing with user configuration, you'll need to create the `~/.config/containers/` directory first.
++
+[source,sh]
+----
+➜ mkdir -p ~/.config/container
+----
+
+Btrfs:::
++
+[source,toml]
+.~/.config/containers/storage.conf
+----
+[storage]
+
+driver = "btrfs"
+----
+
+ZFS:::
++
+[source,toml]
+.~/.config/containers/storage.conf
+----
+[storage]
+
+driver = "zfs"
+----
+
+root::
+Btrfs:::
++
+[source,toml]
+./etc/containers/storage.conf
+----
+[storage]
+
+driver = "btrfs"
+----
+
+ZFS:::
++
+[source,toml]
+./etc/containers/storage.conf
+----
+[storage]
+
+driver = "zfs"
+----
+
+From here, you can configure various driver-specific options for either Btrfs or ZFS as defined in {containers-storage-conf}.
+The Btrfs driver doesn't have a `mountopt` key for controlling mount options.
+This owes to the fact that Podman creates _nested_ Btrfs subvolumes, which inherit the mount options of parent subvolumes.
+Since my user's home directory is its own top-level subvolume mounted in fstab, the mount options used for it are inherited by my rootless containers.
+These options include `autodefrag`, `compress=zstd`, and `noatime`, all of which I would recommend for your running containers.
+You can even go so far as to create dedicated, top-level subvolumes for your root and rootless containers to fine-tune the mount options.
+To learn more about Btrfs mount options and layouts, see <<btrfs-mount-options#,Btrfs Mount Options>> and <<btrfs-layout#,Btrfs Layout>>.
+
+== Conclusion
+
+You have combined the ultimate powers of Podman and Btrfs or ZFS.
+World domination is that much closer.
+Enjoy!
