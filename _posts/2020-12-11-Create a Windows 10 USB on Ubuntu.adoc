@@ -102,7 +102,7 @@ Just know that it does indeed wipe the existing MBR and GPT partitions before cr
 +
 [source,sh]
 ----
-➜ mkntfs -QL Windows10 /dev/sdb1
+➜ sudo mkntfs -QL Windows10 /dev/sdb1
 Cluster size has been automatically set to 4096 bytes.
 Creating NTFS volume structures.
 mkntfs completed successfully. Have a nice day.
