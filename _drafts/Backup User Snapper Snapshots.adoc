@@ -1,0 +1,209 @@
+= Backup User Snapper Snapshots
+:page-layout:
+:page-category: Disks
+:page-tags: [backups, Btrbk, Btrfs, elementary, Linux, snap-sync, Snapper, snapshots, Ubuntu]
+:arch-wiki-snapper-change-frequencies: https://wiki.archlinux.org/index.php/snapper#Change_snapshot_and_cleanup_frequencies[Change snapshot and cleanup frequencies]
+:bash: https://www.gnu.org/software/bash/[Bash]
+:btrbk: https://github.com/digint/btrbk[Btrbk]
+:btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
+:btrfs-maintenance-toolbox: https://github.com/kdave/btrfsmaintenance[Btrfs maintenance toolbox]
+:btrfs-wiki-faq: https://btrfs.wiki.kernel.org/index.php/FAQ[Btrfs Wiki FAQ]
+:Cryptsetup: https://gitlab.com/cryptsetup/cryptsetup[Cryptsetup]
+:elementary-os: https://elementary.io/[elementary OS]
+:fedora: https://getfedora.org/[Fedora]
+:flat-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Flat[flat layout]
+:fish-shell: https://fishshell.com/[fish shell]
+:fstab: https://manpages.ubuntu.com/manpages/focal/man8/fsck.8.html[fstab(5)]
+:mlocate: http://manpages.ubuntu.com/manpages/bionic/en/man1/mlocate.1.html[mlocate(1)]
+:nested-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Nested[nested layout]
+:recommended-partitioning-scheme: https://docs.fedoraproject.org/en-US/fedora/f33/install-guide/install/Installing_Using_Anaconda/#sect-installation-gui-manual-partitioning-recommended[Recommended Partitioning Scheme]
+:snap-sync: https://github.com/wesbarnett/snap-sync[snap-sync]
+:snapper: http://snapper.io/[Snapper]
+:snapper-gui: https://github.com/ricardomv/snapper-gui[snapper-gui]
+:systemd: https://systemd.io/[systemd]
+:tuning-periodic-snapshotting: https://github.com/kdave/btrfsmaintenance#tuning-periodic-snapshotting[Tuning Periodic Snapshotting]
+:ubuntu: https://opensource.org/licenses/gpl-license[Ubuntu]
+:updatedbconf: http://manpages.ubuntu.com/manpages/xenial/en/man5/updatedb.conf.5.html[updatedb.conf(5)]
+
+Backups are a good thing.
+Who doesn't like having a backup when things go wrong?
+While backups of user data can be accomplished at the system-level, there are many instances when a user might want to be in control of her own data.
+This requires her to manage her own backups, but how d
+
+In a previous post, <<btrfs-snapshot-management-with-snapper#,Btrfs Snapshot Management With Snapper>>, I went through the process of automating {btrfs} snapshots with {snapper}.
+My ambitions go further than just that.
+Backups.
+I would very much like to have these snapshots used to incrementally backup my data to an external hard drive.
+While {btrbk} has this feature built-in, Snapper does not.
+This may come some day in the future given https://github.com/openSUSE/snapper/issues/368[Snapper issue #368 - Incremental backups].
+This isn't the most difficult thing to script yourself, but why do more work than you have to?
+The {bash} script {snap-sync} just does this.
+
+== Tutorial
+
+Bundled here is a lovely tutorial on how to use snap-sync to backup your Snapper snapshots to an external hard drive.
+The backups will, of course, be encrypted on the disk using {Cryptsetup}.
+This tutorial will demonstrate how to do this with `root` permissions, however this is not desirable when a user wants to backup her own snapshots herself.
+Eventually, this should be achievable, but currently {snap-sync} must be run as root.
+The reference system is running {elementary-os} 5.1.
+For this tutorial, you should understand the command-line on Linux, Btrfs, filesystems, Cryptsetup, {systemd}, and Snapper.
+As a matter of preference, the commands here use the {fish-shell}'s syntax.
+It's assumed that you have configured Snapper to create snapshots of the subvolumes that are backed up in these examples.
+If you haven't, please refer to <<btrfs-snapshot-management-with-snapper#,Btrfs Snapshot Management With Snapper>> before proceeding.
+
+=== Preparation
+
+<<encrypt-an-external-disk-on-linux#,Encrypt an External Disk on Linux>>
+
+<<install-udisks2-from-source#,Install udisks2 From Source>>
+
+<<adjust-mount-options#,Adjust Mount Options>>
+
+=== Install
+
+=== System
+
+[source,systemd]
+./etc/systemd/system/snap-sync-jordan.service
+----
+[Unit]
+Description=Backup Jordan's Snapper snapshots
+BindsTo=media-jordan-backup.mount
+After=media-jordan-backup.mount
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/snap-sync -c home_jordan --UUID c897ea38-bb15-4476-bd3b-fac121c342f1 --subvolid 496 --noconfirm --quiet
+----
+
+[source,systemd]
+./etc/systemd/system/snap-sync-jordan.timer
+----
+[Unit]
+Description=Backup Jordan's Snapper snapshots hourly
+
+[Timer]
+OnCalendar=hourly
+AccuracySec=15min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+----
+
+. Start the systemd timer.
++
+[source,sh]
+----
+➜ sudo systemctl enable --now snap-sync-jordan.timer
+Created symlink /etc/systemd/system/timers.target.wants/snap-sync-jordan.timer → /etc/systemd/system/snap-sync-jordan.timer.
+----
+
+. Check the status of the timer with the `status` subcommand.
++
+[source,sh]
+----
+➜ sudo systemctl status snap-sync-jordan.timer
+----
+
+=== User
+
+// todo Automount!
+
+// todo 
+
+. Find the Systemd mount unit.
++
+[source,sh]
+----
+➜ systemctl --user list-units -t mount
+UNIT                           LOAD   ACTIVE SUB     DESCRIPTION              
+-.mount                        loaded active mounted Root Mount               
+\x2esnapshots.mount            loaded active mounted /.snapshots              
+boot.mount                     loaded active mounted /boot                    
+dev-hugepages.mount            loaded active mounted /dev/hugepages           
+dev-mqueue.mount               loaded active mounted /dev/mqueue              
+home.mount                     loaded active mounted /home                    
+opt.mount                      loaded active mounted /opt                     
+proc-sys-fs-binfmt_misc.mount  loaded active mounted /proc/sys/fs/binfmt_misc 
+root.mount                     loaded active mounted /root                    
+run-media-jordan-My_Backups.mount loaded active mounted /run/media/jordan/My_Backups
+run-user-1001-doc.mount        loaded active mounted /run/user/1001/doc       
+run-user-1001-gvfs.mount       loaded active mounted /run/user/1001/gvfs      
+run-user-1001.mount            loaded active mounted /run/user/1001           
+srv.mount                      loaded active mounted /srv                     
+swap.mount                     loaded active mounted /swap                    
+sys-fs-fuse-connections.mount  loaded active mounted /sys/fs/fuse/connections 
+sys-kernel-config.mount        loaded active mounted /sys/kernel/config       
+sys-kernel-debug.mount         loaded active mounted /sys/kernel/debug        
+tmp-.mount_jetbraf0pNsi.mount  loaded active mounted /tmp/.mount_jetbraf0pNsi 
+tmp-.mount_Nextcljn7C82.mount  loaded active mounted /tmp/.mount_Nextcljn7C82 
+tmp-.mount_StretcNgku1T.mount  loaded active mounted /tmp/.mount_StretcNgku1T 
+tmp.mount                      loaded active mounted /tmp                     
+usr-local.mount                loaded active mounted /usr/local               
+var.mount                      loaded active mounted /var                     
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+
+24 loaded units listed. Pass --all to see loaded but inactive units, too.
+To show all installed unit files use 'systemctl list-unit-files'.
+----
+
+[source,systemd]
+.~/.config/systemd/user/snap-sync-home.service
+----
+[Unit]
+Description=Backup Jordan's Snapper snapshots
+BindsTo=run-media-jordan-backup.mount
+After=run-media-jordan-backup.mount
+
+// depends:
+gvfs-udisks2-volume-monitor.service
+gnome-session.service
+gnome-keyring.service?
+default.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/snap-sync -c home_jordan --UUID c897ea38-bb15-4476-bd3b-fac121c342f1 --subvolid 496 --noconfirm --quiet
+
+[Install]
+WantedBy=default.target
+----
+
+[source,systemd]
+.~/.config/systemd/user/snap-sync-home.timer
+----
+[Unit]
+Description=Backup Jordan's Snapper snapshots hourly
+
+[Timer]
+OnCalendar=hourly
+AccuracySec=15min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+----
+
+. Start the systemd timer.
++
+[source,sh]
+----
+➜ systemctl --user enable --now snap-sync-home.timer
+----
+
+. Check the status of the timer with the `status` subcommand.
++
+[source,sh]
+----
+➜ systemctl --user status snap-sync-home.timer
+----
+
+== Conclusion
+

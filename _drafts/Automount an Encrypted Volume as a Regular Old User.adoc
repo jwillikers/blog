@@ -1,0 +1,183 @@
+= Automount an Encrypted Volume as a Regular Old User
+:page-layout:
+:page-category: Disks
+:page-tags: [automount, Btrfs, Cryptsetup, elementary, encryption, GIO, Linux, mount, systemd, Ubuntu, udev, udevil, udisks2]
+:Bash: https://www.gnu.org/software/bash/[Bash]
+:Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
+:Cryptsetup: https://gitlab.com/cryptsetup/cryptsetup[Cryptsetup]
+:elementary-OS: https://elementary.io/[elementary OS]
+:flat-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Flat[flat layout]
+:fish-shell: https://fishshell.com/[fish shell]
+:fstab: https://manpages.ubuntu.com/manpages/bionic/man5/fstab.5.html[fstab(5)]
+:GIO: https://developer.gnome.org/gio/stable/[GIO]
+:GNOME: https://www.gnome.org/[GNOME]
+:GNOME-Keyring: https://wiki.gnome.org/Projects/GnomeKeyring[GNOME Keyring]
+:GTK: https://www.gtk.org/[GTK]
+:systemd: https://systemd.io/[systemd]
+:Ubuntu: https://ubuntu.com/[Ubuntu]
+:udev: https://manpages.ubuntu.com/manpages/bionic/en/man7/udev.7.html[udev(7)]
+:udevadm: https://manpages.ubuntu.com/manpages/bionic/man8/udevadm.8.html[udevadm(8)]
+:udevil: https://ignorantguru.github.io/udevil/[udevil]
+:udisks2: http://storaged.org/doc/udisks2-api/latest/[udisks2]
+:udisks2-mount-options: http://storaged.org/doc/udisks2-api/latest/mount_options.html[udisks2 Mount Options]
+:udisksctl: https://manpages.ubuntu.com/manpages/bionic/en/man1/udisksctl.1.html[udisksctl(1)]
+
+Automatically mounting an encrypted volume at the system level is completely different at the user level.
+{systemd}'s convenient automount capability isn't exposed to normal users, and while a keyfile in a protected system directory can be secure, storing one in your home directory probably isn't a good idea.
+So, how does the un-elevated user automate mounting and decrypting their own filesystem volumes?
+I'm so glad you asked because I've been hard at work putting the pieces together.
+Read on to learn how.
+
+== Tutorial
+
+This tutorial provides instructions for automatically mounting and decrypting an encrypted volume as a standard user.
+This is accomplished by utilizing {udisks2}, {GIO}, {GNOME-Keyring}, and a custom shell script.
+
+A {Cryptsetup} encrypted volume on an external hard drive is required for this tutorial.
+One can be created by following the instructions in the post <<encrypt-an-external-disk-on-linux#,Encrypt an External Disk on Linux>>.
+
+This tutorial uses {Btrfs} specifically but applies to Linux filesystems in general.
+The Btrfs mount options `autodefrag` and `compress=zstd` are used for the Btrfs filesystem.
+To control the default and allowed mount options for a user, refer to <<adjust-mount-options#Changing-the-Default-and-Allowed-Mount-Options,Adjust Mount Options>>.
+These instructions require a newer version of udisks2 than is available on the reference operating system, {elementary-OS} 5.1, based on {Ubuntu} 18.04.
+The post <<install-udisks2-from-source#,Install udisks2 From Source>> describes how to install a newer version in order to configure mount options.
+
+This tutorial assumes familiarity with Linux, the command-line, encryption, systemd, filesystem mounting, udev, udisks2, and GIO.
+The commands shown use the {fish-shell}, so some syntax may be incompatible if you use a different shell.
+
+. Plug in the external drive.
+
+
+1. dbus-send
+2. script to automount using a signal to detect when drive is added.
+3. 
+
+https://dbus.freedesktop.org/doc/dbus-send.1.html[dbus-send(1)]
+
+Use dbus-send to enable automount for drive.
+
+dbus-send --dest=org..ExampleName               \
+        /org/freedesktop/sample/object/name              \
+        org.freedesktop.ExampleInterface.ExampleMethod   \
+        int32:47 string:'hello world' double:65.32       \
+        array:string:"1st item","next item","last item"  \
+        dict:string:int32:"one",1,"two",2,"three",3      \
+        variant:int32:-8                                 \
+        objpath:/org/freedesktop/sample/object/name
+
+https://developer.gnome.org/gio/stable/gdbus.html
+
+Use `gdbus call` to send enable automount for drive through GIO
+
+gdbus call --session \
+             --dest org.freedesktop.Notifications \
+             --object-path /org/freedesktop/Notifications \
+             --method org.freedesktop.Notifications.Notify \
+             my_app_name \
+             42 \
+             gtk-dialog-info \
+             "The Summary" \
+             "Here's the body of the notification" \
+             [] \
+             {} \
+             5000
+
+
+Volume changed:     'Black WD easystore'
+  Volume(0): Black WD easystore
+    Type: GProxyVolume (GProxyVolumeMonitorUDisks2)
+    ids:
+     class: 'device'
+     unix-device: '/dev/sdb1'
+     uuid: '0cbab673-2b14-40c0-a1f2-522bc7ff7e18'
+     label: 'Black WD easystore'
+    uuid=0cbab673-2b14-40c0-a1f2-522bc7ff7e18
+    symbolic themed icons:  [drive-harddisk-usb-symbolic]  [drive-harddisk-symbolic]  [drive-symbolic]  [drive-harddisk-usb]  [drive-harddisk]  [drive]
+    can_mount=1
+    can_eject=0
+    should_automount=0
+    sort_key=gvfs.time_detected_usec.1614281093755332
+
+
+# gsettings set org.gnome.desktop.media-handling automount false
+# gsettings set org.gnome.desktop.media-handling automount-open false 
+# systemctl restart gdm.service
+
+=== Unnecessary below here?
+
+Depend on transient mount unit `run-media-system-My_Backups.mount`?
+
+// todo Use gio mount monitor functionality instead of udevadm?
+
+Adapted from https://wiki.archlinux.org/index.php/Udisks#udevadm_monitor
+
+[source,bash]
+.~/.local/bin/automount.sh
+----
+#!/bin/sh
+
+pathtoname() {
+    udevadm info -p /sys/"$1" | awk -v FS== '/DEVNAME/ {print $2}'
+}
+
+stdbuf -oL -- udevadm monitor --udev -s block | while read -r -- _ _ event devpath _; do
+        if [ "$event" = add ]; then
+            devname=$(pathtoname "$devpath")
+            gio mount -d "$devname"
+        fi
+done
+----
+
+// todo systemd user service activated at login?
+
+[source,systemd]
+.~/.config/systemd/user/automount.service
+----
+[Unit]
+Description=Automatically mount disks
+
+[Service]
+Type=forking
+PIDFile=
+ExecStart=~/.local/bin/automount.sh
+
+[Install]
+WantedBy=default.target
+----
+
+[source,sh]
+----
+➜ systemctl --user enable automount
+----
+
+=== udevil
+
+{udevil}
+
+sudo apt install udevil
+
+// Done automatically?
+sudo systemctl start devmon@jordan.service
+
+Disable using udevil for mounting:
+
+sudo chown root:root /usr/bin/udevil
+sudo chmod ugo-s,ugo+x /usr/bin/udevil
+ls -l /usr/bin/udevil
+-rwxr-xr-x 1 root root 226625 May 22 08:13 /usr/bin/udevil
+
+devmon --no-gui --no-mount --exec-on-drive "gio mount -d %f"
+
+=== udiskie
+
+https://github.com/coldfix/udiskie/wiki/automounting-luks-cleartext-devices
+
+[source]
+./etc/udev/rules.d/30-my-rule.rules
+----
+ENV{ID_FS_UUID}=="", ENV{UDISKS_SYSTEM}="0", ENV{UDISKS_AUTO}="1"
+----
+
+https://unix.stackexchange.com/a/570916/395084
+
+== Conclusion
