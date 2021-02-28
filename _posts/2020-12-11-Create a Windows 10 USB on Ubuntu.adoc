@@ -125,7 +125,7 @@ Mounted /dev/sdb1 at /media/jordan/Windows10
 
 [source,sh]
 ----
-➜ gnome-disk-image-mounter ~/Downloads/Win10_20H2_English_x64.iso
+➜ gnome-disk-image-mounter ~/Downloads/Win10_*.iso
 ----
 --
 
