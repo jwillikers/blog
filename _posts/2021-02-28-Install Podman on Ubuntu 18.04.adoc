@@ -1,0 +1,126 @@
+= Install Podman on Ubuntu 18.04
+:page-layout:
+:page-category: Virtualization
+:page-tags: [Btrfs, containers, Docker, elementary, Kubernetes, Linux, Podman, systemd, Ubuntu, ZFS]
+:Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
+:Docker: https://www.docker.com/[Docker]
+:elementary-OS: https://elementary.io/[elementary OS]
+:Kubernetes: https://kubernetes.io/[Kubernetes]
+:Podman: https://podman.io/[Podman]
+:systemd: https://systemd.io/[systemd]
+:Ubuntu: https://ubuntu.com/[Ubuntu]
+:ZFS: https://openzfs.org/wiki/Main_Page[ZFS]
+
+{Podman} is a _daemonless_ container runtime for Linux compatible with {Docker}.
+It offers several advantages over using Docker to manage and run containers.
+First, there is no overhead associated with running a background service as is the case with Docker.
+Podman also allows users to run _rootless_ containers which provides a higher degree of protection for the system.
+Podman integrates deeply with Linux, taking advantage of a number of specific features.
+Notably, it uses namespaces for process isolation and integrates nicely with {systemd}.
+Just like {Kubernetes}, Podman is built on the concept of _pods_, groups of one or more containers, instead of individual containers.
+
+Podman is only available in the Ubuntu repositories as of {Ubuntu} 20.10.
+For older Ubuntu LTS releases, the Kubic PPA can be used to get Podman which is described here. 
+
+== Tutorial
+
+This tutorial provides the necessary steps to install Podman on {elementary-OS} 5.1 and {Ubuntu} 18.04 as well as the steps to enable the {Btrfs} and {ZFS} storage drivers.
+It is assumed that you are familiar with Linux, Ubuntu, and the command-line.
+
+. Add the Kubic repository for Podman to the system's sources list.
++
+[source,sh]
+----
+➜ echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_18.04/ /" \
+  | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_18.04/ /
+----
+
+. Import the Kubic repository's GPG key.
++
+[source,sh]
+----
+➜ wget -qO - https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_18.04/Release.key \
+  | gpg --dearmor \
+  | sudo tee /etc/apt/trusted.gpg.d/kubic_libcontainers.gpg > /dev/null
+----
+
+. Refresh Aptitude.
++
+[source,sh]
+----
+➜ sudo apt update
+----
+
+. Upgrade any installed packages to those from the Kubic repository.
++
+[source,sh]
+----
+➜ sudo apt -y upgrade
+----
+
+. Install Podman.
++
+[source,sh]
+----
+➜ sudo apt -y install podman
+----
+
+. On Ubuntu 18.04, restart dbus in order to use rootless containers.
++
+[source,sh]
+----
+➜ systemctl --user restart dbus
+----
+
+=== Btrfs / ZFS
+
+My systems use Btrfs, so I also enable the Btrfs storage driver for Podman.
+This permits Podman to take advantage of Btrfs-specific features.
+For anyone wanting to take advantage of the ZFS driver, the process is just the same!
+
+. Create the configuration directory.
++
+[source,sh]
+----
+➜ mkdir -p ~/.config/containers
+----
+
+. Set the storage driver in the storage configuration file.
+
+Btrfs::
++
+[source,ini]
+.~/.config/containers/storage.conf
+----
+[storage]
+driver = "btrfs"
+----
+
+ZFS::
++
+[source,ini]
+.~/.config/containers/storage.conf
+----
+[storage]
+driver = "zfs"
+----
+
+. Reset Podman's storage.
++
+--
+[WARNING]
+====
+This will delete all existing containers and images.
+====
+
+[source,sh]
+----
+➜ podman system reset
+----
+--
+
+== Conclusion
+
+You should now have the power of Podman available to you plus the power of either Btrfs or ZFS.
+When you want to use Podman, just use the same Docker command-line but substitute `podman` for `docker`.
