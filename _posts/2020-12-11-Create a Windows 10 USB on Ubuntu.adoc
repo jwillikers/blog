@@ -64,7 +64,7 @@ I unmount this partition with the {udisksctl} command here.
 
 [source,sh]
 ----
-➜ udisksctl unmount -b /dev/sdb1 --no-user-interaction
+➜ udisksctl unmount -b /dev/sdb1
 Unmounted /dev/sdb1.
 ----
 --
@@ -112,7 +112,7 @@ mkntfs completed successfully. Have a nice day.
 +
 [source,sh]
 ----
-➜ udisksctl mount -b /dev/sdb1 --no-user-interaction
+➜ udisksctl mount -b /dev/sdb1
 Mounted /dev/sdb1 at /media/jordan/Windows10
 ----
 
@@ -160,7 +160,7 @@ zd0             230:0    0   500M  0 disk
 +
 [source,sh]
 ----
-➜ udisksctl unmount -b /dev/loop53 --no-user-interaction
+➜ udisksctl unmount -b /dev/loop53
 Unmounted /dev/loop53.
 ----
 
@@ -168,7 +168,7 @@ Unmounted /dev/loop53.
 +
 [source,sh]
 ----
-➜ udisksctl unmount -b /dev/sdb1 --no-user-interaction
+➜ udisksctl unmount -b /dev/sdb1
 Unmounted /dev/sdb1.
 ----
 
