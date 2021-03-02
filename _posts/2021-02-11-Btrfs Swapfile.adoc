@@ -11,7 +11,7 @@
 :fedora: https://getfedora.org/[Fedora]
 :flat-btrfs-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Flat[flat Btrfs layout]
 :fish-shell: https://fishshell.com/[fish shell]
-:fstab: https://manpages.ubuntu.com/manpages/focal/man8/fsck.8.html[/etc/fstab]
+:fstab: http://manpages.ubuntu.com/manpages/bionic/man5/fstab.5.html[/etc/fstab]
 :recommended-partitioning-scheme: https://docs.fedoraproject.org/en-US/fedora/f33/install-guide/install/Installing_Using_Anaconda/#sect-installation-gui-manual-partitioning-recommended[Recommended Partitioning Scheme]
 :systemd: https://systemd.io/[systemd]
 :systemd-swap-man: https://www.freedesktop.org/software/systemd/man/systemd.swap.html[systemd.swap(5)]
