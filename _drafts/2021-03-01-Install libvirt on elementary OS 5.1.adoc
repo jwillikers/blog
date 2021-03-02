@@ -1,0 +1,249 @@
+= Install libvirt on elementary OS 5.1
+:page-layout:
+:page-category: Virtualization
+:page-tags: [Boxes, Btrfs, elementary, KVM, libvirt, Linux, QEMU, systemd, Ubuntu, virt-manager, VM]
+:Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
+:Btrfs-Wiki-FAQ: https://btrfs.wiki.kernel.org/index.php/FAQ[Btrfs Wiki FAQ]
+:Can-copy-on-write-be-turned-off-for-data-blocks: https://btrfs.wiki.kernel.org/index.php/FAQ#Can_copy-on-write_be_turned_off_for_data_blocks.3F[Can copy-on-write be turned off for data blocks?]
+:chattr: https://manpages.ubuntu.com/manpages/bionic/man1/chattr.1.html[chattr(1)]
+:elementary-OS: https://elementary.io/[elementary OS]
+:flat-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Flat[flat layout]
+:fstab: http://manpages.ubuntu.com/manpages/bionic/man5/fstab.5.html[fstab(5)]
+:Boxes: https://wiki.gnome.org/Apps/Boxes[Boxes]
+:KVM: https://www.linux-kvm.org/page/Main_Page[KVM]
+:libvirt: https://libvirt.org/[libvirt]
+:libvirt-6-6-0: https://www.libvirt.org/news.html#v6-6-0-2020-08-02[libvirt 6.6.0]
+:libvirt-6-7-0: https://www.libvirt.org/news.html#v6-7-0-2020-09-01[libvirt 6.7.0]
+:libvirt-storage-pool-features: https://libvirt.org/formatstorage.html#StoragePoolFeatures[Storage Pool Features]
+:qcow2: https://qemu.readthedocs.io/en/latest/system/images.html#cmdoption-image-formats-arg-qcow2[qcow2]
+:qcow2-nocow: https://qemu.readthedocs.io/en/latest/system/images.html#cmdoption-qcow2-arg-nocow[nocow]
+:QEMU: https://www.qemu.org/[QEMU]
+:qemu-img: https://qemu.readthedocs.io/en/latest/tools/qemu-img.html?highlight=qemu-img[qemu-img(1)]
+:systemd: https://systemd.io/[systemd]
+:Ubuntu: https://ubuntu.com/[Ubuntu]
+:virt-manager: https://virt-manager.org/[virt-manager]
+:ZFS: https://openzfs.org/wiki/Main_Page[ZFS]
+
+
+https://wiki.gentoo.org/wiki/Btrfs/pl#Using_with_VM_disk_images
+
+If you want to run virtual machines on Linux, chances are you're going to use {libvirt}.
+I make use of it all the time, especially for testing these blog posts in a clean environment.
+libvirt provides a common interface around various underlying tools for virtual machine management.
+It not only offers features for guest management but for networking and storage management as well.
+It's standard XML schema also makes for a powerful and versatile configuration format.
+On Linux, libvirt is typically utilizing {KVM}, the virtualization layer in the kernel, and, in userspace, {QEMU}, a generic machine emulator and virtualizer.
+
+== Tutorial
+
+This tutorial provides the necessary steps to verify your system supports hardware virtualization and install libvirt on {elementary-OS} 5.1.
+Most of these steps are the same for {Ubuntu} 18.04.
+This tutorial takes into account special considerations for systems using the {Btrfs} filesystem.
+There is also a brief section on installing the graphical user interface for libvirt, {virt-manager}.
+It is assumed that you are familiar with installing software on Ubuntu, using the command-line, and the Btrfs filesystem.
+
+=== Check
+
+. Check that the system supports hardware virtualization.
++
+--
+[source,sh]
+----
+➜ egrep -c '(vmx|svm)' /proc/cpuinfo
+1
+----
+
+If the output is not zero, then your CPU supports virtualization.
+--
+
+. Install the tool for checking that your CPU is compatible with KVM.
++
+[source,sh]
+----
+➜ sudo apt -y install cpu-checker
+----
+
+. Verify that the system supports KVM.
++
+[source,sh]
+----
+➜ sudo kvm-ok
+INFO: /dev/kvm exists
+KVM acceleration can be used
+----
+
+If all checks passed, then you should be able to continue installation of libvirt without issue.
+Otherwise, you'd better switch to some compatible hardware before proceeding.
+
+=== Btrfs
+
+If you use Btrfs on your system like I do, then you'll want to avoid _CoW_ on _CoW_ when using virtual machine disk images.
+Using the default _CoW_ qcow2 format for virtual disk images on top of a Btrfs filesystem is asking for trouble.
+This section demonstrates the various ways of disabling _CoW_ for virtual disk images on Btrfs filesystems.
+If you snapshot your filesystem, take care to place virtual disk images in a subvolume that is excluded from snapshots.
+Snapshots for virtual disk images should be handled in the disk image itself as is the case with the {qcow2} format.
+At least, that's the way until a Btrfs storage driver appears for libvirt.
+I can hope.
+
+==== qemu-img
+
+When creating a {qcow2} image directly with {qemu-img}, the {qcow2-nocow} option can be used to disable _CoW_ for that file.
+The following command creates a 25 gigabyte qcow2 image named `my-vm-image.qcow2` with _CoW_ disabled.
+
+[source,sh]
+----
+➜ qemu-img create -o nocow my-vm-image.qcow2 25G
+----
+
+==== libvirt Storage Pool Features
+
+In {libvirt-6-6-0}, {libvirt-storage-pool-features} and the _cow_ feature were added and _CoW_ was disabled by default on Btrfs filesystems.
+This default behavior was rescinded in {libvirt-6-7-0} enabling _CoW_ by default and leaving this feature to the discretion of system administrators.
+The `cow` feature can be set to `no` to disable _CoW_ for the entire storage pool.
+The following snippet shows how to disable _CoW_ for a libvirt pool.
+
+[source,xml]
+----
+<features>
+  <cow state='no'>
+</features>
+----
+
+==== chattr
+
+The simplest way to disable _CoW_ on a particular directory or file is with {chattr} as described in {Can-copy-on-write-be-turned-off-for-data-blocks}.
+To do this, _add_ the _no copy on write_ attribute with the `+C` option.
+The following commands disable _CoW_ on libvirt's image directory.
+
+. Since libvirt will be installed in the next step, create the `/var/lib/libvirt/images` directory here.
++
+[source,sh]
+----
+➜ sudo mkdir -p /var/lib/libvirt/images
+----
+
+. Disable _CoW_ on the `/var/lib/libvirt/images` directory.
++
+[source,sh]
+----
+➜ sudo chattr +C /var/lib/libvirt/images
+----
+
+==== A Flat Layout Subvolume
+
+A dedicated Btrfs subvolume for `/var/lib/libvirt/images` is probably your best option since it excludes the disk images from snapshots.
+The subvolume can have _CoW_ disabled via chattr, but _CoW_ can also be disabled with the mount option `nodatacow` when using a subvolume in a {flat-layout}.
+The steps here create a dedicated subvolume for libvirt's disk image directory and mount it with _CoW_ disabled.
+
+. Mount the root Btrfs filesystem to create a subvolume. 
++
+[source,sh]
+----
+➜ sudo mount (df --output=source / | tail -n 1) /mnt
+----
+
+. Create a dedicated Btrfs subvolume for libvirt's virtual disk images.
++
+[source,sh]
+----
+➜ sudo btrfs subvolume create /mnt/images
+Create subvolume '/mnt/images'
+----
+
+. Add the subvolume to {fstab}.
++
+[source,sh]
+----
+➜ echo (df --output=source / \
+  | tail -n 1)" /var/lib/libvirt/images btrfs defaults,nodatacow,noatime,subvol=images 0 0" \
+  | sudo tee -a /etc/fstab
+/dev/mapper/sda2_crypt /var/lib/libvirt/images btrfs defaults,nodatacow,noatime,subvol=images 0 0
+----
+
+. Since libvirt will be installed in the next step, create the `/var/lib/libvirt/images` directory here.
++
+[source,sh]
+----
+➜ sudo mkdir -p /var/lib/libvirt/images
+----
+
+. Create the subvolume for libvirt's virtual disk images.
++
+[source,sh]
+----
+➜ sudo btrfs subvolume create 
+----
+
+// todo fstab.
+
+=== Install
+
+https://help.ubuntu.com/community/KVM/Installation
+
+. Install libvirt.
++
+[source,sh]
+----
+➜ sudo apt -y install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
+----
+
+// todo I ended up having to reboot despite the commands below...
+
+// May not be needed in the future?
+. Add the current user to the _kvm_ and _libvirt_ groups.
++
+[source,sh]
+----
+➜ sudo usermod -aG kvm,libvirt $USER
+----
+
+Reload the current user's group assignments.
++
+[source,sh]
+----
+➜ newgrp -
+----
+
+// todo is it started by package installation? check with systemctl is-enabled
+. Enable the libvirt daemon.
++
+[source,sh]
+----
+➜ sudo systemctl enable --now libvirtd
+----
+
+From: https://askubuntu.com/a/940069
+
+. Set the libvirt-qemu user account as a system account for the accountsservices package to hide it from the login menu.
++
+[source,sh]
+----
+➜ printf "[User]\nSystemAccount=true\n" \
+  | sudo tee /var/lib/AccountsService/users/libvirt-qemu
+----
+
+. Restart the accounts service.
++
+[source,sh]
+----
+➜ sudo systemctl restart accounts-daemon.service 
+----
+
+==== Greeter
+
+==== virt-manager
+
+. Install virt-manager.
++
+[source,sh]
+----
+➜ sudo apt -y install virt-manager
+----
+
+=== virt-manager
+
+== Conclusion
+
+You should now be able to get virtual machines up and running without issue.
+Now that you have all the components in place for virtualization, why not make your life easier with {Boxes}?
+I'll cover all the details of installing the GNOME Boxes Flatpak on Btrfs system in an upcoming post, so stay tuned!
