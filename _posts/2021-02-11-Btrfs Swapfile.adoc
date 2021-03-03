@@ -76,7 +76,7 @@ Create subvolume '/mnt/swap'
 /dev/mapper/sda2_crypt /swap btrfs defaults,noatime,subvol=swap 0 0
 ----
 
-. Now mount the swap subvolume according to the rules just add in `/etc/fstab`.
+. Now mount the swap subvolume according to the rules just add in fstab.
 +
 [source,sh]
 ----
