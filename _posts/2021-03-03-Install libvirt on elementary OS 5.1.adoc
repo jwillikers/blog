@@ -24,9 +24,6 @@
 :virt-manager: https://virt-manager.org/[virt-manager]
 :ZFS: https://openzfs.org/wiki/Main_Page[ZFS]
 
-
-https://wiki.gentoo.org/wiki/Btrfs/pl#Using_with_VM_disk_images
-
 If you want to run virtual machines on Linux, chances are you're going to use {libvirt}.
 I make use of it all the time, especially for testing these blog posts in a clean environment.
 libvirt provides a common interface around various underlying tools for virtual machine management.
@@ -50,7 +47,7 @@ It is assumed that you are familiar with installing software on Ubuntu, using th
 [source,sh]
 ----
 ➜ egrep -c '(vmx|svm)' /proc/cpuinfo
-1
+8
 ----
 
 If the output is not zero, then your CPU supports virtualization.
@@ -67,13 +64,59 @@ If the output is not zero, then your CPU supports virtualization.
 +
 [source,sh]
 ----
-➜ sudo kvm-ok
+➜ kvm-ok
 INFO: /dev/kvm exists
 KVM acceleration can be used
 ----
 
 If all checks passed, then you should be able to continue installation of libvirt without issue.
 Otherwise, you'd better switch to some compatible hardware before proceeding.
+
+=== Install
+
+. Install libvirt.
++
+[source,sh]
+----
+➜ sudo apt -y install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
+----
+
+. Add the current user to the _kvm_ and _libvirt_ groups.
++
+[source,sh]
+----
+➜ sudo usermod -aG kvm,libvirt $USER
+----
+
+. Reload the current user's group assignments.
++
+[source,sh]
+----
+➜ newgrp -
+----
+
+=== Greeter
+
+On elementary OS 5.1, there's a bit of a glitch after installing libvirt on the system.
+That is, a new _libvirt-qemu_ user appears as a logon option in Greeter.
+This isn't supposed to happen but luckily there's a workaround.
+The steps here hide the _libvirt-qemu_ login in Greeter.
+The steps were come from https://askubuntu.com/a/940069[this solution] on Stack Overflow.
+
+. Set the libvirt-qemu user account as a system account for the accountsservices package to hide it in the login menu.
++
+[source,sh]
+----
+➜ printf "[User]\nSystemAccount=true\n" \
+  | sudo tee /var/lib/AccountsService/users/libvirt-qemu
+----
+
+. Restart the accounts service.
++
+[source,sh]
+----
+➜ sudo systemctl restart accounts-daemon.service
+----
 
 === Btrfs
 
@@ -115,15 +158,8 @@ The simplest way to disable _CoW_ on a particular directory or file is with {cha
 To do this, _add_ the _no copy on write_ attribute with the `+C` option.
 The following commands disable _CoW_ on libvirt's image directory.
 
-. Since libvirt will be installed in the next step, create the `/var/lib/libvirt/images` directory here.
-+
-[source,sh]
-----
-➜ sudo mkdir -p /var/lib/libvirt/images
-----
+Disable _CoW_ on the `/var/lib/libvirt/images` directory.
 
-. Disable _CoW_ on the `/var/lib/libvirt/images` directory.
-+
 [source,sh]
 ----
 ➜ sudo chattr +C /var/lib/libvirt/images
@@ -146,8 +182,8 @@ The steps here create a dedicated subvolume for libvirt's disk image directory a
 +
 [source,sh]
 ----
-➜ sudo btrfs subvolume create /mnt/images
-Create subvolume '/mnt/images'
+➜ sudo btrfs subvolume create /mnt/var-lib-libvirt-images
+Create subvolume '/mnt/var-lib-libvirt-images'
 ----
 
 . Add the subvolume to {fstab}.
@@ -155,92 +191,48 @@ Create subvolume '/mnt/images'
 [source,sh]
 ----
 ➜ echo (df --output=source / \
-  | tail -n 1)" /var/lib/libvirt/images btrfs defaults,nodatacow,noatime,subvol=images 0 0" \
+  | tail -n 1)" /var/lib/libvirt/images btrfs defaults,nodatacow,noatime,subvol=var-lib-libvirt-images 0 0" \
   | sudo tee -a /etc/fstab
-/dev/mapper/sda2_crypt /var/lib/libvirt/images btrfs defaults,nodatacow,noatime,subvol=images 0 0
+/dev/mapper/sda2_crypt /var/lib/libvirt/images btrfs defaults,nodatacow,noatime,subvol=var-lib-libvirt-images 0 0
 ----
 
-. Since libvirt will be installed in the next step, create the `/var/lib/libvirt/images` directory here.
+. Verify there are no errors in fstab.
 +
 [source,sh]
 ----
-➜ sudo mkdir -p /var/lib/libvirt/images
+➜ sudo findmnt --verify --verbose
 ----
 
-. Create the subvolume for libvirt's virtual disk images.
+. Now mount the subvolume according to the rule just added in fstab.
 +
 [source,sh]
 ----
-➜ sudo btrfs subvolume create 
+➜ sudo mount /var/lib/libvirt/images
 ----
 
-// todo fstab.
-
-=== Install
-
-https://help.ubuntu.com/community/KVM/Installation
-
-. Install libvirt.
+. Don't forget to unmount `/mnt`.
 +
 [source,sh]
 ----
-➜ sudo apt -y install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
+➜ sudo umount /mnt
 ----
 
-// todo I ended up having to reboot despite the commands below...
+That's it!
+The default storage pool for libvirt will store virtual disk images in this subvolume.
 
-// May not be needed in the future?
-. Add the current user to the _kvm_ and _libvirt_ groups.
-+
-[source,sh]
-----
-➜ sudo usermod -aG kvm,libvirt $USER
-----
+=== virt-manager
 
-Reload the current user's group assignments.
-+
-[source,sh]
-----
-➜ newgrp -
-----
+{virt-manager} is an application for managing virtual machines with libvirt graphically.
+It's a handy one for the toolbox, though some might prefer the simplicity of {Boxes}.
 
-// todo is it started by package installation? check with systemctl is-enabled
-. Enable the libvirt daemon.
-+
-[source,sh]
-----
-➜ sudo systemctl enable --now libvirtd
-----
+Install virt-manager.
 
-From: https://askubuntu.com/a/940069
-
-. Set the libvirt-qemu user account as a system account for the accountsservices package to hide it from the login menu.
-+
-[source,sh]
-----
-➜ printf "[User]\nSystemAccount=true\n" \
-  | sudo tee /var/lib/AccountsService/users/libvirt-qemu
-----
-
-. Restart the accounts service.
-+
-[source,sh]
-----
-➜ sudo systemctl restart accounts-daemon.service 
-----
-
-==== Greeter
-
-==== virt-manager
-
-. Install virt-manager.
-+
 [source,sh]
 ----
 ➜ sudo apt -y install virt-manager
 ----
 
-=== virt-manager
+If you haven't logged out and back in since installing libvirt, you'll need to that before running virt-manager.
 
 == Conclusion
 
