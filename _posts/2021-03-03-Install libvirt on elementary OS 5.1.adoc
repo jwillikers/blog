@@ -1,7 +1,7 @@
 = Install libvirt on elementary OS 5.1
 :page-layout:
 :page-category: Virtualization
-:page-tags: [Boxes, Btrfs, elementary, KVM, libvirt, Linux, QEMU, systemd, Ubuntu, virt-manager, VM]
+:page-tags: [Boxes, Btrfs, elementary, KVM, libvirt, Linux, QEMU, systemd, Ubuntu, virsh, virt-manager, VM]
 :Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
 :Btrfs-Wiki-FAQ: https://btrfs.wiki.kernel.org/index.php/FAQ[Btrfs Wiki FAQ]
 :Can-copy-on-write-be-turned-off-for-data-blocks: https://btrfs.wiki.kernel.org/index.php/FAQ#Can_copy-on-write_be_turned_off_for_data_blocks.3F[Can copy-on-write be turned off for data blocks?]
@@ -14,13 +14,19 @@
 :libvirt: https://libvirt.org/[libvirt]
 :libvirt-6-6-0: https://www.libvirt.org/news.html#v6-6-0-2020-08-02[libvirt 6.6.0]
 :libvirt-6-7-0: https://www.libvirt.org/news.html#v6-7-0-2020-09-01[libvirt 6.7.0]
-:libvirt-storage-pool-features: https://libvirt.org/formatstorage.html#StoragePoolFeatures[Storage Pool Features]
+:libvirt-Storage-Pool-Features: https://libvirt.org/formatstorage.html#StoragePoolFeatures[Storage Pool Features]
+:libvirt-Storage-Management: https://libvirt.org/storage.html[Storage Management]
+:libvirt-Directory-pool: https://libvirt.org/storage.html#StorageBackendDir[Directory pool]
 :qcow2: https://qemu.readthedocs.io/en/latest/system/images.html#cmdoption-image-formats-arg-qcow2[qcow2]
 :qcow2-nocow: https://qemu.readthedocs.io/en/latest/system/images.html#cmdoption-qcow2-arg-nocow[nocow]
 :QEMU: https://www.qemu.org/[QEMU]
 :qemu-img: https://qemu.readthedocs.io/en/latest/tools/qemu-img.html?highlight=qemu-img[qemu-img(1)]
 :systemd: https://systemd.io/[systemd]
 :Ubuntu: https://ubuntu.com/[Ubuntu]
+:virsh: https://libvirt.org/manpages/virsh.html[virsh(1)]
+:virsh-pool-edit: https://libvirt.org/manpages/virsh.html#pool-edit[pool-edit]
+:virsh-pool-dumpxml: https://libvirt.org/manpages/virsh.html#pool-dumpxml[pool-dumpxml]
+:virsh-pool-list: https://libvirt.org/manpages/virsh.html#pool-list[pool-list]
 :virt-manager: https://virt-manager.org/[virt-manager]
 :ZFS: https://openzfs.org/wiki/Main_Page[ZFS]
 
@@ -140,10 +146,69 @@ The following command creates a 25 gigabyte qcow2 image named `my-vm-image.qcow2
 
 ==== libvirt Storage Pool Features
 
-In {libvirt-6-6-0}, {libvirt-storage-pool-features} and the _cow_ feature were added and _CoW_ was disabled by default on Btrfs filesystems.
-This default behavior was rescinded in {libvirt-6-7-0} enabling _CoW_ by default and leaving this feature to the discretion of system administrators.
-The `cow` feature can be set to `no` to disable _CoW_ for the entire storage pool.
-The following snippet shows how to disable _CoW_ for a libvirt pool.
+In {libvirt-6-6-0}, {libvirt-storage-pool-features} were introduced, including the _cow_ feature.
+This version of libvirt disabled _CoW_ by default on Btrfs filesystems.
+This default behavior was quickly rescinded in {libvirt-6-7-0} which re-enabled _CoW_ by default.
+The change leaves the decision to disable _CoW_ in the hands of system administrators.
+
+libvirt uses the concept of storage pools to abstract the complexities involved in managing the underlying virtual machine disk images in a variety of situations.
+I won't delve into the details here.
+Refer to {libvirt-Storage-Management} for more information.
+For the purposes of this post you should know that libvirt's default directory for disk images is its default storage pool.
+This pool is a simple {libvirt-Directory-pool}.
+libvirt stores pretty much all configuration in XML files.
+This is the case for storage pools and the XML can be viewed and edited with {virsh}.
+The steps walk through the steps to disable _CoW_ on the default storage pool.
+
+. List storage pools with the {virsh-pool-list} subcommand.
+The default pool is just called _default_.
+No surprises here.
++
+[source,sh]
+----
+➜ virsh pool-list
+ Name                 State      Autostart 
+-------------------------------------------
+ default              active     yes  
+----
+
+. To simply view the XML, use the {virsh-pool-dumpxml} subcommand followed by the pool's name.
+Here I output the default pool's XML configuration where you can see that _path_ is indeed `/var/lib/libvirt/images`.
++
+[source,sh]
+----
+➜ virsh pool-dumpxml default
+<pool type='dir'>
+  <name>default</name>
+  <uuid>4f779eae-e312-4e4d-bf9f-fafe0e334f63</uuid>
+  <capacity unit='bytes'>1999372288000</capacity>
+  <allocation unit='bytes'>191017480192</allocation>
+  <available unit='bytes'>1808354807808</available>
+  <source>
+  </source>
+  <target>
+    <path>/var/lib/libvirt/images</path>
+    <permissions>
+      <mode>0755</mode>
+      <owner>0</owner>
+      <group>0</group>
+    </permissions>
+  </target>
+</pool>
+----
+
+. Edit a pool's configuration with the {virsh-pool-edit} subcommand.
+To modify the default pool's XML, the command would appear as follows.
++
+[source,sh]
+----
+➜ virsh pool-edit default
+----
+
+. To disable _CoW_, set the _cow_ feature with `state=no` in the pool's XML.
++
+--
+The snippet here demonstrates the XML to disable _CoW_.
 
 [source,xml]
 ----
@@ -151,6 +216,33 @@ The following snippet shows how to disable _CoW_ for a libvirt pool.
   <cow state='no'>
 </features>
 ----
+
+For the default storage pool, the resulting XML to disable _CoW_ could appear like so.
+
+[source,xml]
+----
+<pool type='dir'>
+  <name>default</name>
+  <uuid>4f779eae-e312-4e4d-bf9f-fafe0e334f63</uuid>
+  <capacity unit='bytes'>1999372288000</capacity>
+  <allocation unit='bytes'>191017480192</allocation>
+  <available unit='bytes'>1808354807808</available>
+  <features>
+    <cow state='no'>
+  </features>
+  <source>
+  </source>
+  <target>
+    <path>/var/lib/libvirt/images</path>
+    <permissions>
+      <mode>0755</mode>
+      <owner>0</owner>
+      <group>0</group>
+    </permissions>
+  </target>
+</pool>
+----
+--
 
 ==== chattr
 
@@ -238,4 +330,4 @@ If you haven't logged out and back in since installing libvirt, you'll need to t
 
 You should now be able to get virtual machines up and running without issue.
 Now that you have all the components in place for virtualization, why not make your life easier with {Boxes}?
-I'll cover all the details of installing the GNOME Boxes Flatpak on Btrfs system in an upcoming post, so stay tuned!
+I'll cover all the details of installing the GNOME Boxes Flatpak on a Btrfs system in an upcoming post, so stay tuned!
