@@ -28,6 +28,7 @@
 :virsh-pool-dumpxml: https://libvirt.org/manpages/virsh.html#pool-dumpxml[pool-dumpxml]
 :virsh-pool-list: https://libvirt.org/manpages/virsh.html#pool-list[pool-list]
 :virt-manager: https://virt-manager.org/[virt-manager]
+:virtualization-PPA: https://launchpad.net/~jacob/+archive/ubuntu/virtualisation[virtualization PPA]
 :ZFS: https://openzfs.org/wiki/Main_Page[ZFS]
 
 If you want to run virtual machines on Linux, chances are you're going to use {libvirt}.
@@ -79,6 +80,22 @@ If all checks passed, then you should be able to continue installation of libvir
 Otherwise, you'd better switch to some compatible hardware before proceeding.
 
 === Install
+
+. If you want to get a more up-to-date virtualization stack, add the {virtualization-PPA} to your system.
+
+.. The software-properties-common package includes a command for easily adding PPA's.
++
+[source,sh]
+----
+➜ sudo apt -y software-properties-common
+----
+
+.. Add the {virtualization-PPA}.
++
+[source,sh]
+----
+➜ sudo add-apt-repository -uy ppa:jacob/virtualisation
+----
 
 . Install libvirt.
 +
