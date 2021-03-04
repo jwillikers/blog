@@ -1,0 +1,302 @@
+= GNOME Boxes on Btrfs
+:page-layout:
+:page-category: Virtualization
+:page-tags: [Boxes, Btrfs, elementary, GNOME, KVM, libvirt, Linux, QEMU, Ubuntu, virt-manager, VM]
+:Boxes: https://wiki.gnome.org/Apps/Boxes[Boxes]
+:Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
+:Btrfs-Wiki-FAQ: https://btrfs.wiki.kernel.org/index.php/FAQ[Btrfs Wiki FAQ]
+:Can-copy-on-write-be-turned-off-for-data-blocks: https://btrfs.wiki.kernel.org/index.php/FAQ#Can_copy-on-write_be_turned_off_for_data_blocks.3F[Can copy-on-write be turned off for data blocks?]
+:chattr: https://manpages.ubuntu.com/manpages/bionic/man1/chattr.1.html[chattr(1)]
+:elementary-OS: https://elementary.io/[elementary OS]
+:flat-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Flat[flat layout]
+:Flatpak: https://flatpak.org/[Flatpak]
+:fstab: http://manpages.ubuntu.com/manpages/bionic/man5/fstab.5.html[fstab(5)]
+:KVM: https://www.linux-kvm.org/page/Main_Page[KVM]
+:libvirt: https://libvirt.org/[libvirt]
+:libvirt-6-6-0: https://www.libvirt.org/news.html#v6-6-0-2020-08-02[libvirt 6.6.0]
+:libvirt-6-7-0: https://www.libvirt.org/news.html#v6-7-0-2020-09-01[libvirt 6.7.0]
+:libvirt-Storage-Management: https://libvirt.org/storage.html[Storage Management]
+:libvirt-storage-pool-features: https://libvirt.org/formatstorage.html#StoragePoolFeatures[Storage Pool Features]
+:qcow2: https://qemu.readthedocs.io/en/latest/system/images.html#cmdoption-image-formats-arg-qcow2[qcow2]
+:qcow2-nocow: https://qemu.readthedocs.io/en/latest/system/images.html#cmdoption-qcow2-arg-nocow[nocow]
+:QEMU: https://www.qemu.org/[QEMU]
+:qemu-img: https://qemu.readthedocs.io/en/latest/tools/qemu-img.html?highlight=qemu-img[qemu-img(1)]
+:systemd: https://systemd.io/[systemd]
+:Ubuntu: https://ubuntu.com/[Ubuntu]
+:virsh: https://libvirt.org/manpages/virsh.html[virsh(1)]
+:virsh-pool-edit: https://libvirt.org/manpages/virsh.html#pool-edit[pool-edit]
+:virsh-pool-dumpxml: https://libvirt.org/manpages/virsh.html#pool-dumpxml[pool-dumpxml]
+:virsh-pool-list: https://libvirt.org/manpages/virsh.html#pool-list[pool-list]
+:virt-manager: https://virt-manager.org/[virt-manager]
+:Where-does-Boxes-store-disk-images: https://help.gnome.org/users/gnome-boxes/stable/disk-images.html.en[Where does Boxes store disk images?]
+:ZFS: https://openzfs.org/wiki/Main_Page[ZFS]
+
+So, you've got {libvirt} installed on your Linux box and your looking for a simple application for running virtual machines.
+Look no further than {Boxes}, so far as it meets your needs, of course.
+What's that you ask?
+What do you need to figure out to run on this on a {Btrfs} filesystem?
+Well, you've come to the right place!
+This post describes how to install and accommodate Boxes on Btrfs.
+
+== Tutorial
+
+This tutorial describes how to install GNOME {Boxes} on a Btrfs filesystem on {elementary-OS} 5.1 which is based on {Ubuntu} 18.04.
+You'll need to have libvirt installed.
+Instructions for this are available in the post <<install-libvirt-on-elementary-os-5-1#,Install libvirt on elementary OS 5.1>>, which addresses Btrfs concerns.
+You should be familiar with installing software on Ubuntu and elementary OS, {Flatpak}, the command-line, and Btrfs.
+
+[NOTE]
+====
+For more robust configurations and anything that doesn't _just work_ in Boxes, try {virt-manager}.
+====
+
+=== Install
+
+Boxes is readily available in two formats, as a Flatpak and a deb package from Ubuntu's repositories.
+You can install in one or both ways.
+The Flatpak will receive updates to newer versions where the deb package won't be updated beyond the minor version provided, currently 3.28.
+While the Flatpak will be a much newer version, development in Flatpak is still necessary to expose and connect all the necessary system components for virtualization.
+Some things may not work quite right yet with the Flatpak, but I've found it to work well enough.
+
+==== Flatpak
+
+A Flatpak can be installed system-wide or for an individual user.
+The instructions below describe both methods.
+systemd, 
+
+. Add the Flathub remote.
+
+User::
++
+[source,sh]
+----
+➜ flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+----
+
+System::
++
+[source,sh]
+----
+➜ sudo flatpak --system remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+----
+
+. Install the GNOME Boxes Flatpak.
+
+User::
++
+[source,sh]
+----
+➜ flatpak --user install -y flathub org.gnome.Boxes
+----
+
+System::
++
+[source,sh]
+----
+➜ sudo flatpak --system install -y flathub org.gnome.Boxes
+----
+
+==== System Package
+
+Install the GNOME Boxes Ubuntu package.
+
+[source,sh]
+----
+➜ sudo apt -y install gnome-boxes
+----
+
+=== Btrfs
+
+By default, Boxes uses the copy-on-write {qcow2} disk image format.
+If you use Btrfs on your system like I do, then you'll want to avoid placing these _CoW_ disk images on a _CoW_ Btrfs filesystem.
+You'll probably want to exclude the disk images from Btrfs snapshots as well and opt to manage you disk image snapshots independently using the built-in features of qcow2.
+In the future, perhaps libvirt will provide a native Btrfs storage pool making the qcow2 format unnecessary along with these workarounds.
+
+The sections here demonstrate a couple of ways to disable _CoW_ for the disk image directory used by Boxes and how to create a separate subvolume for that directory.
+The location of the Boxes disk image directory depends on whether it is installed as a Flatpak or a deb package.
+Refer to {Where does Boxes store disk images} in the Boxes documentation for more information.
+Commands are provide for both locations where feasible.
+
+==== Exclude From Btrfs Snapshots
+
+If you snapshot your filesystem, take care to exclude the Boxes virtual disk image directory by making the directory a subvolume.
+Btrfs subvolumes are automatically excluded from snapshots of their parent subvolumes.
+Snapshots for virtual disk images should be handled in the disk image itself.
+Snapshots are provided by default qcow2 format used by Boxes.
+Here's how to create the subvolume.
+
+. Delete the current images directory.
+
+Flatpak::
++
+[source,sh]
+----
+➜ rmdir ~/.var/app/org.gnome.Boxes/data/gnome-boxes/images
+----
+
+System Package::
++
+[source,sh]
+----
+➜ rmdir ~/.local/share/gnome-boxes/images
+----
+
+. Create a subvolume in its place.
+
+Flatpak::
++
+[source,sh]
+----
+➜ btrfs subvolume create ~/.var/app/org.gnome.Boxes/data/gnome-boxes/images
+Create subvolume '/home/jordan/.var/app/org.gnome.Boxes/data/gnome-boxes/images'
+----
+
+System Package::
++
++
+[source,sh]
+----
+➜ btrfs subvolume create ~/.local/share/gnome-boxes/images
+Create subvolume '/home/jordan/.local/share/gnome-boxes/images'
+----
+
+==== Disable _CoW_
+
+The two most straightforward ways to disable _CoW_ for a directory, or subvolume, are to use a file attribute or libvirt's storage pool feature.
+Use whichever one you prefer.
+
+[NOTE]
+====
+There's also the `nodatacow` mount option, but a {flat-layout} in a home directory isn't exactly the pinnacle of convenience.
+====
+
+===== chattr
+
+The simplest way to disable _CoW_ on a particular directory or file is with {chattr} as described in {Can-copy-on-write-be-turned-off-for-data-blocks}.
+This makes it easy to disable _CoW_ on the Boxes disk image directory.
+To do this, _add_ the _no copy on write_ attribute with the `+C` option followed by the directory.
+The following commands disable _CoW_ on Boxes' image directory.
+
+Flatpak::
++
+[source,sh]
+----
+➜ chattr +C ~/.var/app/org.gnome.Boxes/data/gnome-boxes/images
+----
+
+System Package::
++
+[source,sh]
+----
+➜ chattr +C ~/.local/share/gnome-boxes/images
+----
+
+===== libvirt Storage Pool Feature
+
+Boxes creates a dedicated libvirt storage pool.
+libvirt uses the concept of storage pools to abstract the complexities involved in managing the underlying virtual machine disk images in a variety of situations.
+There's a bit to it, but I'll leave out the lengthy explanation for brevity.
+libvirt has fantastic documentation on its {libvirt-Storage-Management} if you wish to learn more.
+
+[NOTE]
+====
+elementary OS 5.1 and Ubuntu 18.04 only ship with access to libvirt 4.0.0, so you'll need to get newer version by some external means for this to work.
+====
+
+_CoW_ can be disabled on the libvirt storage pool by configuring the appropriate storage pool feature.
+libvirt stores pretty much all configuration in XML files.
+This is the case for storage pools and the XML can be viewed and edited with {virsh}.
+The steps here walk through the steps to disable _CoW_ on the Boxes storage pool.
+
+. Find the Boxes storage pool with the {virsh-pool-list} subcommand.
++
+--
+[source,sh]
+----
+➜ virsh pool-list
+ Name                 State      Autostart 
+-------------------------------------------
+ default              active     yes  
+ gnome-boxes          active     yes      
+----
+
+libvirt's default pool is simply called _default_ while Boxes' pool is named _gnome-boxes_.
+--
+
+. To view the current XML configuration for a pool, use the {virsh-pool-dumpxml} subcommand followed by the pool's name.
+Here I output the default pool's XML configuration where you can verify _path_ is as expected for the Flatpak.
++
+[source,sh]
+----
+➜ virsh pool-dumpxml gnome-boxes
+<pool type='dir'>
+  <name>images</name>
+  <uuid>02814071-7a82-4444-80f1-295cfc6f947d</uuid>
+  <capacity unit='bytes'>1999372288000</capacity>
+  <allocation unit='bytes'>191017480192</allocation>
+  <available unit='bytes'>1808354807808</available>
+  <source>
+  </source>
+  <target>
+    <path>/home/jordan/.var/app/org.gnome.Boxes/data/gnome-boxes/images</path>
+    <permissions>
+      <mode>0775</mode>
+      <owner>1001</owner>
+      <group>1001</group>
+    </permissions>
+  </target>
+</pool>
+----
+
+
+. To edit a pool's configuration, use the {virsh-pool-edit} subcommand.
+To modify the Boxes pool, the command would appear as follows.
++
+[source,sh]
+----
+➜ virsh pool-edit gnome-boxes
+----
+
+. To disable _CoW_, set the _cow_ feature with `state=no` in the pool's XML.
++
+--
+The snippet here illustrates the necessary XML.
+
+[source,xml]
+----
+<features>
+  <cow state='no'>
+</features>
+----
+
+For Boxes' storage pool, the resulting XML to disable _CoW_ could appear like so.
+
+[source,xml]
+----
+<pool type='dir'>
+  <name>gnome-boxes</name>
+  <uuid>02814071-7a82-4444-80f1-295cfc6f947d</uuid>
+  <capacity unit='bytes'>1999372288000</capacity>
+  <allocation unit='bytes'>191017480192</allocation>
+  <available unit='bytes'>1808354807808</available>
+  <features>
+    <cow state='no'>
+  </features>
+  <source>
+  </source>
+  <target>
+    <path>/home/jordan/.var/app/org.gnome.Boxes/data/gnome-boxes/images</path>
+    <permissions>
+      <mode>0775</mode>
+      <owner>1001</owner>
+      <group>1001</group>
+    </permissions>
+  </target>
+</pool>
+----
+--
+
+== Conclusion
+
+That should be everything you need to get started with GNOME Boxes on a Btrfs filesystem.
+Enjoy that simple virtualization.
