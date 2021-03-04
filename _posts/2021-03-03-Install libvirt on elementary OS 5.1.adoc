@@ -167,6 +167,14 @@ In {libvirt-6-6-0}, {libvirt-storage-pool-features} were introduced, including t
 This version of libvirt disabled _CoW_ by default on Btrfs filesystems.
 This default behavior was quickly rescinded in {libvirt-6-7-0} which re-enabled _CoW_ by default.
 The change leaves the decision to disable _CoW_ in the hands of system administrators.
+If your lucky enough to be using libvirt 6.6.0 or newer, you can take advantage of this feature.
+
+[NOTE]
+====
+elementary OS 5.1 and Ubuntu 18.04 only ship with access to libvirt 4.0.0
+Even if you use the virtualization PPA, it only goes up to version 4.7.0 for Ubuntu 18.04.
+You'll need to get newer version by some external means or use a newer version of Ubuntu for this to work.
+====
 
 libvirt uses the concept of storage pools to abstract the complexities involved in managing the underlying virtual machine disk images in a variety of situations.
 I won't delve into the details here.
@@ -175,7 +183,7 @@ For the purposes of this post you should know that libvirt's default directory f
 This pool is a simple {libvirt-Directory-pool}.
 libvirt stores pretty much all configuration in XML files.
 This is the case for storage pools and the XML can be viewed and edited with {virsh}.
-The steps walk through the steps to disable _CoW_ on the default storage pool.
+The steps here walk through the steps to disable _CoW_ on the default storage pool.
 
 . List storage pools with the {virsh-pool-list} subcommand.
 The default pool is just called _default_.
