@@ -1,7 +1,7 @@
 = Btrfs Scrub
 :page-layout:
 :page-category: Disks
-:page-tags: [Arch, Btrfs, elementary, Linux, scrub, systemd, Ubuntu]
+:page-tags: [Arch, Btrfs, Linux, scrub, systemd, ZFS]
 :AccuracySec: https://www.freedesktop.org/software/systemd/man/systemd.timer.html#AccuracySec=[AccuracySec]
 :Arch-Wiki-Btrfs-Scrub-Start-with-a-service-or-timer: https://wiki.archlinux.org/index.php/btrfs#Start_with_a_service_or_timer[Start with a service or timer]
 :Arch-Linux-systemd-Btrfs-scrub-service: https://github.com/archlinux/svntogit-packages/blob/packages/btrfs-progs/trunk/btrfs-scrub%40.service[Arch Linux systemd Btrfs scrub service]
@@ -10,19 +10,25 @@
 :btrfs-scrub: https://btrfs.wiki.kernel.org/index.php/Manpage/btrfs-scrub[btrfs-scrub(8)]
 :Btrfs-maintenance-toolbox: https://github.com/kdave/btrfsmaintenance[Btrfs maintenance toolbox]
 :ConditionPathIsMountPoint: https://www.freedesktop.org/software/systemd/man/systemd.unit.html#ConditionPathIsMountPoint=[ConditionPathIsMountPoint]
-:flat-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Flat[flat layout]
+:ExecStart: https://www.freedesktop.org/software/systemd/man/systemd.service.html#ExecStart=[ExecStart]
 :fstab: https://manpages.ubuntu.com/manpages/focal/man8/fsck.8.html[/etc/fstab]
+:instantiated-service: https://www.freedesktop.org/software/systemd/man/systemd.service.html#Service%20Templates[instantiated service]
 :IOSchedulingClass: https://www.freedesktop.org/software/systemd/man/systemd.exec.html#IOSchedulingClass=[IOSchedulingClass]
 :KillSignal: https://www.freedesktop.org/software/systemd/man/systemd.kill.html#KillSignal=[KillSignal]
 :Nagios: www.nagios.org[Nagios]
 :Nice: https://www.freedesktop.org/software/systemd/man/systemd.exec.html#Nice=[Nice]
-:nested-layout: https://btrfs.wiki.kernel.org/index.php/SysadminGuide#Nested[nested layout]
 :OnCalendar: https://www.freedesktop.org/software/systemd/man/systemd.timer.html#OnCalendar=[OnCalendar]
 :Persistent: https://www.freedesktop.org/software/systemd/man/systemd.timer.html#Persistent=[Persistent]
 :RandomizedDelaySec: https://www.freedesktop.org/software/systemd/man/systemd.timer.html#RandomizedDelaySec=[RandomizedDelaySec]
+:systemctl: https://www.freedesktop.org/software/systemd/man/systemctl.html#[systemctl(1)]
+:systemctl-enable: https://www.freedesktop.org/software/systemd/man/systemctl.html#enable%20UNIT%E2%80%A6[systemctl enable]
+:systemctl-now: https://www.freedesktop.org/software/systemd/man/systemctl.html#--now[--now]
+:systemctl-start: https://www.freedesktop.org/software/systemd/man/systemctl.html#start%20PATTERN%E2%80%A6[systemctl start]
+:systemctl-status: https://www.freedesktop.org/software/systemd/man/systemctl.html#status%20PATTERN%E2%80%A6%7CPID%E2%80%A6%5D[systemctl status]
 :systemd: https://systemd.io/[systemd]
 :systemd-automount: https://www.freedesktop.org/software/systemd/man/systemd.automount.html[systemd.automount]
 :systemd-escape: https://www.freedesktop.org/software/systemd/man/systemd-escape.html[systemd-escape(1)]
+:systemd-mount-unit: https://www.freedesktop.org/software/systemd/man/systemd.mount.html[systemd.mount]
 :systemd-service: https://www.freedesktop.org/software/systemd/man/systemd.service.html[systemd.service]
 :systemd-timer: https://www.freedesktop.org/software/systemd/man/systemd.timer.html[systemd.timer]
 :zpool-scrub: https://openzfs.github.io/openzfs-docs/man/8/zpool-scrub.8.html[zpool-scrub(8)]
@@ -51,7 +57,7 @@ You should probably use either a mount point or device path to make the intended
 
 [NOTE]
 ----
-Even if the btrfs-scrub accepts a directory path, it doesn't necessarily just scrub that directory.
+Even if the `btrfs-scrub` command accepts a directory path, it doesn't necessarily just scrub that directory.
 It will scrub the entire filesystem where that directory resides.
 ----
 
@@ -113,7 +119,7 @@ The systemd units here should be dropped in the standard system directory `/etc/
 
 === Service
 
-Below is the {Arch-Linux-systemd-Btrfs-scrub-service}.
+Below is the {Arch-Linux-systemd-Btrfs-scrub-service} with just two tweaks of my own.footnote:[I've submitted https://bugs.archlinux.org/task/69887?project=1&string=btrfs-progs[bug #69887] to have this functionality added to the Btrfs scrub service in Arch Linux.]
 
 [source,systemd]
 ./etc/systemd/system/btrfs-scrub@.service
@@ -121,6 +127,8 @@ Below is the {Arch-Linux-systemd-Btrfs-scrub-service}.
 [Unit]
 Description=Btrfs scrub on %f
 ConditionPathIsMountPoint=%f
+BindsTo=%i.mount
+After=%i.mount
 
 [Service]
 Nice=19
@@ -129,18 +137,30 @@ KillSignal=SIGINT
 ExecStart=/usr/bin/btrfs scrub start -B %f
 ----
 
-This service requires that the path of the service unit is indeed a mount point.
-The service also ensures that it's very nice to other tasks that want to use the CPU and only runs when the disk is idle.
-
-// todo Describe systemd keywords.
-
-This systemd unit unit is instantiable and expects that a properly escaped path is provided after the `@` and before the `.service` extension.
+This {systemd-service} is an {instantiated-service} which expects that a properly escaped path is provided after the `@` and before the `.service` extension.
 systemd uses special escaping rules to map filesystem paths to unit file names.
 The {systemd-escape} tool makes it quite easy to convert a given path.
 
-The `-B` flag executes the scrub in the foreground instead of the background so that the service will fail when scrub reports corruption or fails.
+This service requires that the path of the service unit is indeed a mount point and that it exists with {ConditionPathIsMountPoint}.
+The argument `%f` represents the unescaped path used to instantiate this systemd unit.
+The `%i` flag is the escaped version of the path used to instantiate this unit, that is the string between `@` and before `.service` when starting the unit.
+{BindsTo} and {After} define the relationship with the {systemd-mount-unit} unit responsible for mounting the filesystem at the given mount point.
+systemd mount units are usually generated automatically from entries in {fstab}.
+For this dependency relationship to work, a corresponding systemd mount unit needs to exist.
+You'll want the filesystem your scrubbing to have an entry in fstab or otherwise provide the mount unit in some other way.
+`BindsTo` requires that the filesystem at the mount point be available the entire time this unit is running.
+If it becomes unavailable for some reason, the mount unit fails and the scrub service is killed along with it.
+The `After` keyword requires that the target be mounted before this service runs.
+These two keywords are my addition to the unit to make it friendlier with filesystems which are hot-plugged and not always present, such as my external backup drive.
 
-To start a scrub directly with the systemd service, start the the systemd unit.
+The {Nice} directive sets the scheduling priority to the lowest possible value, _19_, giving the scrub a very low priority to avoid hogging the system CPU time.
+The {`IOSchedulingClass} directive is set to `idle` which effectively means that the IO activity of the process shouldn't impact normal system activity.
+the scrub will only use the disk when no other programs are using it.
+{KillSignal} sets the signal used to kill the process to SIGINT, i.e. kbd:[Ctrl-C].
+Finally, the {ExecStart} executes the scrub command on the unescaped path used to instantiate the service but uses `-B` to avoid immediately returning.
+
+The {systemctl} command handles interacting with systemd services and units.
+To start a scrub directly with the systemd service, start the the systemd unit with `{systemctl-start}`.
 Here, I start the unit on the root path of the filesystem which is converted by systemd to `-`.
 
 [source,sh]
@@ -148,24 +168,27 @@ Here, I start the unit on the root path of the filesystem which is converted by 
 ➜ sudo systemctl start btrfs-scrub@(systemd-escape -p /).service
 ----
 
-You can then check the status of the systemd service as follows.
+You can then check the status of the systemd service with `{systemctl-status}` as follows.
 
 [source,sh]
 ----
 ➜ sudo systemctl status btrfs-scrub@(systemd-escape -p /).service
+● btrfs-scrub@-.service - Btrfs scrub on /
+   Loaded: loaded (/etc/systemd/system/btrfs-scrub@.service; static; vendor preset: enabled)
+   Active: inactive (dead)
 ----
 
 === Timer
 
 Below is the {Arch-Linux-systemd-Btrfs-scrub-timer} albeit with a small modification on my part.
-The timer runs on the first and fifteenth of every month instead of only once a month.
-Weekly is also a good option which can be set with `OnCalendar=weekly`.
+The {systemd-timer} runs on the first and fifteenth of every month instead of only once a month.
+Weekly is also a good option which can be configured by setting {OnCalendar} to `weekly`.
 
 [source,systemd]
 ./etc/systemd/system/btrfs-scrub@.timer
 ----
 [Unit]
-Description=Monthly Btrfs scrub on %f
+Description=Btrfs scrub on %f twice per month
 
 [Timer]
 OnCalendar=*-*-1,15
@@ -177,33 +200,26 @@ Persistent=true
 WantedBy=timers.target
 ----
 
-// todo Describe systemd keywords.
+The {Persistent} keyword ensures the service runs even if the timer would have fired previously but the system was not available.
+If you miss a scrub due to your machine being powered off, the scrub will happen the next time you boot up.
 
-By default most scrub timers are set to run once every month, but I prefer at least every two weeks if not weekly.
-This timer fires the first and fifteenth day of every month.
+Use `{systemctl-enable}` to activate the timer.
+Here I set the timer to scrub the root filesystem automatically activate at boot while starting the timer immediately with `{systemctl-now}`.
 
 [source,sh]
 ----
 ➜ sudo systemctl enable --now btrfs-scrub@(systemd-escape -p /).timer
+Created symlink /etc/systemd/system/timers.target.wants/btrfs-scrub@-.timer → /etc/systemd/system/btrfs-scrub@.timer.
 ----
 
-As with the timer, you can check the status of the systemd timer which is shown here.
+As with the service, you can check the status of the systemd timer which is shown here.
 
 [source,sh]
 ----
 ➜ sudo systemctl status btrfs-scrub@(systemd-escape -p /).timer
+● btrfs-scrub@boot.timer - Btrfs scrub on / twice per month
+   Loaded: loaded (/etc/systemd/system/btrfs-scrub@.timer; indirect; vendor preset: enabled)
 ----
-
-=== Automount
-
-If you followed along with my tutorial <<encrypt-an-external-disk-on-linux#,Encrypt an External Disk on Linux>> or have an external drive with a Btrfs filesystem, you'll want to scrub these filesystems too.
-You can automate scrubs for such a filesystem by creating a {systemd-automount} as described in <<automount-an-encrypted-system-volume#,Automount an Encrypted System Volume>>.
-You can then use the mount point of that volume as the path for the instantiable systemd unit.
-
-// todo Test the behavior of the Arch Linux systemd unit when an automounted volume is not attached to the system.
-//   Does the service fail to start or does btrfs scrub report an error?
-//   Ideally, the service should not be able to start without the drive attached.
-//   Does this dependency need to appear in the systemd unit?
 
 == Conclusion
 
