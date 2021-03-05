@@ -56,10 +56,10 @@ I'm not exactly sure why it takes a directory path to anywhere on the filesystem
 You should probably use either a mount point or device path to make the intended target clear.
 
 [NOTE]
-----
+====
 Even if the `btrfs-scrub` command accepts a directory path, it doesn't necessarily just scrub that directory.
 It will scrub the entire filesystem where that directory resides.
-----
+====
 
 To initiate a scrub in the background, use the start subcommand followed by the path or device.
 Here I initiate a scrub on the device on which my root filesystem resides.
@@ -105,11 +105,11 @@ If you go to the trouble to automate your scrubs you'll want to make sure to reg
 Ideally you'd use something like {Nagios} for monitoring this aspect of your systems.
 
 [CAUTION]
-----
+====
 Don't rely on alerts whether that is through email or desktop notifications.
 If they fail silently, you won't realize when something has gone horribly wrong.
 Set aside time regularly to check your systems' status and health.
-----
+====
 
 Arch Linux provides a handy {systemd-service} and {systemd-timer} to automate scrubs.
 The {Btrfs-maintenance-toolbox} provides similar functionality.
