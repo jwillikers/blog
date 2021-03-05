@@ -1,4 +1,4 @@
-= Install Podman on Ubuntu 18.04
+= Install Podman on Ubuntu
 :page-layout:
 :page-category: Virtualization
 :page-tags: [Btrfs, containers, Docker, elementary, Kubernetes, Linux, Podman, systemd, Ubuntu, ZFS]
@@ -19,15 +19,17 @@ Podman integrates deeply with Linux, taking advantage of a number of specific fe
 Notably, it uses namespaces for process isolation and integrates nicely with {systemd}.
 Just like {Kubernetes}, Podman is built on the concept of _pods_, groups of one or more containers, instead of individual containers.
 
-Podman is only available in the Ubuntu repositories as of {Ubuntu} 20.10.
+Podman is only available in the Ubuntu repositories as of {Ubuntu} 20.10, making it just an apt install away.
 For older Ubuntu LTS releases, the Kubic PPA can be used to get Podman which is described here. 
 
 == Tutorial
 
-This tutorial provides the necessary steps to install Podman on {elementary-OS} 5.1 and {Ubuntu} 18.04.
+This tutorial provides the necessary steps to install Podman on {elementary-OS} 5.1, i.e. {Ubuntu} 18.04, as well as Ubuntu 20.04 proper.
 It is assumed that you are familiar with Linux, Ubuntu, and the command-line.
 
 . Add the Kubic repository for Podman to the system's sources list.
+
+Ubuntu 18.04::
 +
 [source,sh]
 ----
@@ -36,11 +38,31 @@ It is assumed that you are familiar with Linux, Ubuntu, and the command-line.
 deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_18.04/ /
 ----
 
+Ubuntu 20.04::
++
+[source,sh]
+----
+➜ echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_20.04/ /" \
+  | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_20.04/ /
+----
+
 . Import the Kubic repository's GPG key.
+
+Ubuntu 18.04::
 +
 [source,sh]
 ----
 ➜ wget -qO - https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_18.04/Release.key \
+  | gpg --dearmor \
+  | sudo tee /etc/apt/trusted.gpg.d/kubic_libcontainers.gpg > /dev/null
+----
+
+Ubuntu 20.04::
++
+[source,sh]
+----
+➜ wget -qO - https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_20.04/Release.key \
   | gpg --dearmor \
   | sudo tee /etc/apt/trusted.gpg.d/kubic_libcontainers.gpg > /dev/null
 ----
