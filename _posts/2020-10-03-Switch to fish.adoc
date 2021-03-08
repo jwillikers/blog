@@ -194,14 +194,33 @@ The equivalent of `~/.bashrc` and `~/.zshrc` is `~/.config/fish/config.fish` but
 . Update the `PATH` environment variable in fish to suit your needs.footnote:[https://fishshell.com/docs/current/tutorial.html#path[fish Tutorial: $PATH]]
 +
 --
-When messing with `PATH`, use fish's dedicated internal variable `fish_user_paths`.
-This variable is special and populates `PATH`.
+Version 3.2.0 of fish introduced the command https://fishshell.com/docs/current/cmds/fish_add_path.html#cmd-fish-add-path[`fish_add_path`] which makes permanently adding a path to `PATH` super easy.
+Just use use the command followed by the path to add, and that's it!
+No fiddling with configuration files necessary.
+It takes care of duplicates for you, too.
 Some Linux distributions don't include `/usr/local/bin` in `PATH` by default.
+Adding `/usr/local/bin` to the end of the list in `PATH` is as simple as this.
+
+[source,sh]
+----
+➜ fish_add_path /usr/local/bin
+----
+
+The `-p` flag prepends the given path to `PATH`.
+To place `/usr/local/bin` at the beginning of `PATH`, use this command.
+
+[source,sh]
+----
+➜ fish_add_path -p /usr/local/bin
+----
+
+When messing with `PATH` prior to version 3.2.0, use fish's dedicated internal variable `fish_user_paths`.
+This variable is special and populates `PATH`.
 With the https://fishshell.com/docs/current/cmds/set.html[`set`] command, prepend `/usr/local/bin` to `PATH` as follows.
 
 [source,sh]
 ----
-➜ set -p fish_user_paths /usr/local/bin
+➜ set -pU fish_user_paths /usr/local/bin
 ----
 
 The `-p` option prepends a value to the given variable.

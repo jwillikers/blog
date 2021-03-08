@@ -93,6 +93,15 @@ Shell changed.
 . Log out and back in to complete the switch to fish.
 
 . Because it is CentOS, add `/usr/local/bin` to your `PATH`.
+
+Version 3.2.0 and newer::
++
+[source,sh]
+----
+➜ fish_add_path -p /usr/local/bin
+----
+
+Versions prior to 3.2.0::
 +
 [source,sh]
 ----
