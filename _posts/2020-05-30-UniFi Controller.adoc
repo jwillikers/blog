@@ -97,6 +97,15 @@ $ docker-compose up -d
 ----
 
 . Then, just open the UniFi Controller's web UI.
+
+fish::
++
+[source,sh]
+----
+$ open http://127.0.0.1:8443
+----
+
+Other shells::
 +
 [source,sh]
 ----
