@@ -189,7 +189,7 @@ The shell variables are configured to persist across shell sessions below.
 ➜ source ~/.bashrc
 
 # fish
-➜ set -pU fish_user_paths ~/.gcc/10.2.0/bin
+➜ fish_add_path -p ~/.gcc/10.2.0/bin
 ----
 
 . Prepend the compiler's library directory, `lib64`, to the `LD_LIBRARY_PATH` environment variable.

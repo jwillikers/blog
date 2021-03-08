@@ -198,10 +198,7 @@ User::
 _fish_:::
 [source,sh]
 ----
-➜ mkdir -p ~/.config/fish/conf.d; and \
-  echo 'set -p fish_user_paths ~/.local/(gcc -dumpmachine)/bin' > \
-    ~/.config/fish/conf.d/machine_paths.fish
-➜ exec fish
+➜ fish_add_path -p ~/.local/(gcc -dumpmachine)/bin
 ----
 
 _Bash_:::
