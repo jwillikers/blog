@@ -743,14 +743,14 @@ _fish_::
 +
 [source,sh]
 ----
-➜ asdf global direnv (asdf list ruby | awk 'FNR <= 1')
+➜ asdf global direnv (asdf list direnv | awk 'FNR <= 1')
 ----
 
 _Bash / ZSH_::
 +
 [source,sh]
 ----
-➜ asdf global direnv $(asdf list ruby | awk 'FNR <= 1')
+➜ asdf global direnv $(asdf list direnv | awk 'FNR <= 1')
 ----
 ====
 --
