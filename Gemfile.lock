@@ -23,7 +23,7 @@ GEM
     faraday-net_http (1.0.1)
     faraday_middleware (1.0.0)
       faraday (~> 1.0)
-    ffi (1.14.2)
+    ffi (1.15.0)
     forwardable-extended (2.6.0)
     gh (0.18.0)
       activesupport (~> 5.0)
@@ -35,7 +35,7 @@ GEM
       net-http-pipeline
     highline (2.0.3)
     http_parser.rb (0.6.0)
-    i18n (1.8.8)
+    i18n (1.8.9)
       concurrent-ruby (~> 1.0)
     jekyll (4.2.0)
       addressable (~> 2.4)
@@ -96,7 +96,7 @@ GEM
       jekyll-include-cache (~> 0.1)
       jekyll-paginate (~> 1.1)
       jekyll-sitemap (~> 1.3)
-    minitest (5.14.3)
+    minitest (5.14.4)
     multi_json (1.15.0)
     multipart-post (2.1.1)
     net-http-persistent (2.9.4)
@@ -158,4 +158,4 @@ DEPENDENCIES
   travis
 
 BUNDLED WITH
-   2.1.4
+   2.2.3
