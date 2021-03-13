@@ -1,5 +1,6 @@
 = Btrfs Scrub
 :page-layout:
+:page-comments: true
 :page-category: Disks
 :page-tags: [Arch, Btrfs, Linux, scrub, systemd, ZFS]
 :AccuracySec: https://www.freedesktop.org/software/systemd/man/systemd.timer.html#AccuracySec=[AccuracySec]
