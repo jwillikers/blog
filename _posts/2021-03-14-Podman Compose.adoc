@@ -1,0 +1,156 @@
+= Podman Compose
+:page-layout:
+:page-category: Virtualization
+:page-tags: [containers, Docker, DockerCompose, Kubernetes, Linux, Podman, PodmanCompose, Ubuntu]
+:Docker: https://www.docker.com/[Docker]
+:Docker-Compose: https://docs.docker.com/compose/[Docker Compose]
+:docker-unifi-controller: https://github.com/linuxserver/docker-unifi-controller[docker-unifi-controller]
+:Fedora-Magazine: https://fedoramagazine.org/[Fedora Magazine]
+:Kubernetes: https://kubernetes.io/[Kubernetes]
+:LinuxServer-io: https://www.linuxserver.io/[LinuxServer.io]
+:Manage-containers-with-Podman-Compose: https://fedoramagazine.org/manage-containers-with-podman-compose/[Manage containers with Podman Compose]
+:Podman: https://podman.io/[Podman]
+:Podman-Compose: https://github.com/containers/podman-compose[Podman Compose]
+:Python: https://www.python.org/[Python]
+:systemd: https://systemd.io/[systemd]
+:Ubuntu: https://ubuntu.com/[Ubuntu]
+
+{Podman} supports the {Kubernetes} YAML format for configuring pods.
+Unfortunately, I'm coming to the Podman scene from {Docker} where the {Docker-Compose} format is common.
+The Docker Compose format isn't supported by Podman.
+I don't really want to invest the time in learning a new configuration file format right now, so what should I do?
+Use {Podman-Compose}!
+
+== Tutorial
+
+This tutorial describes how to use a Docker Compose file with Podman to create a rootless container.
+It uses the Docker Compose for the UniFi Controller described in the <<unifi-controller#,UniFi Controller>> post.
+This tutorial targets {Ubuntu} 18.04, and you should be familiar with Linux Containers, Docker Compose, Podman, {Python}, and the command-line.
+You'll need to have Podman installed on your machine, which can be installed on Ubuntu 18.04 by following the instructions in the post <<install-podman-on-ubuntu#,Install Podman on Ubuntu>>.
+
+. Since Podman Compose is a Python tool, install Python 3 and pip.
++
+[source,sh]
+----
+➜ sudo apt -y install python3 python3-pip
+----
+
+. Now using pip, install the latest development version of Podman Compose.
++
+[source,sh]
+----
+➜ pip3 install --user https://github.com/containers/podman-compose/archive/devel.tar.gz
+----
+
+. Add `~/.local/bin` to your `PATH`.
+
+fish::
++
+[source,sh]
+----
+➜ fish_add_path ~/.local/bin
+----
+
+ZSH::
++
+[source,sh]
+----
+➜ echo "set PATH=$HOME/.local/bin:$PATH" >> ~/.zshrc; source ~/.zshrc
+----
+
+Bash::
++
+[source,sh]
+----
+➜ echo "set PATH=$HOME/.local/bin:$PATH" >> ~/.bashrc; source ~/.bashrc
+----
+
+. Create a directory for the Docker Compose file.
++
+[source,sh]
+----
+➜ mkdir -p ~/Projects/unifi-controller
+----
+
+. Change to the new directory.
++
+[source,sh]
+----
+➜ cd ~/Projects/unifi-controller
+----
+
+. Create the Docker Compose file.
++
+--
+[source,yaml]
+.~/Projects/unifi-controller/docker-compose.yml
+----
+---
+version: "2.1"
+services:
+  unifi-controller:
+    image: ghcr.io/linuxserver/unifi-controller
+    environment:
+      - MEM_LIMIT=1024M #optional
+    volumes:
+      - data:/config
+    ports:
+      - 3478:3478/udp
+      - 10001:10001/udp
+      - 8080:8080
+      - 8443:8443
+      - 1900:1900/udp #optional
+      - 8843:8843 #optional
+      - 8880:8880 #optional
+      - 6789:6789 #optional
+      - 5514:5514/udp #optional
+    restart: unless-stopped
+    labels:
+      io.containers.autoupdate: image # <1>
+volumes:
+  data:
+----
+<1> Spoiler! I'll be describing how to automatically update container images with Podman in an upcoming blog post.
+
+This Docker Compose uses the {docker-unifi-controller} image provided by {LinuxServer-io} and is very close to the provided Docker Compose file.
+It uses a volume to store persistent data.
+The volume dubbed _data_ here will use a Podman volume named `unifi-controller_data`.
+--
+
+. From within the project directory, run Podman Compose to create the _unifi-controller_ pod.
++
+--
+Just like when using Docker Compose, the `up` subcommand creates and starts the container, and the `-d` flag backgrounds the process.
+
+[source,sh]
+----
+➜ podman-compose up -d
+----
+--
+
+. Access the controller's web console at https://127.0.0.1:8443/.
+
+fish::
++
+[source,sh]
+----
+➜ open http://127.0.0.1:8443
+----
+
+Other shells::
++
+[source,sh]
+----
+➜ xdg-open http://127.0.0.1:8443
+----
+
+== See Also
+
+If you'd like to learn more about using Podman Compose, checkout the article {Manage-containers-with-Podman-Compose} from {Fedora-Magazine}.
+
+== Conclusion
+
+That was fast, wasn't it?
+Love Podman yet?
+If you want to simplify your workflow, you can generate a Kubernetes configuration from the Podman container, and even setup this container as a {systemd} service.
+Blog posts on these topics will be available soon!
