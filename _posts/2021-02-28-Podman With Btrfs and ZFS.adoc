@@ -137,6 +137,17 @@ These options include `autodefrag`, `compress=zstd`, and `noatime`, all of which
 You can even go so far as to create dedicated, top-level subvolumes for your root and rootless containers to fine-tune the mount options.
 To learn more about Btrfs mount options and layouts, see <<btrfs-mount-options#,Btrfs Mount Options>> and <<btrfs-layout#,Btrfs Layout>>.
 
+To really capitalize on using Btrfs and ZFS for your containers, you'll want to take advantage of their snapshot and incremental backup capabilities.
+Containers, images, and named volumes are all stored in `~/.local/share/containers/storage` for rootless runtimes and `/var/lib/containers/storage/` for root.
+For Btrfs, these directories contain the subdirectory `btrfs/subvolumes` which contains individual subvolumes for each container.
+I assume that the ZFS driver uses a similar procedure for creating individual datasets for each container.
+Snapshots can be taken of these containers and they can be backed up incrementally.
+
+You probably use named volumes for persisting any important data in your containers such as databases and configuration.
+These named volumes are located in the `volumes` subdirectory.
+You might make this directory - or any of its subdirectories for that matter - a subvolume or dataset and snapshot it and back it up.
+For Btrfs users, the blog posts <<btrfs-snapshot-management-with-snapper#,Btrfs Snapshot Management With Snapper>> and <<backup-snapper-snapshots-with-snap-sync#,Backup Snapper Snapshots With snap-sync>> can be applied to create automated snapshots and backups of these directories.
+
 == Conclusion
 
 You have combined the ultimate powers of Podman and Btrfs or ZFS.
