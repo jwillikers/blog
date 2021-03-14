@@ -1,6 +1,6 @@
 = Why Choose Btrfs
 :page-layout:
-:page-category: Disks
+:page-category: Data Storage
 :page-tags: [bcachefs, Btrfs, CoW, filesystem, Fedora, FreeBSD, Linux, OpenZFS, openSUSE, NetBSD, snapshots, ZFS]
 :Allan-Jude: https://github.com/allanjude[Allan Jude]
 :bcachefs: https://bcachefs.org/[bcachefs]

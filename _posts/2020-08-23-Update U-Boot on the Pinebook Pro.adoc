@@ -1,6 +1,6 @@
 = Update U-Boot on the Pinebook Pro
 :page-layout:
-:page-category: Systems
+:page-category: Admin
 :page-tags: [ArchLinux, Boot, Linux, Manjaro, PinebookPro, UBoot]
 
 The other day, https://elementary.io[Elementary] announced https://www.google.com/search?channel=fs&client=ubuntu&q=elementaryos+6[elementaryOS 6] preview builds for the https://www.pine64.org/pinebook-pro/[Pinebook Pro].

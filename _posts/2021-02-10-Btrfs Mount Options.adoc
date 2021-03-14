@@ -1,6 +1,6 @@
 = Btrfs Mount Options
 :page-layout:
-:page-category: Disks
+:page-category: Data Storage
 :page-tags: [Btrfs, fstab, Linux, mount]
 :Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
 :mount-options: https://btrfs.wiki.kernel.org/index.php/Manpage/btrfs(5)#MOUNT_OPTIONS[mount options]

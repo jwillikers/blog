@@ -1,6 +1,6 @@
 = Generate a GPG Key
 :page-layout:
-:page-category: Systems
+:page-category: Security
 :page-tags: [Backups, GnuPG, GPG, OpenPGP, Ubuntu]
 
 https://gnupg.org/[GPG] keys can be used to cryptographically sign https://git-scm.com/[Git] commits, pushes, and tags.

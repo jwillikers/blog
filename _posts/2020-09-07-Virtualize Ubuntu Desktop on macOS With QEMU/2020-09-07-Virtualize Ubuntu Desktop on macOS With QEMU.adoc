@@ -1,6 +1,6 @@
 = Virtualize Ubuntu Desktop on macOS with QEMU
 :page-layout:
-:page-category: Systems
+:page-category: Virtualization
 :page-tags: [Homebrew, Linux, macOS, MacPorts, QEMU, Ubuntu, Ubuntu2004, virtio, Virtualization]
 
 [caption=""]

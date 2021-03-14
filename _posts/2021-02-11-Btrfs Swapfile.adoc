@@ -1,6 +1,6 @@
 = Btrfs Swapfile
 :page-layout:
-:page-category: Disks
+:page-category: Data Storage
 :page-tags: [Btrfs, Linux, swap, swapfile]
 :an-introduction-to-swap-space-on-linux-systems: https://opensource.com/article/18/9/swap-space-linux-systems[An Introduction to Swap Space on Linux Systems]
 :archwiki-swappiness: https://wiki.archlinux.org/index.php/swap#Swappiness[Swappiness]

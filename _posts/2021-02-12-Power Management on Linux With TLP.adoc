@@ -1,6 +1,6 @@
 = Power Management on Linux With TLP
 :page-layout:
-:page-category: Systems
+:page-category: Admin
 :page-tags: [elementary, Linux, TLP, Ubuntu]
 :elementary-os: https://elementary.io/[elementary OS]
 :TLP: https://linrunner.de/tlp/#[TLP]

@@ -1,6 +1,6 @@
 = Btrfs Layout
 :page-layout:
-:page-category: Disks
+:page-category: Data Storage
 :page-tags: [AppImage, AppImageLauncher, asdf, Btrfs, CoW, Cargo, Conan, elementary, FHS, filesystem, Flatpak, fstab, Gnome-Boxes, libvirt, Linux, openSUSE, Podman, Rust, Snapper, snapshots, systemd, Ubuntu, xdg-base]
 :AppImageLauncher: https://assassinate-you.net/tags/appimagelauncher/[AppImageLauncher]
 :AppImage: https://appimage.org/[AppImage]

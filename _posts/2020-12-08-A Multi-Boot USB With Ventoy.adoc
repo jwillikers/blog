@@ -1,6 +1,6 @@
 = A Multi-Boot USB With Ventoy
 :page-layout:
-:page-category: Disks
+:page-category: Data Storage
 :page-tags: [Boot, Disk, GNOME, Linux, Installer, ISO, Ubuntu, Ubuntu2004, udisks, USB, Ventoy, Windows, Windows10]
 
 My daily driver predates Dell's support for the https://fwupd.org/[Linux Vendor Firmware Service], usually abbreviated _LVFS_.

@@ -1,6 +1,6 @@
 = Btrfs Snapshot Management With Snapper
 :page-layout:
-:page-category: Disks
+:page-category: Data Storage
 :page-tags: [Btrbk, Btrfs, elementary, Linux, Snapper, snapshots, Timeshift, Ubuntu]
 :arch-wiki-snapper-change-frequencies: https://wiki.archlinux.org/index.php/snapper#Change_snapshot_and_cleanup_frequencies[Change snapshot and cleanup frequencies]
 :Btrbk: https://github.com/digint/btrbk[Btrbk]

@@ -1,6 +1,6 @@
 = Automount an Encrypted Volume as a Regular Old User
 :page-layout:
-:page-category: Disks
+:page-category: Data Storage
 :page-tags: [automount, Btrfs, Cryptsetup, elementary, encryption, GIO, Linux, mount, systemd, Ubuntu, udev, udevil, udisks2]
 :Bash: https://www.gnu.org/software/bash/[Bash]
 :Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
