@@ -1,0 +1,340 @@
+= Translate Docker Compose to Kubernetes With Podman
+:page-layout:
+:page-category: Virtualization
+:page-tags: [containers, Docker, Docker-Compose, Kubernetes, Linux, Podman, podman-compose, Ubuntu]
+:Docker: https://www.docker.com/[Docker]
+:Docker-Compose: https://docs.docker.com/compose/[Docker Compose]
+:docker-unifi-controller: https://github.com/linuxserver/docker-unifi-controller[docker-unifi-controller]
+:Kubernetes: https://kubernetes.io/[Kubernetes]
+:LinuxServer-io: https://www.linuxserver.io/[LinuxServer.io]
+:Podman: https://podman.io/[Podman]
+:Podman-Compose: https://github.com/containers/podman-compose[Podman Compose]
+:podman-generate-kube: https://docs.podman.io/en/latest/markdown/podman-generate-kube.1.html[podman-generate-kube(1)]
+:podman-play-kube: https://docs.podman.io/en/latest/markdown/podman-play-kube.1.html[podman-play-kube(1)]
+:podman-pod-ps: https://docs.podman.io/en/latest/markdown/podman-pod-ps.1.html[podman-pod-ps(1)]
+:systemd: https://systemd.io/[systemd]
+:Ubuntu: https://ubuntu.com/[Ubuntu]
+
+{Podman} ships with built-in support for {Kubernetes} configuration files but not for {Docker-Compose}.
+As described in <<podman-compose#,Podman Compose>>, the {Podman-Compose} utility can use Docker Compose files to create Podman containers.
+However, you might want to migrate to the Kubernetes format, eschewing Podman Compose and Docker Compose entirely.
+This is what I ended up doing, and I describe the process here.
+
+== Tutorial
+
+This tutorial provides the steps necessary to convert a simple Docker Compose file to an equivalent Kubernetes configuration using Podman Compose and Podman.
+It continues where <<podman-compose#,Podman Compose>> left off, having created a Podman container from the Docker Compose for the UniFi Controller from the <<unifi-controller#,UniFi Controller>> post.
+So, complete this tutorial before following the steps below.
+This tutorial targets {Ubuntu} 18.04, and you should be familiar with Linux Containers, Docker Compose, Podman, the command-line, and the Kubernetes configuration format.
+
+. Change into the directory containing the UniFi Controller's Docker Compose file.
++
+[source,sh]
+----
+➜ cd ~/Projects/unifi-controller
+----
+
+. Check for the previously created UniFi Controller pod with {podman-pod-ps}.
++
+--
+[source,sh]
+----
+➜ podman pod ps
+POD ID        NAME              STATUS   CREATED      INFRA ID      # OF CONTAINERS
+241f0bf222a3  unifi-controller  Running  2 hours ago  d5eaaf6d5625  2
+----
+
+Okay, it's present and accounted for!
+--
+
+. To generate the Kubernetes configuration from a Podman container, use {podman-generate-kube}.
++
+--
+Here I output the configuration to the file _unifi-controller.yml_ using the `-f` flag.
+The `-s` flag produces the necessary network service configuration.
+
+[source,sh]
+----
+➜ podman generate kube -s -f unifi-controller.yml unifi-controller
+----
+--
+
+. Examine the generated YAML file, reproduced below.
++
+--
+[source,yaml]
+.~/Projects/unifi-controller/unifi-controller.yml
+----
+# Generation of Kubernetes YAML is still under development!
+#
+# Save the output of this file and use kubectl create -f to import
+# it into Kubernetes.
+#
+# Created with podman-3.0.1
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2021-03-14T15:41:03Z"
+  labels:
+    app: unifi-controller
+  name: unifi-controller
+spec:
+  containers:
+  - command:
+    - /init
+    env:
+    - name: PATH
+      value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    - name: TERM
+      value: xterm
+    - name: container
+      value: podman
+    - name: HOME
+      value: /root
+    - name: LANGUAGE
+      value: en_US.UTF-8
+    - name: LANG
+      value: en_US.UTF-8
+    - name: MEM_LIMIT
+      value: 1024M
+    image: ghcr.io/linuxserver/unifi-controller
+    name: unifi-controllerunifi-controller1
+    ports:
+    - containerPort: 6789
+      hostPort: 6789
+      protocol: TCP
+    - containerPort: 3478
+      hostPort: 3478
+      protocol: UDP
+    - containerPort: 5514
+      hostPort: 5514
+      protocol: UDP
+    - containerPort: 8880
+      hostPort: 8880
+      protocol: TCP
+    - containerPort: 8080
+      hostPort: 8080
+      protocol: TCP
+    - containerPort: 8443
+      hostPort: 8443
+      protocol: TCP
+    - containerPort: 10001
+      hostPort: 10001
+      protocol: UDP
+    - containerPort: 8843
+      hostPort: 8843
+      protocol: TCP
+    - containerPort: 1900
+      hostPort: 1900
+      protocol: UDP
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities:
+        drop:
+        - CAP_MKNOD
+        - CAP_NET_RAW
+        - CAP_AUDIT_WRITE
+      privileged: false
+      readOnlyRootFilesystem: false
+      seLinuxOptions: {}
+    workingDir: /usr/lib/unifi
+  dnsConfig: {}
+  restartPolicy: Never
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2021-03-14T15:41:03Z"
+  labels:
+    app: unifi-controller
+  name: unifi-controller
+spec:
+  ports:
+  - name: "6789"
+    nodePort: 32062
+    port: 6789
+    protocol: TCP
+    targetPort: 0
+  - name: "3478"
+    nodePort: 32030
+    port: 3478
+    protocol: UDP
+    targetPort: 0
+  - name: "5514"
+    nodePort: 30747
+    port: 5514
+    protocol: UDP
+    targetPort: 0
+  - name: "8880"
+    nodePort: 30295
+    port: 8880
+    protocol: TCP
+    targetPort: 0
+  - name: "8080"
+    nodePort: 32396
+    port: 8080
+    protocol: TCP
+    targetPort: 0
+  - name: "8443"
+    nodePort: 32319
+    port: 8443
+    protocol: TCP
+    targetPort: 0
+  - name: "10001"
+    nodePort: 30786
+    port: 10001
+    protocol: UDP
+    targetPort: 0
+  - name: "8843"
+    nodePort: 31695
+    port: 8843
+    protocol: TCP
+    targetPort: 0
+  - name: "1900"
+    nodePort: 31076
+    port: 1900
+    protocol: UDP
+    targetPort: 0
+  selector:
+    app: unifi-controller
+  type: NodePort
+status:
+  loadBalancer: {}
+----
+
+This generated file warrants some additional attention.
+Most importantly, the generated Kubernetes configuration is conspicuously lacking any volumes.
+--
+
+. Add a section for an associated named volume that will hold the persistent data.
++
+--
+In the Docker Compose file, a volume was created like so.
+
+[source,yaml]
+----
+version: "2.1"
+services:
+  unifi-controller:
+  ...
+    volumes:
+      - data:/config # <1>
+  ...
+volumes:
+  data: # <2>
+----
+<1> Associate the _unifi-controller_ with the volume dubbed _data_ which is mounted at `/config` inside the container.
+<2> Declare the named volume _data_ which will be created automatically if it doesn't exist.
+
+The way to accomplish the same behavior in the Kubernetes YAML is to use a _Persistent Volume Claim_.
+Podman has recently added support for using _Persistent Volume Claims_ to associate Podman containers with named Podman volumes.
+See Podman pull request https://github.com/containers/podman/pull/8497[#8497] for details.
+This wasn't in the generated YAML because the functionality to generate the corresponding YAML is still outstanding per Podman issue https://github.com/containers/podman/issues/5788[#5788].
+
+For the time being, we'll just have to add this manually.
+
+[source,yaml]
+----
+spec:
+  containers:
+  - command:
+    - /init
+    ...
+    volumeMounts: # <1>
+      - mountPath: /config
+        name: unifi-data
+  volumes:
+    - name: unifi-data # <2>
+      persistentVolumeClaim:
+        claimName: unifi-controller-data
+----
+<1> Mount the volume dubbed _unifi-data_ at `/config` inside the container.
+<2> Declare the _Persistent Volume Claim_, _unifi-data_, using the claim name _unifi-controller-data_.
+Podman associates the claim name with the name of the Podman named volume to use for this particular pod.
+
+[NOTE]
+====
+In an attempt to preserve what little sanity remains in my possession in this moment, I named the volume using `-` as the separator.
+This is inconsistent with the volume created by Podman Compose which is named _unifi-controller_data_.
+Notice that underscore instead of a hyphen at the end?
+You might already be using the volume _unifi-controller_data_.
+If you want to keep using it with the container created from the Kubernetes YAML, change the claim name accordingly.
+====
+--
+
+. Optionally, you can remove some of the environment variable cruft in the `env` section.
+I reduced this to just the values below.
++
+[source,yaml]
+----
+env:
+  - name: container
+    value: podman
+  - name: MEM_LIMIT
+    value: 1024M
+----
+
+. If you want to allow automatic updates of the image, add the appropriate label.
++
+--
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2021-03-13T17:21:54Z"
+  labels:
+    app: unifi-controller
+    io.containers.autoupdate: image # <1>
+  name: unifi-controller
+----
+<1> Add the label `io.containers.autoupdate` and set it to `image` to enable automatic updates for the containers herein.
+
+This is a bit of a tease for an upcoming blog post which will describe this in more detail.
+You'll need to make sure that Podman's auto-update systemd timer is enabled.
+Details forthcoming.
+--
+
+. Before starting this pod up, use podman-compose to destroy the existing _unifi-controller_ pod.
++
+[source,sh]
+----
+➜ podman-compose down
+----
+
+. Provide the generated Kubernetes YAML to {podman-play-kube} to create and launch the pod.
++
+[source,sh]
+----
+➜ podman play kube ~/Projects/unifi-controller/unifi-controller.yml
+----
+
+. Access the controller's web console at https://127.0.0.1:8443/.
+
+fish::
++
+[source,sh]
+----
+➜ open http://127.0.0.1:8443
+----
+
+Other shells::
++
+[source,sh]
+----
+➜ xdg-open http://127.0.0.1:8443
+----
+
+== See Also
+
+I have a https://github.com/jwillikers/unifi-controller[GitHub repository] for this Kubernetes configuration file which you might find helpful.
+RedHat has several blog posts related to Podman and Kubernetes YAML including https://developers.redhat.com/blog/2019/01/29/podman-kubernetes-yaml/[Podman can now ease the transition to Kubernetes and CRI-O], https://www.redhat.com/sysadmin/compose-kubernetes-podman[From Docker Compose to Kubernetes with Podman], and https://www.redhat.com/sysadmin/podman-play-kube[The podman play kube command now supports deployments].
+
+== Conclusion
+
+You should now have a better idea of how the Docker Compose format translates to the Kubernetes format plus how to get the conversion started with Podman and Podman Compose.
+This also sets the stage for transitioning to using Kubernetes for managing container deployments.
+Hopefully you've found this post helpful.
+Posts on automatic image updates and setting up a Podman container as a {systemd} service to follow.

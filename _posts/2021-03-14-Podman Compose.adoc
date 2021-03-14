@@ -152,5 +152,4 @@ If you'd like to learn more about using Podman Compose, checkout the article {Ma
 
 That was fast, wasn't it?
 Love Podman yet?
-If you want to simplify your workflow, you can generate a Kubernetes configuration from the Podman container, and even setup this container as a {systemd} service.
-Blog posts on these topics will be available soon!
+If you want to simplify your workflow, checkout <<translate-docker-compose-to-kubernetes-with-podman#,Translate Docker Compose to Kubernetes With Podman>>.
