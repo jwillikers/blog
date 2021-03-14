@@ -1,6 +1,6 @@
 = UniFi Controller
 :page-layout:
-:page-category: Networking
+:page-category: Virtualization
 :page-tags: [Containers, Docker, DockerCompose, Linux, UniFi, UniFiController, Ubuntu, Ubuntu2004]
 
 For wi-fi, I use use a https://www.ui.com/unifi/unifi-ap/[UniFi AP].

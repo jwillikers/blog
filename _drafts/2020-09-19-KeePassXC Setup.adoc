@@ -1,6 +1,6 @@
 = Unlock KeePassXC on Login
 :page-layout:
-:page-category: Systems
+:page-category: Security
 :page-tags: [KeePassXC, Linux, Ubuntu]
 
 . Install KeePassXC.

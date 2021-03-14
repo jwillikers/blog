@@ -1,6 +1,6 @@
 = Backup and Restore a GPG Key
 :page-layout:
-:page-category: Systems
+:page-category: Security
 :page-tags: [Backups, GnuPG, GPG, OpenPGP, Ubuntu]
 
 https://gnupg.org/[Gnu Privacy Guard], also known as GnuPG and GPG, is a handy tool for managing https://www.openpgp.org/[OpenPGP] keys.

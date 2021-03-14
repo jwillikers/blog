@@ -1,6 +1,6 @@
 = Automatically Detect and Report Hard Drive Failure
 :page-layout:
-:page-category: Disks
+:page-category: Data Storage
 :page-tags: [Email, Linux, OpenSMTPD, SMART, smartd, SmartMonTools, SMTP, Ubuntu, Ubuntu2004]
 
 I recently fixed my mother-in-law's laptop.

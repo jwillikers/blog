@@ -1,6 +1,6 @@
 = Update U-Boot on the PinePhone
 :page-layout:
-:page-category: Systems
+:page-category: Admin
 :page-tags: [ArchLinux, Boot, Linux, Manjaro, PinePhone, UBoot]
 
 As I big fan of https://www.gnome.org/[GNOME], I really wanted a similar experience on the https://www.pine64.org/pinephone/[PinePhone].

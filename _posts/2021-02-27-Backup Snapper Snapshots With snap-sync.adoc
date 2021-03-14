@@ -1,6 +1,6 @@
 = Backup Snapper Snapshots With snap-sync
 :page-layout:
-:page-category: Disks
+:page-category: Data Storage
 :page-tags: [backups, Btrbk, Btrfs, elementary, encryption, Linux, snap-sync, Snapper, snapshots, systemd, Ubuntu]
 :AccuracySec: https://www.freedesktop.org/software/systemd/man/systemd.timer.html#AccuracySec=[AccuracySec]
 :Bash: https://www.gnu.org/software/bash/[Bash]

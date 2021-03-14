@@ -1,6 +1,6 @@
 = Snapping on the Pinebook Pro
 :page-layout:
-:page-category: Packaging
+:page-category: Development
 :page-tags: [arm64, Armbian, Linux, LXC, PinebookPro, Snapcraft, Ubuntu]
 
 https://snapcraft.io/about[Snaps] are an incredible new packaging format for Linux from https://canonical.com/[Canonical].footnote:[Yes, https://flatpak.org/[Flatpaks] are great too.]

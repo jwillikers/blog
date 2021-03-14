@@ -1,6 +1,6 @@
 = Podman With Btrfs and ZFS
 :page-layout:
-:page-category: Disks
+:page-category: Data Storage
 :page-tags: [Btrfs, containers, CoW, filesystem, Linux, Podman, ZFS]
 :Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
 :containers-storage-conf: https://github.com/containers/storage/blob/master/docs/containers-storage.conf.5.md[containers-storage.conf(5)]

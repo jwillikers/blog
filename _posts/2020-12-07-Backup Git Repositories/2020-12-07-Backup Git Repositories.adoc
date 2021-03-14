@@ -1,6 +1,6 @@
 = Backup Git Repositories
 :page-layout:
-:page-category: Systems
+:page-category: Data Storage
 :page-tags: [Backup, fish, Git, Linux, SSH, systemd, Ubuntu]
 
 If you have any source code repositories hosted online, you probably don't want to lose those.

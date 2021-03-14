@@ -1,6 +1,6 @@
 = Automount an Encrypted System Volume
 :page-layout:
-:page-category: Disks
+:page-category: Data Storage
 :page-tags: [automount, Btrfs, Cryptsetup, crypttab, elementary, encryption, fstab, Linux, mount, systemd, Ubuntu]
 :Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
 :crypttab: https://www.freedesktop.org/software/systemd/man/crypttab.html[crypttab]

@@ -1,6 +1,6 @@
 = Create a Windows 10 USB on Ubuntu
 :page-layout:
-:page-category: Disks
+:page-category: Data Storage
 :page-tags: [Boot, Disks, gdisk, GNOME, gnome-disk-image-mounter, Installer, ISO, Linux, sgdisk, Ubuntu, Ubuntu2004, udisks, USB, Windows, Windows10]
 :cgdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/cgdisk.8.html[cgdisk(8)]
 :create-a-bootable-windows-10-usb-drive-in-linux: https://linuxhint.com/create-a-bootable-windows-10-usb-drive-in-linux/[How to Create a Bootable Windows 10 USB Drive in Linux]

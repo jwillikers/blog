@@ -1,6 +1,6 @@
 = Automatically Update Antigen
 :page-layout:
-:page-category: Service Management
+:page-category: Admin
 :page-tags: [Antigen, CentOS, Linux, oh-my-zsh, RedHat, systemd, Ubuntu, ZSH]
 
 There's a catch when it comes to managing plugins with http://antigen.sharats.me/[Antigen] as done in <<configure-zsh#,Configure ZSH>>.

@@ -1,7 +1,7 @@
 = Btrfs Scrub
 :page-layout:
 :page-comments: true
-:page-category: Disks
+:page-category: Data Storage
 :page-tags: [Arch, Btrfs, Linux, scrub, systemd, ZFS]
 :AccuracySec: https://www.freedesktop.org/software/systemd/man/systemd.timer.html#AccuracySec=[AccuracySec]
 :Arch-Wiki-Btrfs-Scrub-Start-with-a-service-or-timer: https://wiki.archlinux.org/index.php/btrfs#Start_with_a_service_or_timer[Start with a service or timer]

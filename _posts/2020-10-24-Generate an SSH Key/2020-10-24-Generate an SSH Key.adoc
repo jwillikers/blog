@@ -1,6 +1,6 @@
 = Generate an SSH Key
 :page-layout:
-:page-category: Command-Line
+:page-category: Networking
 :page-tags: [BSD, Linux, macOS, OpenSSH, SSH]
 
 Entering passwords is a pain.

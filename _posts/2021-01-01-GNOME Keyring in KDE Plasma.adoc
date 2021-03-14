@@ -1,6 +1,6 @@
 = GNOME Keyring in KDE Plasma
 :page-layout:
-:page-category: Developer
+:page-category: Development
 :page-tags: [GNOME, GPG, KDE, Keyring, Manjaro, PinebookPro, Plasma, SSH]
 :fish: https://fishshell.com/[fish]
 :gnome: https://www.gnome.org/[GNOME]

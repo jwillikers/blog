@@ -1,6 +1,6 @@
 = Adjust Mount Options
 :page-layout:
-:page-category: Disks
+:page-category: Data Storage
 :page-tags: [Btrfs, elementary, fstab, GIO, Linux, mount, systemd, Ubuntu, udev, udisks2]
 :bash: https://www.gnu.org/software/bash/[Bash]
 :btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]

@@ -1,6 +1,6 @@
 = Easily Virtualize Ubuntu MATE on macOS With Multipass
 :page-layout:
-:page-category: Systems
+:page-category: Virtualization
 :page-tags: [Homebrew, Linux, macOS, MacPorts, MATE, Multipass, Ubuntu, Ubuntu2004, Virtualization]
 
 [caption=""]
