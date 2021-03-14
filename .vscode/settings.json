@@ -211,6 +211,7 @@
         "udisks",
         "udisksctl",
         "undelete",
+        "unifi",
         "unmount",
         "unmounts",
         "updatedb",
