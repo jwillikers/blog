@@ -1,0 +1,123 @@
+= Automate Flatpak Updates With systemd
+:page-layout:
+:page-category: Admin
+:page-tags: [elementary, Flatpak, Linux, systemd, Ubuntu]
+:elementary-OS: https://elementary.io/[elementary OS]
+:Flatpak: https://flatpak.org/[Flatpak]
+:GNOME-Software: https://wiki.gnome.org/Apps/Software[GNOME Software]
+:Phoronix: https://www.phoronix.com/scan.php?page=home[Phoronix]
+:systemd: https://systemd.io/[systemd]
+:Ubuntu: https://ubuntu.com/[Ubuntu]
+
+{elementary-OS} 5.1 doesn't automatically update {Flatpak} applications.
+Given the arbitrary appearance of updates, it's a bit bothersome to be nagged about updates all day.
+Flatpak doesn't provide an auto-update mechanism but instead leaves this up to software apps.
+GNOME Software has had this functionality baked-in since GNOME 3.30, for instance, according to the {Phoronix} article https://www.phoronix.com/scan.php?page=news_item&px=GNOME-3.30-Auto-Updates-Flatpak[GNOME Software 3.30 Will Automatically Update Flatpaks By Default].
+Since I don't want to have multiple app stores on my machine, I opted for using {systemd} to update Flatpaks.
+
+== Tutorial
+
+The instructions here describe how to create systemd service and timers to automate updating both user and system Flatpak installations.
+The tutorial uses elementary OS 5.1 as a reference operating system but are more generally applicable to any Linux system with systemd and Flatpak.
+I assume you are familiar with these concepts and keep things brief.
+Separate instructions are provided for the user and system Flatpak installations.
+The systemd units here were derived from those provided by https://github.com/flatpak/flatpak/issues/1399#issuecomment-403065567[_marcelpaulo_'s GitHub comment].
+
+[NOTE]
+====
+The systemd user unit files are placed in the directory `/etc/systemd/user/` where they are applied to all users on the system.
+An individual user can place the unit files in the directory `~/.config/systemd/user/` to only effect her account.
+====
+
+. Create the systemd service unit to update Flatpaks.
+
+User::
++
+[source,systemd]
+./etc/systemd/user/update-user-flatpaks.service
+----
+[Unit]
+Description=Update user Flatpaks
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/flatpak --user update -y
+
+[Install]
+WantedBy=default.target
+----
+
+System::
++
+[source,systemd]
+./etc/systemd/system/update-system-flatpaks.service
+----
+[Unit]
+Description=Update system Flatpaks
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/flatpak --system update -y
+
+[Install]
+WantedBy=multi-user.target
+----
+
+. Create the systemd timer unit to automate the updates.
+
+User::
++
+[source,systemd]
+./etc/systemd/user/update-user-flatpaks.timer
+----
+[Unit]
+Description=Update user Flatpaks daily
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+----
+
+System::
++
+[source,systemd]
+./etc/systemd/system/update-system-flatpaks.timer
+----
+[Unit]
+Description=Update system Flatpaks daily
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+----
+
+. Start the systemd timer.
+
+User::
++
+[source,sh]
+----
+➜ systemctl --user enable --now update-user-flatpaks.timer
+Created symlink /home/jordan/.config/systemd/user/timers.target.wants/update-user-flatpaks.timer → /etc/systemd/user/update-user-flatpaks.timer.
+----
+
+System::
++
+[source,sh]
+----
+➜ sudo systemctl --system enable --now update-system-flatpaks.timer
+Created symlink /etc/systemd/system/timers.target.wants/update-system-flatpaks.timer → /etc/systemd/system/update-system-flatpaks.timer.
+----
+
+== Conclusion
+
+You have removed a bit of distraction from your day.
+With any luck, it wasn't even too difficult.
