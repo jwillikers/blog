@@ -1,0 +1,173 @@
+= Unattended Upgrades
+:page-layout:
+:page-category: Admin
+:page-tags: [Aptitude, Debian, elementary, Linux, systemd, Ubuntu, unattended-upgrades]
+:Aptitude: https://wiki.debian.org/Aptitude[Aptitude]
+:Debian: https://www.debian.org/[Debian]
+:elementary-OS: https://elementary.io/[elementary OS]
+:Flatpak: https://flatpak.org/[Flatpak]
+:Python: https://www.python.org/[Python]
+:systemd: https://systemd.io/[systemd]
+:Ubuntu: https://ubuntu.com/[Ubuntu]
+:unattended-upgrades: https://github.com/mvo5/unattended-upgrades[unattended-upgrades]
+
+Suffering from obsessive updating syndrome?
+Are you making frequent trips to the App Center or terminal to apply updates?
+Do update notifications haunt you all day long?
+If your on a Debian-based system, _unattended upgrades_ can help.footnote:[Side-effects may include sudden, irreversible blue-screen of death, failure to boot, changes in behavior, obscure glitches, and an increase in log messages. Talk to your system administrator before using _unattended upgrades_, especially for production systems. Use as prescribed.]
+
+== Tutorial
+
+Systems based on {Debian} systems such as {Ubuntu} and {elementary-OS} can use the {unattended-upgrades} package to automate system updates with {Aptitude}.
+The package provides a {Python} script by the same name.
+This tutorial provides a quick run through to install and configure the package for those familiar with Linux, Debian, Aptitude, and the command-line.
+The tutorial uses elementary OS 5.1 as the reference system.
+My configuration choices were based off my preferences for a system I use as a general desktop workstation.
+
+[TIP]
+====
+This won't update {Flatpak} applications for you.
+To do this, see <<automate-flatpak-updates-with-systemd#,Automate Flatpak Updates With systemd>>.
+====
+
+. Install the unattended-upgrades package.
++
+[source,sh]
+----
+➜ sudo apt -y install unattended-upgrades
+----
+
+. Refine the update behavior in the configuration file `/etc/apt/apt.conf.d/50unattended-upgrades`.
+
+.. Apply updates from all repositories.
++
+--
+The `Unattended-Upgrade::Allowed-Origins` block contains specific repositories from which to update automatically.
+Lines are commented with `//`.
+Only Ubuntu repositories are listed in this file and some of the repositories are commented out.
+Uncomment these to use them.
+The following example enables `"Ubuntu:bionic-updates";` and `"Ubuntu:bionic-backports"` enabling Ubuntu updates and backports.
+The lines for security updates were already uncommented, so I left those as they were.
+
+[source]
+./etc/apt/apt.conf.d/50unattended-upgrades
+----
+Unattended-Upgrade::Allowed-Origins {
+        "Ubuntu:bionic";
+        "Ubuntu:bionic-security";
+        // Extended Security Maintenance; doesn't necessarily exist for
+        // every release and this system may not have it installed, but if
+        // available, the policy for updates is such that unattended-upgrades
+        // should also install from here by default.
+        "UbuntuESMApps:bionic-apps-security";
+        "UbuntuESM:bionic-infra-security";
+        "Ubuntu:bionic-updates";
+//      "Ubuntu:bionic-proposed";
+        "Ubuntu:bionic-backports";
+};
+----
+
+For my particular use case, I want to allow updates from all repositories I have configured.
+I could add these manually to the `Allowed-Origins` block, but that's more work than I'd like to do.
+Instead, my configuration replaces the `Allowed-Origins` block with an `Origins-Pattern` block which allows any origin with the `*` wildcard.
+This is shown in the following snippet.
+
+[source,sh]
+./etc/apt/apt.conf.d/50unattended-upgrades
+----
+Unattended-Upgrade::Origins-Pattern {
+        "origin=*";
+};
+----
+--
+
+.. Remove unused dependencies.
++
+--
+I don't want to keep old or unused dependencies around, so I uncommented the following lines and set them each to _true_.
+The included comments are fairly self-explanatory.
+
+[source]
+./etc/apt/apt.conf.d/50unattended-upgrades
+----
+// Remove unused automatically installed kernel-related packages
+// (kernel images, kernel headers and kernel version locked tools).
+Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
+
+// Do automatic removal of new unused dependencies after the upgrade
+// (equivalent to apt-get autoremove)
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
+----
+--
+
+.. Automatically reboot after upgrades when required.
++
+--
+I don't think anyone appreciates their desktop suddenly rebooting immediately after it applies some updates.
+I rarely leave my computer on for more than a few hours at a time.
+However, I figured it's good to make sure the computer reboots eventually if necessary.
+The configuration below will automatically reboot but it does this at two in the morning to remain unobtrusive.
+To further reduce the chance of unexpected interruptions I've disallowed the computer from rebooting so long as users are logged in.
+
+[source]
+./etc/apt/apt.conf.d/50unattended-upgrades
+----
+// Automatically reboot *WITHOUT CONFIRMATION*
+//  if the file /var/run/reboot-required is found after the upgrade
+Unattended-Upgrade::Automatic-Reboot "true";
+
+// If automatic reboot is enabled and needed, reboot at the specific
+// time instead of immediately
+//  Default: "now"
+Unattended-Upgrade::Automatic-Reboot-Time "02:00";
+
+// Automatically reboot even if users are logged in
+Unattended-Upgrade::Automatic-Reboot-WithUsers "false";
+----
+--
+
+. Configure Aptitude's schedule for unattended-upgrades and related functions.
++
+--
+Aptitude has it's own scheduling configuration activated by systemd timers, namely `apt-daily.timer` and `apt-daily-upgrade.timer`.
+Aptitude configuration resides under the `/etc/apt` directory.
+The unattended-upgrades script should be enabled here.
+
+The package `update-notifier-common` is installed on my elementary OS system, so I simply updated the existing configuration file `/etc/apt/apt.conf.d/10periodic` with the appropriate settings to enable unattended-upgrades.
+Alternatively, you might create a new file with a higher precedence such as `/etc/apt/apt.conf.d/20auto-upgrades` or `/etc/apt/apt.conf` and put the configuration there.
+
+The options shown below use numbers to indicate the frequency to apply the corresponding operation in days.
+`Unattended-Upgrade` is set to one so that the unattended-upgrades script is run every day.
+Similarly, `Update-Package-Lists` is set to one because the package lists should be updated from their repositories each day.
+If the package lists aren't updated automatically then packages wont be upgraded because updates won't be detected, so enabling this is important.
+In addition to setting these two variables, I also set `AutocleanInterval` to automatically clean out the package cache every week.
+
+[source]
+./etc/apt/apt.conf.d/10periodic
+----
+APT::Periodic::AutocleanInterval "7";
+APT::Periodic::Unattended-Upgrade "1";
+APT::Periodic::Update-Package-Lists "1";
+----
+
+These variables and more are described in detail in the script `/usr/lib/apt/apt.systemd.daily`.
+--
+
+. Test the behavior of unattended upgrades by running the script manually with the `--dry-run` and `--debug` flags.
++
+[source,sh]
+----
+➜ sudo unattended-upgrades --dry-run --debug
+----
+
+. Monitor unattended upgrades by perusing the log files in `/var/log/unattended-upgrades/`.
+
+== See Also
+
+* https://github.com/mvo5/unattended-upgrades[The README from the unattended-upgrades GitHub repository]
+* https://wiki.debian.org/UnattendedUpgrades[Debian Wiki - UnattendedUpgrades]
+* https://debian-handbook.info/browse/stable/sect.regular-upgrades.html[The Debian Administrator's Handbook - 6.8. Keeping a System Up to Date]
+
+== Conclusion
+
+You should know everything you need to get started automating package updates on Debian systems.
