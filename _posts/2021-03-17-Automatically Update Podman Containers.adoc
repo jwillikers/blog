@@ -1,0 +1,128 @@
+= Automatically Update Podman Containers
+:page-layout:
+:page-category: Virtualization
+:page-tags: [auto-update, containers, Docker, Kubernetes, Linux, Podman, Ubuntu]
+:Git: https://git-scm.com/[Git]
+:Kubernetes: https://kubernetes.io/[Kubernetes]
+:Podman: https://podman.io/[Podman]
+:podman-auto-update: https://docs.podman.io/en/latest/markdown/podman-auto-update.1.html[podman-auto-update(1)]
+:podman-generate-systemd: https://docs.podman.io/en/latest/markdown/podman-generate-systemd.1.html[podman-generate-systemd(1)]
+:podman-play-kube: https://docs.podman.io/en/latest/markdown/podman-play-kube.1.html[podman-play-kube(1)]
+:podman-pod-ps: https://docs.podman.io/en/latest/markdown/podman-pod-ps.1.html[podman-pod-ps(1)]
+:systemd: https://systemd.io/[systemd]
+:Ubuntu: https://ubuntu.com/[Ubuntu]
+
+{Podman} can automatically update your containers and hopefully make you're life easier at the same time.
+Setting this up for Podman is actually pretty straightforward.
+Read on to learn how to set this up.
+
+== Tutorial
+
+This tutorial will guide you through the steps to configure automatic updates for a Podman container.
+Specifically, the tutorial will walk through automating updates for a UniFi Controller container using a {Kubernetes} YAML file.
+It's a continuation of the <<podman-compose#,Podman Compose>> and <<translate-docker-compose-to-kubernetes-with-podman#,Translate Docker Compose to Kubernetes With Podman>> posts.
+The target system is {Ubuntu} 18.04.
+You'll need to have Podman installed, of course.
+You should also be familiar with Linux containers, Podman, the command-line, the Kubernetes configuration format, {Git}, and {systemd}.
+
+. Clone the GitHub repository with the Kubernetes configuration file for the UniFi controller.
++
+[source,sh]
+----
+➜ git clone git@github.com:jwillikers/unifi-controller.git ~/Projects/unifi-controller
+----
+
+. Inspect the YAML file.
++
+--
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2021-03-13T17:21:54Z"
+  labels:
+    app: unifi-controller
+    io.containers.autoupdate: image # <1>
+  name: unifi-controller
+----
+<1> Add the label `io.containers.autoupdate` and set it to `image` to enable automatic updates for the containers herein.
+
+When using the `podman create` command, the `--label` or `-l` flag can be followed by the label, `"io.containers.autoupdate=image"` to enable auto-updates for the container.
+
+[NOTE]
+====
+The image name must be fully qualified for auto-update to update the image.
+====
+--
+
+. Provide the generated Kubernetes YAML to {podman-play-kube} to create and launch the pod.
++
+[source,sh]
+----
+➜ podman play kube ~/Projects/unifi-controller/unifi-controller.yml
+----
+
+. Check the labels attached to the UniFi Controller container with `podman ps`.
++
+--
+[source,sh]
+----
+➜ podman ps -a --filter name=unifi-controller --format "{{.Names}}  {{.Labels}}"
+unifi-controller_unifi-controller_1  map[PODMAN_SYSTEMD_UNIT:container-unifi-controller_unifi-controller_1.service build_version:Linuxserver.io version:- 6.0.45-ls100 Build-date:- 2021-03-02T04:05:16+00:00 com.docker.compose.container-number:1 com.docker.compose.service:unifi-controller io.containers.autoupdate:image io.podman.compose.config-hash:123 io.podman.compose.project:unifi-controller io.podman.compose.version:0.0.1 maintainer:aptalca]
+----
+
+There are quite a few labels present, but one of them is the correct label, `io.containers.autoupdate:image`.
+This confirms that the container is labelled correctly.
+--
+
+. Enable the Podman's auto-update systemd timer.
+This tutorial uses the rootless runtime, but the necessary command is provided for enabling the auto-update timer for containers run as root.
+
+Rootless::
++
+[source,sh]
+----
+➜ systemctl --user enable --now podman-auto-update.timer
+----
+
+Root::
++
+[source,sh]
+----
+➜ sudo systemctl enable --now podman-auto-update.timer
+----
+
+. When using {podman-generate-systemd} to create systemd units for a pod, make sure to use the `--new` flag.
+This will create, start, and remove containers as part of the systemd units, which is necessary for applying automatic updates to running containers.
+
+. It's also possible to trigger auto-updates manually with {podman-auto-update}.
++
+[source,sh]
+----
+➜ podman auto-update
+----
+
+. In case you're interested in accessing the UniFi controller container, the controller's web console is at https://127.0.0.1:8443/.
+
+fish::
++
+[source,sh]
+----
+➜ open http://127.0.0.1:8443
+----
+
+Other shells::
++
+[source,sh]
+----
+➜ xdg-open http://127.0.0.1:8443
+----
+
+== See Also
+
+On Red Hat's Enable Sysadmin publication, the article https://www.redhat.com/sysadmin/improved-systemd-podman[Improved systemd integration with Podman 2.0] delves into Podman's auto-update functionality.
+
+== Conclusion
+
+You have learned how to enable automatic updates for Podman containers.
