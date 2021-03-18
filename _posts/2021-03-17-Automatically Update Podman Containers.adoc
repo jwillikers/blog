@@ -96,6 +96,7 @@ Root::
 
 . When using {podman-generate-systemd} to create systemd units for a pod, make sure to use the `--new` flag.
 This will create, start, and remove containers as part of the systemd units, which is necessary for applying automatic updates to running containers.
+To learn more about running a pod or container as a systemd service, refer to <<a-podman-pod-as-a-systemd-service#,A Podman Pod as a systemd Service>>.
 
 . It's also possible to trigger auto-updates manually with {podman-auto-update}.
 +
