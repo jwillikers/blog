@@ -1,0 +1,146 @@
+= A Podman Pod as a systemd Service
+:page-layout:
+:page-category: Virtualization
+:page-tags: [containers, elementary, Docker, Kubernetes, Linux, Podman, systemd, Ubuntu]
+:Docker: https://www.docker.com/[Docker]
+:docker-unifi-controller: https://github.com/linuxserver/docker-unifi-controller[docker-unifi-controller]
+:Kubernetes: https://kubernetes.io/[Kubernetes]
+:LinuxServer-io: https://www.linuxserver.io/[LinuxServer.io]
+:Podman: https://podman.io/[Podman]
+:podman-generate-systemd: https://docs.podman.io/en/latest/markdown/podman-generate-systemd.1.html[podman-generate-systemd(1)]
+:podman-play-kube: https://docs.podman.io/en/latest/markdown/podman-play-kube.1.html[podman-play-kube(1)]
+:systemd: https://systemd.io/[systemd]
+:Toolbox: https://github.com/containers/toolbox/[Toolbox]
+:Ubuntu: https://ubuntu.com/[Ubuntu]
+
+Ever wanted to run a container, or pod, as a {systemd} service on Linux?
+This allows the container to be started automatically and even restarted on failure.
+I'm got a container running like this right now thanks to {Podman} which makes this incredibly easy and a bit more secure.
+If managing your containers as services is something you're interested in, then this tutorial is for you.
+
+== Tutorial
+
+This tutorial lays out the steps to manage a Podman container as a {systemd} service.
+A UniFi Controller container, derived from a {Kubernetes} YAML file, will be used as an example.
+Steps are provided for both rootless and root configurations.
+This tutorial continues the series on Podman.
+Previous tutorials include <<podman-compose#,Podman Compose>>, <<translate-docker-compose-to-kubernetes-with-podman#,Translate Docker Compose to Kubernetes With Podman>>, and <<automatically-update-podman-containers#,Automatically Update Podman Containers>>.
+The target system is elementary OS 5.1, based on {Ubuntu} 18.04.
+You'll need to have Podman installed, of course.
+To install Podman on an Ubuntu system, follow the instructions in <<install-podman-on-ubuntu#,Install Podman on Ubuntu>>.
+You are expected to be familiar with Linux containers, Podman, the command-line, the Kubernetes configuration format, {Git}, systemd, and anything else I forgot to mention... 
+
+. Clone the repository with the Kubernetes YAML file for the UniFi Controller.
++
+[source,sh]
+----
+➜ git clone git@github.com:jwillikers/unifi-controller.git ~/Projects/unifi-controller
+----
+
+. Provide the generated Kubernetes YAML to {podman-play-kube} to create and launch the pod.
+
+Rootless::
++
+[source,sh]
+----
+➜ podman play kube ~/Projects/unifi-controller/unifi-controller.yml
+----
+
+Root::
++
+[source,sh]
+----
+➜ sudo podman play kube ~/Projects/unifi-controller/unifi-controller.yml
+----
+
+. Change into the directory where you want the systemd unit files to be placed.
+Below are common locations for these files.
+
+Rootless::
++
+[source,sh]
+----
+➜ cd ~/.config/systemd/user
+----
+
+Root::
++
+[source,sh]
+----
+➜ cd /etc/systemd/system
+----
+
+. Generate the systemd service unit files using {podman-generate-systemd}.
+The following commands use a couple of extra options.
+By default, podman-generate-systemd will output the content of the units to the console.
+`--files` places the output in the appropriate files.
+In this particular situation, it will create a service unit file for the pod and a service unit file for the single container.
+The `--name` option will use the names of the pod and containers instead of their hash id's.
+The `--new` option causes the pods and containers to be created each time the service starts or restarts.
+When running containers as systemd services, this option is required for Podman's auto-update functionality to work.
+For details on auto-update, checkout <<automatically-update-podman-containers#,Automatically Update Podman Containers>>.
+The last argument to the command is the pod's identifier.
+
+Rootless::
++
+[source,sh]
+----
+➜ podman generate systemd --files --name --new unifi-controller
+----
+
+Root::
++
+[source,sh]
+----
+➜ sudo podman generate systemd --files --name --new unifi-controller
+----
+
+. Enable the systemd service.
+For the rootless configuration, the service will start upon the user logging in.
+For the root configuration, the service will be activated on boot.
+
+Rootless::
++
+[source,sh]
+----
+➜ systemctl --user enable --now pod-unifi-controller.service
+Created symlink /home/jordan/.config/systemd/user/multi-user.target.wants/pod-unifi-controller.service → /home/jordan/.config/systemd/user/pod-unifi-controller.service.
+Created symlink /home/jordan/.config/systemd/user/default.target.wants/pod-unifi-controller.service → /home/jordan/.config/systemd/user/pod-unifi-controller.service.
+----
+
+Root::
++
+[source,sh]
+----
+➜ sudo systemctl enable --now pod-unifi-controller.service
+Created symlink /etc/systemd/system/multi-user.target.wants/pod-unifi-controller.service → /etc/systemd/system/pod-unifi-controller.service.
+Created symlink /etc/systemd/system/default.target.wants/pod-unifi-controller.service → /etc/systemd/system/pod-unifi-controller.service.
+----
+
+. Access the controller's web console at https://127.0.0.1:8443/.
+
+fish::
++
+[source,sh]
+----
+➜ open http://127.0.0.1:8443
+----
+
+Other shells::
++
+[source,sh]
+----
+➜ xdg-open http://127.0.0.1:8443
+----
+
+== See Also
+
+On Red Hat's Enable Sysadmin publication, the article https://www.redhat.com/sysadmin/improved-systemd-podman[Improved systemd integration with Podman 2.0] delves into Podman's systemd and auto-update functionality.
+
+An article on Red Hat's Developer Blog, https://developers.redhat.com/blog/2019/04/24/how-to-run-systemd-in-a-container/How to run systemd in a container], describes how to run systemd from within containers.
+
+{Toolbox} is a simplified wrapper for using Podman containers for development.
+
+== Conclusion
+
+Given the simplicity of managing Podman containers as systemd services, why not use them yourself if they fit your use case?
