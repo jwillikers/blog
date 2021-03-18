@@ -36,6 +36,7 @@ You should also be familiar with Linux containers, Podman, the command-line, the
 +
 --
 [source,yaml]
+.~/Projects/unifi-controller/unifi-controller.yml
 ----
 apiVersion: v1
 kind: Pod
