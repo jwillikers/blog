@@ -1,7 +1,7 @@
 = Automatically Update Podman Containers
 :page-layout:
 :page-category: Virtualization
-:page-tags: [auto-update, containers, Docker, Kubernetes, Linux, Podman, Ubuntu]
+:page-tags: [auto-update, containers, elementary, Docker, Kubernetes, Linux, Podman, Ubuntu]
 :Git: https://git-scm.com/[Git]
 :Kubernetes: https://kubernetes.io/[Kubernetes]
 :Podman: https://podman.io/[Podman]
