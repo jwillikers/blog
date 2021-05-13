@@ -1,10 +1,11 @@
 = Create a Windows 10 USB on Ubuntu
 :page-layout:
 :page-category: Data Storage
-:page-tags: [Boot, Disks, gdisk, GNOME, gnome-disk-image-mounter, Installer, ISO, Linux, sgdisk, Ubuntu, Ubuntu2004, udisks, USB, Windows, Windows10]
+:page-tags: [Boot, Disks, Fedora, gdisk, GNOME, gnome-disk-image-mounter, Installer, ISO, Linux, sgdisk, Ubuntu, Ubuntu2004, udisks, USB, Windows, Windows10]
 :cgdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/cgdisk.8.html[cgdisk(8)]
 :create-a-bootable-windows-10-usb-drive-in-linux: https://linuxhint.com/create-a-bootable-windows-10-usb-drive-in-linux/[How to Create a Bootable Windows 10 USB Drive in Linux]
 :fdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/fdisk.8.html[fdisk(8)]
+:Fedora: https://start.fedoraproject.org/[Fedora]
 :gdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/gdisk.8.html[gdisk(8)]
 :GNOME: https://www.gnome.org/[GNOME]
 :gnome-disk-image-mounter: https://manpages.ubuntu.com/manpages/focal/en/man1/gnome-disk-image-mounter.1.html[gnome-disk-image-mounter(1)]
@@ -32,6 +33,7 @@ So, I converted that tutorial to a command-line only version here.
 
 This tutorial documents the steps required to create a Windows 10 USB installer on {Ubuntu} 20.04 from the command-line.
 As such, you should be familiar with Linux and the command-line to get the most out of this tutorial.
+These instructions will work on {Fedora} just the same except that disks will be mounted to `/run/media` instead of `/media`.
 
 . Insert a spare flash drive in to your computer.
 
