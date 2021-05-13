@@ -155,7 +155,7 @@ zd0             230:0    0   500M  0 disk
 +
 [source,sh]
 ----
-➜ cp -r /media/jordan/CCCOMA_X64FRE_EN-US_DV9/* /media/jordan/Windows10
+➜ cp -r /media/$USER/CCCOMA_X64FRE_EN-US_DV9/* /media/$USER/Windows10
 ----
 
 . Unmount the ISO.
