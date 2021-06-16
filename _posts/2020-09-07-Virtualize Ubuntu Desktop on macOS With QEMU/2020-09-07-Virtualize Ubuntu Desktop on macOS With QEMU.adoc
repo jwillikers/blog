@@ -67,7 +67,7 @@ $ curl -L -o ubuntu-20.04.1-desktop-amd64.iso https://releases.ubuntu.com/20.04/
 ----
 $ qemu-system-x86_64 \
   -accel hvf \
-  -cpu host,-rtdscp \
+  -cpu host,-rdtscp \
   -smp 2 \
   -m 4G \
   -usb \
@@ -86,8 +86,8 @@ For more details, refer to the https://www.qemu.org/docs/master/system/index.htm
 
 `-accel hvf`:: Accelerate the machine by taking advantage of the macOS hypervisor, `hvf`.
 `kvm` is available for Linux and `whpx` for Windows.
-`-cpu host,-rtdscp`:: Due to https://bugs.launchpad.net/qemu/+bug/1894836[this bug] in Apple's Hypervisor framework, the RTDSCP virtualization feature on my mac's CPU needs to be disabled.
-The `host` keyword enables CPU passthrough, while the `-rtdscp` option disables the troublesome RTDSCP feature.
+`-cpu host,-rdtscp`:: Due to https://bugs.launchpad.net/qemu/+bug/1894836[this bug] in Apple's Hypervisor framework, the RDTSCP virtualization feature on my mac's CPU needs to be disabled.
+The `host` keyword enables CPU passthrough, while the `-rdtscp` option disables the troublesome RDTSCP feature.
 If you experience issues due to host passthrough, you can use the default `cpu` option, `qemu64`, which emulates the CPU instead of passing through.
 `-smp 2`:: Allocate two threads for the VM.
 `-m 4G`:: Allocate 4 GB of RAM for the VM.
@@ -113,7 +113,7 @@ Skipping this layer of emulation can significantly improve VM performance.
 ----
 $ qemu-system-x86_64 \
   -accel hvf \
-  -cpu host,-rtdscp \
+  -cpu host,-rdtscp \
   -smp 2 \
   -m 4G \
   -device usb-tablet \
@@ -136,7 +136,7 @@ It's a small step away to run the virtual machine headless and access it through
 ----
 $ qemu-system-x86_64 \
   -accel hvf \
-  -cpu host,-rtdscp \
+  -cpu host,-rdtscp \
   -smp 2 \
   -m 4G \
   -device usb-tablet \
