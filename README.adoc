@@ -26,236 +26,34 @@ If you wish to test the website locally, please see <<Getting Started>>.
 == Getting Started
 
 The steps below will create an environment for generating the website locally.
-These steps assume you are on https://ubuntu.com/[Ubuntu] and familiar with the Linux command-line and https://git-scm.com/[Git].
-Instructions are provided for the https://www.gnu.org/software/bash/[Bash], https://fishshell.com/[fish], and https://www.zsh.org/[ZSH] shells.
+These steps assume you are on Fedora and familiar with the Linux command-line and https://git-scm.com/[Git].
 
 . Clone the blog's repository.
 +
 [source,sh]
 ----
-➜ git clone git@github.com:jwillikers/blog.git
+git -C Projects clone git@github.com:jwillikers/blog.git
 ----
 
 . Change into the blog's directory.
 +
 [source,sh]
 ----
-➜ cd blog
+cd ~/Projects/blog
 ----
 
 . Install the dependencies needed for asdf.
 +
 [source,sh]
 ----
-➜ sudo apt -y install curl git
-----
-
-. Pull down the https://github.com/asdf-vm/asdf[asdf repository] in to your home directory.
-+
-[source,sh]
-----
-➜ git clone https://github.com/asdf-vm/asdf.git ~/.asdf
-Cloning into '/home/ubuntu/.asdf'...
-remote: Enumerating objects: 145, done.
-remote: Counting objects: 100% (145/145), done.
-remote: Compressing objects: 100% (85/85), done.
-remote: Total 5782 (delta 76), reused 93 (delta 59), pack-reused 5637
-Receiving objects: 100% (5782/5782), 1.09 MiB | 6.01 MiB/s, done.
-Resolving deltas: 100% (3293/3293), done.
-----
-
-. Checkout the latest version of asdf.
-+
---
-_fish_::
-+
-[source,sh]
-----
-➜ git -C ~/.asdf switch --detach (git -C ~/.asdf describe --abbrev=0 --tags)
-HEAD is now at c6145d0 Update version to 0.8.0
-----
-
-_Bash / ZSH_::
-+
-[source,bash]
-----
-➜ git -C ~/.asdf switch --detach $(git -C ~/.asdf describe --abbrev=0 --tags)
-HEAD is now at c6145d0 Update version to 0.8.0
-----
---
-
-. Enable asdf in your shell.
-+
---
-_fish_::
-+
-[source,sh]
-----
-➜ mkdir -p ~/.config/fish/conf.d; and echo "source ~/.asdf/asdf.fish" > ~/.config/fish/conf.d/asdf.fish
-----
-
-_Bash_::
-+
-[source,bash]
-----
-➜ echo '. $HOME/.asdf/asdf.sh' >> ~/.bashrc
-----
-
-_ZSH_::
-+
-[source,zsh]
-----
-➜ echo '. $HOME/.asdf/asdf.sh' >> ~/.zshrc
-----
---
-
-. Install shell completions for asdf.
-+
---
-_fish_::
-+
-[source,sh]
-----
-➜ mkdir -p ~/.config/fish/completions; and ln -s ~/.asdf/completions/asdf.fish ~/.config/fish/completions
-----
-
-_Bash_::
-+
-[source,bash]
-----
-➜ echo '. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
-----
-
-_ZSH_::
-+
-[source,zsh]
-----
-➜ echo -e 'fpath=(${ASDF_DIR}/completions $fpath)\nautoload -Uz compinit\ncompinit' >> ~/.zshrc
-----
---
-
-. Reload fish to make asdf available.
-+
---
-_fish_::
-+
-[source,sh]
-----
-➜ exec fish
-----
-
-_Bash_::
-+
-[source,bash]
-----
-➜ source ~/.bashrc
-----
-
-_ZSH_::
-+
-[source,zsh]
-----
-➜ source ~/.zshrc
-----
---
-
-. Install the requisite packages for building Ruby.
-+
-[source,sh]
-----
-➜ sudo apt -y install autoconf bison build-essential libssl-dev libyaml-dev \
-  libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm6 libgdbm-dev \
-  libdb-dev
-----
-
-. Add the Bundler plugin for asdf.
-+
-[source,sh]
-----
-➜ asdf plugin add bundler
-----
-
-. Add the direnv plugin for asdf.
-+
-[source,sh]
-----
-➜ asdf plugin add direnv
-----
-
-. Add the Ruby plugin for asdf.
-+
-[source,sh]
-----
-➜ asdf plugin add ruby
-----
-
-. Integrate direnv with your shell.
-+
---
-_fish_::
-+
-[source,sh]
-----
-➜ mkdir -p ~/.config/fish/conf.d; \
-  and echo "asdf exec direnv hook fish | source" > ~/.config/fish/conf.d/direnv.fish
-----
-
-_Bash_::
-+
-[source,bash]
-----
-➜ echo 'eval "$(asdf exec direnv hook bash)"' >> ~/.bashrc
-----
-
-_ZSH_::
-+
-[source,zsh]
-----
-➜ echo 'eval "$(asdf exec direnv hook zsh)"' >> ~/.zshrc
-----
---
-
-. Make the asdf feature, i.e. the command `use asdf`, available in direnv.
-+
---
-_fish_::
-+
-[source,sh]
-----
-➜ mkdir -p ~/.config/direnv; \
-  and echo 'source "$(asdf direnv hook asdf)"' >> ~/.config/direnv/direnvrc
-----
-
-_Bash / ZSH_::
-+
-[source,bash]
-----
-➜ mkdir -p ~/.config/direnv; \
-  echo 'source "$(asdf direnv hook asdf)"' >> ~/.config/direnv/direnvrc
-----
-
-NOTE: The `direnvrc` file should only use Bash syntax.
---
-
-. Install the project's asdf dependencies.
-+
-[source,sh]
-----
-➜ asdf install
-----
-
-. Allow direnv to alter the environment for the project directory.
-+
-[source,sh]
-----
-➜ direnv allow
+sudo dnf -y install gcc gcc-c++ libffi-devel ruby-devel rubygem-bundler
 ----
 
 . Install the required Ruby gems.
 +
 [source,sh]
 ----
-➜ bundle
+bundle
 ----
 
 == Test
@@ -267,7 +65,7 @@ The steps below describe how to do this below, assuming you are in the project d
 +
 [source,sh]
 ----
-➜ jekyll s
+jekyll s
 Configuration file: /home/jordan/Source/blog/_config.yml
             Source: /home/jordan/Source/blog
        Destination: /home/jordan/Source/blog/_site
@@ -283,7 +81,7 @@ Configuration file: /home/jordan/Source/blog/_config.yml
 +
 [source,sh]
 ----
-➜ gnome-www-browser http://127.0.0.1:4000/
+gnome-www-browser http://127.0.0.1:4000/
 ----
 
 . When finished testing, type kbd:[Ctrl+C] to stop the local web server.
@@ -294,7 +92,7 @@ The website can be generated locally by passing the `b` subcommand, i.e. _build_
 
 [source,sh]
 ----
-➜ jekyll b
+jekyll b
 ----
 
 == Deploy
@@ -304,7 +102,7 @@ Trigger the CI to build and deploy by pushing changes to the `master` branch on 
 
 [source,sh]
 ----
-➜ git push
+git push
 ----
 
 The updated website is deployed to https://jwillikers.com[jwillikers.com].
@@ -315,12 +113,7 @@ This project is built on the hard work of countless open source contributors.
 Several of these projects are enumerated below.
 
 * https://asciidoctor.org/[asciidoctor]
-* https://asdf-vm.com/#/[asdf]
-* https://github.com/jonathanmorley/asdf-bundler[asdf-bundler]
-* https://github.com/asdf-community/asdf-direnv[asdf-direnv]
-* https://github.com/asdf-vm/asdf-ruby[asdf-ruby]
 * https://bundler.io/[Bundler]
-* https://direnv.net/[direnv]
 * https://git-scm.com/[Git]
 * https://jekyllrb.com/[Jekyll]
 * https://github.com/asciidoctor/jekyll-asciidoc[jekyll-asciidoc]
@@ -338,7 +131,7 @@ This repository is licensed under the https://www.gnu.org/licenses/gpl-3.0.html[
 
 The website's content is licensed under a http://creativecommons.org/licenses/by-sa/4.0/[Creative Commons Attribution-ShareAlike 4.0 International License].
 
-© 2020 Jordan Williams
+© 2020-2021 Jordan Williams
 
 == Authors
 
