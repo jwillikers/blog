@@ -104,7 +104,7 @@ Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? O
 +
 [caption=""]
 .Passphrase Prompt
-image::Passphrase Prompt.png[Passphrase Prompt for GPG Key]
+image::Passphrase Prompt for GPG Key.png[Passphrase Prompt for GPG Key]
 
 . This should output information similar to the following when your key has been successfully generated.
 +
