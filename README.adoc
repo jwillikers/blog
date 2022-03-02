@@ -81,7 +81,7 @@ Configuration file: /home/jordan/Source/blog/_config.yml
 +
 [source,sh]
 ----
-gnome-www-browser http://127.0.0.1:4000/
+open http://127.0.0.1:4000/
 ----
 
 . When finished testing, type kbd:[Ctrl+C] to stop the local web server.
