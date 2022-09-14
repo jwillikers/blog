@@ -63,7 +63,7 @@ rootless:: When dealing with user configuration, you'll need to create the `~/.c
 +
 [source,sh]
 ----
-➜ mkdir -p ~/.config/container
+➜ mkdir -p ~/.config/containers
 ----
 
 root::
