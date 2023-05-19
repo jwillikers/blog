@@ -41,7 +41,7 @@ Description=Update user Flatpaks
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/flatpak --user update -y
+ExecStart=/usr/bin/flatpak update --assumeyes --noninteractive --user
 
 [Install]
 WantedBy=default.target
@@ -59,7 +59,7 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/flatpak --system update -y
+ExecStart=/usr/bin/flatpak update --assumeyes --noninteractive --system
 
 [Install]
 WantedBy=multi-user.target
@@ -105,7 +105,7 @@ User::
 +
 [source,sh]
 ----
-➜ systemctl --user enable --now update-user-flatpaks.timer
+systemctl --user enable --now update-user-flatpaks.timer
 Created symlink /home/jordan/.config/systemd/user/timers.target.wants/update-user-flatpaks.timer → /etc/systemd/user/update-user-flatpaks.timer.
 ----
 
@@ -113,7 +113,7 @@ System::
 +
 [source,sh]
 ----
-➜ sudo systemctl --system enable --now update-system-flatpaks.timer
+sudo systemctl --system enable --now update-system-flatpaks.timer
 Created symlink /etc/systemd/system/timers.target.wants/update-system-flatpaks.timer → /etc/systemd/system/update-system-flatpaks.timer.
 ----
 
