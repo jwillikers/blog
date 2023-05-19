@@ -32,7 +32,7 @@ These steps assume you are on Fedora and familiar with the Linux command-line an
 +
 [source,sh]
 ----
-git -C Projects clone git@github.com:jwillikers/blog.git
+git -C ~/Projects clone git@github.com:jwillikers/blog.git
 ----
 
 . Change into the blog's directory.
@@ -49,11 +49,34 @@ cd ~/Projects/blog
 sudo dnf -y install gcc gcc-c++ libffi-devel ruby-devel rubygem-bundler
 ----
 
+. Configure a project-specific directory for Gems.
++
+[source,sh]
+----
+bundle config set --local path 'vendor/bundle'
+----
+
 . Install the required Ruby gems.
 +
 [source,sh]
 ----
-bundle
+bundle install
+----
+
+. Install the executable stubs.
++
+[source,sh]
+----
+bundle binstubs --all
+----
+
+== Build
+
+The website can be generated locally by passing the `b` subcommand, i.e. _build_, to Jekyll.
+
+[source,sh]
+----
+bundle exec jekyll b
 ----
 
 == Test
@@ -86,19 +109,10 @@ open http://127.0.0.1:4000/
 
 . When finished testing, type kbd:[Ctrl+C] to stop the local web server.
 
-== Build
-
-The website can be generated locally by passing the `b` subcommand, i.e. _build_, to Jekyll.
-
-[source,sh]
-----
-bundle exec jekyll b
-----
-
 == Deploy
 
-Continuous integration is configured through https://travis-ci.org/[Travis CI].
-Trigger the CI to build and deploy by pushing changes to the `master` branch on the GitHub remote.
+Continuous integration is configured through GitHub Actions.
+Trigger the CI to build and deploy by pushing changes to the `main` branch on the GitHub remote.
 
 [source,sh]
 ----
@@ -106,6 +120,15 @@ git push
 ----
 
 The updated website is deployed to https://jwillikers.com[jwillikers.com].
+
+== Update
+
+Update the Gems with the `bundle update` command.
+
+[source,sh]
+----
+bundle update
+----
 
 == Open Source Software
 
