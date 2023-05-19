@@ -20,6 +20,7 @@ author:
       url: "https://elementaryos.stackexchange.com/users/20782"
 email: jordan@jwillikers.com
 description: Handy admin and dev guides from my myriad of tinkering
+baseurl: ""
 basewebsite: /
 url: "https://www.jwillikers.com"
 repository: "jwillikers/blog"
