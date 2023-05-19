@@ -131,7 +131,7 @@ This repository is licensed under the https://www.gnu.org/licenses/gpl-3.0.html[
 
 The website's content is licensed under a http://creativecommons.org/licenses/by-sa/4.0/[Creative Commons Attribution-ShareAlike 4.0 International License].
 
-© 2020-2022 Jordan Williams
+© 2020-2023 Jordan Williams
 
 == Authors
 
