@@ -63,13 +63,6 @@ bundle config set --local path 'vendor/bundle'
 bundle install
 ----
 
-. Install the executable stubs.
-+
-[source,sh]
-----
-bundle binstubs --all
-----
-
 == Build
 
 The website can be generated locally by passing the `b` subcommand, i.e. _build_, to Jekyll.
