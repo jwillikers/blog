@@ -147,7 +147,7 @@ WantedBy=default.target
 
 [,sh]
 ----
-➜ systemctl --user enable automount
+systemctl --user enable automount
 ----
 
 === udevil

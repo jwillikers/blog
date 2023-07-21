@@ -59,7 +59,7 @@ snap-sync doesn't handle cleanup yet so you'll have to prune back snapshots on t
 +
 [,sh]
 ----
-➜ wget -q -nv -O - https://api.github.com/repos/wesbarnett/snap-sync/releases/latest \
+wget -q -nv -O - https://api.github.com/repos/wesbarnett/snap-sync/releases/latest \
   | awk -F': ' '/browser_download_url/ && /snap-sync-[0-9]\.[0-9]\.tar\.gz/ \
   {gsub(/"/, "", $(NF)); system("wget -qLP ~/Downloads/ " $(NF))}'
 ----
@@ -71,7 +71,7 @@ The command here does this with the added convenience of importing the signing k
 
 [,sh]
 ----
-➜ gpg --verify --auto-key-retrieve --keyserver keyserver.ubuntu.com ~/Downloads/snap-sync-*.tar.gz.sig
+gpg --verify --auto-key-retrieve --keyserver keyserver.ubuntu.com ~/Downloads/snap-sync-*.tar.gz.sig
 gpg: assuming signed data in '/home/jordan/Downloads/snap-sync-0.7.tar.gz'
 gpg: Signature made Fri 29 Jan 2021 09:19:24 PM CST
 gpg:                using EDDSA key F7B28C61944FE30DABEEB0B01070BCC98C18BD66
@@ -98,21 +98,21 @@ Assuming, of course, that no unauthorized persons have managed to get their hand
 +
 [,sh]
 ----
-➜ tar -C ~/Downloads -xvf ~/Downloads/snap-sync-*.tar.gz
+tar -C ~/Downloads -xvf ~/Downloads/snap-sync-*.tar.gz
 ----
 
 . Install snap-sync.
 +
 [,sh]
 ----
-➜ sudo make -C ~/Downloads/snap-sync install
+sudo make -C ~/Downloads/snap-sync install
 ----
 
 . Remove the snap-sync files since they are no longer needed.
 +
 [,sh]
 ----
-➜ rm -rf ~/Downloads/snap-sync*
+rm -rf ~/Downloads/snap-sync*
 ----
 
 . Plug in the external hard drive.
@@ -122,7 +122,7 @@ Assuming, of course, that no unauthorized persons have managed to get their hand
 --
 [,sh]
 ----
-➜ sudo systemctl start run-media-system-System_Backups.mount
+sudo systemctl start run-media-system-System_Backups.mount
 ----
 
 This systemd mount unit comes from the {fstab} entry added in <<automount-an-encrypted-system-volume#,Automount an Encrypted System Volume>>.
@@ -139,7 +139,7 @@ Some scripting in the command below determines the UUID of the Btrfs filesystem 
 
 [,sh]
 ----
-➜ sudo snap-sync -c root \
+sudo snap-sync -c root \
   --UUID (sudo blkid -o value -s UUID /dev/mapper/backup_crypt) \
   --subvolid (sudo btrfs subvolume show /run/media/system/System_Backups \
     | awk -F ":[ \t]*" '/Subvolume ID:/ {gsub(//,""); print $2}')
@@ -223,7 +223,7 @@ Once the drive is plugged in or the computer is booted, the latest snapshot is s
 +
 [,sh]
 ----
-➜ sudo systemctl enable --now snap-sync-root.timer
+sudo systemctl enable --now snap-sync-root.timer
 Created symlink /etc/systemd/system/timers.target.wants/snap-sync-root.timer → /etc/systemd/system/snap-sync-root.timer.
 ----
 
@@ -231,7 +231,7 @@ Created symlink /etc/systemd/system/timers.target.wants/snap-sync-root.timer →
 +
 [,sh]
 ----
-➜ sudo systemctl status snap-sync-root.timer
+sudo systemctl status snap-sync-root.timer
 ----
 
 == Conclusion

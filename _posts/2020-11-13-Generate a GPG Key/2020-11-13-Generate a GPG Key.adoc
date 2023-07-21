@@ -18,7 +18,7 @@ Detailed instructions for creating a key can be found in https://docs.github.com
 +
 [,sh]
 ----
-➜ gpg --full-generate-key
+gpg --full-generate-key
 gpg (GnuPG) 2.2.20; Copyright (C) 2020 Free Software Foundation, Inc.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
@@ -131,7 +131,7 @@ If you have multiple secret keys and would like to use this key by default, set 
 
 [,sh]
 ----
-➜ echo "default-key 5DBCB56A458D5A0F" >> ~/.gnupg/gpg.conf
+echo "default-key 5DBCB56A458D5A0F" >> ~/.gnupg/gpg.conf
 ----
 
 Of course, make sure to substitute the id specific to your key here.

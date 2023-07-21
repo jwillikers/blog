@@ -15,7 +15,7 @@ These instructions are exemplified on an Ubuntu 20.04 system for the fish shell 
 --
 [,sh]
 ----
-➜ sudo apt -y install fish
+sudo apt -y install fish
 ----
 
 This Debian package installs the `fish` executable in `/usr/bin`.
@@ -28,14 +28,14 @@ Debian provides a convenient https://manpages.ubuntu.com/manpages/en/man8/add-sh
 
 [,sh]
 ----
-➜ sudo add-shell /usr/bin/fish
+sudo add-shell /usr/bin/fish
 ----
 
 On other systems, simply add the path manually.
 
 [,sh]
 ----
-➜ echo /usr/bin/fish | sudo tee -a /etc/shells
+echo /usr/bin/fish | sudo tee -a /etc/shells
 /usr/bin/fish
 ----
 --
@@ -44,7 +44,7 @@ On other systems, simply add the path manually.
 +
 [,sh]
 ----
-➜ chsh -s /usr/bin/fish
+chsh -s /usr/bin/fish
 Password:
 ----
 

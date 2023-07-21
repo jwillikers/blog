@@ -42,7 +42,7 @@ Knowledge of Linux, filesystems, and the command-line is assumed.
 +
 [,sh]
 ----
-➜ sudo apt -y install cryptsetup
+sudo apt -y install cryptsetup
 ----
 
 . Locate the disk's device path.
@@ -50,7 +50,7 @@ Knowledge of Linux, filesystems, and the command-line is assumed.
 --
 [,sh]
 ----
-➜ lsblk
+lsblk
 NAME           MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
 sda              8:0    0   1.8T  0 disk  
 ├─sda1           8:1    0   976M  0 part  /boot
@@ -79,7 +79,7 @@ A descriptive label, _BlackWDExtHDD_, is attached to the partition.
 
 [,sh]
 ----
-➜ sudo sgdisk -Z -n 0:0:0 -c 0:"BlackWDExtHDD" /dev/sdb
+sudo sgdisk -Z -n 0:0:0 -c 0:"BlackWDExtHDD" /dev/sdb
 GPT data structures destroyed! You may now partition the disk using fdisk or
 other utilities.
 Setting name!
@@ -93,7 +93,7 @@ The operation has completed successfully.
 --
 [,sh]
 ----
-➜ sudo cryptsetup luksFormat --type luks2 --label "Black WD easystore" /dev/sdb1
+sudo cryptsetup luksFormat --type luks2 --label "Black WD easystore" /dev/sdb1
 
 WARNING!
 ========
@@ -117,7 +117,7 @@ udisks2::
 --
 [,sh]
 ----
-➜ udisksctl unlock -b /dev/sdb1
+udisksctl unlock -b /dev/sdb1
 Passphrase: 
 Unlocked /dev/sdb1 as /dev/dm-1.
 ----
@@ -132,7 +132,7 @@ Cryptsetup::
 --
 [,sh]
 ----
-➜ sudo cryptsetup open /dev/sdb1 MyUSB
+sudo cryptsetup open /dev/sdb1 MyUSB
 Enter passphrase for /dev/sdb1:
 ----
 
@@ -146,7 +146,7 @@ udisks2::
 +
 [,sh]
 ----
-➜ sudo mkfs -t btrfs -L "My Backups" /dev/dm-1
+sudo mkfs -t btrfs -L "My Backups" /dev/dm-1
 btrfs-progs v4.15.1
 See http://btrfs.wiki.kernel.org for more information.
 
@@ -171,7 +171,7 @@ Cryptsetup::
 +
 [,sh]
 ----
-➜ sudo mkfs -t btrfs -L "My Backups" /dev/mapper/MyUSB
+sudo mkfs -t btrfs -L "My Backups" /dev/mapper/MyUSB
 btrfs-progs v4.15.1
 See http://btrfs.wiki.kernel.org for more information.
 
@@ -199,7 +199,7 @@ udisks2::
 --
 [,sh]
 ----
-➜ udisksctl mount -b /dev/mapper/MyUSB -o noatime
+udisksctl mount -b /dev/mapper/MyUSB -o noatime
 Mounted /dev/dm-1 at /run/media/jordan/My_Backups
 ----
 
@@ -215,7 +215,7 @@ Cryptsetup::
 --
 [,sh]
 ----
-➜ sudo systemd-mount -o noatime,autodefrag,compress=zstd /dev/mapper/MyUSB
+sudo systemd-mount -o noatime,autodefrag,compress=zstd /dev/mapper/MyUSB
 Started unit run-media-system-System_Backups.mount for mount point: /run/media/system/System_Backups
 ----
 
@@ -231,7 +231,7 @@ udisks2::
 +
 [,sh]
 ----
-➜ udisksctl unmount -b /dev/dm-1
+udisksctl unmount -b /dev/dm-1
 Unmounted /dev/dm-1.
 ----
 
@@ -239,7 +239,7 @@ Cryptsetup::
 +
 [,sh]
 ----
-➜ sudo systemd-umount /run/media/system/My_Backups
+sudo systemd-umount /run/media/system/My_Backups
 Stopped unit run-media-system-System_Backups.mount for mount point: /run/media/system/System_Backups
 ----
 
@@ -249,7 +249,7 @@ udisks2::
 +
 [,sh]
 ----
-➜ udisksctl lock -b /dev/sdb1
+udisksctl lock -b /dev/sdb1
 Locked /dev/sdb1.
 ----
 
@@ -257,7 +257,7 @@ Cryptsetup::
 +
 [,sh]
 ----
-➜ sudo cryptsetup close MyUSB
+sudo cryptsetup close MyUSB
 ----
 
 === GIO
@@ -271,7 +271,7 @@ The following instruction demonstrate how to use GIO to easily access your newly
 +
 [,sh]
 ----
-➜ gio mount -d /dev/sdb1
+gio mount -d /dev/sdb1
 Enter a passphrase to unlock the volume
 The passphrase is needed to access encrypted data on WD easystore 25FC (1.0 TB Hard Disk).
 Password: 
@@ -282,7 +282,7 @@ Mounted /dev/sdb1 at /run/media/jordan/My_Backups
 +
 [,sh]
 ----
-➜ gio mount -u /run/media/jordan/My_Backups
+gio mount -u /run/media/jordan/My_Backups
 ----
 
 To store the volume's passphrase in your keyring, the easiest method is to open the device in the Files application.

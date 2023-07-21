@@ -21,7 +21,7 @@ It is expected you are already familiar using GnuPG from the command-line and ha
 --
 [,sh]
 ----
-➜ gpg --list-secret-keys --keyid-format LONG
+gpg --list-secret-keys --keyid-format LONG
 /home/pstibbons/.gnupg/pubring.kbx
 -------------------------------
 sec   rsa4096/C8DE632E9A8A0BDD 2020-11-13 [SC]
@@ -38,7 +38,7 @@ Here there is only one private key for a Ponder Stibbons.
 --
 [,sh]
 ----
-➜ gpg -o private.gpg --export-options backup --export-secret-keys ponder.stibbons@unseen.edu
+gpg -o private.gpg --export-options backup --export-secret-keys ponder.stibbons@unseen.edu
 ----
 
 This invocation places the key in the file `private.gpg` in the current directory.
@@ -61,7 +61,7 @@ Ideally, store it only on offline media.
 --
 [,sh]
 ----
-➜ gpg --import-options restore --import private.gpg
+gpg --import-options restore --import private.gpg
 gpg: key C8DE632E9A8A0BDD: public key "Ponder Stibbons <ponder.stibbons@unseen.edu>" imported
 gpg: key C8DE632E9A8A0BDD: secret key imported
 gpg: Total number processed: 1
@@ -86,7 +86,7 @@ image::Import Passphrase Prompt.png[Passphrase Prompt to Import GPG Key]
 +
 [,sh]
 ----
-➜ gpg --edit-key ponder.stibbons@unseen.edu
+gpg --edit-key ponder.stibbons@unseen.edu
 gpg (GnuPG) 2.2.20; Copyright (C) 2020 Free Software Foundation, Inc.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.

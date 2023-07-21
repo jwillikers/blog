@@ -16,14 +16,14 @@ For this tutorial to make a lick of sense, you should be familiar with the comma
 +
 [,sh]
 ----
-➜ sudo yum -y install dnf
+sudo yum -y install dnf
 ----
 
 . Add the https://fedoraproject.org/wiki/EPEL[EPEL] repository for retrieving necessary dependencies.
 +
 [,sh]
 ----
-➜ sudo dnf -y install \
+sudo dnf -y install \
   https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 ----
 
@@ -31,7 +31,7 @@ For this tutorial to make a lick of sense, you should be familiar with the comma
 +
 [,sh]
 ----
-➜ sudo dnf -y install cmake3 gettext-devel git ncurses-devel ninja-build \
+sudo dnf -y install cmake3 gettext-devel git ncurses-devel ninja-build \
   pcre2-devel
 ----
 
@@ -39,14 +39,14 @@ For this tutorial to make a lick of sense, you should be familiar with the comma
 +
 [,sh]
 ----
-➜ git clone https://github.com/fish-shell/fish-shell.git
+git clone https://github.com/fish-shell/fish-shell.git
 ----
 
 . Checkout the latest release tag.
 +
 [,sh]
 ----
-➜ git -C fish-shell switch --detach (git -C fish-shell describe --abbrev=0 --tags)
+git -C fish-shell switch --detach (git -C fish-shell describe --abbrev=0 --tags)
 HEAD is now at 0314b0f1d Release 3.1.2
 ----
 
@@ -54,21 +54,21 @@ HEAD is now at 0314b0f1d Release 3.1.2
 +
 [,sh]
 ----
-➜ cmake3 -GNinja -B fish-shell/build -S fish-shell
+cmake3 -GNinja -B fish-shell/build -S fish-shell
 ----
 
 . Build fish.
 +
 [,sh]
 ----
-➜ cmake3 --build fish-shell/build
+cmake3 --build fish-shell/build
 ----
 
 . Install fish.
 +
 [,sh]
 ----
-➜ sudo cmake3 --install fish-shell/build
+sudo cmake3 --install fish-shell/build
 -- Install configuration: "RelWithDebInfo"
 ----
 
@@ -76,7 +76,7 @@ HEAD is now at 0314b0f1d Release 3.1.2
 +
 [,sh]
 ----
-➜ echo /usr/local/bin/fish | sudo tee -a /etc/shells
+echo /usr/local/bin/fish | sudo tee -a /etc/shells
 /usr/local/bin/fish
 ----
 
@@ -84,7 +84,7 @@ HEAD is now at 0314b0f1d Release 3.1.2
 +
 [,sh]
 ----
-➜ chsh -s /usr/local/bin/fish
+chsh -s /usr/local/bin/fish
 Changing shell for jordan.
 Password: 
 Shell changed.
@@ -98,14 +98,14 @@ Version 3.2.0 and newer::
 +
 [,sh]
 ----
-➜ fish_add_path -p /usr/local/bin
+fish_add_path -p /usr/local/bin
 ----
 
 Versions prior to 3.2.0::
 +
 [,sh]
 ----
-➜ set -pU fish_user_paths /usr/local/bin
+set -pU fish_user_paths /usr/local/bin
 ----
 
 === Update
@@ -117,7 +117,7 @@ For completeness, the instructions to update fish are provided below.
 +
 [,sh]
 ----
-➜ git -C fish-shell switch --detach (git -C fish-shell describe --abbrev=0 --tags)
+git -C fish-shell switch --detach (git -C fish-shell describe --abbrev=0 --tags)
 HEAD is now at 0314b0f1d Release 3.1.2
 ----
 
@@ -125,21 +125,21 @@ HEAD is now at 0314b0f1d Release 3.1.2
 +
 [,sh]
 ----
-➜ cmake3 -GNinja -B fish-shell/build -S fish-shell
+cmake3 -GNinja -B fish-shell/build -S fish-shell
 ----
 
 . Build fish.
 +
 [,sh]
 ----
-➜ cmake3 --build fish-shell/build
+cmake3 --build fish-shell/build
 ----
 
 . Install fish.
 +
 [,sh]
 ----
-➜ sudo cmake3 --install fish-shell/build
+sudo cmake3 --install fish-shell/build
 -- Install configuration: "RelWithDebInfo"
 ----
 
@@ -152,7 +152,7 @@ Setting the `QT_QPA_PLATFORM_PLUGIN_PATH` to as shown below resolved this issue.
 
 [,sh]
 ----
-➜ set -Ux QT_QPA_PLATFORM_PLUGIN_PATH /usr/lib64/qt5/plugins/platforms
+set -Ux QT_QPA_PLATFORM_PLUGIN_PATH /usr/lib64/qt5/plugins/platforms
 ----
 
 The moral of the story is to check any Bash-specific initialization in places such as the `/etc/profile` file and the `/etc/profile.d` directory.

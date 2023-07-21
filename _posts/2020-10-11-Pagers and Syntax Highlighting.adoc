@@ -20,7 +20,7 @@ The following one-liner downloads the amd64 deb installer for the latest release
 
 [,sh]
 ----
-➜ wget -q -nv -O - https://api.github.com/repos/sharkdp/bat/releases/latest \
+wget -q -nv -O - https://api.github.com/repos/sharkdp/bat/releases/latest \
    | awk -F': ' '/browser_download_url/ && /_amd64\.deb/ && !/musl/ {gsub(/"/, "", $(NF)); system("wget -qi -L " $(NF))}'
 ----
 --
@@ -29,21 +29,21 @@ The following one-liner downloads the amd64 deb installer for the latest release
 +
 [,sh]
 ----
-➜ sudo apt -y install ./bat_*_amd64.deb
+sudo apt -y install ./bat_*_amd64.deb
 ----
 
 . Clean up the remaining deb package since it is no longer needed.
 +
 [,sh]
 ----
-➜ rm bat_*_amd64.deb
+rm bat_*_amd64.deb
 ----
 
 . Create an initial configuration file.
 +
 [,sh]
 ----
-➜ bat --generate-config-file
+bat --generate-config-file
 Success! Config file written to /home/jordan/.config/bat/config
 ----
 
@@ -76,7 +76,7 @@ NOTE: You will have to log out and back in again for changes in `~/.pam_environm
 +
 [,sh]
 ----
-➜ alias -s cat (which bat)
+alias -s cat (which bat)
 ----
 
 . Highlight syntax within `man` pages.
@@ -91,7 +91,7 @@ MANPAGER DEFAULT="sh -c 'col -bx | bat -l man -p'"
 +
 [,sh]
 ----
-➜ man 2 select
+man 2 select
 ----
 
 == Conclusion

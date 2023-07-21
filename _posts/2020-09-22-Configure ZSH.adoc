@@ -28,7 +28,7 @@ Debian provides a convenient https://manpages.ubuntu.com/manpages/en/man8/add-sh
 
 [,sh]
 ----
-➜ sudo add-shell /usr/bin/zsh
+sudo add-shell /usr/bin/zsh
 ----
 --
 

@@ -26,7 +26,7 @@ On macOS, the X11 software is available from the https://www.xquartz.org/[XQuart
 +
 [,sh]
 ----
-➜ which xauth
+which xauth
 /usr/bin/xauth
 ----
 
@@ -43,7 +43,7 @@ ForwardX11 yes
 --
 [,sh]
 ----
-➜ ssh -CX mordor
+ssh -CX mordor
 ----
 
 [NOTE]
@@ -60,7 +60,7 @@ TIP: Enable compression when using X11 forwarding with the `-C` flag, as done he
 --
 [,sh]
 ----
-➜ ssh -CY helms-deep
+ssh -CY helms-deep
 ----
 
 CAUTION: Your key presses can be captured on the remote machine so make sure you actually trust it.
@@ -73,7 +73,7 @@ Execute https://wiki.gnome.org/Apps/Terminal[GNOME Terminal], for instance.
 
 [,sh]
 ----
-➜ gnome-terminal
+gnome-terminal
 ----
 --
 
@@ -101,7 +101,7 @@ The following example demonstrates this by running GNOME Terminal on the remote 
 
 [,sh]
 ----
-➜ ssh -CYf helms-deep gnome-terminal
+ssh -CYf helms-deep gnome-terminal
 ----
 --
 

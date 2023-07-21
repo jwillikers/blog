@@ -98,7 +98,7 @@ WantedBy=timers.target
 +
 [,sh]
 ----
-➜ sudo systemctl enable --now snap-sync-jordan.timer
+sudo systemctl enable --now snap-sync-jordan.timer
 Created symlink /etc/systemd/system/timers.target.wants/snap-sync-jordan.timer → /etc/systemd/system/snap-sync-jordan.timer.
 ----
 
@@ -106,7 +106,7 @@ Created symlink /etc/systemd/system/timers.target.wants/snap-sync-jordan.timer �
 +
 [,sh]
 ----
-➜ sudo systemctl status snap-sync-jordan.timer
+sudo systemctl status snap-sync-jordan.timer
 ----
 
 === User
@@ -119,7 +119,7 @@ Created symlink /etc/systemd/system/timers.target.wants/snap-sync-jordan.timer �
 +
 [,sh]
 ----
-➜ systemctl --user list-units -t mount
+systemctl --user list-units -t mount
 UNIT                           LOAD   ACTIVE SUB     DESCRIPTION              
 -.mount                        loaded active mounted Root Mount               
 \x2esnapshots.mount            loaded active mounted /.snapshots              
@@ -195,14 +195,14 @@ WantedBy=timers.target
 +
 [,sh]
 ----
-➜ systemctl --user enable --now snap-sync-home.timer
+systemctl --user enable --now snap-sync-home.timer
 ----
 
 . Check the status of the timer with the `status` subcommand.
 +
 [,sh]
 ----
-➜ systemctl --user status snap-sync-home.timer
+systemctl --user status snap-sync-home.timer
 ----
 
 == Conclusion

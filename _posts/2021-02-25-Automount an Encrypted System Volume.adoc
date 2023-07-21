@@ -44,7 +44,7 @@ Let's go!
 +
 [,sh]
 ----
-➜ lsblk
+lsblk
 NAME           MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
 sda              8:0    0   1.8T  0 disk  
 ├─sda1           8:1    0   976M  0 part  /boot
@@ -60,7 +60,7 @@ sr0             11:0    1  1024M  0 rom
 +
 [,sh]
 ----
-➜ sudo cryptsetup open /dev/sdb1 backup_crypt
+sudo cryptsetup open /dev/sdb1 backup_crypt
 Enter passphrase for /dev/sdb1: 
 ----
 
@@ -69,7 +69,7 @@ Enter passphrase for /dev/sdb1:
 --
 [,sh]
 ----
-➜ sudo systemd-mount /dev/mapper/backup_crypt
+sudo systemd-mount /dev/mapper/backup_crypt
 Started unit run-media-system-System_Backups.mount for mount point: /run/media/system/System_Backups
 ----
 
@@ -83,7 +83,7 @@ The mount point here reflects the label of the Btrfs volume, which is "System Ba
 +
 [,sh]
 ----
-➜ sudo btrfs subvolume create /run/media/system/System_Backups/root_backups
+sudo btrfs subvolume create /run/media/system/System_Backups/root_backups
 Create subvolume '/run/media/system/System_Backups/root_backups'
 ----
 
@@ -91,7 +91,7 @@ Create subvolume '/run/media/system/System_Backups/root_backups'
 +
 [,sh]
 ----
-➜ sudo systemd-umount /run/media/system/System_Backups
+sudo systemd-umount /run/media/system/System_Backups
 Stopped unit run-media-system-System_Backups.mount for mount point: /run/media/system/System_Backups
 ----
 
@@ -100,7 +100,7 @@ Stopped unit run-media-system-System_Backups.mount for mount point: /run/media/s
 --
 [,sh]
 ----
-➜ sudo mkdir /etc/cryptsetup-keys.d
+sudo mkdir /etc/cryptsetup-keys.d
 ----
 
 This directory is specified in the {systemd-cryptsetup} man page.
@@ -111,7 +111,7 @@ This directory is specified in the {systemd-cryptsetup} man page.
 --
 [,sh]
 ----
-➜ sudo dd if=/dev/urandom of=/etc/cryptsetup-keys.d/backup_crypt.key bs=1024 \
+sudo dd if=/dev/urandom of=/etc/cryptsetup-keys.d/backup_crypt.key bs=1024 \
   count=4
 4+0 records in
 4+0 records out
@@ -125,14 +125,14 @@ The keyfile should be named after the associated volume.
 +
 [,sh]
 ----
-➜ sudo chmod 0400 /etc/cryptsetup-keys.d/backup_crypt.key
+sudo chmod 0400 /etc/cryptsetup-keys.d/backup_crypt.key
 ----
 
 . Add the keyfile to the device.
 +
 [,sh]
 ----
-➜ sudo cryptsetup luksAddKey /dev/sdb1 /etc/cryptsetup-keys.d/backup_crypt.key
+sudo cryptsetup luksAddKey /dev/sdb1 /etc/cryptsetup-keys.d/backup_crypt.key
 Enter any existing passphrase: 
 ----
 
@@ -141,7 +141,7 @@ Enter any existing passphrase:
 --
 [,sh]
 ----
-➜ echo "backup_crypt UUID="(sudo blkid -o value -s UUID /dev/sdb1)" /etc/cryptsetup-keys.d/backup_crypt.key luks,noauto,nofail,discard" \
+echo "backup_crypt UUID="(sudo blkid -o value -s UUID /dev/sdb1)" /etc/cryptsetup-keys.d/backup_crypt.key luks,noauto,nofail,discard" \
   | sudo tee -a /etc/crypttab
 backup_crypt UUID=0cbab673-2b14-40c0-a1f2-522bc7ff7e18 /etc/cryptsetup-keys.d/backup_crypt.key luks,noauto,nofail,discard
 ----
@@ -159,7 +159,7 @@ systemd will generate the {systemd-cryptsetup} unit `systemd-cryptsetup@backup_c
 --
 [,sh]
 ----
-➜ echo "/dev/mapper/backup_crypt /run/media/system/System_Backups btrfs defaults,nofail,noauto,x-systemd.automount,noatime,autodefrag,compress=zstd,commit=120,subvol=root_backups 0 0" \
+echo "/dev/mapper/backup_crypt /run/media/system/System_Backups btrfs defaults,nofail,noauto,x-systemd.automount,noatime,autodefrag,compress=zstd,commit=120,subvol=root_backups 0 0" \
   | sudo tee -a /etc/fstab
 /dev/mapper/backup_crypt /run/media/system/System_Backups btrfs defaults,nofail,noauto,x-systemd.automount,noatime,autodefrag,compress=zstd,commit=120,subvol=root_backups 0 0
 ----
@@ -174,7 +174,7 @@ systemd will generate the {systemd-mount-unit} unit `run-media-system-System_Bac
 +
 [,sh]
 ----
-➜ sudo findmnt --verify --verbose
+sudo findmnt --verify --verbose
 ...
 /run/media/system/System_Backups
    [ ] target exists
@@ -191,21 +191,21 @@ systemd will generate the {systemd-mount-unit} unit `run-media-system-System_Bac
 +
 [,sh]
 ----
-➜ sudo cryptsetup close backup_crypt
+sudo cryptsetup close backup_crypt
 ----
 
 . Reload the changes in fstab and crypttab and generate the corresponding unit files.
 +
 [,sh]
 ----
-➜ sudo systemctl daemon-reload
+sudo systemctl daemon-reload
 ----
 
 . Restart the Cryptsetup target in order to make sure that the volume isn't decrypted automatically.
 +
 [,sh]
 ----
-➜ sudo systemctl restart cryptsetup.target
+sudo systemctl restart cryptsetup.target
 ----
 
 . Now verify that the encrypted volume has not been decrypted yet.
@@ -213,7 +213,7 @@ systemd will generate the {systemd-mount-unit} unit `run-media-system-System_Bac
 --
 [,sh]
 ----
-➜ sudo systemctl status systemd-cryptsetup@backup_crypt.service
+sudo systemctl status systemd-cryptsetup@backup_crypt.service
 ● systemd-cryptsetup@backup_crypt.service - Cryptography Setup for backup_crypt
    Loaded: loaded (/etc/crypttab; generated)
    Active: inactive (dead)
@@ -226,7 +226,7 @@ The cryptsetup unit is marked _inactive_, so volume has not been decrypted yet.
 +
 [,sh]
 ----
-➜ sudo touch /run/media/system/System_Backups/file
+sudo touch /run/media/system/System_Backups/file
 ----
 
 . You can now see that the volume has been decrypted because its cryptsetup target is active.
@@ -234,7 +234,7 @@ The cryptsetup unit is marked _inactive_, so volume has not been decrypted yet.
 --
 [,sh]
 ----
-➜ sudo systemctl status systemd-cryptsetup@backup_crypt.service
+sudo systemctl status systemd-cryptsetup@backup_crypt.service
 ● systemd-cryptsetup@backup_crypt.service - Cryptography Setup for backup_crypt
    Loaded: loaded (/etc/crypttab; generated)
    Active: active (exited) since Thu 2021-02-25 09:38:03 CST; 44s ago
@@ -246,7 +246,7 @@ You can also check the status of the Cryptsetup volume using `cryptsetup status`
 
 [,sh]
 ----
-➜ sudo cryptsetup status backup_crypt
+sudo cryptsetup status backup_crypt
 /dev/mapper/backup_crypt is active and is in use.
   type:    LUKS2
   cipher:  aes-xts-plain64
@@ -266,7 +266,7 @@ You can also check the status of the Cryptsetup volume using `cryptsetup status`
 +
 [,sh]
 ----
-➜ sudo systemctl status run-media-system-System_Backups.mount
+sudo systemctl status run-media-system-System_Backups.mount
 ● run-media-system-System_Backups.mount - /run/media/system/System_Backups
    Loaded: loaded (/etc/fstab; generated)
    Active: active (mounted) since Thu 2021-02-25 09:38:03 CST; 2min 1s ago

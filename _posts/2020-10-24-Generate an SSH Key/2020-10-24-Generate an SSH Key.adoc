@@ -22,7 +22,7 @@ It is assumed you are familiar with the command-line on Unix-Like systems, https
 +
 [,sh]
 ----
-➜ ssh-keygen
+ssh-keygen
 Generating public/private rsa key pair.
 ----
 
@@ -123,7 +123,7 @@ GitHub is used as an example here because it is so widely used.
 +
 [,sh]
 ----
-➜ sudo apt -y install git
+sudo apt -y install git
 ----
 
 . Open your https://github.com/settings/keys[SSH and GPG keys] settings page in a web browser.
@@ -145,7 +145,7 @@ This can be accomplished by dumping the contents of the public key to your termi
 
 [,sh]
 ----
-➜ cat ~/.ssh/id_rsa.pub
+cat ~/.ssh/id_rsa.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDoxvFhlQciJxydpZVKnNwVYtSZI8hw6aF3ug961FAHzp1sbuZJm++rFSG30wwxeXK3r+FPXXnEnmPW53dn26ywFChHRRpN4zgyEdCXYLBOILObm/9z6hnOa8MReNC9VKH5xBq5CH4YmNfJjmJ5LaeI9PMbF/++F+n+QDTWgpfwKu3FxJYRtQ4NLd5q2QOvwpzQ3M2FOkqJ0N//qwiuJNLtUmDZQRqpeZCbhhAptrF6yyYME70pMKQFuE5gEzZThDIP6TAPuu0L4LECwossWlsA4bvhOK8wN0KWfvuZLx6r/8ld4P9/3FkshuTsWXIDbykewR4QcPE8EcpVNFH6l+zrLBCkndOimN4iLy7eBPPfdLZG1yfcusA0pPMiYKiA4SYzh6w2wrt0Y0wV1/npNHvZM/qS/2tJTkwYYKLxRah3SdR7onJQzWn67SdzxJ5FO5xQB5HsMMe99JTqaHEGEiUrGFB5MsqUbtTqHo3ZMYre0uEax03omq3pZel+MCj52S8= jordan@jwillikers
 ---- 
 --
@@ -161,7 +161,7 @@ Here, I clone the repository for this blog over SSH.
 
 [,sh]
 ----
-➜ git clone git@github.com:jwillikers/blog.git
+git clone git@github.com:jwillikers/blog.git
 ----
 --
 
@@ -173,7 +173,7 @@ For remotely accessing a host, some configuration is required.
 +
 [,sh]
 ----
-➜ sudo apt -y install openssh-server
+sudo apt -y install openssh-server
 ----
 
 . Copy the public from your account to the target user's `~/.ssh/known_hosts` file on the remote host.
@@ -183,21 +183,21 @@ The https://www.ssh.com/ssh/copy-id[`ssh-copy-id`] command is usually available 
 
 [,sh]
 ----
-➜ ssh-copy-id remote_host
+ssh-copy-id remote_host
 ----
 
 If it's not available you might be able to install a package for it, such as on https://www.openbsd.org/[OpenBSD].
 
 [,sh]
 ----
-➜ doas pkg_add ssh-copy-id
+doas pkg_add ssh-copy-id
 ----
 
 Or, you can just use https://man7.org/linux/man-pages/man1/cat.1.html[`cat`], courtesy of https://mwl.io/[Michael W. Lucas].
 
 [,sh]
 ----
-➜ cat ~/.ssh/id_rsa.pub | \
+cat ~/.ssh/id_rsa.pub | \
   ssh remote_host "cat >> ~/.ssh/authorized_keys"
 ----
 --
@@ -208,7 +208,7 @@ Or, you can just use https://man7.org/linux/man-pages/man1/cat.1.html[`cat`], co
 +
 [,sh]
 ----
-➜ ssh remote_host
+ssh remote_host
 ----
 
 == Conclusion

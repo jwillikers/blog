@@ -37,21 +37,21 @@ This tutorial assumes you are comfortable with https://git-scm.com/[Git], packag
 +
 [,sh]
 ----
-➜ sudo apt -y install curl git
+sudo apt -y install curl git
 ----
 
 . Pull down the https://github.com/asdf-vm/asdf[asdf repository] in to your home directory.
 +
 [,sh]
 ----
-➜ git clone https://github.com/asdf-vm/asdf.git ~/.asdf
+git clone https://github.com/asdf-vm/asdf.git ~/.asdf
 ----
 
 . Checkout the latest version of asdf.
 +
 [,sh]
 ----
-➜ git -C ~/.asdf switch --detach (git -C ~/.asdf describe --abbrev=0 --tags)
+git -C ~/.asdf switch --detach (git -C ~/.asdf describe --abbrev=0 --tags)
 HEAD is now at c6145d0 Update version to 0.8.0
 ----
 
@@ -59,14 +59,14 @@ HEAD is now at c6145d0 Update version to 0.8.0
 +
 [,sh]
 ----
-➜ mkdir -p ~/.config/fish/conf.d; and echo "source ~/.asdf/asdf.fish" > ~/.config/fish/conf.d/asdf.fish
+mkdir -p ~/.config/fish/conf.d; and echo "source ~/.asdf/asdf.fish" > ~/.config/fish/conf.d/asdf.fish
 ----
 
 . Install shell completions for asdf.
 +
 [,sh]
 ----
-➜ mkdir -p ~/.config/fish/completions; and ln -s ~/.asdf/completions/asdf.fish ~/.config/fish/completions
+mkdir -p ~/.config/fish/completions; and ln -s ~/.asdf/completions/asdf.fish ~/.config/fish/completions
 ----
 
 . To make asdf available, restart your terminal.
@@ -80,7 +80,7 @@ In the case of the Ruby plugin, install its dependencies with the following comm
 
 [,sh]
 ----
-➜ sudo apt -y install autoconf bison build-essential libssl-dev libyaml-dev \
+sudo apt -y install autoconf bison build-essential libssl-dev libyaml-dev \
   libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm6 libgdbm-dev \
   libdb-dev
 ----
@@ -89,7 +89,7 @@ Then add the Ruby plugin with the `asdf plugin add` command.
 
 [,sh]
 ----
-➜ asdf plugin add ruby
+asdf plugin add ruby
 ----
 --
 
@@ -102,7 +102,7 @@ Now that asdf is installed, it's time to configure a project to use a specific v
 --
 [,sh]
 ----
-➜ asdf install ruby latest
+asdf install ruby latest
 ----
 
 TIP: A specific version number can be provided or the `latest` keyword can be used to automatically install the latest version available.
@@ -115,7 +115,7 @@ TIP: A specific version number can be provided or the `latest` keyword can be us
 --
 [,sh]
 ----
-➜ asdf local ruby (asdf latest ruby)
+asdf local ruby (asdf latest ruby)
 ----
 
 The `asdf local` command records the appropriate version for a runtime in a `.tool-versions` file in the current directory, creating it if it does not exist.
@@ -146,7 +146,7 @@ The necessary work flow is described step-by-step below.
 +
 [,sh]
 ----
-➜ asdf install
+asdf install
 ----
 
 === Update
@@ -157,14 +157,14 @@ Updates are important, so the necessary commands to update asdf and its plugins 
 +
 [,sh]
 ----
-➜ asdf update
+asdf update
 ----
 
 . Update the plugins.
 +
 [,sh]
 ----
-➜ asdf plugin update --all
+asdf plugin update --all
 ----
 
 [TIP]

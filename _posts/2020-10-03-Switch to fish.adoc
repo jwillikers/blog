@@ -22,21 +22,21 @@ The following steps install fish through the PPA.
 +
 [,sh]
 ----
-➜ sudo apt-add-repository ppa:fish-shell/release-3
+sudo apt-add-repository ppa:fish-shell/release-3
 ----
 
 . Update https://wiki.debian.org/Aptitude[Aptitude] with the new PPA.
 +
 [,sh]
 ----
-➜ sudo apt update
+sudo apt update
 ----
 
 . Install the fish package.
 +
 [,sh]
 ----
-➜ sudo apt -y install fish
+sudo apt -y install fish
 ----
 
 === Switch
@@ -50,7 +50,7 @@ Debian provides a convenient https://manpages.ubuntu.com/manpages/en/man8/add-sh
 
 [,sh]
 ----
-➜ sudo add-shell /usr/bin/fish
+sudo add-shell /usr/bin/fish
 ----
 --
 
@@ -58,7 +58,7 @@ Debian provides a convenient https://manpages.ubuntu.com/manpages/en/man8/add-sh
 +
 [,sh]
 ----
-➜ chsh -s /usr/bin/fish
+chsh -s /usr/bin/fish
 Password:
 ----
 
@@ -83,7 +83,7 @@ Adjusting basic configuration options is quick ang easy with fish.
 +
 [,sh]
 ----
-➜ fish_config
+fish_config
 ----
 
 . Style the prompt.
@@ -96,14 +96,14 @@ If you like doing things the old fashion way - or want to set the prompt remotel
 +
 [,sh]
 ----
-➜ mkdir -p ~/.config/fish/functions
+mkdir -p ~/.config/fish/functions
 ----
 
 . Then copy over the desired prompt configuration, `robbyrussell.fish` in this case, from `/usr/share/fish/tools/web_config/sample_prompts/`.
 +
 [,sh]
 ----
-➜ cp /usr/share/fish/tools/web_config/sample_prompts/robbyrussell.fish ~/.config/fish/functions/fish_prompt.fish
+cp /usr/share/fish/tools/web_config/sample_prompts/robbyrussell.fish ~/.config/fish/functions/fish_prompt.fish
 ----
 --
 
@@ -118,7 +118,7 @@ As an example, the following command sets the color scheme to solarized dark.
 
 [,sh]
 ----
-➜ set -U fish_color_normal normal; \
+set -U fish_color_normal normal; \
   set -U fish_color_command 93a1a1; \
   set -U fish_color_quote 657b83; \
   set -U fish_color_redirection 6c71c4; \
@@ -150,14 +150,14 @@ As an example, the following command sets the color scheme to solarized dark.
 +
 [,sh]
 ----
-➜ set -U fish_greeting ""
+set -U fish_greeting ""
 ----
 
 . Enable backwards-incompatible features.footnote:[https://fishshell.com/docs/current/index.html#future-feature-flags[fish Documentation: Future feature flags]]
 +
 [,sh]
 ----
-➜ set -U fish_features stderr-nocaret qmark-noglob
+set -U fish_features stderr-nocaret qmark-noglob
 ----
 
 . Enable https://fishshell.com/docs/current/index.html#vi-mode-commands[Vi mode].
@@ -203,7 +203,7 @@ Adding `/usr/local/bin` to the end of the list in `PATH` is as simple as this.
 
 [,sh]
 ----
-➜ fish_add_path /usr/local/bin
+fish_add_path /usr/local/bin
 ----
 
 The `-p` flag prepends the given path to `PATH`.
@@ -211,7 +211,7 @@ To place `/usr/local/bin` at the beginning of `PATH`, use this command.
 
 [,sh]
 ----
-➜ fish_add_path -p /usr/local/bin
+fish_add_path -p /usr/local/bin
 ----
 
 When messing with `PATH` prior to version 3.2.0, use fish's dedicated internal variable `fish_user_paths`.
@@ -220,7 +220,7 @@ With the https://fishshell.com/docs/current/cmds/set.html[`set`] command, prepen
 
 [,sh]
 ----
-➜ set -pU fish_user_paths /usr/local/bin
+set -pU fish_user_paths /usr/local/bin
 ----
 
 The `-p` option prepends a value to the given variable.
@@ -244,7 +244,7 @@ To add a value to the beginning of the `LD_LIBRARY_PATH` environment variable an
 
 [,sh]
 ----
-➜ set -px LD_LIBRARY_PATH /usr/local/lib
+set -px LD_LIBRARY_PATH /usr/local/lib
 ----
 --
 
@@ -263,14 +263,14 @@ As an example, the following command adds `/usr/local/lib` to the beginning of t
 
 [,sh]
 ----
-➜ set -x LD_LIBRARY_PATH /usr/local/lib $LD_LIBRARY_PATH ~/lib
+set -x LD_LIBRARY_PATH /usr/local/lib $LD_LIBRARY_PATH ~/lib
 ----
 
 When quoting the variable, it must be modified like so to achieve the same result.
 
 [,sh]
 ----
-➜ set -x LD_LIBRARY_PATH /usr/local/lib:"$LD_LIBRARY_PATH":~/lib
+set -x LD_LIBRARY_PATH /usr/local/lib:"$LD_LIBRARY_PATH":~/lib
 ----
 --
 
@@ -298,7 +298,7 @@ The following example recursively searches and lists all files ending in `.fish`
 
 [,sh]
 ----
-➜ ls ~/.config/**.fish
+ls ~/.config/**.fish
 /home/jordan/.config/fish/functions/fish_prompt.fish
 ----
 --

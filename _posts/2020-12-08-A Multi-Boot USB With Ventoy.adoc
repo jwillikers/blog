@@ -31,7 +31,7 @@ The first step is, of course, to setup the flash drive with Ventoy.
 +
 [,sh]
 ----
-➜ lsblk
+lsblk
 NAME             MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
 sda                8:0    0 465.8G  0 disk
 ├─sda1             8:1    0   512M  0 part  /boot/efi
@@ -54,7 +54,7 @@ Download the latest release directly from the command-line with the following co
 
 [,sh]
 ----
-➜ wget -q -nv -O - https://api.github.com/repos/ventoy/Ventoy/releases/latest \
+wget -q -nv -O - https://api.github.com/repos/ventoy/Ventoy/releases/latest \
   | awk -F': ' '/browser_download_url/ && /\.tar\.gz/ \
   {gsub(/"/, "", $(NF)); system("wget -qi -L " $(NF))}'
 ----
@@ -64,7 +64,7 @@ Download the latest release directly from the command-line with the following co
 +
 [,sh]
 ----
-➜ tar xf ventoy-*-linux.tar.gz
+tar xf ventoy-*-linux.tar.gz
 ----
 
 . Install Ventoy on the flash drive by running the `Ventoy2Disk.sh` shell script as _root_, passing the `-i` flag and device.
@@ -77,7 +77,7 @@ NOTE: Some one-time setup, documented https://www.ventoy.net/en/doc_secure.html[
 
 [,sh]
 ----
-➜ sudo ventoy-*/Ventoy2Disk.sh -i -s -g /dev/sdb
+sudo ventoy-*/Ventoy2Disk.sh -i -s -g /dev/sdb
 
 **********************************************
       Ventoy: 1.0.31
@@ -131,7 +131,7 @@ Install Ventoy to /dev/sdb successfully finished.
 +
 [,sh]
 ----
-➜ rm -rf ventoy-*
+rm -rf ventoy-*
 ----
 
 === Add Images
@@ -156,7 +156,7 @@ Here, I mount the _Ventoy_ partition by label.
 
 [,sh]
 ----
-➜ udisksctl mount -b /dev/disk/by-label/Ventoy
+udisksctl mount -b /dev/disk/by-label/Ventoy
 Mounted /dev/sdb1 at /media/jordan/Ventoy
 ----
 --
@@ -168,7 +168,7 @@ Unless Ventoy's label for the storage partition has been changed from its defaul
 
 [,sh]
 ----
-➜ cp ~/Downloads/Win10_20H2_English_x64.iso /media/$USER/ventoy
+cp ~/Downloads/Win10_20H2_English_x64.iso /media/$USER/ventoy
 ----
 --
 
@@ -178,7 +178,7 @@ Unless Ventoy's label for the storage partition has been changed from its defaul
 +
 [,sh]
 ----
-➜ udisksctl unmount -b /dev/disk/by-label/Ventoy
+udisksctl unmount -b /dev/disk/by-label/Ventoy
 Unmounted /dev/sdb1.
 ----
 
@@ -186,7 +186,7 @@ Unmounted /dev/sdb1.
 +
 [,sh]
 ----
-➜ udisksctl unmount -b /dev/disk/by-label/VTOYEFI
+udisksctl unmount -b /dev/disk/by-label/VTOYEFI
 Unmounted /dev/sdb2.
 ----
 
@@ -204,7 +204,7 @@ These instructions explain how to go about updating a Ventoy flash drive.
 +
 [,sh]
 ----
-➜ lsblk
+lsblk
 NAME             MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
 sda                8:0    0 465.8G  0 disk
 ├─sda1             8:1    0   512M  0 part  /boot/efi
@@ -224,7 +224,7 @@ zd0              230:0    0   500M  0 disk
 +
 [,sh]
 ----
-➜ wget -q -nv -O - https://api.github.com/repos/ventoy/Ventoy/releases/latest \
+wget -q -nv -O - https://api.github.com/repos/ventoy/Ventoy/releases/latest \
   | awk -F': ' '/browser_download_url/ && /\.tar\.gz/ \
   {gsub(/"/, "", $(NF)); system("wget -qi -L " $(NF))}'
 ----
@@ -233,14 +233,14 @@ zd0              230:0    0   500M  0 disk
 +
 [,sh]
 ----
-➜ tar xf ventoy-*-linux.tar.gz
+tar xf ventoy-*-linux.tar.gz
 ----
 
 . Update the Ventoy flash drive by running the `Ventoy2Disk.sh` shell script as root with the `-u` flag and the path to the flash drive.
 +
 [,sh]
 ----
-➜ sudo ventoy-*/Ventoy2Disk.sh -u /dev/sdb
+sudo ventoy-*/Ventoy2Disk.sh -u /dev/sdb
 
 **********************************************
       Ventoy: 1.0.31
@@ -270,7 +270,7 @@ Update Ventoy to /dev/sdb successfully finished.
 +
 [,sh]
 ----
-➜ udisksctl unmount -b /dev/disk/by-label/Ventoy
+udisksctl unmount -b /dev/disk/by-label/Ventoy
 Unmounted /dev/sdb1.
 ----
 
@@ -278,7 +278,7 @@ Unmounted /dev/sdb1.
 +
 [,sh]
 ----
-➜ udisksctl unmount -b /dev/disk/by-label/VTOYEFI
+udisksctl unmount -b /dev/disk/by-label/VTOYEFI
 Unmounted /dev/sdb2.
 ----
 
@@ -288,7 +288,7 @@ Unmounted /dev/sdb2.
 +
 [,sh]
 ----
-➜ rm -rf ventoy-*
+rm -rf ventoy-*
 ----
 
 == Conclusion

@@ -17,14 +17,14 @@ To account for two distinct yet equally important use cases, instructions are pr
 +
 [,sh]
 ----
-➜ sudo yum -y install dnf
+sudo yum -y install dnf
 ----
 
 . Add the https://fedoraproject.org/wiki/EPEL[EPEL] repository for retrieving necessary dependencies.
 +
 [,sh]
 ----
-➜ sudo dnf -y install \
+sudo dnf -y install \
   https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 ----
 
@@ -32,7 +32,7 @@ To account for two distinct yet equally important use cases, instructions are pr
 +
 [,sh]
 ----
-➜ sudo dnf -y install asciidoc curl-devel dh-autoreconf docbook2X expat-devel \
+sudo dnf -y install asciidoc curl-devel dh-autoreconf docbook2X expat-devel \
   gettext-devel openssl-devel perl-devel xmlto zlib-devel
 ----
 
@@ -40,7 +40,7 @@ To account for two distinct yet equally important use cases, instructions are pr
 +
 [,sh]
 ----
-➜ sudo ln -s /usr/bin/db2x_docbook2texi /usr/bin/docbook2x-texi
+sudo ln -s /usr/bin/db2x_docbook2texi /usr/bin/docbook2x-texi
 ----
 
 . Download the source code of the latest release.
@@ -48,7 +48,7 @@ To account for two distinct yet equally important use cases, instructions are pr
 --
 [,sh]
 ----
-➜ wget -L https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.29.2.tar.xz
+wget -L https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.29.2.tar.xz
 ----
 
 [NOTE]
@@ -62,14 +62,14 @@ The method used here describes where to grab the latest source code releases and
 +
 [,sh]
 ----
-➜ wget -L https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.29.2.tar.sign
+wget -L https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.29.2.tar.sign
 ----
 
 . Decompress the archive.
 +
 [,sh]
 ----
-➜ unxz git-2.29.2.tar.xz
+unxz git-2.29.2.tar.xz
 ----
 
 . Verify the archive's signature.
@@ -77,7 +77,7 @@ The method used here describes where to grab the latest source code releases and
 --
 [,sh]
 ----
-➜ gpg --keyserver-options auto-key-retrieve git-2.29.2.tar.sign
+gpg --keyserver-options auto-key-retrieve git-2.29.2.tar.sign
 gpg: Signature made Thu 29 Oct 2020 05:14:01 PM CDT using RSA key ID 96AFE6CB
 gpg: requesting key 96AFE6CB from hkp server keys.gnupg.net
 gpg: key 713660A7: public key "Junio C Hamano <gitster@pobox.com>" imported
@@ -103,21 +103,21 @@ CAUTION: There are potential privacy concerns when automatically downloading the
 +
 [,sh]
 ----
-➜ tar -xf git-2.29.2.tar
+tar -xf git-2.29.2.tar
 ----
 
 . Change into the source directory.
 +
 [,sh]
 ----
-➜ cd git-2.29.2
+cd git-2.29.2
 ----
 
 . Build the configure script.
 +
 [,sh]
 ----
-➜ make configure
+make configure
 GIT_VERSION = 2.29.2
     GEN configure
 ----
@@ -141,19 +141,19 @@ This should probably be described in detail in another blog post more... but tha
 _fish_:::
 [,sh]
 ----
-➜ ./configure --prefix=$HOME/.local/(gcc -dumpmachine)
+./configure --prefix=$HOME/.local/(gcc -dumpmachine)
 ----
 
 _Bash_:::
 [,sh]
 ----
-➜ ./configure --prefix=$HOME/.local/$(gcc -dumpmachine)
+./configure --prefix=$HOME/.local/$(gcc -dumpmachine)
 ----
 
 System-wide::
 [,sh]
 ----
-➜ ./configure
+./configure
 ----
 
 NOTE: The configure script will arrange for installation under the `/usr/local` directory by default.
@@ -165,13 +165,13 @@ NOTE: The configure script will arrange for installation under the `/usr/local` 
 _fish_::
 [,sh]
 ----
-➜ make all doc info -j(nproc)
+make all doc info -j(nproc)
 ----
 
 _Bash_::
 [,sh]
 ----
-➜ make all doc info -j$(nproc)
+make all doc info -j$(nproc)
 ----
 --
 
@@ -181,13 +181,13 @@ _Bash_::
 User::
 [,sh]
 ----
-➜ make install install-doc install-html install-info
+make install install-doc install-html install-info
 ----
 
 System-wide::
 [,sh]
 ----
-➜ sudo make install install-doc install-html install-info
+sudo make install install-doc install-html install-info
 ----
 --
 
@@ -198,13 +198,13 @@ User::
 _fish_:::
 [,sh]
 ----
-➜ fish_add_path -p ~/.local/(gcc -dumpmachine)/bin
+fish_add_path -p ~/.local/(gcc -dumpmachine)/bin
 ----
 
 _Bash_:::
 [,sh]
 ----
-➜ echo 'export PATH=$HOME/.local/$(gcc -dumpmachine)/bin:$PATH' >> ~/.bashrc
+echo 'export PATH=$HOME/.local/$(gcc -dumpmachine)/bin:$PATH' >> ~/.bashrc
 ➜ source ~/.bashrc
 ----
 
@@ -225,14 +225,14 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/us
 +
 [,sh]
 ----
-➜ cd ..
+cd ..
 ----
 
 . Cleanup the source directory and tarball now that are no longer needed.
 +
 [,sh]
 ----
-➜ rm -rf git-2.29.1 git-2.29.2.tar git-2.29.2.tar.sign
+rm -rf git-2.29.1 git-2.29.2.tar git-2.29.2.tar.sign
 ----
 
 == Update
@@ -244,7 +244,7 @@ Now that Git has been installed, you can build newer versions of Git directly fr
 --
 [,sh]
 ----
-➜ git clone git://git.kernel.org/pub/scm/git/git.git
+git clone git://git.kernel.org/pub/scm/git/git.git
 Cloning into 'git'...
 remote: Enumerating objects: 9545, done.
 remote: Counting objects: 100% (9545/9545), done.
@@ -272,7 +272,7 @@ You should still do that from within your home directory.
 +
 [,sh]
 ----
-➜ cd git
+cd git
 ----
 
 . Checkout the latest version of git.
@@ -281,14 +281,14 @@ You should still do that from within your home directory.
 _fish_::
 [,sh]
 ----
-➜ git switch --detach (git describe --abbrev=0 --tags)
+git switch --detach (git describe --abbrev=0 --tags)
 HEAD is now at b927c80531 Git 2.29.2
 ----
 
 _Bash_::
 [,sh]
 ----
-➜ git switch --detach $(git describe --abbrev=0 --tags)
+git switch --detach $(git describe --abbrev=0 --tags)
 HEAD is now at b927c80531 Git 2.29.2
 ----
 --
@@ -297,7 +297,7 @@ HEAD is now at b927c80531 Git 2.29.2
 +
 [,sh]
 ----
-➜ make configure
+make configure
 GIT_VERSION = 2.29.2
     GEN configure
 ----
@@ -306,14 +306,14 @@ GIT_VERSION = 2.29.2
 +
 [,sh]
 ----
-➜ mkdir build
+mkdir build
 ----
 
 . Change into the build directory.
 +
 [,sh]
 ----
-➜ cd build
+cd build
 ----
 
 . Configure the build.
@@ -323,19 +323,19 @@ User::
 _fish_:::
 [,sh]
 ----
-➜ ../configure --prefix=~/.local/(gcc -dumpmachine)
+../configure --prefix=~/.local/(gcc -dumpmachine)
 ----
 
 _Bash_:::
 [,sh]
 ----
-➜ ../configure --prefix=~/.local/$(gcc -dumpmachine)
+../configure --prefix=~/.local/$(gcc -dumpmachine)
 ----
 
 System-wide::
 [,sh]
 ----
-➜ ../configure
+../configure
 ----
 --
 
@@ -345,13 +345,13 @@ System-wide::
 _fish_::
 [,sh]
 ----
-➜ make all doc info -j(nproc)
+make all doc info -j(nproc)
 ----
 
 _Bash_::
 [,sh]
 ----
-➜ make all doc info -j$(nproc)
+make all doc info -j$(nproc)
 ----
 --
 
@@ -361,13 +361,13 @@ _Bash_::
 User::
 [,sh]
 ----
-➜ make install install-doc install-html install-info
+make install install-doc install-html install-info
 ----
 
 System-wide::
 [,sh]
 ----
-➜ sudo make install install-doc install-html install-info
+sudo make install install-doc install-html install-info
 ----
 --
 
@@ -375,14 +375,14 @@ System-wide::
 +
 [,sh]
 ----
-➜ cd ..
+cd ..
 ----
 
 . Clean up the lingering build artifacts by deleting the `build` directory.
 +
 [,sh]
 ----
-➜ rm -rf build
+rm -rf build
 ----
 
 == Conclusion

@@ -45,14 +45,14 @@ rootless::
 +
 [,sh]
 ----
-➜ podman system reset
+podman system reset
 ----
 
 root::
 +
 [,sh]
 ----
-➜ sudo podman system reset
+sudo podman system reset
 ----
 --
 
@@ -69,7 +69,7 @@ rootless:: When dealing with user configuration, you'll need to create the `~/.c
 +
 [,sh]
 ----
-➜ mkdir -p ~/.config/containers
+mkdir -p ~/.config/containers
 ----
 
 root::

@@ -34,14 +34,14 @@ You should be familiar with Manjaro, KDE Plasma, and the fish shell to get the m
 +
 [,sh]
 ----
-➜ pacman -S gnome-keyring
+pacman -S gnome-keyring
 ----
 
 . Optionally, install the graphical {seahorse} application to help manage your GNOME Keyring.
 +
 [,sh]
 ----
-➜ pacman -S seahorse
+pacman -S seahorse
 ----
 
 . Add the GNOME Keyring PAM module to `/etc/pam.d/login` to unlock the keyring at login.
@@ -70,28 +70,28 @@ NOTE: For this to work, your keyring must use the same password you use to login
 +
 [,sh]
 ----
-➜ cp /etc/xdg/autostart/{gnome-keyring-secrets.desktop,gnome-keyring-ssh.desktop} ~/.config/autostart/
+cp /etc/xdg/autostart/{gnome-keyring-secrets.desktop,gnome-keyring-ssh.desktop} ~/.config/autostart/
 ----
 
 . Strip out the `OnlyShowIn` line from the autostart file for the Secrets component.
 +
 [,sh]
 ----
-➜ sed -i '/^OnlyShowIn.*$/d' ~/.config/autostart/gnome-keyring-secrets.desktop
+sed -i '/^OnlyShowIn.*$/d' ~/.config/autostart/gnome-keyring-secrets.desktop
 ----
 
 . Also strip out the `OnlyShowIn` line from the autostart file for the SSH component.
 +
 [,sh]
 ----
-➜ sed -i '/^OnlyShowIn.*$/d' ~/.config/autostart/gnome-keyring-ssh.desktop
+sed -i '/^OnlyShowIn.*$/d' ~/.config/autostart/gnome-keyring-ssh.desktop
 ----
 
 . Create the `conf.d` configuration directory for fish startup scripts in order to keep things tidy.
 +
 [,sh]
 ----
-➜ mkdir ~/.config/fish/conf.d
+mkdir ~/.config/fish/conf.d
 ----
 
 . Set the `SSH_AUTH_SOCK` environment variable to the PID of the GNOME Keyring ssh-agent in a shell startup file to make it available in your terminal.

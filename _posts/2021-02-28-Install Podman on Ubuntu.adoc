@@ -33,7 +33,7 @@ Ubuntu 18.04::
 +
 [,sh]
 ----
-➜ echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_18.04/ /" \
+echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_18.04/ /" \
   | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
 deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_18.04/ /
 ----
@@ -42,7 +42,7 @@ Ubuntu 20.04::
 +
 [,sh]
 ----
-➜ echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_20.04/ /" \
+echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_20.04/ /" \
   | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
 deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_20.04/ /
 ----
@@ -53,7 +53,7 @@ Ubuntu 18.04::
 +
 [,sh]
 ----
-➜ wget -qO - https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_18.04/Release.key \
+wget -qO - https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_18.04/Release.key \
   | gpg --dearmor \
   | sudo tee /etc/apt/trusted.gpg.d/kubic_libcontainers.gpg > /dev/null
 ----
@@ -62,7 +62,7 @@ Ubuntu 20.04::
 +
 [,sh]
 ----
-➜ wget -qO - https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_20.04/Release.key \
+wget -qO - https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_20.04/Release.key \
   | gpg --dearmor \
   | sudo tee /etc/apt/trusted.gpg.d/kubic_libcontainers.gpg > /dev/null
 ----
@@ -71,28 +71,28 @@ Ubuntu 20.04::
 +
 [,sh]
 ----
-➜ sudo apt update
+sudo apt update
 ----
 
 . Upgrade any installed packages to those from the Kubic repository.
 +
 [,sh]
 ----
-➜ sudo apt -y upgrade
+sudo apt -y upgrade
 ----
 
 . Install Podman.
 +
 [,sh]
 ----
-➜ sudo apt -y install podman
+sudo apt -y install podman
 ----
 
 . On Ubuntu 18.04, restart dbus in order to use rootless containers.
 +
 [,sh]
 ----
-➜ systemctl --user restart dbus
+systemctl --user restart dbus
 ----
 
 [TIP]

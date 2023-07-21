@@ -39,7 +39,7 @@ What follows are step-by-step instructions for detecting and resolving this issu
 --
 [,sh]
 ----
-➜ launchctl limit maxfiles
+launchctl limit maxfiles
 	maxfiles    256            unlimited
 ----
 
@@ -52,7 +52,7 @@ This limit is much too low.
 --
 [,sh]
 ----
-➜ sudo launchctl limit maxfiles 65536 2147483647
+sudo launchctl limit maxfiles 65536 2147483647
 ----
 
 This sets the soft limit to 65,536 open files and the hard limit to 2,147,483,647 open files.
@@ -98,34 +98,34 @@ However, such an approach only applies to a single user, doesn't account for cha
 +
 [,sh]
 ----
-➜ sudo chown root:wheel /Library/LaunchDaemons/limit.maxfiles.plist
+sudo chown root:wheel /Library/LaunchDaemons/limit.maxfiles.plist
 ----
 
 . Set permissions on the file so that it is readable and writeable by the owner and only readable by group members and everyone else.
 +
 [,sh]
 ----
-➜ sudo chmod 644 /Library/LaunchDaemons/limit.maxfiles.plist
+sudo chmod 644 /Library/LaunchDaemons/limit.maxfiles.plist
 ----
 
 . Create a system service from the script.footnote:[https://apple.stackexchange.com/a/345974/361122[AskDifferent: How do I use non-“legacy” launchctl commands to load and unload plists?]]footnote:[https://babodee.wordpress.com/2016/04/09/launchctl-2-0-syntax/[Babo D's Corner: Launchctl 2.0 Syntax]]
 +
 [,sh]
 ----
-➜ sudo launchctl bootstrap system /Library/LaunchDaemons/limit.maxfiles.plist
+sudo launchctl bootstrap system /Library/LaunchDaemons/limit.maxfiles.plist
 ----
 
 . Set the service to run at boot.
 +
 [,sh]
 ----
-➜ sudo launchctl enable system/limit.maxfiles
+sudo launchctl enable system/limit.maxfiles
 ----
 
 . Verify that the limits have been updated.
 +
 ----
-➜ launchctl limit maxfiles
+launchctl limit maxfiles
 	maxfiles    65536          2147483647
 ----
 
@@ -135,7 +135,7 @@ However, such an approach only applies to a single user, doesn't account for cha
 +
 [,sh]
 ----
-➜ ulimit -S -n
+ulimit -S -n
 65536
 ----
 

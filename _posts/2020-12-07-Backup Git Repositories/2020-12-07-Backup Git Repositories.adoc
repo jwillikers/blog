@@ -19,14 +19,14 @@ This tutorial will demonstrate how to automate these backups with https://system
 +
 [,sh]
 ----
-➜ sudo apt -y install fish
+sudo apt -y install fish
 ----
 
 . Create a backup directory for storing your Git repositories.
 +
 [,sh]
 ----
-➜ mkdir ~/Source
+mkdir ~/Source
 ----
 
 . Create mirrors for each repository you wish to backup in this directory, making sure each repository's name is suffixed with _.git_.
@@ -36,7 +36,7 @@ Here, I mirror this blog's repository in the _Source_ directory in my home folde
 
 [,sh]
 ----
-➜ git clone --mirror https://github.com/jwillikers/blog.git ~/Source/blog.git
+git clone --mirror https://github.com/jwillikers/blog.git ~/Source/blog.git
 ----
 --
 
@@ -66,7 +66,7 @@ Since I use fish as my default shell, it's as easy as running the function direc
 
 [,sh]
 ----
-➜ update_git_mirrors ~/Source
+update_git_mirrors ~/Source
 Updated /home/jordan/Source/blog.git
 ----
 
@@ -74,7 +74,7 @@ If you don't use fish as your shell - and don't want to bother converting this c
 
 [,sh]
 ----
-➜ fish -c 'update_git_mirrors ~/Source'
+fish -c 'update_git_mirrors ~/Source'
 Updated /home/jordan/Source/blog.git
 ----
 --
@@ -83,7 +83,7 @@ Updated /home/jordan/Source/blog.git
 +
 [,sh]
 ----
-➜ mkdir -p ~/.config/systemd/user
+mkdir -p ~/.config/systemd/user
 ----
 
 . Create a systemd unit to refresh the mirrors.
@@ -115,14 +115,14 @@ You could even use a dedicated user account for these backups to isolate this fu
 +
 [,sh]
 ----
-➜ systemctl --user start update-git-mirrors.service
+systemctl --user start update-git-mirrors.service
 ----
 
 . Check the output of the command to make sure everything worked.
 +
 [,sh]
 ----
-➜ systemctl --user status update-git-mirrors.service
+systemctl --user status update-git-mirrors.service
 ● update-git-mirrors.service - Update my Git mirrors
      Loaded: loaded (/home/jordan/.config/systemd/user/update-git-mirrors.service; disabled; vendor preset: enabled)
      Active: inactive (dead)
@@ -149,7 +149,7 @@ When this happens, the timer will just fire the next time the user logs on.
 +
 [,sh]
 ----
-➜ systemctl --user enable update-git-mirrors.timer
+systemctl --user enable update-git-mirrors.timer
 Created symlink /home/jordan/.config/systemd/user/timers.target.wants/update-git-mirrors.timer → /home/jordan/.config/systemd/user/update-git-mirrors.timer.
 ----
 
@@ -158,7 +158,7 @@ Created symlink /home/jordan/.config/systemd/user/timers.target.wants/update-git
 --
 [,sh]
 ----
-➜ systemctl --user list-timers update-git-mirrors
+systemctl --user list-timers update-git-mirrors
 NEXT                        LEFT     LAST PASSED UNIT                     ACTIVATES
 Tue 2020-12-08 00:00:00 CST 16h left n/a  n/a    update-git-mirrors.timer update-git-mirrors.service
 

@@ -35,7 +35,7 @@ The instructions here are intended for the beloved {fish-shell} or {Bash} or {ZS
 +
 [,sh]
 ----
-➜ sudo apt -y install build-essential libbytesize-dev libkeyutils-dev \
+sudo apt -y install build-essential libbytesize-dev libkeyutils-dev \
   libkmod-dev libcryptsetup-dev libglib2.0-dev libgirepository1.0-dev \
   libmount-dev libdmraid-dev libndctl-dev libnss3-dev libparted-dev \
   libudev-dev libvolume-key-dev libyaml-dev pkg-config
@@ -45,7 +45,7 @@ The instructions here are intended for the beloved {fish-shell} or {Bash} or {ZS
 +
 [,sh]
 ----
-➜ wget -qO - https://api.github.com/repos/storaged-project/libblockdev/releases/latest \
+wget -qO - https://api.github.com/repos/storaged-project/libblockdev/releases/latest \
   | awk -F': ' '/browser_download_url/ && /libblockdev-[0-9]+\.[0-9]+\.tar\.gz/ \
   {gsub(/"/, "", $(NF)); system("wget -qLP ~/Downloads/ " $(NF))}'
 ----
@@ -54,21 +54,21 @@ The instructions here are intended for the beloved {fish-shell} or {Bash} or {ZS
 +
 [,sh]
 ----
-➜ tar -C ~/Downloads -xvf ~/Downloads/libblockdev-*.tar.gz
+tar -C ~/Downloads -xvf ~/Downloads/libblockdev-*.tar.gz
 ----
 
 . Change to the extracted directory.
 +
 [,sh]
 ----
-➜ cd ~/Downloads/libblockdev-*/
+cd ~/Downloads/libblockdev-*/
 ----
 
 . Prepare the build.
 +
 [,sh]
 ----
-➜ ./configure
+./configure
 ----
 
 . Build libblockdev.
@@ -77,28 +77,28 @@ _fish_::
 +
 [,sh]
 ----
-➜ make -j(nproc)
+make -j(nproc)
 ----
 
 _Bash / ZSH_::
 +
 [source,bash]
 ----
-➜ make -j$(nproc)
+make -j$(nproc)
 ----
 
 . Install libblockdev.
 +
 [,sh]
 ----
-➜ sudo make install
+sudo make install
 ----
 
 . Install the dependencies required to build udisks2.
 +
 [,sh]
 ----
-➜ sudo apt -y install libacl1-dev libatasmart-dev libgudev-1.0-dev \
+sudo apt -y install libacl1-dev libatasmart-dev libgudev-1.0-dev \
   libpolkit-agent-1-dev libpolkit-gobject-1-dev libsystemd-dev
 ----
 
@@ -106,7 +106,7 @@ _Bash / ZSH_::
 +
 [,sh]
 ----
-➜ wget -qO - https://api.github.com/repos/storaged-project/udisks/releases/latest \
+wget -qO - https://api.github.com/repos/storaged-project/udisks/releases/latest \
   | awk -F': ' '/browser_download_url/ && /\.tar\.bz2/ \
   {gsub(/"/, "", $(NF)); system("wget -qLP ~/Downloads/ " $(NF))}'
 ----
@@ -115,14 +115,14 @@ _Bash / ZSH_::
 +
 [,sh]
 ----
-➜ tar -C ~/Downloads -xvf ~/Downloads/udisks-*.tar.bz2
+tar -C ~/Downloads -xvf ~/Downloads/udisks-*.tar.bz2
 ----
 
 . Change to the extracted directory.
 +
 [,sh]
 ----
-➜ cd ~/Downloads/udisks-*/
+cd ~/Downloads/udisks-*/
 ----
 
 . Configure the build.
@@ -130,7 +130,7 @@ _Bash / ZSH_::
 --
 [,sh]
 ----
-➜ ./configure --enable-btrfs \
+./configure --enable-btrfs \
   --with-systemdsystemunitdir=/usr/local/lib/systemd/system \
   --with-udevdir=/usr/local/lib/udev
 ----
@@ -145,21 +145,21 @@ _fish_::
 +
 [,sh]
 ----
-➜ make -j(nproc)
+make -j(nproc)
 ----
 
 _Bash / ZSH_::
 +
 [source,bash]
 ----
-➜ make -j$(nproc)
+make -j$(nproc)
 ----
 
 . Install udisks2.
 +
 [,sh]
 ----
-➜ sudo make install
+sudo make install
 ----
 
 . On Ubuntu 18.04, symlink the udisks2 udev rules to `/etc/udev/rules.d/80-udisks2.rules`
@@ -170,7 +170,7 @@ This functions as a workaround and isn't necessary for newer Ubuntu LTS releases
 
 [,sh]
 ----
-➜ sudo ln -s /usr/local/lib/udev/rules.d/80-udisks2.rules /etc/udev/rules.d/
+sudo ln -s /usr/local/lib/udev/rules.d/80-udisks2.rules /etc/udev/rules.d/
 ----
 --
 
@@ -178,28 +178,28 @@ This functions as a workaround and isn't necessary for newer Ubuntu LTS releases
 +
 [,sh]
 ----
-➜ sudo ldconfig
+sudo ldconfig
 ----
 
 . Reload the {systemd} unit files to refresh the updated udisks2 service unit.
 +
 [,sh]
 ----
-➜ sudo systemctl daemon-reload
+sudo systemctl daemon-reload
 ----
 
 . Restart the udisks2 service unit to load the new version.
 +
 [,sh]
 ----
-➜ sudo systemctl restart udisks2
+sudo systemctl restart udisks2
 ----
 
 . Cleanup the downloaded source files and residual build artifacts. 
 +
 [,sh]
 ----
-➜ rm -rf ~/Downloads/libblockdev-* ~/Downloads/udisks-*
+rm -rf ~/Downloads/libblockdev-* ~/Downloads/udisks-*
 ----
 
 [TIP]
@@ -213,7 +213,7 @@ To configure mount options for udisks2, copy the example template to `/usr/local
 
 [,sh]
 ----
-➜ sudo cp /usr/local/etc/udisks2/mount_options.conf.example \
+sudo cp /usr/local/etc/udisks2/mount_options.conf.example \
   /usr/local/etc/udisks2/mount_options.conf
 ----
 

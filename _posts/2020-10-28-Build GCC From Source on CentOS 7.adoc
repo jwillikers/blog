@@ -19,28 +19,28 @@ Shell commands are provided in both https://www.gnu.org/software/bash/[Bash], th
 +
 [,sh]
 ----
-➜ sudo yum -y install dnf
+sudo yum -y install dnf
 ----
 
 . Install the dependencies necessary to build GCC.
 +
 [,sh]
 ----
-➜ sudo dnf -y install bzip2 wget gcc gcc-c++ gmp-devel mpfr-devel libmpc-devel make
+sudo dnf -y install bzip2 wget gcc gcc-c++ gmp-devel mpfr-devel libmpc-devel make
 ----
 
 . Download the latest release, GCC 10.2.0 in this case, available https://ftp.gnu.org/gnu/gcc/[here].
 +
 [,sh]
 ----
-➜ wget https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz
+wget https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz
 ----
 
 . Download the corresponding signature file.
 +
 [,sh]
 ----
-➜ wget https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz.sig
+wget https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz.sig
 ----
 
 . Verify the archive's signature.
@@ -48,7 +48,7 @@ Shell commands are provided in both https://www.gnu.org/software/bash/[Bash], th
 --
 [,sh]
 ----
-➜ gpg --keyserver-options auto-key-retrieve gcc-10.2.0.tar.xz.sig
+gpg --keyserver-options auto-key-retrieve gcc-10.2.0.tar.xz.sig
 gpg: Signature made Thu 23 Jul 2020 01:57:41 AM CDT using RSA key ID FC26A641
 gpg: requesting key FC26A641 from hkp server keys.gnupg.net
 gpg: key 981C74C7: public key "Richard Guenther <richard.guenther@gmail.com>" imported
@@ -76,21 +76,21 @@ CAUTION: There are potential privacy concerns when automatically downloading the
 +
 [,sh]
 ----
-➜ tar xf gcc-10.2.0.tar.xz
+tar xf gcc-10.2.0.tar.xz
 ----
 
 . Make a build directory.
 +
 [,sh]
 ----
-➜ mkdir gcc-10.2.0-build
+mkdir gcc-10.2.0-build
 ----
 
 . Change into the build directory.
 +
 [,sh]
 ----
-➜ cd gcc-10.2.0-build
+cd gcc-10.2.0-build
 ----
 
 . Run the https://www.gnu.org/prep/standards/html_node/Configuration.html[configure script] to prepare the build.
@@ -98,7 +98,7 @@ CAUTION: There are potential privacy concerns when automatically downloading the
 --
 [,sh]
 ----
-➜ ../gcc-10.2.0/configure --enable-languages=c,c++,fortran \
+../gcc-10.2.0/configure --enable-languages=c,c++,fortran \
   --disable-multilib --prefix=$HOME/.gcc/10.2.0
 ----
 
@@ -122,21 +122,21 @@ NOTE: GCC is configured to install to the user's home directory here, but can ea
 +
 [,sh]
 ----
-➜ make install
+make install
 ----
 
 . Change out of the build directory.
 +
 [,sh]
 ----
-➜ cd ..
+cd ..
 ----
 
 . Free up some disk space by deleting the remaining source and build artifacts.
 +
 [,sh]
 ----
-➜ rm -rf gcc-10.2.0 gcc-10.2.0-build gcc-10.2.0.tar.xz
+rm -rf gcc-10.2.0 gcc-10.2.0-build gcc-10.2.0.tar.xz
 ----
 
 === Environment Variables
@@ -212,7 +212,7 @@ Set these variables in the CMake cache like so.
 
 [,sh]
 ----
-➜ cmake \
+cmake \
   -DCMAKE_C_COMPILER=$HOME/.gcc/10.2.0/bin/gcc \
   -DCMAKE_CXX_COMPILER=$HOME/.gcc/10.2.0/bin/g++ \
   -DCMAKE_Fortran_COMPILER=$HOME/.gcc/10.2.0/bin/gfortran \

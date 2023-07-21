@@ -70,14 +70,14 @@ User::
 +
 [,sh]
 ----
-➜ flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 ----
 
 System::
 +
 [,sh]
 ----
-➜ sudo flatpak --system remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+sudo flatpak --system remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 ----
 
 . Install the GNOME Boxes Flatpak.
@@ -86,14 +86,14 @@ User::
 +
 [,sh]
 ----
-➜ flatpak --user install -y flathub org.gnome.Boxes
+flatpak --user install -y flathub org.gnome.Boxes
 ----
 
 System::
 +
 [,sh]
 ----
-➜ sudo flatpak --system install -y flathub org.gnome.Boxes
+sudo flatpak --system install -y flathub org.gnome.Boxes
 ----
 
 ==== System Package
@@ -102,7 +102,7 @@ Install the GNOME Boxes Ubuntu package.
 
 [,sh]
 ----
-➜ sudo apt -y install gnome-boxes
+sudo apt -y install gnome-boxes
 ----
 
 === Btrfs
@@ -131,14 +131,14 @@ Flatpak::
 +
 [,sh]
 ----
-➜ rmdir ~/.var/app/org.gnome.Boxes/data/gnome-boxes/images
+rmdir ~/.var/app/org.gnome.Boxes/data/gnome-boxes/images
 ----
 
 System Package::
 +
 [,sh]
 ----
-➜ rmdir ~/.local/share/gnome-boxes/images
+rmdir ~/.local/share/gnome-boxes/images
 ----
 
 . Create a subvolume in its place.
@@ -147,7 +147,7 @@ Flatpak::
 +
 [,sh]
 ----
-➜ btrfs subvolume create ~/.var/app/org.gnome.Boxes/data/gnome-boxes/images
+btrfs subvolume create ~/.var/app/org.gnome.Boxes/data/gnome-boxes/images
 Create subvolume '/home/jordan/.var/app/org.gnome.Boxes/data/gnome-boxes/images'
 ----
 
@@ -156,7 +156,7 @@ System Package::
 +
 [,sh]
 ----
-➜ btrfs subvolume create ~/.local/share/gnome-boxes/images
+btrfs subvolume create ~/.local/share/gnome-boxes/images
 Create subvolume '/home/jordan/.local/share/gnome-boxes/images'
 ----
 
@@ -181,14 +181,14 @@ Flatpak::
 +
 [,sh]
 ----
-➜ chattr +C ~/.var/app/org.gnome.Boxes/data/gnome-boxes/images
+chattr +C ~/.var/app/org.gnome.Boxes/data/gnome-boxes/images
 ----
 
 System Package::
 +
 [,sh]
 ----
-➜ chattr +C ~/.local/share/gnome-boxes/images
+chattr +C ~/.local/share/gnome-boxes/images
 ----
 
 ===== libvirt Storage Pool Feature
@@ -213,7 +213,7 @@ The steps here walk through the steps to disable _CoW_ on the Boxes storage pool
 --
 [,sh]
 ----
-➜ virsh pool-list
+virsh pool-list
  Name                 State      Autostart 
 -------------------------------------------
  default              active     yes  
@@ -228,7 +228,7 @@ Here I output the default pool's XML configuration where you can verify _path_ i
 +
 [,sh]
 ----
-➜ virsh pool-dumpxml gnome-boxes
+virsh pool-dumpxml gnome-boxes
 <pool type='dir'>
   <name>images</name>
   <uuid>02814071-7a82-4444-80f1-295cfc6f947d</uuid>
@@ -254,7 +254,7 @@ To modify the Boxes pool, the command would appear as follows.
 +
 [,sh]
 ----
-➜ virsh pool-edit gnome-boxes
+virsh pool-edit gnome-boxes
 ----
 
 . To disable _CoW_, set the _cow_ feature with `state=no` in the pool's XML.

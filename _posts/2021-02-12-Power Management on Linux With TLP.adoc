@@ -21,28 +21,28 @@ The instructions use the command-line and software-management utilities built in
 +
 [,sh]
 ----
-➜ sudo apt -y install software-properties-common
+sudo apt -y install software-properties-common
 ----
 
 . Add the TLP PPA to your system to get the latest version of TLP.
 +
 [,sh]
 ----
-➜ sudo apt-add-repository -uy ppa:linrunner/tlp
+sudo apt-add-repository -uy ppa:linrunner/tlp
 ----
 
 . Install TLP.
 +
 [,sh]
 ----
-➜ sudo apt -y install tlp tlp-rdw
+sudo apt -y install tlp tlp-rdw
 ----
 
 . TLP will start automatically at boot, but to start it now without rebooting, do so manually.
 +
 [,sh]
 ----
-➜ sudo tlp start
+sudo tlp start
 ----
 
 == Conclusion

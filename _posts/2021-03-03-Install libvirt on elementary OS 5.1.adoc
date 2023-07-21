@@ -53,7 +53,7 @@ It is assumed that you are familiar with installing software on Ubuntu, using th
 --
 [,sh]
 ----
-➜ egrep -c '(vmx|svm)' /proc/cpuinfo
+egrep -c '(vmx|svm)' /proc/cpuinfo
 8
 ----
 
@@ -64,14 +64,14 @@ If the output is not zero, then your CPU supports virtualization.
 +
 [,sh]
 ----
-➜ sudo apt -y install cpu-checker
+sudo apt -y install cpu-checker
 ----
 
 . Verify that the system supports KVM.
 +
 [,sh]
 ----
-➜ kvm-ok
+kvm-ok
 INFO: /dev/kvm exists
 KVM acceleration can be used
 ----
@@ -87,35 +87,35 @@ Otherwise, you'd better switch to some compatible hardware before proceeding.
 +
 [,sh]
 ----
-➜ sudo apt -y software-properties-common
+sudo apt -y software-properties-common
 ----
 
 .. Add the {virtualization-PPA}.
 +
 [,sh]
 ----
-➜ sudo add-apt-repository -uy ppa:jacob/virtualisation
+sudo add-apt-repository -uy ppa:jacob/virtualisation
 ----
 
 . Install libvirt.
 +
 [,sh]
 ----
-➜ sudo apt -y install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
+sudo apt -y install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
 ----
 
 . Add the current user to the _kvm_ and _libvirt_ groups.
 +
 [,sh]
 ----
-➜ sudo usermod -aG kvm,libvirt $USER
+sudo usermod -aG kvm,libvirt $USER
 ----
 
 . Reload the current user's group assignments.
 +
 [,sh]
 ----
-➜ newgrp -
+newgrp -
 ----
 
 === Greeter
@@ -130,7 +130,7 @@ The steps were come from https://askubuntu.com/a/940069[this solution] on Stack 
 +
 [,sh]
 ----
-➜ printf "[User]\nSystemAccount=true\n" \
+printf "[User]\nSystemAccount=true\n" \
   | sudo tee /var/lib/AccountsService/users/libvirt-qemu
 ----
 
@@ -138,7 +138,7 @@ The steps were come from https://askubuntu.com/a/940069[this solution] on Stack 
 +
 [,sh]
 ----
-➜ sudo systemctl restart accounts-daemon.service
+sudo systemctl restart accounts-daemon.service
 ----
 
 === Btrfs
@@ -158,7 +158,7 @@ The following command creates a 25 gigabyte qcow2 image named `my-vm-image.qcow2
 
 [,sh]
 ----
-➜ qemu-img create -o nocow my-vm-image.qcow2 25G
+qemu-img create -o nocow my-vm-image.qcow2 25G
 ----
 
 ==== libvirt Storage Pool Features
@@ -191,7 +191,7 @@ No surprises here.
 +
 [,sh]
 ----
-➜ virsh pool-list
+virsh pool-list
  Name                 State      Autostart 
 -------------------------------------------
  default              active     yes  
@@ -202,7 +202,7 @@ Here I output the default pool's XML configuration where you can see that _path_
 +
 [,sh]
 ----
-➜ virsh pool-dumpxml default
+virsh pool-dumpxml default
 <pool type='dir'>
   <name>default</name>
   <uuid>4f779eae-e312-4e4d-bf9f-fafe0e334f63</uuid>
@@ -227,7 +227,7 @@ To modify the default pool's XML, the command would appear as follows.
 +
 [,sh]
 ----
-➜ virsh pool-edit default
+virsh pool-edit default
 ----
 
 . To disable _CoW_, set the _cow_ feature with `state=no` in the pool's XML.
@@ -279,7 +279,7 @@ Disable _CoW_ on the `/var/lib/libvirt/images` directory.
 
 [,sh]
 ----
-➜ sudo chattr +C /var/lib/libvirt/images
+sudo chattr +C /var/lib/libvirt/images
 ----
 
 ==== A Flat Layout Subvolume
@@ -292,14 +292,14 @@ The steps here create a dedicated subvolume for libvirt's disk image directory a
 +
 [,sh]
 ----
-➜ sudo mount (df --output=source / | tail -n 1) /mnt
+sudo mount (df --output=source / | tail -n 1) /mnt
 ----
 
 . Create a dedicated Btrfs subvolume for libvirt's virtual disk images.
 +
 [,sh]
 ----
-➜ sudo btrfs subvolume create /mnt/var-lib-libvirt-images
+sudo btrfs subvolume create /mnt/var-lib-libvirt-images
 Create subvolume '/mnt/var-lib-libvirt-images'
 ----
 
@@ -307,7 +307,7 @@ Create subvolume '/mnt/var-lib-libvirt-images'
 +
 [,sh]
 ----
-➜ echo (df --output=source / \
+echo (df --output=source / \
   | tail -n 1)" /var/lib/libvirt/images btrfs defaults,nodatacow,noatime,subvol=var-lib-libvirt-images 0 0" \
   | sudo tee -a /etc/fstab
 /dev/mapper/sda2_crypt /var/lib/libvirt/images btrfs defaults,nodatacow,noatime,subvol=var-lib-libvirt-images 0 0
@@ -317,21 +317,21 @@ Create subvolume '/mnt/var-lib-libvirt-images'
 +
 [,sh]
 ----
-➜ sudo findmnt --verify --verbose
+sudo findmnt --verify --verbose
 ----
 
 . Now mount the subvolume according to the rule just added in fstab.
 +
 [,sh]
 ----
-➜ sudo mount /var/lib/libvirt/images
+sudo mount /var/lib/libvirt/images
 ----
 
 . Don't forget to unmount `/mnt`.
 +
 [,sh]
 ----
-➜ sudo umount /mnt
+sudo umount /mnt
 ----
 
 That's it!
@@ -346,7 +346,7 @@ Install virt-manager.
 
 [,sh]
 ----
-➜ sudo apt -y install virt-manager
+sudo apt -y install virt-manager
 ----
 
 If you haven't logged out and back in since installing libvirt, you'll need to that before running virt-manager.

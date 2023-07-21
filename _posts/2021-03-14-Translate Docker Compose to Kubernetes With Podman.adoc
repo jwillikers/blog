@@ -31,7 +31,7 @@ This tutorial targets {Ubuntu} 18.04, and you should be familiar with Linux Cont
 +
 [,sh]
 ----
-➜ cd ~/Projects/unifi-controller
+cd ~/Projects/unifi-controller
 ----
 
 . Check for the previously created UniFi Controller pod with {podman-pod-ps}.
@@ -39,7 +39,7 @@ This tutorial targets {Ubuntu} 18.04, and you should be familiar with Linux Cont
 --
 [,sh]
 ----
-➜ podman pod ps
+podman pod ps
 POD ID        NAME              STATUS   CREATED      INFRA ID      # OF CONTAINERS
 241f0bf222a3  unifi-controller  Running  2 hours ago  d5eaaf6d5625  2
 ----
@@ -55,7 +55,7 @@ The `-s` flag produces the necessary network service configuration.
 
 [,sh]
 ----
-➜ podman generate kube -s -f unifi-controller.yml unifi-controller
+podman generate kube -s -f unifi-controller.yml unifi-controller
 ----
 --
 
@@ -301,14 +301,14 @@ Details forthcoming.
 +
 [,sh]
 ----
-➜ podman-compose down
+podman-compose down
 ----
 
 . Provide the generated Kubernetes YAML to {podman-play-kube} to create and launch the pod.
 +
 [,sh]
 ----
-➜ podman play kube ~/Projects/unifi-controller/unifi-controller.yml
+podman play kube ~/Projects/unifi-controller/unifi-controller.yml
 ----
 
 . Access the controller's web console at https://127.0.0.1:8443/.
@@ -317,14 +317,14 @@ fish::
 +
 [,sh]
 ----
-➜ open http://127.0.0.1:8443
+open http://127.0.0.1:8443
 ----
 
 Other shells::
 +
 [,sh]
 ----
-➜ xdg-open http://127.0.0.1:8443
+xdg-open http://127.0.0.1:8443
 ----
 
 == See Also

@@ -41,7 +41,7 @@ These instructions will work on {Fedora} just the same except that disks will be
 +
 [,sh]
 ----
-➜ lsblk
+lsblk
 NAME             MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
 sda                8:0    0 465.8G  0 disk
 ├─sda1             8:1    0   512M  0 part  /boot/efi
@@ -66,7 +66,7 @@ I unmount this partition with the {udisksctl} command here.
 
 [,sh]
 ----
-➜ udisksctl unmount -b /dev/sdb1
+udisksctl unmount -b /dev/sdb1
 Unmounted /dev/sdb1.
 ----
 --
@@ -80,7 +80,7 @@ Here, the {sgdisk} command is used to partition the flash drive using the newer 
 
 [,sh]
 ----
-➜ sudo sgdisk -Z -n 0:0:0 /dev/sdb
+sudo sgdisk -Z -n 0:0:0 /dev/sdb
 Creating new GPT entries in memory.
 GPT data structures destroyed! You may now partition the disk using fdisk or
 other utilities.
@@ -104,7 +104,7 @@ Just know that it does indeed wipe the existing MBR and GPT partitions before cr
 +
 [,sh]
 ----
-➜ sudo mkntfs -QL Windows10 /dev/sdb1
+sudo mkntfs -QL Windows10 /dev/sdb1
 Cluster size has been automatically set to 4096 bytes.
 Creating NTFS volume structures.
 mkntfs completed successfully. Have a nice day.
@@ -114,7 +114,7 @@ mkntfs completed successfully. Have a nice day.
 +
 [,sh]
 ----
-➜ udisksctl mount -b /dev/sdb1
+udisksctl mount -b /dev/sdb1
 Mounted /dev/sdb1 at /media/jordan/Windows10
 ----
 
@@ -127,7 +127,7 @@ Mounted /dev/sdb1 at /media/jordan/Windows10
 
 [,sh]
 ----
-➜ gnome-disk-image-mounter ~/Downloads/Win10_*.iso
+gnome-disk-image-mounter ~/Downloads/Win10_*.iso
 ----
 --
 
@@ -135,7 +135,7 @@ Mounted /dev/sdb1 at /media/jordan/Windows10
 +
 [,sh]
 ----
-➜ lsblk
+lsblk
 NAME            MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
 loop53            7:53   0   5.7G  1 loop  /media/jordan/CCCOMA_X64FRE_EN-US_DV9 # <1>
 sda               8:0    0 465.8G  0 disk  
@@ -155,14 +155,14 @@ zd0             230:0    0   500M  0 disk
 +
 [,sh]
 ----
-➜ cp -r /media/$USER/CCCOMA_X64FRE_EN-US_DV9/* /media/$USER/Windows10
+cp -r /media/$USER/CCCOMA_X64FRE_EN-US_DV9/* /media/$USER/Windows10
 ----
 
 . Unmount the ISO.
 +
 [,sh]
 ----
-➜ udisksctl unmount -b /dev/loop53
+udisksctl unmount -b /dev/loop53
 Unmounted /dev/loop53.
 ----
 
@@ -170,7 +170,7 @@ Unmounted /dev/loop53.
 +
 [,sh]
 ----
-➜ udisksctl unmount -b /dev/sdb1
+udisksctl unmount -b /dev/sdb1
 Unmounted /dev/sdb1.
 ----
 

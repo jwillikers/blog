@@ -26,28 +26,28 @@ They may just as easily be configured at the repository level.
 +
 [,sh]
 ----
-➜ sudo apt -y install git
+sudo apt -y install git
 ----
 
 . Set your Git username.
 +
 [,sh]
 ----
-➜ git config --global user.name "Ponder Stibbons"
+git config --global user.name "Ponder Stibbons"
 ----
 
 . Set your Git commit email address.
 +
 [,sh]
 ----
-➜ git config --global user.email "ponder.stibbons@unseen.edu"
+git config --global user.email "ponder.stibbons@unseen.edu"
 ----
 
 . Identify the GPG secret key associated with your Git commit email address.
 +
 [,sh]
 ----
-➜ gpg --list-secret-keys --keyid-format LONG
+gpg --list-secret-keys --keyid-format LONG
 /home/pstibbons/.gnupg/pubring.kbx
 -------------------------------
 sec   rsa4096/C8DE632E9A8A0BDD 2020-11-13 [SC] # <1>
@@ -63,7 +63,7 @@ The `sec` word indicates this is the secret key.
 --
 [,sh]
 ----
-➜ git config --global user.signingKey C8DE632E9A8A0BDD
+git config --global user.signingKey C8DE632E9A8A0BDD
 ----
 
 NOTE: The key can be provided when signing a tag, commit, or push, but it's generally more convenient to configure your default key,
@@ -73,42 +73,42 @@ NOTE: The key can be provided when signing a tag, commit, or push, but it's gene
 +
 [,sh]
 ----
-➜ mkdir git-signing-test
+mkdir git-signing-test
 ----
 
 . Change into the directory.
 +
 [,sh]
 ----
-➜ cd git-signing-test
+cd git-signing-test
 ----
 
 . Initialize a new Git repository.
 +
 [,sh]
 ----
-➜ git init
+git init
 ----
 
 . Create an example file.
 +
 [,sh]
 ----
-➜ touch test
+touch test
 ----
 
 . Stage this file in order to make a signed commit.
 +
 [,sh]
 ----
-➜ git add test
+git add test
 ----
 
 . Pass the `-S` short option to http://manpages.ubuntu.com/manpages/focal/en/man1/git-commit.1.html[git-commit(1)] to manually sign a commit.
 +
 [,sh]
 ----
-➜ git commit -S -m 'Signed commit'
+git commit -S -m 'Signed commit'
 ----
 
 . Enter the passphrase for your private key in the <<Passphrase Prompt>>.
@@ -126,7 +126,7 @@ TIP: If you value your sanity, check the _Save in password manager_ box to avoid
 --
 [,sh]
 ----
-➜ git config --global commit.gpgSign true
+git config --global commit.gpgSign true
 ----
 
 NOTE: This configuration setting applies to merge commits created when using https://manpages.ubuntu.com/manpages/focal/en/man1/git-pull.1.html[git-merge(1)] and https://manpages.ubuntu.com/manpages/focal/en/man1/git-pull.1.html[git-pull(1)].
@@ -137,7 +137,7 @@ NOTE: This configuration setting applies to merge commits created when using htt
 --
 [,sh]
 ----
-➜ git log --show-signature -1
+git log --show-signature -1
 commit 48fafff3d24a89ec9c6d5940317588f9b10b4f43 (HEAD -> master)
 gpg: Signature made Sat 14 Nov 2020 09:53:05 AM CST
 gpg:                using RSA key F38915B041F5F1024AF95C30C8DE632E9A8A0BDD
@@ -155,21 +155,21 @@ IMPORTANT: When verifying GPG signatures, you will need to have the signer's pub
 +
 [,sh]
 ----
-➜ git tag -s v1.0.0 -m 'Signed tag'
+git tag -s v1.0.0 -m 'Signed tag'
 ----
 
 . If desired, configure Git to sign all tags by default.
 +
 [,sh]
 ----
-➜ git config --global tag.gpgSign true
+git config --global tag.gpgSign true
 ----
 
 . Verify a tag with the `-v` option.
 +
 [,sh]
 ----
-➜ git tag -v v1.0.0
+git tag -v v1.0.0
 object 48fafff3d24a89ec9c6d5940317588f9b10b4f43
 type commit
 tag v1.0.0
@@ -185,7 +185,7 @@ gpg: Good signature from "Ponder Stibbons <ponder.stibbons@unseen.edu>" [ultimat
 +
 [,sh]
 ----
-➜ git switch -c unsigned
+git switch -c unsigned
 Switched to a new branch 'unsigned'
 ----
 
@@ -193,28 +193,28 @@ Switched to a new branch 'unsigned'
 +
 [,sh]
 ----
-➜ touch test2
+touch test2
 ----
 
 . Stage the new file.
 +
 [,sh]
 ----
-➜ git add test2
+git add test2
 ----
 
 . Now, commit the file without a signature.
 +
 [,sh]
 ----
-➜ git commit --no-gpg-sign -m 'Unsigned commit'
+git commit --no-gpg-sign -m 'Unsigned commit'
 ----
 
 . Switch back to the main branch.
 +
 [,sh]
 ----
-➜ git switch master
+git switch master
 Switched to branch 'master'
 ----
 
@@ -223,7 +223,7 @@ Switched to branch 'master'
 --
 [,sh]
 ----
-➜ git merge -S --verify-signatures unsigned
+git merge -S --verify-signatures unsigned
 fatal: Commit a3bf413 does not have a GPG signature.
 ----
 
@@ -235,7 +235,7 @@ Oh no! The unsigned commit in the _unsigned_ branch couldn't be verified so the 
 --
 [,sh]
 ----
-➜ git config --global merge.verifySignatures true
+git config --global merge.verifySignatures true
 ----
 
 NOTE: This configuration setting also applies to the https://manpages.ubuntu.com/manpages/focal/en/man1/git-pull.1.html[git-pull(1)] command.
@@ -245,7 +245,7 @@ NOTE: This configuration setting also applies to the https://manpages.ubuntu.com
 +
 [,sh]
 ----
-➜ git pull -S --verify-signatures
+git pull -S --verify-signatures
 ----
 
 . Sign pushes by using the `--signed` long option with https://manpages.ubuntu.com/manpages/focal/en/man1/git-push.1.html[git-push(1)].
@@ -257,7 +257,7 @@ Signing pushed signifies _intent_, as Konstantin Ryabitsev describes in more det
 
 [,sh]
 ----
-➜ git push --signed=if-asked
+git push --signed=if-asked
 ----
 --
 
@@ -265,7 +265,7 @@ Signing pushed signifies _intent_, as Konstantin Ryabitsev describes in more det
 +
 [,sh]
 ----
-➜ git config --global push.gpgSign if-asked
+git config --global push.gpgSign if-asked
 ----
 
 == Conclusion

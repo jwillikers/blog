@@ -29,7 +29,7 @@ You should also be familiar with Linux containers, Podman, the command-line, the
 +
 [,sh]
 ----
-➜ git clone git@github.com:jwillikers/unifi-controller.git ~/Projects/unifi-controller
+git clone git@github.com:jwillikers/unifi-controller.git ~/Projects/unifi-controller
 ----
 
 . Inspect the YAML file.
@@ -61,7 +61,7 @@ The image name must be fully qualified for auto-update to update the image.
 +
 [,sh]
 ----
-➜ podman play kube ~/Projects/unifi-controller/unifi-controller.yml
+podman play kube ~/Projects/unifi-controller/unifi-controller.yml
 ----
 
 . Check the labels attached to the UniFi Controller container with `podman ps`.
@@ -69,7 +69,7 @@ The image name must be fully qualified for auto-update to update the image.
 --
 [,sh]
 ----
-➜ podman ps -a --filter name=unifi-controller --format "{{.Names}}  {{.Labels}}"
+podman ps -a --filter name=unifi-controller --format "{{.Names}}  {{.Labels}}"
 unifi-controller_unifi-controller_1  map[PODMAN_SYSTEMD_UNIT:container-unifi-controller_unifi-controller_1.service build_version:Linuxserver.io version:- 6.0.45-ls100 Build-date:- 2021-03-02T04:05:16+00:00 com.docker.compose.container-number:1 com.docker.compose.service:unifi-controller io.containers.autoupdate:image io.podman.compose.config-hash:123 io.podman.compose.project:unifi-controller io.podman.compose.version:0.0.1 maintainer:aptalca]
 ----
 
@@ -84,14 +84,14 @@ Rootless::
 +
 [,sh]
 ----
-➜ systemctl --user enable --now podman-auto-update.timer
+systemctl --user enable --now podman-auto-update.timer
 ----
 
 Root::
 +
 [,sh]
 ----
-➜ sudo systemctl enable --now podman-auto-update.timer
+sudo systemctl enable --now podman-auto-update.timer
 ----
 
 . When using {podman-generate-systemd} to create systemd units for a pod, make sure to use the `--new` flag.
@@ -102,7 +102,7 @@ To learn more about running a pod or container as a systemd service, refer to <<
 +
 [,sh]
 ----
-➜ podman auto-update
+podman auto-update
 ----
 
 . In case you're interested in accessing the UniFi controller container, the controller's web console is at https://127.0.0.1:8443/.
@@ -111,14 +111,14 @@ fish::
 +
 [,sh]
 ----
-➜ open http://127.0.0.1:8443
+open http://127.0.0.1:8443
 ----
 
 Other shells::
 +
 [,sh]
 ----
-➜ xdg-open http://127.0.0.1:8443
+xdg-open http://127.0.0.1:8443
 ----
 
 == See Also

@@ -68,7 +68,7 @@ Here I initiate a scrub on the device on which my root filesystem resides.
 
 [,sh]
 ----
-➜ sudo btrfs scrub start (df --output=source / | tail -n 1)
+sudo btrfs scrub start (df --output=source / | tail -n 1)
 scrub started on /dev/mapper/sda2_crypt, fsid 175792e7-4167-40d1-aebc-78b948d6d378 (pid=10555)
 ----
 
@@ -77,7 +77,7 @@ Check the status of the previous scrub like so.
 
 [,sh]
 ----
-➜ sudo btrfs scrub status (df --output=source / | tail -n 1)
+sudo btrfs scrub status (df --output=source / | tail -n 1)
 scrub status for 175792e7-4167-40d1-aebc-78b948d6d378
 	scrub started at Fri Mar  5 06:07:42 2021, running for 00:01:25
 	total bytes scrubbed: 26.19GiB with 0 errors
@@ -90,7 +90,7 @@ This command scrubs my boot partition and returns once the scrub is complete.
 
 [,sh]
 ----
-➜ sudo btrfs scrub start -B /boot
+sudo btrfs scrub start -B /boot
 scrub done for 264b42a6-a09c-40cc-b754-88926d43b395
 	scrub started at Fri Mar  5 06:13:23 2021 and finished after 00:00:01
 	total bytes scrubbed: 159.55MiB with 0 errors
@@ -168,14 +168,14 @@ Here, I start the unit on the root path of the filesystem which is converted by 
 
 [,sh]
 ----
-➜ sudo systemctl start btrfs-scrub@(systemd-escape -p /).service
+sudo systemctl start btrfs-scrub@(systemd-escape -p /).service
 ----
 
 You can then check the status of the systemd service with `{systemctl-status}` as follows.
 
 [,sh]
 ----
-➜ sudo systemctl status btrfs-scrub@(systemd-escape -p /).service
+sudo systemctl status btrfs-scrub@(systemd-escape -p /).service
 ● btrfs-scrub@-.service - Btrfs scrub on /
    Loaded: loaded (/etc/systemd/system/btrfs-scrub@.service; static; vendor preset: enabled)
    Active: inactive (dead)
@@ -211,7 +211,7 @@ Here I set the timer to scrub the root filesystem automatically activate at boot
 
 [,sh]
 ----
-➜ sudo systemctl enable --now btrfs-scrub@(systemd-escape -p /).timer
+sudo systemctl enable --now btrfs-scrub@(systemd-escape -p /).timer
 Created symlink /etc/systemd/system/timers.target.wants/btrfs-scrub@-.timer → /etc/systemd/system/btrfs-scrub@.timer.
 ----
 
@@ -219,7 +219,7 @@ As with the service, you can check the status of the systemd timer which is show
 
 [,sh]
 ----
-➜ sudo systemctl status btrfs-scrub@(systemd-escape -p /).timer
+sudo systemctl status btrfs-scrub@(systemd-escape -p /).timer
 ● btrfs-scrub@boot.timer - Btrfs scrub on / twice per month
    Loaded: loaded (/etc/systemd/system/btrfs-scrub@.timer; indirect; vendor preset: enabled)
 ----

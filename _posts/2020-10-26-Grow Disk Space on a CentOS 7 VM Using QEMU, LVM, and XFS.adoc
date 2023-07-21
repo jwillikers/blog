@@ -23,7 +23,7 @@ This tutorial uses https://www.qemu.org/[QEMU] for modifying the disk image, htt
 --
 [,sh]
 ----
-➜ qemu-img resize example.qcow2 +40G
+qemu-img resize example.qcow2 +40G
 Image resized.
 ----
 
@@ -36,7 +36,7 @@ This increases the size of the disk image _example.qcow2_ by forty Gibibytes.
 +
 [,sh]
 ----
-➜ sudo dnf -y install cloud-utils-growpart
+sudo dnf -y install cloud-utils-growpart
 ----
 
 . List your disks and partitions with the https://www.freebsd.org/cgi/man.cgi?query=lsblk&manpath=CentOS+7.1[`lsblk`] command and note the device and partition you wish to expand.
@@ -44,7 +44,7 @@ This increases the size of the disk image _example.qcow2_ by forty Gibibytes.
 --
 [,sh]
 ----
-➜ lsblk
+lsblk
 NAME                           MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
 fd0                              2:0    1     4K  0 disk
 sr0                             11:0    1  1024M  0 rom
@@ -63,7 +63,7 @@ The _home_ partition is low on space, so partition 2 on the device `vda` will be
 +
 [,sh]
 ----
-➜ sudo growpart /dev/vda 2
+sudo growpart /dev/vda 2
 CHANGED: partition=2 start=2099200 old: size=123729920 end=125829120 new: size=207615967 end=209715167
 ----
 
@@ -73,7 +73,7 @@ CHANGED: partition=2 start=2099200 old: size=123729920 end=125829120 new: size=2
 +
 [,sh]
 ----
-➜ sudo pvresize /dev/vda2
+sudo pvresize /dev/vda2
   Physical volume "/dev/vda2" changed
   1 physical volume(s) resized or updated / 0 physical volume(s) not resized
 ----
@@ -83,7 +83,7 @@ CHANGED: partition=2 start=2099200 old: size=123729920 end=125829120 new: size=2
 --
 [,sh]
 ----
-➜ df -Th
+df -Th
 Filesystem                             Type      Size  Used Avail Use% Mounted on
 devtmpfs                               devtmpfs  1.9G     0  1.9G   0% /dev
 tmpfs                                  tmpfs     1.9G     0  1.9G   0% /dev/shm
@@ -103,7 +103,7 @@ The `/dev/mapper/centos-home` filesystem is ninety-nine percent full, so this is
 +
 [,sh]
 ----
-➜ sudo lvextend -l +100%FREE /dev/mapper/centos-home
+sudo lvextend -l +100%FREE /dev/mapper/centos-home
   Size of logical volume centos/home changed from <18.09 GiB (4630 extents) to <58.09 GiB (14870 extents).
   Logical volume centos/home successfully resized.
 ----
@@ -113,7 +113,7 @@ The `/dev/mapper/centos-home` filesystem is ninety-nine percent full, so this is
 --
 [,sh]
 ----
-➜ sudo lvdisplay
+sudo lvdisplay
   --- Logical volume ---
   LV Path                /dev/centos/swap
   LV Name                swap
@@ -174,7 +174,7 @@ The path for the _home_ directory is `/dev/centos/home`.
 +
 [,sh]
 ----
-➜ sudo xfs_growfs /dev/centos/home
+sudo xfs_growfs /dev/centos/home
 meta-data=/dev/mapper/home isize=512    agcount=5, agsize=1185024 blks
          =                       sectsz=512   attr=2, projid32bit=1
          =                       crc=1        finobt=0 spinodes=0
@@ -191,7 +191,7 @@ data blocks changed from 4741120 to 15226880
 +
 [,sh]
 ----
-➜ df -Th /home
+df -Th /home
 Filesystem                             Type  Size  Used Avail Use% Mounted on
 /dev/mapper/centos-home                xfs    59G   18G   41G  31% /home
 ----
