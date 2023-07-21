@@ -12,6 +12,12 @@
 :podman-system-reset: https://docs.podman.io/en/latest/markdown/podman-system-reset.1.html[podman-system-reset(1)]
 :ZFS: https://openzfs.org/wiki/Main_Page[ZFS]
 
+[NOTE]
+====
+I now use the default `overlay` driver on Btrfs and ZFS filesystems as I've found it to _just work_.
+Unless you have specific reasons for using the underlying filesystem driver, you might want to consider sticking with the default `overlay` driver.
+====
+
 {Podman} has storage backends for both {Btrfs} and {ZFS}.
 Using these backends allows Podman to take full advantage of the underlying _CoW_ filesystem.
 This is a quick guide on enabling these storage drivers.
