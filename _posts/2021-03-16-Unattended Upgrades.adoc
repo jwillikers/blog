@@ -32,9 +32,9 @@ To do this, see <<automate-flatpak-updates-with-systemd#,Automate Flatpak Update
 
 . Install the unattended-upgrades package.
 +
-[source,sh]
+[,sh]
 ----
-➜ sudo apt -y install unattended-upgrades
+sudo apt -y install unattended-upgrades
 ----
 
 . Refine the update behavior in the configuration file `/etc/apt/apt.conf.d/50unattended-upgrades`.
@@ -72,7 +72,7 @@ I could add these manually to the `Allowed-Origins` block, but that's more work 
 Instead, my configuration replaces the `Allowed-Origins` block with an `Origins-Pattern` block which allows any origin with the `*` wildcard.
 This is shown in the following snippet.
 
-[source,sh]
+[,sh]
 ./etc/apt/apt.conf.d/50unattended-upgrades
 ----
 Unattended-Upgrade::Origins-Pattern {
@@ -84,20 +84,18 @@ Unattended-Upgrade::Origins-Pattern {
 .. Remove unused dependencies.
 +
 --
-I don't want to keep old or unused dependencies around, so I uncommented the following lines and set them each to _true_.
-The included comments are fairly self-explanatory.
+I don't want to keep old or unused dependencies around, so I uncommented the following line `Unattended-Upgrade::Remove-Unused-Dependencies` and set it to _true_.
+The included comment is fairly self-explanatory.
 
 [source]
 ./etc/apt/apt.conf.d/50unattended-upgrades
 ----
-// Remove unused automatically installed kernel-related packages
-// (kernel images, kernel headers and kernel version locked tools).
-Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
-
 // Do automatic removal of new unused dependencies after the upgrade
 // (equivalent to apt-get autoremove)
 Unattended-Upgrade::Remove-Unused-Dependencies "true";
 ----
+
+The other options related to removing unused dependencies and kernels are already enabled by default.
 --
 
 .. Automatically reboot after upgrades when required.
@@ -106,7 +104,7 @@ Unattended-Upgrade::Remove-Unused-Dependencies "true";
 I don't think anyone appreciates their desktop suddenly rebooting immediately after it applies some updates.
 I rarely leave my computer on for more than a few hours at a time.
 However, I figured it's good to make sure the computer reboots eventually if necessary.
-The configuration below will automatically reboot but it does this at two in the morning to remain unobtrusive.
+The configuration below will automatically reboot but it does this at two in the morning to be as unobtrusive as possible.
 To further reduce the chance of unexpected interruptions I've disallowed the computer from rebooting so long as users are logged in.
 
 [source]
@@ -155,9 +153,9 @@ These variables and more are described in detail in the script `/usr/lib/apt/apt
 
 . Test the behavior of unattended upgrades by running the script manually with the `--dry-run` and `--debug` flags.
 +
-[source,sh]
+[,sh]
 ----
-➜ sudo unattended-upgrades --dry-run --debug
+sudo unattended-upgrades --dry-run --debug
 ----
 
 . Monitor unattended upgrades by perusing the log files in `/var/log/unattended-upgrades/`.
