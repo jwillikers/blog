@@ -16,7 +16,7 @@ Detailed instructions for creating a key can be found in https://docs.github.com
 
 . Create a new key.
 +
-[source,sh]
+[,sh]
 ----
 ➜ gpg --full-generate-key
 gpg (GnuPG) 2.2.20; Copyright (C) 2020 Free Software Foundation, Inc.
@@ -129,7 +129,7 @@ sub   rsa4096 2020-10-27 [E]
 ====
 If you have multiple secret keys and would like to use this key by default, set it as such in `~/.gnupg/gpg.conf` as follows.
 
-[source,sh]
+[,sh]
 ----
 ➜ echo "default-key 5DBCB56A458D5A0F" >> ~/.gnupg/gpg.conf
 ----

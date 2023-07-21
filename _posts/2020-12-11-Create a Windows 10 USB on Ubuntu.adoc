@@ -39,7 +39,7 @@ These instructions will work on {Fedora} just the same except that disks will be
 
 . Locate the device associated with your USB by using the {lsblk} command.footnote:[Or, use `sudo fdisk -l` if you prefer.]
 +
-[source,sh]
+[,sh]
 ----
 ➜ lsblk
 NAME             MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
@@ -64,7 +64,7 @@ zd0              230:0    0   500M  0 disk
 As shown in the previous output, _sdb1_ is mounted at _/media/jordan/MyUSB_.
 I unmount this partition with the {udisksctl} command here.
 
-[source,sh]
+[,sh]
 ----
 ➜ udisksctl unmount -b /dev/sdb1
 Unmounted /dev/sdb1.
@@ -78,7 +78,7 @@ The set of _gdisk_ commands, consisting of {cgdisk}, {gdisk}, and {sgdisk}, mani
 Older {master-boot-records}, _MBR_'s, are instead managed with {fdisk} and its similarly named friends.
 Here, the {sgdisk} command is used to partition the flash drive using the newer _GPT_ format without requiring any user interaction.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo sgdisk -Z -n 0:0:0 /dev/sdb
 Creating new GPT entries in memory.
@@ -102,7 +102,7 @@ Just know that it does indeed wipe the existing MBR and GPT partitions before cr
 
 . Format the partition as {NTFS} with the {mkntfs} tool.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo mkntfs -QL Windows10 /dev/sdb1
 Cluster size has been automatically set to 4096 bytes.
@@ -112,7 +112,7 @@ mkntfs completed successfully. Have a nice day.
 
 . Mount the newly created partition with {udisksctl}.
 +
-[source,sh]
+[,sh]
 ----
 ➜ udisksctl mount -b /dev/sdb1
 Mounted /dev/sdb1 at /media/jordan/Windows10
@@ -125,7 +125,7 @@ Mounted /dev/sdb1 at /media/jordan/Windows10
 --
 {gnome-disk-image-mounter} makes this a piece of cake and only requires a single argument, the path to the ISO file to mount.
 
-[source,sh]
+[,sh]
 ----
 ➜ gnome-disk-image-mounter ~/Downloads/Win10_*.iso
 ----
@@ -133,7 +133,7 @@ Mounted /dev/sdb1 at /media/jordan/Windows10
 
 . Use {lsblk} again in order to find where the ISO is mounted.
 +
-[source,sh]
+[,sh]
 ----
 ➜ lsblk
 NAME            MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
@@ -153,14 +153,14 @@ zd0             230:0    0   500M  0 disk
 
 . Copy all files from the ISO to the flash drive.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cp -r /media/$USER/CCCOMA_X64FRE_EN-US_DV9/* /media/$USER/Windows10
 ----
 
 . Unmount the ISO.
 +
-[source,sh]
+[,sh]
 ----
 ➜ udisksctl unmount -b /dev/loop53
 Unmounted /dev/loop53.
@@ -168,7 +168,7 @@ Unmounted /dev/loop53.
 
 . Unmount the flash drive.
 +
-[source,sh]
+[,sh]
 ----
 ➜ udisksctl unmount -b /dev/sdb1
 Unmounted /dev/sdb1.

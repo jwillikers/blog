@@ -43,14 +43,14 @@ This will delete all existing containers and images.
 
 rootless::
 +
-[source,sh]
+[,sh]
 ----
 ➜ podman system reset
 ----
 
 root::
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo podman system reset
 ----
@@ -67,7 +67,7 @@ While the Btrfs driver is supported in rootless configurations, the ZFS driver i
 
 rootless:: When dealing with user configuration, you'll need to create the `~/.config/containers/` directory first.
 +
-[source,sh]
+[,sh]
 ----
 ➜ mkdir -p ~/.config/containers
 ----

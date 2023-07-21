@@ -64,7 +64,7 @@ The mount point is `/run/media/$USER/backups`.
 This mount point must exist before we begin.
 Create this directory as follows.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo mkdir -p /run/media/$USER/backups
 ----
@@ -77,7 +77,7 @@ This tutorial also uses a USB connected storage device which appears as `sdb`.
 Your device could be under the same name in the device tree or it might use a different name.
 To locate your USB device, examine the output of lsblk.
 
-[source,sh]
+[,sh]
 ----
 ➜ lsblk
 NAME           MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
@@ -106,7 +106,7 @@ The set of _gdisk_ commands, consisting of {cgdisk}, {gdisk}, and {sgdisk}, mani
 Older {master-boot-records}, _MBR_'s, are instead managed with {fdisk} and its similarly named friends.
 Here, the {sgdisk} command is used to partition the flash drive using the newer _GPT_ format without requiring any user interaction.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo sgdisk -Z -n 0:0:0 -c 0:"Black WD HDD" /dev/sdb
 GPT data structures destroyed! You may now partition the disk using fdisk or
@@ -130,7 +130,7 @@ The label here provides a basic description of the disk.
 --
 Here I label the volume with a descriptive name of the disk and its purpose.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo mkfs -t btrfs -L "Black WD EasyStore External HDD - My Backups" /dev/sdb1
 btrfs-progs v4.15.1
@@ -157,7 +157,7 @@ Devices:
 
 . Then mount the volume.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo mount -o noatime,autodefrag,compress=zstd,commit=120 \
   /dev/sdb1 \
@@ -166,7 +166,7 @@ Devices:
 
 . Create a subvolume for storing backups.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo btrfs subvolume create /run/media/$USER/backups/my-backups
 Create subvolume '/run/media/jordan/backups/my-backups'
@@ -174,21 +174,21 @@ Create subvolume '/run/media/jordan/backups/my-backups'
 
 . Set the current user as the owner of the subvolume.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo chown $USER:$USER /run/media/$USER/backups/my-backups
 ----
 
 . Umount the volume.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo umount /run/media/$USER/backups
 ----
 
 . If you didn't note your volume's UUID, you can do so with the following command.
 +
-[source,sh]
+[,sh]
 ----
 ➜ lsblk -no uuid /dev/sdb1
 13177899-cb85-45b7-99b6-b76e2fc41f44
@@ -205,7 +205,7 @@ Old faithful and ever present, {mount} is ubiquitous.
 Use it to mount a filesystem as root giving it a comma-separated list of options preceded by the `-o` flag, the device, and the mountpoint.
 To mount the Btrfs subvolume named `backups` on the block device `/dev/sdb1` to `/run/media/$USER/backups` with several mount options, use the following command.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo mount -o noatime,autodefrag,compress=zstd,commit=120,subvol=my-backups \
   '/dev/disk/by-label/Black\x20WD\x20EasyStore\x20External\x20HDD\x20-\x20My\x20Backups' \
@@ -215,7 +215,7 @@ To mount the Btrfs subvolume named `backups` on the block device `/dev/sdb1` to 
 To unmount the device, use the umount command with the device path or the path of the mount point.
 Here, the previously mounted device is unmounted.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo umount /run/media/$USER/backups
 ----
@@ -245,7 +245,7 @@ Or, at least, it should...
 Always verify your fstab file after modifying it with `findmnt --verify`.
 Here I include the `--verbose` flag as well and abbreviate the output.
 
-[source,sh]
+[,sh]
 ----
 ➜ findmnt --verify --verbose
 /
@@ -277,7 +277,7 @@ Previously when using the mount command, each mount option had to be specified.
 When mounting a matching entry in fstab, the mount options in fstab are applied automatically.
 The following command will mount the volume using the mount options specified in fstab for `/run/media/$USER/backups`.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo mount /run/media/$USER/backups
 ----
@@ -309,21 +309,21 @@ I don't want to reboot, so I'll just reload the necessary components before exam
 
 . Reload systemd.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemctl daemon-reload
 ----
 
 . Restart the _local-fs_ target.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemctl restart local-fs.target
 ----
 
 . Use the `systemctl` subcommand `list-unit-files` and specify the `mount` type with the `-t` flag to list all mount unit files.
 +
-[source,sh]
+[,sh]
 ----
 ➜ systemctl list-unit-files -t mount
 UNIT FILE                      STATE    
@@ -353,7 +353,7 @@ var.mount                      generated
 To view the contents of a mount unit file, pass the name of the unit to `systemctl` after the subcommand `cat`.
 The following command displays the contents of the mount unit file generated for `/dev/sdb1`.
 
-[source,sh]
+[,sh]
 ----
 ➜ systemctl cat run-media-$USER-backups.mount
 # /run/systemd/generator/run-media-jordan-backups.mount
@@ -383,7 +383,7 @@ The `x-systemd.idle-timeout` mount option for automount units is handy for speci
 Mount units can be generated on the fly by mounting volumes with {systemd-mount-command}.
 The systemd-mount command to mount `/dev/sdb1` with the desired Btrfs options appears suspiciously like the corresponding mount command.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemd-mount -o noatime,autodefrag,compress=zstd,commit=120,subvol=my-backups /dev/sdb1 /run/media/$USER/backups
 Started unit run-media-jordan-backups.mount for mount point: /run/media/jordan/backups
@@ -393,7 +393,7 @@ It's possible to eschew the mount point and let systemd decide where to mount th
 By default, this will mount the volume underneath the directory `/run/media/system/<label>` where `<label>` is a placeholder for the filesystem label or other identifier.
 Mount `/dev/sdb1` to the default systemd location as follows.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemd-mount -o noatime,autodefrag,compress=zstd,commit=120,subvol=my-backups /dev/sdb1
 Started unit run-media-system-backups.mount for mount point: /run/media/system/backups
@@ -407,7 +407,7 @@ Use the `-A` flag to generate a corresponding systemd automount unit when mounti
 Likewise, use {systemd-umount} to unmount the volume by providing either the device or the path to the mount point.
 This command unmounts the device `/dev/sdb1` mounted with either or both of the previous two commands.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemd-umount /dev/sdb1
 Stopped unit run-media-system-backups.mount for mount point: /run/media/system/backups
@@ -446,7 +446,7 @@ The name of the mount unit must reflect the path of the mount point.
 
 . Enable the mount unit with `systemctl`.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemctl enable run-media-$USER-backups.mount
 ----
@@ -488,7 +488,7 @@ The fstab entry below allows a user to mount `/dev/sdb1` to `/run/media/$USER/ba
 
 Now, a user can mount the volume with the device path _or_ the mount point as done here.
 
-[source,sh]
+[,sh]
 ----
 ➜ mount /run/media/$USER/backups
 ----
@@ -498,7 +498,7 @@ Now, a user can mount the volume with the device path _or_ the mount point as do
 Attempting to provide _both_ the device and mount point to the mount command as a user will result in an error.
 Here mount doesn't like the fact that I gave it the device and the mount point.
 
-[source,sh]
+[,sh]
 ----
 ➜ mount /dev/sdb1 /run/media/$USER/backups
 mount: only root can do that
@@ -507,7 +507,7 @@ mount: only root can do that
 
 A user can also unmount the entry they have mounted when it is set with the `user` option.
 
-[source,sh]
+[,sh]
 ----
 ➜ umount /run/media/$USER/backups
 ----
@@ -552,7 +552,7 @@ No root privileges are required to create units here.
 
 To mount the volume, start the service.
 
-[source,sh]
+[,sh]
 ----
 ➜ systemctl --user start mount-run-media-$USER-backups.service
 ----
@@ -560,14 +560,14 @@ To mount the volume, start the service.
 Unmounting the volume is just a matter of stopping the service.
 Do this like so.
 
-[source,sh]
+[,sh]
 ----
 ➜ systemctl --user stop mount-run-media-$USER-backups.service
 ----
 
 If you want to mount automatically when logging in, use the `enable` subcommand instead of `start`.
 
-[source,sh]
+[,sh]
 ----
 ➜ systemctl --user enable mount-run-media-$USER-backups.service
 ----
@@ -583,7 +583,7 @@ To follow conventions, the unit will mount the volume under `/run/media/$USER`.
 The mount point will be encoded in the name of the service, i.e. sandwiched between the `@` and `.service` suffix.
 This user service unit, dubbed `mount@`, looks like this.
 
-[source,sh]
+[,sh]
 .~/.config/systemd/user/mount@.service
 ----
 [Unit]
@@ -614,14 +614,14 @@ Additionally, an entry in fstab that mounts to that mount point must set the `us
 Given those requirements, use the instantiable service as demonstrated here.
 To mount `/run/media/run/$USER/backups`, start the service with the name `mount@backups`.
 
-[source,sh]
+[,sh]
 ----
 ➜ systemctl --user start mount@backups.service
 ----
 
 Unmount it by stopping the service of the same name.
 
-[source,sh]
+[,sh]
 ----
 ➜ systemctl --user stop mount@backups.service
 ----
@@ -645,7 +645,7 @@ Mount options should be provided as a comma-separated list following the `--opti
 
 Here, I mount `/dev/sdb1` with specific Btrfs mount options.
 
-[source,sh]
+[,sh]
 ----
 ➜ udisksctl mount -b /dev/sdb1 --options noatime,autodefrag,compress=zstd,commit=120,subvol=my-backups
 Error mounting /dev/sdb1: GDBus.Error:org.freedesktop.UDisks2.Error.OptionNotPermitted: Mount option `autodefrag' is not allowed
@@ -657,7 +657,7 @@ In version 2.9.0 of udisks2, a newer version than ships with Ubuntu 18.04, it's 
 A newer version of udisks2 can be installed on Ubuntu 18.04 by following the instructions in the post <<install-udisks2-from-source#,Install udisks2 From Source>>.
 It turns out the only allowed mount option here is `noatime`, so the simpler command below will still mount the volume.
 
-[source,sh]
+[,sh]
 ----
 ➜ udisksctl mount -b /dev/sdb1 --options noatime
 Mounted /dev/sdb1 at /run/media/jordan/backups
@@ -670,7 +670,7 @@ Unmount the volume using the `unmount` subcommand followed by the `-b` flag and 
 The subcommand is the word _unmount_ not _umount_.
 ====
 
-[source,sh]
+[,sh]
 ----
 ➜ udisksctl unmount -b /dev/sdb1
 Unmounted /dev/sdb1.
@@ -809,7 +809,7 @@ LABEL="udisks_mount_options_end"
 
 To enable a new rule, either reboot your system or reload the udev daemon as demonstrated by the command here.
 
-[source,sh]
+[,sh]
 ----
 ➜ udevadm control --reload-rules
 ----
@@ -835,7 +835,7 @@ LABEL="udisks_mount_options_end"
 To determine the id attributes for your hardware, query the information with udevadm.
 Here I filter the output of such a query for `/dev/sdb1` to just show the `ID_VENDOR`, `ID_MODEL`, and `ID_SERIAL_SHORT` attributes.
 
-[source,sh]
+[,sh]
 ----
 ➜ udevadm info --query=all --name=/dev/sdb \
   | awk -F'=' '/ID_VENDOR=/ || /ID_MODEL=/ || /ID_SERIAL_SHORT=/ {print $2}'
@@ -859,7 +859,7 @@ Follow the steps below to mount and unmount the `/dev/sdb1` volume.
 
 . Mount the volume by passing the device to GIO's _mount_ subcommand via the `-d` flag.
 +
-[source,sh]
+[,sh]
 ----
 ➜ gio mount -d /dev/sdb1
 Mounted /dev/sdb1 at /run/media/jordan/backups
@@ -867,7 +867,7 @@ Mounted /dev/sdb1 at /run/media/jordan/backups
 
 . Unmount the volume with the _mount_ command, the `-u` flag, and the mount point.
 +
-[source,sh]
+[,sh]
 ----
 ➜ gio mount -u /run/media/jordan/backups
 ----

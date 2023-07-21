@@ -19,7 +19,7 @@ It is expected you are already familiar using GnuPG from the command-line and ha
 . First, determine which key to backup.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ gpg --list-secret-keys --keyid-format LONG
 /home/pstibbons/.gnupg/pubring.kbx
@@ -36,7 +36,7 @@ Here there is only one private key for a Ponder Stibbons.
 . Export the private GPG key.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ gpg -o private.gpg --export-options backup --export-secret-keys ponder.stibbons@unseen.edu
 ----
@@ -59,7 +59,7 @@ Ideally, store it only on offline media.
 . Import the private key.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ gpg --import-options restore --import private.gpg
 gpg: key C8DE632E9A8A0BDD: public key "Ponder Stibbons <ponder.stibbons@unseen.edu>" imported
@@ -84,7 +84,7 @@ image::Import Passphrase Prompt.png[Passphrase Prompt to Import GPG Key]
 
 . Now, edit the freshly imported key.
 +
-[source,sh]
+[,sh]
 ----
 ➜ gpg --edit-key ponder.stibbons@unseen.edu
 gpg (GnuPG) 2.2.20; Copyright (C) 2020 Free Software Foundation, Inc.
@@ -103,7 +103,7 @@ ssb  rsa4096/DBCD8B98F2F9188C
 
 . Enter `trust` to modify the trust value of the key.
 +
-[source,sh]
+[,sh]
 ----
 gpg> trust
 sec  rsa4096/C8DE632E9A8A0BDD
@@ -116,7 +116,7 @@ ssb  rsa4096/DBCD8B98F2F9188C
 
 . Type kbd:[5] to trust your keys completely.
 +
-[source,sh]
+[,sh]
 ----
 Please decide how far you trust this user to correctly verify other users' keys
 (by looking at passports, checking fingerprints from different sources, etc.)
@@ -133,7 +133,7 @@ Your decision? 5
 
 . Confirm your choice by entering kbd:[Y].
 +
-[source,sh]
+[,sh]
 ----
 Do you really want to set this key to ultimate trust? (y/N) y
 
@@ -149,7 +149,7 @@ unless you restart the program.
 
 . Use the command `quit` to exit.
 +
-[source,sh]
+[,sh]
 ----
 gpg> quit
 ----

@@ -13,7 +13,7 @@ These instructions are exemplified on an Ubuntu 20.04 system for the fish shell 
 . Install the fish package.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt -y install fish
 ----
@@ -26,14 +26,14 @@ This Debian package installs the `fish` executable in `/usr/bin`.
 --
 Debian provides a convenient https://manpages.ubuntu.com/manpages/en/man8/add-shell.8.html[`add-shell`] command to accomplish this.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo add-shell /usr/bin/fish
 ----
 
 On other systems, simply add the path manually.
 
-[source,sh]
+[,sh]
 ----
 ➜ echo /usr/bin/fish | sudo tee -a /etc/shells
 /usr/bin/fish
@@ -42,7 +42,7 @@ On other systems, simply add the path manually.
 
 . Set the default login shell of the current user to fish.footnote:[https://fishshell.com/docs/current/tutorial.html#switching-to-fish[Fish Shell Tutorial - Switching to fish?]]
 +
-[source,sh]
+[,sh]
 ----
 ➜ chsh -s /usr/bin/fish
 Password:

@@ -145,7 +145,7 @@ ExecStart=~/.local/bin/automount.sh
 WantedBy=default.target
 ----
 
-[source,sh]
+[,sh]
 ----
 ➜ systemctl --user enable automount
 ----

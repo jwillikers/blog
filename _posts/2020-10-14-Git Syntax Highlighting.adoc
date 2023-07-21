@@ -15,7 +15,7 @@ It assumes you are familiar with common command-line utilities on Ubuntu, includ
 --
 Releases can be found https://github.com/dandavison/delta/releases[here].
 
-[source,sh]
+[,sh]
 ----
 ➜ wget -q -nv -O - https://api.github.com/repos/dandavison/delta/releases/latest \
   | awk -F': ' '/browser_download_url/ && /_amd64\.deb/ && !/musl/ {gsub(/"/, "", $(NF)); system("wget -qi -L " $(NF))}'
@@ -26,35 +26,35 @@ This one-liner downloads the amd64 deb installer for the latest release.
 
 . Install the `delta` deb package.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt -y install ./git-delta_*_amd64.deb
 ----
 
 . Clean up the remaining deb package since it is no longer needed.
 +
-[source,sh]
+[,sh]
 ----
 ➜ rm git-delta_*_amd64.deb
 ----
 
 . Use `delta` as the pager for `git`.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git config --global core.pager delta
 ----
 
 . Stylize diff output with `delta`.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git config --global interactive.diffFilter "delta --color-only"
 ----
 
 . Style moved blocks of code appropriately.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git config --global diff.colorMoved default
 ----
@@ -64,7 +64,7 @@ This one-liner downloads the amd64 deb installer for the latest release.
 --
 This command sets the color scheme to https://ethanschoonover.com/solarized/[Solarized] Dark.
 
-[source,sh]
+[,sh]
 ----
 ➜ git config --global delta.syntax-theme "Solarized (dark)"
 ----
@@ -72,21 +72,21 @@ This command sets the color scheme to https://ethanschoonover.com/solarized/[Sol
 
 . View diffs side-by-side so that they are easier to compare.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git config --global delta.side-by-side true
 ----
 
 . Show line numbers for reference.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git config --global delta.line-numbers true
 ----
 
 . Turn on extra decorations to emphasize important details, such as the file and commit information.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git config --global delta.decorations true
 ----

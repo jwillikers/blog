@@ -24,28 +24,28 @@ They may just as easily be configured at the repository level.
 
 . Install https://packages.ubuntu.com/focal/git[Ubuntu's git package], of course.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt -y install git
 ----
 
 . Set your Git username.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git config --global user.name "Ponder Stibbons"
 ----
 
 . Set your Git commit email address.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git config --global user.email "ponder.stibbons@unseen.edu"
 ----
 
 . Identify the GPG secret key associated with your Git commit email address.
 +
-[source,sh]
+[,sh]
 ----
 ➜ gpg --list-secret-keys --keyid-format LONG
 /home/pstibbons/.gnupg/pubring.kbx
@@ -61,7 +61,7 @@ The `sec` word indicates this is the secret key.
 . Configure this key as your default signing key for Git.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ git config --global user.signingKey C8DE632E9A8A0BDD
 ----
@@ -71,42 +71,42 @@ NOTE: The key can be provided when signing a tag, commit, or push, but it's gene
 
 . Create a test directory for a test repository.
 +
-[source,sh]
+[,sh]
 ----
 ➜ mkdir git-signing-test
 ----
 
 . Change into the directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cd git-signing-test
 ----
 
 . Initialize a new Git repository.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git init
 ----
 
 . Create an example file.
 +
-[source,sh]
+[,sh]
 ----
 ➜ touch test
 ----
 
 . Stage this file in order to make a signed commit.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git add test
 ----
 
 . Pass the `-S` short option to http://manpages.ubuntu.com/manpages/focal/en/man1/git-commit.1.html[git-commit(1)] to manually sign a commit.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git commit -S -m 'Signed commit'
 ----
@@ -124,7 +124,7 @@ TIP: If you value your sanity, check the _Save in password manager_ box to avoid
 . Optionally, configure Git to sign commits by default with https://manpages.ubuntu.com/manpages/focal/en/man1/git-config.1.html[git-config(1)] thus allowing you to omit the `-S` flag.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ git config --global commit.gpgSign true
 ----
@@ -135,7 +135,7 @@ NOTE: This configuration setting applies to merge commits created when using htt
 . Check a signed commit by using the `--show-signature` option with `git log`.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ git log --show-signature -1
 commit 48fafff3d24a89ec9c6d5940317588f9b10b4f43 (HEAD -> master)
@@ -153,21 +153,21 @@ IMPORTANT: When verifying GPG signatures, you will need to have the signer's pub
 
 . Manually sign a tag with the `-s` short option.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git tag -s v1.0.0 -m 'Signed tag'
 ----
 
 . If desired, configure Git to sign all tags by default.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git config --global tag.gpgSign true
 ----
 
 . Verify a tag with the `-v` option.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git tag -v v1.0.0
 object 48fafff3d24a89ec9c6d5940317588f9b10b4f43
@@ -183,7 +183,7 @@ gpg: Good signature from "Ponder Stibbons <ponder.stibbons@unseen.edu>" [ultimat
 
 . Create and switch to a new branch.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git switch -c unsigned
 Switched to a new branch 'unsigned'
@@ -191,28 +191,28 @@ Switched to a new branch 'unsigned'
 
 . Create another file.
 +
-[source,sh]
+[,sh]
 ----
 ➜ touch test2
 ----
 
 . Stage the new file.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git add test2
 ----
 
 . Now, commit the file without a signature.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git commit --no-gpg-sign -m 'Unsigned commit'
 ----
 
 . Switch back to the main branch.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git switch master
 Switched to branch 'master'
@@ -221,7 +221,7 @@ Switched to branch 'master'
 . When using https://manpages.ubuntu.com/manpages/focal/en/man1/git-merge.1.html[git-merge(1)], sign a merge commit by passing the `-S` option and verify all signatures in the merge with the `--verify-signatures` option.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ git merge -S --verify-signatures unsigned
 fatal: Commit a3bf413 does not have a GPG signature.
@@ -233,7 +233,7 @@ Oh no! The unsigned commit in the _unsigned_ branch couldn't be verified so the 
 . To always verify signatures when merging, set the configuration option `merge.verifySignatures` to `true`.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ git config --global merge.verifySignatures true
 ----
@@ -243,7 +243,7 @@ NOTE: This configuration setting also applies to the https://manpages.ubuntu.com
 
 . For https://manpages.ubuntu.com/manpages/focal/en/man1/git-pull.1.html[git-pull(1)], use the same options as with https://manpages.ubuntu.com/manpages/focal/en/man1/git-merge.1.html[git-merge(1)] to sign a merge commit and verify all signatures.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git pull -S --verify-signatures
 ----
@@ -255,7 +255,7 @@ This option takes more than just a true or false value.
 The `if-asked` value used here signs pushes if the server supports this feature, but doesn't otherwise.
 Signing pushed signifies _intent_, as Konstantin Ryabitsev describes in more detail in his article https://people.kernel.org/monsieuricon/signed-git-pushes[Signed git pushes].
 
-[source,sh]
+[,sh]
 ----
 ➜ git push --signed=if-asked
 ----
@@ -263,7 +263,7 @@ Signing pushed signifies _intent_, as Konstantin Ryabitsev describes in more det
 
 . Configure Git to sign pushes by default if the server supports it.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git config --global push.gpgSign if-asked
 ----

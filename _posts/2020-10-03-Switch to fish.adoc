@@ -20,21 +20,21 @@ The following steps install fish through the PPA.
 
 . Add the https://launchpad.net/~fish-shell/+archive/ubuntu/release-3[fish PPA].
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt-add-repository ppa:fish-shell/release-3
 ----
 
 . Update https://wiki.debian.org/Aptitude[Aptitude] with the new PPA.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt update
 ----
 
 . Install the fish package.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt -y install fish
 ----
@@ -48,7 +48,7 @@ Once installed, switching is just a matter of updating the login shell.footnote:
 --
 Debian provides a convenient https://manpages.ubuntu.com/manpages/en/man8/add-shell.8.html[`add-shell`] command to accomplish this.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo add-shell /usr/bin/fish
 ----
@@ -56,7 +56,7 @@ Debian provides a convenient https://manpages.ubuntu.com/manpages/en/man8/add-sh
 
 . Set the current user's login shell to fish with https://manpages.ubuntu.com/manpages/en/man1/chsh.1.html[`chsh`].
 +
-[source,sh]
+[,sh]
 ----
 ➜ chsh -s /usr/bin/fish
 Password:
@@ -67,7 +67,7 @@ Password:
 --
 You should see a fresh, vanilla shell prompt like the following.
 
-[source,sh]
+[,sh]
 ----
 Welcome to fish, the friendly interactive shell
 Type help for instructions on how to use fish
@@ -81,7 +81,7 @@ Adjusting basic configuration options is quick ang easy with fish.
 
 . Configuring the fish shell is as easy as selecting options the provided by the web interface.
 +
-[source,sh]
+[,sh]
 ----
 ➜ fish_config
 ----
@@ -94,14 +94,14 @@ If you like doing things the old fashion way - or want to set the prompt remotel
 
 . Make sure the `~/.config/fish/functions` directory exists.
 +
-[source,sh]
+[,sh]
 ----
 ➜ mkdir -p ~/.config/fish/functions
 ----
 
 . Then copy over the desired prompt configuration, `robbyrussell.fish` in this case, from `/usr/share/fish/tools/web_config/sample_prompts/`.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cp /usr/share/fish/tools/web_config/sample_prompts/robbyrussell.fish ~/.config/fish/functions/fish_prompt.fish
 ----
@@ -116,7 +116,7 @@ The `fish_config` web tool outputs the commands that set the various variables f
 This is  easy to translate to a command-line which can be quite helpful when configuring remotely.
 As an example, the following command sets the color scheme to solarized dark.
 
-[source,sh]
+[,sh]
 ----
 ➜ set -U fish_color_normal normal; \
   set -U fish_color_command 93a1a1; \
@@ -148,14 +148,14 @@ As an example, the following command sets the color scheme to solarized dark.
 
 . Customize the greeting message with the variable `fish_greeting`.footnote:[https://fishshell.com/docs/current/index.html#configurable-greeting[fish Documentation: Configurable greeting]]
 +
-[source,sh]
+[,sh]
 ----
 ➜ set -U fish_greeting ""
 ----
 
 . Enable backwards-incompatible features.footnote:[https://fishshell.com/docs/current/index.html#future-feature-flags[fish Documentation: Future feature flags]]
 +
-[source,sh]
+[,sh]
 ----
 ➜ set -U fish_features stderr-nocaret qmark-noglob
 ----
@@ -166,7 +166,7 @@ As an example, the following command sets the color scheme to solarized dark.
 For user's who prefer http://ex-vi.sourceforge.net/[Vi] and https://www.vim.org/[Vim], there is a nifty method of enabling Vim keyboard shortcuts in addition to the default Emacs shortcuts.
 Creating the file below will enable this and default to insert mode.
 
-[source,sh]
+[,sh]
 .~/.config/fish/functions/fish_user_key_bindings.fish
 ----
 function fish_user_key_bindings
@@ -179,7 +179,7 @@ end
 ====
 Override the `fish_mode_prompt` function with an empty function to disable the Vi mode indicator.
 
-[source,sh]
+[,sh]
 .~/.config/fish/functions/fish_mode_prompt.fish
 ----
 function fish_mode_prompt
@@ -201,7 +201,7 @@ It takes care of duplicates for you, too.
 Some Linux distributions don't include `/usr/local/bin` in `PATH` by default.
 Adding `/usr/local/bin` to the end of the list in `PATH` is as simple as this.
 
-[source,sh]
+[,sh]
 ----
 ➜ fish_add_path /usr/local/bin
 ----
@@ -209,7 +209,7 @@ Adding `/usr/local/bin` to the end of the list in `PATH` is as simple as this.
 The `-p` flag prepends the given path to `PATH`.
 To place `/usr/local/bin` at the beginning of `PATH`, use this command.
 
-[source,sh]
+[,sh]
 ----
 ➜ fish_add_path -p /usr/local/bin
 ----
@@ -218,7 +218,7 @@ When messing with `PATH` prior to version 3.2.0, use fish's dedicated internal v
 This variable is special and populates `PATH`.
 With the https://fishshell.com/docs/current/cmds/set.html[`set`] command, prepend `/usr/local/bin` to `PATH` as follows.
 
-[source,sh]
+[,sh]
 ----
 ➜ set -pU fish_user_paths /usr/local/bin
 ----
@@ -242,7 +242,7 @@ This makes the variables accessible to other programs.
 For everything else, export the variable by calling `set` with the `-x` flag.
 To add a value to the beginning of the `LD_LIBRARY_PATH` environment variable and export it, use `set` as follows.
 
-[source,sh]
+[,sh]
 ----
 ➜ set -px LD_LIBRARY_PATH /usr/local/lib
 ----
@@ -261,14 +261,14 @@ Any variable ending in `PATH` is automatically treated as a _PATH variable_.
 So, when using `set` to deal a _PATH variable_, you can still treat it as you would any other list in fish.footnote:[https://fishshell.com/docs/current/index.html#lists[fish Documentation: Lists]]
 As an example, the following command adds `/usr/local/lib` to the beginning of the classic `LD_LIBRARY_PATH` variable and appends `~/lib` to the end.
 
-[source,sh]
+[,sh]
 ----
 ➜ set -x LD_LIBRARY_PATH /usr/local/lib $LD_LIBRARY_PATH ~/lib
 ----
 
 When quoting the variable, it must be modified like so to achieve the same result.
 
-[source,sh]
+[,sh]
 ----
 ➜ set -x LD_LIBRARY_PATH /usr/local/lib:"$LD_LIBRARY_PATH":~/lib
 ----
@@ -296,7 +296,7 @@ Then, just press kbd:[Alt+↑] to scroll backwards through history for matches.
 --
 The following example recursively searches and lists all files ending in `.fish` in `~/.config`.
 
-[source,sh]
+[,sh]
 ----
 ➜ ls ~/.config/**.fish
 /home/jordan/.config/fish/functions/fish_prompt.fish

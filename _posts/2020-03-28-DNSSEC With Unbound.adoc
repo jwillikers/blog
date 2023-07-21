@@ -11,14 +11,14 @@ Using this http://www.lonecpluspluscoder.com/2020/01/16/building-an-openbsd-wire
 
 Use the https://man.openbsd.org/ftp.1[ftp] command to download the https://wiki.archlinux.org/index.php/unbound#Root_hints[Root Hints].
 
-[source,sh]
+[,sh]
 ----
 ftp -o /var/unbound/etc/root.hints https://www.internic.net/domain/named.root
 ----
 
 Download the trust anchor file with the https://man.openbsd.org/unbound-anchor[unbound-anchor] utility.
 
-[source,sh]
+[,sh]
 ----
 unbound-anchor
 ----
@@ -55,14 +55,14 @@ forward-zone:
 
 Verify the configuration of unbound.conf which http://man.openbsd.org/unbound-checkconf.8[unbound-checkconf].
 
-[source,sh]
+[,sh]
 ----
 unbound-checkconf
 ----
 
 Finally, restart Unbound.
 
-[source,sh]
+[,sh]
 ----
 rcctl restart unbound
 ----
@@ -71,7 +71,7 @@ Verify that DNSSEC is working with the https://man.openbsd.org/OpenBSD-6.6/dig[d
 This website, `jwillikers.com`, has DNSSEC enabled and so makes for a good address to test.
 Cloudflare provides a nice write-up about using dig to verify DNSSEC https://support.cloudflare.com/hc/en-us/articles/360021111972-Troubleshooting-DNSSEC#TroubleshootingDNSSEC-DNSSECinPracticewithDig[here].
 
-[source,sh]
+[,sh]
 ----
 dig jwillikers.com +dnssec
 ----

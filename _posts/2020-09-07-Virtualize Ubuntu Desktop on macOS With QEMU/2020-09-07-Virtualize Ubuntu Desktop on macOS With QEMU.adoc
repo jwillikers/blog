@@ -27,14 +27,14 @@ This guide assumes you have familiarity with the command-line, virtual machines,
 --
 Homebrew::
 +
-[source,sh]
+[,sh]
 ----
 $ brew install qemu
 ----
 
 MacPorts::
 +
-[source,sh]
+[,sh]
 ----
 $ sudo port install qemu
 ----
@@ -42,7 +42,7 @@ $ sudo port install qemu
 
 . Create a 60 Gigabyte image to use as the VMs hard disk.
 +
-[source,sh]
+[,sh]
 ----
 $ qemu-img create -f qcow2 ubuntu2004.qcow2 60G
 Formatting 'ubuntu2004.qcow2', fmt=qcow2 size=64424509440 cluster_size=65536 lazy_refcounts=off refcount_bits=16
@@ -50,7 +50,7 @@ Formatting 'ubuntu2004.qcow2', fmt=qcow2 size=64424509440 cluster_size=65536 laz
 
 . Download the Ubuntu 20.04 desktop installer.
 +
-[source,sh]
+[,sh]
 ----
 $ curl -L -o ubuntu-20.04.1-desktop-amd64.iso https://releases.ubuntu.com/20.04/ubuntu-20.04.1-desktop-amd64.iso
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
@@ -63,7 +63,7 @@ $ curl -L -o ubuntu-20.04.1-desktop-amd64.iso https://releases.ubuntu.com/20.04/
 . Boot the ISO installer
 +
 --
-[source,sh]
+[,sh]
 ----
 $ qemu-system-x86_64 \
   -accel hvf \
@@ -109,7 +109,7 @@ Skipping this layer of emulation can significantly improve VM performance.
 
 . After the installation, run the virtual machine from the hard disk.
 +
-[source,sh]
+[,sh]
 ----
 $ qemu-system-x86_64 \
   -accel hvf \
@@ -132,7 +132,7 @@ It's a small step away to run the virtual machine headless and access it through
 
 . Run the virtual machine headless, forwarding ssh over port `9001` on the host.
 +
-[source,sh]
+[,sh]
 ----
 $ qemu-system-x86_64 \
   -accel hvf \
@@ -151,7 +151,7 @@ $ qemu-system-x86_64 \
 
 . ssh into the machine from the host.
 +
-[source,sh]
+[,sh]
 ----
 $ ssh -p 9001 localhost
 ----

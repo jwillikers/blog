@@ -21,7 +21,7 @@ $ sudo pacman -S dkms linux-pinebookpro-headers
 
 Create a new pool.
 
-[source,sh]
+[,sh]
 ----
 $ zpool create -o ashift=12 backup-01 /dev/sdb <1>
 ----
@@ -29,14 +29,14 @@ $ zpool create -o ashift=12 backup-01 /dev/sdb <1>
 
 Enable encryption for the pool.
 
-[source,sh]
+[,sh]
 ----
 $ zpool set feature@encryption=enabled backup-01
 ----
 
 Create the backup dataset in the new pool, using a password for the key.
 
-[source,sh]
+[,sh]
 ----
 $ zfs create \
   -o mountpoint=/media/jordan/backup-01 \ # <1>
@@ -51,14 +51,14 @@ $ zfs create \
 // Is it auto-mounted??
 Mount the dataset for backing up the files.
 
-[source,sh]
+[,sh]
 ----
 $ zfs mount backup-01/USERDATA/jordan
 ----
 
 Copy the files from the target directory to the backup directory.
 
-[source,sh]
+[,sh]
 ----
 $ tar cfC - /home/jordan . | tar xpfC - /media/jordan/backup-01
 ----
@@ -66,14 +66,14 @@ $ tar cfC - /home/jordan . | tar xpfC - /media/jordan/backup-01
 Take a snapshot.
 // Best to use the zsys tool instead.
 
-[source,sh]
+[,sh]
 ----
 $ zfs snapshot -r backup-01/USERDATA/jordan@2020-06-06-13:09:00
 ----
 
 Un-mount the dataset.
 
-[source,sh]
+[,sh]
 ----
 $ zfs umount backup-01/mnt
 $ zfs key -u backup-01 <1>
@@ -82,7 +82,7 @@ $ zfs key -u backup-01 <1>
 
 Export the backup pool.
 
-[source,sh]
+[,sh]
 ----
 $ zpool export backup-01
 ----
@@ -91,7 +91,7 @@ $ zpool export backup-01
 
 Incrementally send data between the last two backups.
 
-[source,sh]
+[,sh]
 ----
 $ zfs send \
   --replicate \ # <1>
@@ -107,21 +107,21 @@ $ zfs send \
 
 Import the pool, unlocking it with the encryption key.
 
-[source,sh]
+[,sh]
 ----
 $ zpool import backup-01 -d /dev -l
 ----
 
 // Copy the necessary files from the backup.
 
-// [source,sh]
+// [,sh]
 // ----
 // cp zfs/snapshots/
 // ----
 
 Revert to the snapshot.
 
-[source,sh]
+[,sh]
 ----
 $ zfs rollback -r
 ----

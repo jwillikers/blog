@@ -103,7 +103,7 @@ WantedBy=timers.target
 
 User::
 +
-[source,sh]
+[,sh]
 ----
 systemctl --user enable --now update-user-flatpaks.timer
 Created symlink /home/jordan/.config/systemd/user/timers.target.wants/update-user-flatpaks.timer → /etc/systemd/user/update-user-flatpaks.timer.
@@ -111,7 +111,7 @@ Created symlink /home/jordan/.config/systemd/user/timers.target.wants/update-use
 
 System::
 +
-[source,sh]
+[,sh]
 ----
 sudo systemctl --system enable --now update-system-flatpaks.timer
 Created symlink /etc/systemd/system/timers.target.wants/update-system-flatpaks.timer → /etc/systemd/system/update-system-flatpaks.timer.

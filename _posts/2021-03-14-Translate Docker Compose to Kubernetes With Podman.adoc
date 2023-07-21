@@ -29,7 +29,7 @@ This tutorial targets {Ubuntu} 18.04, and you should be familiar with Linux Cont
 
 . Change into the directory containing the UniFi Controller's Docker Compose file.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cd ~/Projects/unifi-controller
 ----
@@ -37,7 +37,7 @@ This tutorial targets {Ubuntu} 18.04, and you should be familiar with Linux Cont
 . Check for the previously created UniFi Controller pod with {podman-pod-ps}.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ podman pod ps
 POD ID        NAME              STATUS   CREATED      INFRA ID      # OF CONTAINERS
@@ -53,7 +53,7 @@ Okay, it's present and accounted for!
 Here I output the configuration to the file _unifi-controller.yml_ using the `-f` flag.
 The `-s` flag produces the necessary network service configuration.
 
-[source,sh]
+[,sh]
 ----
 ➜ podman generate kube -s -f unifi-controller.yml unifi-controller
 ----
@@ -299,14 +299,14 @@ Details forthcoming.
 
 . Before starting this pod up, use podman-compose to destroy the existing _unifi-controller_ pod.
 +
-[source,sh]
+[,sh]
 ----
 ➜ podman-compose down
 ----
 
 . Provide the generated Kubernetes YAML to {podman-play-kube} to create and launch the pod.
 +
-[source,sh]
+[,sh]
 ----
 ➜ podman play kube ~/Projects/unifi-controller/unifi-controller.yml
 ----
@@ -315,14 +315,14 @@ Details forthcoming.
 
 fish::
 +
-[source,sh]
+[,sh]
 ----
 ➜ open http://127.0.0.1:8443
 ----
 
 Other shells::
 +
-[source,sh]
+[,sh]
 ----
 ➜ xdg-open http://127.0.0.1:8443
 ----

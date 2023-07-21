@@ -51,7 +51,7 @@ It is assumed that you are familiar with installing software on Ubuntu, using th
 . Check that the system supports hardware virtualization.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ egrep -c '(vmx|svm)' /proc/cpuinfo
 8
@@ -62,14 +62,14 @@ If the output is not zero, then your CPU supports virtualization.
 
 . Install the tool for checking that your CPU is compatible with KVM.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt -y install cpu-checker
 ----
 
 . Verify that the system supports KVM.
 +
-[source,sh]
+[,sh]
 ----
 ➜ kvm-ok
 INFO: /dev/kvm exists
@@ -85,35 +85,35 @@ Otherwise, you'd better switch to some compatible hardware before proceeding.
 
 .. The software-properties-common package includes a command for easily adding PPA's.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt -y software-properties-common
 ----
 
 .. Add the {virtualization-PPA}.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo add-apt-repository -uy ppa:jacob/virtualisation
 ----
 
 . Install libvirt.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt -y install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
 ----
 
 . Add the current user to the _kvm_ and _libvirt_ groups.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo usermod -aG kvm,libvirt $USER
 ----
 
 . Reload the current user's group assignments.
 +
-[source,sh]
+[,sh]
 ----
 ➜ newgrp -
 ----
@@ -128,7 +128,7 @@ The steps were come from https://askubuntu.com/a/940069[this solution] on Stack 
 
 . Set the libvirt-qemu user account as a system account for the accountsservices package to hide it in the login menu.
 +
-[source,sh]
+[,sh]
 ----
 ➜ printf "[User]\nSystemAccount=true\n" \
   | sudo tee /var/lib/AccountsService/users/libvirt-qemu
@@ -136,7 +136,7 @@ The steps were come from https://askubuntu.com/a/940069[this solution] on Stack 
 
 . Restart the accounts service.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemctl restart accounts-daemon.service
 ----
@@ -156,7 +156,7 @@ I can hope.
 When creating a {qcow2} image directly with {qemu-img}, the {qcow2-nocow} option can be used to disable _CoW_ for that file.
 The following command creates a 25 gigabyte qcow2 image named `my-vm-image.qcow2` with _CoW_ disabled.
 
-[source,sh]
+[,sh]
 ----
 ➜ qemu-img create -o nocow my-vm-image.qcow2 25G
 ----
@@ -189,7 +189,7 @@ The steps here walk through the steps to disable _CoW_ on the default storage po
 The default pool is just called _default_.
 No surprises here.
 +
-[source,sh]
+[,sh]
 ----
 ➜ virsh pool-list
  Name                 State      Autostart 
@@ -200,7 +200,7 @@ No surprises here.
 . To simply view the XML, use the {virsh-pool-dumpxml} subcommand followed by the pool's name.
 Here I output the default pool's XML configuration where you can see that _path_ is indeed `/var/lib/libvirt/images`.
 +
-[source,sh]
+[,sh]
 ----
 ➜ virsh pool-dumpxml default
 <pool type='dir'>
@@ -225,7 +225,7 @@ Here I output the default pool's XML configuration where you can see that _path_
 . Edit a pool's configuration with the {virsh-pool-edit} subcommand.
 To modify the default pool's XML, the command would appear as follows.
 +
-[source,sh]
+[,sh]
 ----
 ➜ virsh pool-edit default
 ----
@@ -277,7 +277,7 @@ The following commands disable _CoW_ on libvirt's image directory.
 
 Disable _CoW_ on the `/var/lib/libvirt/images` directory.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo chattr +C /var/lib/libvirt/images
 ----
@@ -290,14 +290,14 @@ The steps here create a dedicated subvolume for libvirt's disk image directory a
 
 . Mount the root Btrfs filesystem to create a subvolume. 
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo mount (df --output=source / | tail -n 1) /mnt
 ----
 
 . Create a dedicated Btrfs subvolume for libvirt's virtual disk images.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo btrfs subvolume create /mnt/var-lib-libvirt-images
 Create subvolume '/mnt/var-lib-libvirt-images'
@@ -305,7 +305,7 @@ Create subvolume '/mnt/var-lib-libvirt-images'
 
 . Add the subvolume to {fstab}.
 +
-[source,sh]
+[,sh]
 ----
 ➜ echo (df --output=source / \
   | tail -n 1)" /var/lib/libvirt/images btrfs defaults,nodatacow,noatime,subvol=var-lib-libvirt-images 0 0" \
@@ -315,21 +315,21 @@ Create subvolume '/mnt/var-lib-libvirt-images'
 
 . Verify there are no errors in fstab.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo findmnt --verify --verbose
 ----
 
 . Now mount the subvolume according to the rule just added in fstab.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo mount /var/lib/libvirt/images
 ----
 
 . Don't forget to unmount `/mnt`.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo umount /mnt
 ----
@@ -344,7 +344,7 @@ It's a handy one for the toolbox, though some might prefer the simplicity of {Bo
 
 Install virt-manager.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt -y install virt-manager
 ----

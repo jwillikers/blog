@@ -16,7 +16,7 @@ This tutorial describes the steps required to backup user data to an external di
 
 First, determine which device is the external hard drive.
 
-[source,sh]
+[,sh]
 ----
 $ sudo fdisk -l
 Disk /dev/sdb: 931.49 GiB, 1000170586112 bytes, 1953458176 sectors
@@ -32,7 +32,7 @@ In this case, `/dev/sdb` is the 1 TB external hard drive.
 
 Next, determine the disk id to use when creating the zpool.footnote:[https://wiki.archlinux.org/index.php/ZFS#Identify_disks[Arch Linux Wiki: Identify Disks]]
 
-[source,sh]
+[,sh]
 ----
 $ ls -lh /dev/disk/by-id/ | grep -w sdb
 lrwxrwxrwx 1 root root  9 Jul  4 07:23 usb-WD_easystore_25FC_000000000000000000000001-0:0 -> ../../sdb
@@ -41,7 +41,7 @@ lrwxrwxrwx 1 root root  9 Jul  4 07:23 usb-WD_easystore_25FC_0000000000000000000
 // Is this necessary?
 Then, double-check the block size.
 
-[source,sh]
+[,sh]
 ----
 $ sudo blockdev --getpbsz /dev/sdb
 512
@@ -51,7 +51,7 @@ The SD card's block size is 512 MiB, which means `ashift` should be set to 12.fo
 
 Create the pool.footnote:[https://wiki.archlinux.org/index.php/ZFS#Creating_ZFS_pools[Arch Linux Wiki: ZFS - Creating ZFS Pools]]
 
-[source,sh]
+[,sh]
 ----
 $ sudo zpool create \
   -o ashift=12 \
@@ -62,14 +62,14 @@ $ sudo zpool create \
 
 Take a snapshot.
 
-[source,sh]
+[,sh]
 ----
 $ sudo zfs snapshot -r rpool/USERDATA/jordan@2020-07-04-13:00:58
 ----
 
 // Export the backup pool.
 
-// [source,sh]
+// [,sh]
 // ----
 // $ zpool export backup_pool
 // ----
@@ -78,7 +78,7 @@ $ sudo zfs snapshot -r rpool/USERDATA/jordan@2020-07-04-13:00:58
 
 Incrementally send data between the last two backups.
 
-[source,sh]
+[,sh]
 ----
 $ zfs send \
   --replicate \ # <1>
@@ -94,14 +94,14 @@ You can do a complete restoration of the entire dataset, or otherwise mount it.
 
 Retrieve the snapshot.
 
-[source,sh]
+[,sh]
 ----
 $ zfs send --replicate backup_pool/USERDATA/jordan@2020-07-04-14:00:00 | zfs receive -dvu rpool
 ----
 
 Revert to the snapshot.
 
-[source,sh]
+[,sh]
 ----
 $ sudo zfs rollback -r rpool/USERDATA/jordan@2020-07-04-14:00:00
 ----

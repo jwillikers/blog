@@ -29,7 +29,7 @@ The first step is, of course, to setup the flash drive with Ventoy.
 
 . Locate the device associated with your USB by using the https://manpages.ubuntu.com/manpages/focal/man8/lsblk.8.html[lsblk(8)] command.footnote:[Or, use https://manpages.ubuntu.com/manpages/focal/en/man8/fdisk.8.html[fdisk(8)], via `sudo fdisk -l`, if you prefer.]
 +
-[source,sh]
+[,sh]
 ----
 ➜ lsblk
 NAME             MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
@@ -52,7 +52,7 @@ zd0              230:0    0   500M  0 disk
 --
 Download the latest release directly from the command-line with the following command.
 
-[source,sh]
+[,sh]
 ----
 ➜ wget -q -nv -O - https://api.github.com/repos/ventoy/Ventoy/releases/latest \
   | awk -F': ' '/browser_download_url/ && /\.tar\.gz/ \
@@ -62,7 +62,7 @@ Download the latest release directly from the command-line with the following co
 
 . Use the https://manpages.ubuntu.com/manpages/focal/en/man1/tar.1.html[tar(1)] command to extract the archive.
 +
-[source,sh]
+[,sh]
 ----
 ➜ tar xf ventoy-*-linux.tar.gz
 ----
@@ -75,7 +75,7 @@ When targeting systems using legacy https://en.wikipedia.org/wiki/BIOS[BIOS] or 
 
 NOTE: Some one-time setup, documented https://www.ventoy.net/en/doc_secure.html[here], is required for secure boot when booting the flash drive for the first time on a machine.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo ventoy-*/Ventoy2Disk.sh -i -s -g /dev/sdb
 
@@ -94,7 +94,7 @@ Style: GPT
 
 . When prompted, take a deep breath, read the message, double-check the device is correct, and type kbd:[Y] if everything checks out and you still think this is a good idea.
 +
-[source,sh]
+[,sh]
 ----
 Attention:
 You will install Ventoy to /dev/sdb.
@@ -105,7 +105,7 @@ Continue? (y/n) y
 
 . Repeat as necessary.
 +
-[source,sh]
+[,sh]
 ----
 All the data on the disk /dev/sdb will be lost!!!
 Double-check. Continue? (y/n) y
@@ -129,7 +129,7 @@ Install Ventoy to /dev/sdb successfully finished.
 
 . That's all that is required of the downloaded Ventoy files for this tutorial, so delete them if you like.
 +
-[source,sh]
+[,sh]
 ----
 ➜ rm -rf ventoy-*
 ----
@@ -154,7 +154,7 @@ If you are wondering whether it is mounted or not, well, the following command w
 By default, Ventoy labels the storage partition on the USB drive _Ventoy_ and the boot partition _VTOYEFI_.
 Here, I mount the _Ventoy_ partition by label.
 
-[source,sh]
+[,sh]
 ----
 ➜ udisksctl mount -b /dev/disk/by-label/Ventoy
 Mounted /dev/sdb1 at /media/jordan/Ventoy
@@ -166,7 +166,7 @@ Mounted /dev/sdb1 at /media/jordan/Ventoy
 --
 Unless Ventoy's label for the storage partition has been changed from its default, it will be mounted at _/media/$USER/Ventoy_, where `$USER` represents your username.
 
-[source,sh]
+[,sh]
 ----
 ➜ cp ~/Downloads/Win10_20H2_English_x64.iso /media/$USER/ventoy
 ----
@@ -176,7 +176,7 @@ Unless Ventoy's label for the storage partition has been changed from its defaul
 
 .. Unmount the _Ventoy_ storage partition.
 +
-[source,sh]
+[,sh]
 ----
 ➜ udisksctl unmount -b /dev/disk/by-label/Ventoy
 Unmounted /dev/sdb1.
@@ -184,7 +184,7 @@ Unmounted /dev/sdb1.
 
 .. Unmount the _VTOYEFI_ boot partition.
 +
-[source,sh]
+[,sh]
 ----
 ➜ udisksctl unmount -b /dev/disk/by-label/VTOYEFI
 Unmounted /dev/sdb2.
@@ -202,7 +202,7 @@ These instructions explain how to go about updating a Ventoy flash drive.
 
 . Find the your flash drive with https://manpages.ubuntu.com/manpages/focal/man8/lsblk.8.html[lsblk(8)] command.
 +
-[source,sh]
+[,sh]
 ----
 ➜ lsblk
 NAME             MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
@@ -222,7 +222,7 @@ zd0              230:0    0   500M  0 disk
 
 . Download the latest release for Linux from https://github.com/ventoy/Ventoy/releases[Ventoy's GitHub Releases page].
 +
-[source,sh]
+[,sh]
 ----
 ➜ wget -q -nv -O - https://api.github.com/repos/ventoy/Ventoy/releases/latest \
   | awk -F': ' '/browser_download_url/ && /\.tar\.gz/ \
@@ -231,14 +231,14 @@ zd0              230:0    0   500M  0 disk
 
 . Extract the archive with https://manpages.ubuntu.com/manpages/focal/en/man1/tar.1.html[tar(1)].
 +
-[source,sh]
+[,sh]
 ----
 ➜ tar xf ventoy-*-linux.tar.gz
 ----
 
 . Update the Ventoy flash drive by running the `Ventoy2Disk.sh` shell script as root with the `-u` flag and the path to the flash drive.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo ventoy-*/Ventoy2Disk.sh -u /dev/sdb
 
@@ -254,7 +254,7 @@ zd0              230:0    0   500M  0 disk
 --
 Enter kbd:[Y] to continue with the update.
 
-[source,sh]
+[,sh]
 ----
 Upgrade operation is safe, all the data in the 1st partition (iso files and other) will be unchanged!
 
@@ -268,7 +268,7 @@ Update Ventoy to /dev/sdb successfully finished.
 
 .. Unmount the _Ventoy_ storage partition.
 +
-[source,sh]
+[,sh]
 ----
 ➜ udisksctl unmount -b /dev/disk/by-label/Ventoy
 Unmounted /dev/sdb1.
@@ -276,7 +276,7 @@ Unmounted /dev/sdb1.
 
 .. Unmount the _VTOYEFI_ boot partition.
 +
-[source,sh]
+[,sh]
 ----
 ➜ udisksctl unmount -b /dev/disk/by-label/VTOYEFI
 Unmounted /dev/sdb2.
@@ -286,7 +286,7 @@ Unmounted /dev/sdb2.
 
 . If you are finished with the downloaded Ventoy files, clean them up now.
 +
-[source,sh]
+[,sh]
 ----
 ➜ rm -rf ventoy-*
 ----

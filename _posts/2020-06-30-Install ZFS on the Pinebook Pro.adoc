@@ -20,21 +20,21 @@ The following instructions detail how to install the ZFS DKMS module.
 
 . First, install DKMS on the Pinebook Pro.footnote:[https://wiki.archlinux.org/index.php/Dynamic_Kernel_Module_Support[Arch Linux Wiki: Dynamic Kernel Module Support]]
 +
-[source,sh]
+[,sh]
 ----
 $ sudo pacman -S dkms linux-pinebookpro-headers
 ----
 
 . The https://github.com/Jguer/yay[yay] tool provides a nifty way to install packages from the https://wiki.archlinux.org/index.php/Arch_User_Repository[AUR].
 +
-[source,sh]
+[,sh]
 ----
 $ sudo pacman -S yay
 ----
 
 . Then, install the https://aur.archlinux.org/packages/zfs-dkms-any/[zfs-dkms-any] package from the AUR.
 +
-[source,sh]
+[,sh]
 ----
 $ yay -S zfs-dkms-any
 ----
@@ -54,7 +54,7 @@ zfs
 
 . Enable importing pools and mounting datasets at boot.footnote:[https://wiki.archlinux.org/index.php/ZFS#Automatic_Start[Arch Linux Wiki: ZFS - Automatic Start]]
 +
-[source,sh]
+[,sh]
 ----
 $ sudo systemctl enable zfs-import-cache
 $ sudo systemctl enable zfs-import.target

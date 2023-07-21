@@ -32,14 +32,14 @@ You should be familiar with Manjaro, KDE Plasma, and the fish shell to get the m
 
 . Install GNOME Keyring.
 +
-[source,sh]
+[,sh]
 ----
 ➜ pacman -S gnome-keyring
 ----
 
 . Optionally, install the graphical {seahorse} application to help manage your GNOME Keyring.
 +
-[source,sh]
+[,sh]
 ----
 ➜ pacman -S seahorse
 ----
@@ -68,35 +68,35 @@ NOTE: For this to work, your keyring must use the same password you use to login
 
 . Autostart SSH and Secrets components of the GNOME keyring on login by copying their autostart files to your `~/.config/autostart` directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cp /etc/xdg/autostart/{gnome-keyring-secrets.desktop,gnome-keyring-ssh.desktop} ~/.config/autostart/
 ----
 
 . Strip out the `OnlyShowIn` line from the autostart file for the Secrets component.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sed -i '/^OnlyShowIn.*$/d' ~/.config/autostart/gnome-keyring-secrets.desktop
 ----
 
 . Also strip out the `OnlyShowIn` line from the autostart file for the SSH component.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sed -i '/^OnlyShowIn.*$/d' ~/.config/autostart/gnome-keyring-ssh.desktop
 ----
 
 . Create the `conf.d` configuration directory for fish startup scripts in order to keep things tidy.
 +
-[source,sh]
+[,sh]
 ----
 ➜ mkdir ~/.config/fish/conf.d
 ----
 
 . Set the `SSH_AUTH_SOCK` environment variable to the PID of the GNOME Keyring ssh-agent in a shell startup file to make it available in your terminal.
 +
-[source,sh]
+[,sh]
 .~/.config/fish/conf.d/gnome-keyring-ssh-agent.fish
 ----
 if test -n "$DESKTOP_SESSION"
@@ -106,7 +106,7 @@ end
 
 . Configure GnuPG to use GNOME Keyring to manage passphrase prompts.
 +
-[source,sh]
+[,sh]
 .~/.gnupg/gpg-agent.conf
 ----
 pinentry-program /usr/bin/pinentry-gnome3

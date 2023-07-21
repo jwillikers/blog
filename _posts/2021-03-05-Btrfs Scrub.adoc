@@ -66,7 +66,7 @@ It will scrub the entire filesystem where that directory resides.
 To initiate a scrub in the background, use the start subcommand followed by the path or device.
 Here I initiate a scrub on the device on which my root filesystem resides.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo btrfs scrub start (df --output=source / | tail -n 1)
 scrub started on /dev/mapper/sda2_crypt, fsid 175792e7-4167-40d1-aebc-78b948d6d378 (pid=10555)
@@ -75,7 +75,7 @@ scrub started on /dev/mapper/sda2_crypt, fsid 175792e7-4167-40d1-aebc-78b948d6d3
 To check on the status of a scrub, use the status subcommand and the path or device.
 Check the status of the previous scrub like so.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo btrfs scrub status (df --output=source / | tail -n 1)
 scrub status for 175792e7-4167-40d1-aebc-78b948d6d378
@@ -88,7 +88,7 @@ This is ideal for people like me who don't want to type a status command constan
 Use the `-B` flag to scrub in the foreground.
 This command scrubs my boot partition and returns once the scrub is complete.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo btrfs scrub start -B /boot
 scrub done for 264b42a6-a09c-40cc-b754-88926d43b395
@@ -166,14 +166,14 @@ The {systemctl} command handles interacting with systemd services and units.
 To start a scrub directly with the systemd service, start the the systemd unit with `{systemctl-start}`.
 Here, I start the unit on the root path of the filesystem which is converted by systemd to `-`.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemctl start btrfs-scrub@(systemd-escape -p /).service
 ----
 
 You can then check the status of the systemd service with `{systemctl-status}` as follows.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemctl status btrfs-scrub@(systemd-escape -p /).service
 ● btrfs-scrub@-.service - Btrfs scrub on /
@@ -209,7 +209,7 @@ If you miss a scrub due to your machine being powered off, the scrub will happen
 Use `{systemctl-enable}` to activate the timer.
 Here I set the timer to scrub the root filesystem automatically activate at boot while starting the timer immediately with `{systemctl-now}`.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemctl enable --now btrfs-scrub@(systemd-escape -p /).timer
 Created symlink /etc/systemd/system/timers.target.wants/btrfs-scrub@-.timer → /etc/systemd/system/btrfs-scrub@.timer.
@@ -217,7 +217,7 @@ Created symlink /etc/systemd/system/timers.target.wants/btrfs-scrub@-.timer → 
 
 As with the service, you can check the status of the systemd timer which is shown here.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemctl status btrfs-scrub@(systemd-escape -p /).timer
 ● btrfs-scrub@boot.timer - Btrfs scrub on / twice per month

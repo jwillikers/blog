@@ -61,7 +61,7 @@ OpenBSD has yet to natively support DHCPv6, so a third-party package was require
 I decided on https://roy.marples.name/projects/dhcpcd/[dhcpcd].
 There is a package available for https://sourceforge.net/projects/wide-dhcpv6/[wide-dhcpv6], but it lacks rc init scripts to conveniently integrate into the system's startup process.
 
-[source,sh]
+[,sh]
 ----
 pkg_add dhcpcd
 ----
@@ -93,7 +93,7 @@ interface em0 # <5>
 <8> Request a prefix delegation for all of my internal interfaces.
 
 I then enabled the dhcpcd service at boot.
-[source,sh]
+[,sh]
 ----
 rcctl enable dhcpcd
 ----
@@ -130,7 +130,7 @@ Ideally, my setup would have used my local Unbound instance for IPv6 DNS lookups
 Specifically, I'm at a loss for how to dynamically assign an IPv6 address to the Unbound server.
 
 I enabled rad to start at boot.
-[source,sh]
+[,sh]
 ----
 rcctl enable rad
 ----
@@ -196,7 +196,7 @@ net.inet6.ip6.forwarding=1
 
 Last of all, the system was rebooted to put all the changes in to take effect.
 
-[source,sh]
+[,sh]
 ----
 reboot
 ----
@@ -205,7 +205,7 @@ reboot
 
 Once my router had rebooted, I ran https://man.openbsd.org/ifconfig[ifconfig] to ensure that my interfaces had public IPv6 addresses.
 
-[source,sh]
+[,sh]
 ----
 ifconfig
 ----
@@ -218,7 +218,7 @@ They only had https://en.wikipedia.org/wiki/Link-local_address[link-local IPv6 a
 I thought that dhcpcd was not provisioning addresses correctly.
 Eventually, I realized that public IPv6 addresses are only shown for interfaces with active connections.
 
-[source,sh]
+[,sh]
 ----
 em0: flags=808843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST,AUTOCONF4> mtu 1500
 	lladdr 00:00:00:00:00:00
@@ -285,7 +285,7 @@ vlan2: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
 
 To make sure end-to-end connections were working over IPv6, I pinged https://www.cloudflare.com/[Cloudflare]'s DNS server from my laptop.
 
-[source,sh]
+[,sh]
 ----
 ping6 2606:4700:4700::1111
 ----

@@ -11,7 +11,7 @@ One such occurrence is on macOS when compiling a large {cpp} project.
 The following error message is output by https://clang.llvm.org/[LLVM Clang] 10.0.1 when compiling from the command-line.
 The https://www.jetbrains.com/clion/[Clion IDE] builds the project just fine, of course.
 
-[source,sh]
+[,sh]
 ----
 $ cmake --build build
 ...
@@ -37,7 +37,7 @@ What follows are step-by-step instructions for detecting and resolving this issu
 . First, check the existing soft and hard limits for the maximum number of open files.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ launchctl limit maxfiles
 	maxfiles    256            unlimited
@@ -50,7 +50,7 @@ This limit is much too low.
 . For the running session, remedy the problem by setting higher limits with `launchctl`.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ sudo launchctl limit maxfiles 65536 2147483647
 ----
@@ -96,28 +96,28 @@ However, such an approach only applies to a single user, doesn't account for cha
 
 . Ensure the file is owned by the `root` user and belongs to the `wheel` group.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo chown root:wheel /Library/LaunchDaemons/limit.maxfiles.plist
 ----
 
 . Set permissions on the file so that it is readable and writeable by the owner and only readable by group members and everyone else.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo chmod 644 /Library/LaunchDaemons/limit.maxfiles.plist
 ----
 
 . Create a system service from the script.footnote:[https://apple.stackexchange.com/a/345974/361122[AskDifferent: How do I use non-“legacy” launchctl commands to load and unload plists?]]footnote:[https://babodee.wordpress.com/2016/04/09/launchctl-2-0-syntax/[Babo D's Corner: Launchctl 2.0 Syntax]]
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo launchctl bootstrap system /Library/LaunchDaemons/limit.maxfiles.plist
 ----
 
 . Set the service to run at boot.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo launchctl enable system/limit.maxfiles
 ----
@@ -133,7 +133,7 @@ However, such an approach only applies to a single user, doesn't account for cha
 
 . Check to make sure the changes have taken effect for your shell.
 +
-[source,sh]
+[,sh]
 ----
 ➜ ulimit -S -n
 65536

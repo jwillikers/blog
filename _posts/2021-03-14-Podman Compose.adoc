@@ -30,14 +30,14 @@ You'll need to have Podman installed on your machine, which can be installed on 
 
 . Since Podman Compose is a Python tool, install Python 3 and pip.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt -y install python3 python3-pip
 ----
 
 . Now using pip, install the latest development version of Podman Compose.
 +
-[source,sh]
+[,sh]
 ----
 ➜ pip3 install --user https://github.com/containers/podman-compose/archive/devel.tar.gz
 ----
@@ -46,35 +46,35 @@ You'll need to have Podman installed on your machine, which can be installed on 
 
 fish::
 +
-[source,sh]
+[,sh]
 ----
 ➜ fish_add_path ~/.local/bin
 ----
 
 ZSH::
 +
-[source,sh]
+[,sh]
 ----
 ➜ echo "set PATH=$HOME/.local/bin:$PATH" >> ~/.zshrc; source ~/.zshrc
 ----
 
 Bash::
 +
-[source,sh]
+[,sh]
 ----
 ➜ echo "set PATH=$HOME/.local/bin:$PATH" >> ~/.bashrc; source ~/.bashrc
 ----
 
 . Create a directory for the Docker Compose file.
 +
-[source,sh]
+[,sh]
 ----
 ➜ mkdir -p ~/Projects/unifi-controller
 ----
 
 . Change to the new directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cd ~/Projects/unifi-controller
 ----
@@ -122,7 +122,7 @@ The volume dubbed _data_ here will use a Podman volume named `unifi-controller_d
 --
 Just like when using Docker Compose, the `up` subcommand creates and starts the container, and the `-d` flag backgrounds the process.
 
-[source,sh]
+[,sh]
 ----
 ➜ podman-compose up -d
 ----
@@ -132,14 +132,14 @@ Just like when using Docker Compose, the `up` subcommand creates and starts the 
 
 fish::
 +
-[source,sh]
+[,sh]
 ----
 ➜ open http://127.0.0.1:8443
 ----
 
 Other shells::
 +
-[source,sh]
+[,sh]
 ----
 ➜ xdg-open http://127.0.0.1:8443
 ----

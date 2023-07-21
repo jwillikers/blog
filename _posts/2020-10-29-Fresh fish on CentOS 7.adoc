@@ -14,14 +14,14 @@ For this tutorial to make a lick of sense, you should be familiar with the comma
 
 . If you aren't using the https://rpm-software-management.github.io/[DNF] package manager yet, grab that.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo yum -y install dnf
 ----
 
 . Add the https://fedoraproject.org/wiki/EPEL[EPEL] repository for retrieving necessary dependencies.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo dnf -y install \
   https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
@@ -29,7 +29,7 @@ For this tutorial to make a lick of sense, you should be familiar with the comma
 
 . Install the build dependencies.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo dnf -y install cmake3 gettext-devel git ncurses-devel ninja-build \
   pcre2-devel
@@ -37,14 +37,14 @@ For this tutorial to make a lick of sense, you should be familiar with the comma
 
 . Pull down the fish repository. 
 +
-[source,sh]
+[,sh]
 ----
 ➜ git clone https://github.com/fish-shell/fish-shell.git
 ----
 
 . Checkout the latest release tag.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git -C fish-shell switch --detach (git -C fish-shell describe --abbrev=0 --tags)
 HEAD is now at 0314b0f1d Release 3.1.2
@@ -52,21 +52,21 @@ HEAD is now at 0314b0f1d Release 3.1.2
 
 . Configure CMake in the directory `fish-shell/build`.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cmake3 -GNinja -B fish-shell/build -S fish-shell
 ----
 
 . Build fish.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cmake3 --build fish-shell/build
 ----
 
 . Install fish.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo cmake3 --install fish-shell/build
 -- Install configuration: "RelWithDebInfo"
@@ -74,7 +74,7 @@ HEAD is now at 0314b0f1d Release 3.1.2
 
 . Register the shell in https://www.freebsd.org/cgi/man.cgi?query=shells&manpath=CentOS+7.1[`/etc/shells`].
 +
-[source,sh]
+[,sh]
 ----
 ➜ echo /usr/local/bin/fish | sudo tee -a /etc/shells
 /usr/local/bin/fish
@@ -82,7 +82,7 @@ HEAD is now at 0314b0f1d Release 3.1.2
 
 . Change your login shell to fish.
 +
-[source,sh]
+[,sh]
 ----
 ➜ chsh -s /usr/local/bin/fish
 Changing shell for jordan.
@@ -96,14 +96,14 @@ Shell changed.
 
 Version 3.2.0 and newer::
 +
-[source,sh]
+[,sh]
 ----
 ➜ fish_add_path -p /usr/local/bin
 ----
 
 Versions prior to 3.2.0::
 +
-[source,sh]
+[,sh]
 ----
 ➜ set -pU fish_user_paths /usr/local/bin
 ----
@@ -115,7 +115,7 @@ For completeness, the instructions to update fish are provided below.
 
 . Checkout the latest release tag.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git -C fish-shell switch --detach (git -C fish-shell describe --abbrev=0 --tags)
 HEAD is now at 0314b0f1d Release 3.1.2
@@ -123,21 +123,21 @@ HEAD is now at 0314b0f1d Release 3.1.2
 
 . Configure CMake in the directory `fish-shell/build`.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cmake3 -GNinja -B fish-shell/build -S fish-shell
 ----
 
 . Build fish.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cmake3 --build fish-shell/build
 ----
 
 . Install fish.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo cmake3 --install fish-shell/build
 -- Install configuration: "RelWithDebInfo"
@@ -150,7 +150,7 @@ For instance, the https://www.qt.io/[Qt] 5 development packages work fine when u
 After switching to fish, building a Qt 5 application failed because it could not find the `xcb` plugin.
 Setting the `QT_QPA_PLATFORM_PLUGIN_PATH` to as shown below resolved this issue.
 
-[source,sh]
+[,sh]
 ----
 ➜ set -Ux QT_QPA_PLATFORM_PLUGIN_PATH /usr/lib64/qt5/plugins/platforms
 ----

@@ -15,14 +15,14 @@ To account for two distinct yet equally important use cases, instructions are pr
 
 . If you aren't using the https://rpm-software-management.github.io/[DNF] package manager yet, grab that.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo yum -y install dnf
 ----
 
 . Add the https://fedoraproject.org/wiki/EPEL[EPEL] repository for retrieving necessary dependencies.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo dnf -y install \
   https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
@@ -30,7 +30,7 @@ To account for two distinct yet equally important use cases, instructions are pr
 
 . Install the build dependencies.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo dnf -y install asciidoc curl-devel dh-autoreconf docbook2X expat-devel \
   gettext-devel openssl-devel perl-devel xmlto zlib-devel
@@ -38,7 +38,7 @@ To account for two distinct yet equally important use cases, instructions are pr
 
 . Account the different name of an executable on RPM-based distributions.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo ln -s /usr/bin/db2x_docbook2texi /usr/bin/docbook2x-texi
 ----
@@ -46,7 +46,7 @@ To account for two distinct yet equally important use cases, instructions are pr
 . Download the source code of the latest release.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ wget -L https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.29.2.tar.xz
 ----
@@ -60,14 +60,14 @@ The method used here describes where to grab the latest source code releases and
 
 . Download the corresponding signature file.
 +
-[source,sh]
+[,sh]
 ----
 ➜ wget -L https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.29.2.tar.sign
 ----
 
 . Decompress the archive.
 +
-[source,sh]
+[,sh]
 ----
 ➜ unxz git-2.29.2.tar.xz
 ----
@@ -75,7 +75,7 @@ The method used here describes where to grab the latest source code releases and
 . Verify the archive's signature.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ gpg --keyserver-options auto-key-retrieve git-2.29.2.tar.sign
 gpg: Signature made Thu 29 Oct 2020 05:14:01 PM CDT using RSA key ID 96AFE6CB
@@ -101,21 +101,21 @@ CAUTION: There are potential privacy concerns when automatically downloading the
 
 . Extract the source code from the archive.
 +
-[source,sh]
+[,sh]
 ----
 ➜ tar -xf git-2.29.2.tar
 ----
 
 . Change into the source directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cd git-2.29.2
 ----
 
 . Build the configure script.
 +
-[source,sh]
+[,sh]
 ----
 ➜ make configure
 GIT_VERSION = 2.29.2
@@ -139,19 +139,19 @@ This should probably be described in detail in another blog post more... but tha
 ====
 
 _fish_:::
-[source,sh]
+[,sh]
 ----
 ➜ ./configure --prefix=$HOME/.local/(gcc -dumpmachine)
 ----
 
 _Bash_:::
-[source,sh]
+[,sh]
 ----
 ➜ ./configure --prefix=$HOME/.local/$(gcc -dumpmachine)
 ----
 
 System-wide::
-[source,sh]
+[,sh]
 ----
 ➜ ./configure
 ----
@@ -163,13 +163,13 @@ NOTE: The configure script will arrange for installation under the `/usr/local` 
 +
 --
 _fish_::
-[source,sh]
+[,sh]
 ----
 ➜ make all doc info -j(nproc)
 ----
 
 _Bash_::
-[source,sh]
+[,sh]
 ----
 ➜ make all doc info -j$(nproc)
 ----
@@ -179,13 +179,13 @@ _Bash_::
 +
 --
 User::
-[source,sh]
+[,sh]
 ----
 ➜ make install install-doc install-html install-info
 ----
 
 System-wide::
-[source,sh]
+[,sh]
 ----
 ➜ sudo make install install-doc install-html install-info
 ----
@@ -196,13 +196,13 @@ System-wide::
 --
 User::
 _fish_:::
-[source,sh]
+[,sh]
 ----
 ➜ fish_add_path -p ~/.local/(gcc -dumpmachine)/bin
 ----
 
 _Bash_:::
-[source,sh]
+[,sh]
 ----
 ➜ echo 'export PATH=$HOME/.local/$(gcc -dumpmachine)/bin:$PATH' >> ~/.bashrc
 ➜ source ~/.bashrc
@@ -212,7 +212,7 @@ System-wide::
 
 . Ensure that `/usr/local/bin` is on the `PATH` in the `/etc/environment` file used by PAM.
 +
-[source,sh]
+[,sh]
 ./etc/environment
 ----
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
@@ -223,14 +223,14 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/us
 
 . Change out of the source directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cd ..
 ----
 
 . Cleanup the source directory and tarball now that are no longer needed.
 +
-[source,sh]
+[,sh]
 ----
 ➜ rm -rf git-2.29.1 git-2.29.2.tar git-2.29.2.tar.sign
 ----
@@ -242,7 +242,7 @@ Now that Git has been installed, you can build newer versions of Git directly fr
 . Checkout Git's source code repository.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ git clone git://git.kernel.org/pub/scm/git/git.git
 Cloning into 'git'...
@@ -270,7 +270,7 @@ You should still do that from within your home directory.
 
 . Change into the source directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cd git
 ----
@@ -279,14 +279,14 @@ You should still do that from within your home directory.
 +
 --
 _fish_::
-[source,sh]
+[,sh]
 ----
 ➜ git switch --detach (git describe --abbrev=0 --tags)
 HEAD is now at b927c80531 Git 2.29.2
 ----
 
 _Bash_::
-[source,sh]
+[,sh]
 ----
 ➜ git switch --detach $(git describe --abbrev=0 --tags)
 HEAD is now at b927c80531 Git 2.29.2
@@ -295,7 +295,7 @@ HEAD is now at b927c80531 Git 2.29.2
 
 . Build the configure script.
 +
-[source,sh]
+[,sh]
 ----
 ➜ make configure
 GIT_VERSION = 2.29.2
@@ -304,14 +304,14 @@ GIT_VERSION = 2.29.2
 
 . Create a build directory to avoid cluttering the sourced directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ mkdir build
 ----
 
 . Change into the build directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cd build
 ----
@@ -321,19 +321,19 @@ GIT_VERSION = 2.29.2
 --
 User::
 _fish_:::
-[source,sh]
+[,sh]
 ----
 ➜ ../configure --prefix=~/.local/(gcc -dumpmachine)
 ----
 
 _Bash_:::
-[source,sh]
+[,sh]
 ----
 ➜ ../configure --prefix=~/.local/$(gcc -dumpmachine)
 ----
 
 System-wide::
-[source,sh]
+[,sh]
 ----
 ➜ ../configure
 ----
@@ -343,13 +343,13 @@ System-wide::
 +
 --
 _fish_::
-[source,sh]
+[,sh]
 ----
 ➜ make all doc info -j(nproc)
 ----
 
 _Bash_::
-[source,sh]
+[,sh]
 ----
 ➜ make all doc info -j$(nproc)
 ----
@@ -359,13 +359,13 @@ _Bash_::
 +
 --
 User::
-[source,sh]
+[,sh]
 ----
 ➜ make install install-doc install-html install-info
 ----
 
 System-wide::
-[source,sh]
+[,sh]
 ----
 ➜ sudo make install install-doc install-html install-info
 ----
@@ -373,14 +373,14 @@ System-wide::
 
 . Change out of the build directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cd ..
 ----
 
 . Clean up the lingering build artifacts by deleting the `build` directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ rm -rf build
 ----

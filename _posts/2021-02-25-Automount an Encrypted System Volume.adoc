@@ -42,7 +42,7 @@ Let's go!
 
 . Locate the drive's device path with {lsblk}.
 +
-[source,sh]
+[,sh]
 ----
 ➜ lsblk
 NAME           MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
@@ -58,7 +58,7 @@ sr0             11:0    1  1024M  0 rom
 
 . Unlock the encrypted volume.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo cryptsetup open /dev/sdb1 backup_crypt
 Enter passphrase for /dev/sdb1: 
@@ -67,7 +67,7 @@ Enter passphrase for /dev/sdb1:
 . Mount the now decrypted volume.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemd-mount /dev/mapper/backup_crypt
 Started unit run-media-system-System_Backups.mount for mount point: /run/media/system/System_Backups
@@ -81,7 +81,7 @@ The mount point here reflects the label of the Btrfs volume, which is "System Ba
 
 . Create a Btrfs subvolume to hold backups of the root filesystem.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo btrfs subvolume create /run/media/system/System_Backups/root_backups
 Create subvolume '/run/media/system/System_Backups/root_backups'
@@ -89,7 +89,7 @@ Create subvolume '/run/media/system/System_Backups/root_backups'
 
 . Unmount the Btrfs filesystem.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemd-umount /run/media/system/System_Backups
 Stopped unit run-media-system-System_Backups.mount for mount point: /run/media/system/System_Backups
@@ -98,7 +98,7 @@ Stopped unit run-media-system-System_Backups.mount for mount point: /run/media/s
 . Ensure that the standard systemd directory for Cryptsetup keyfiles exists.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ sudo mkdir /etc/cryptsetup-keys.d
 ----
@@ -109,7 +109,7 @@ This directory is specified in the {systemd-cryptsetup} man page.
 . Generate a new keyfile that will be used to decrypt the encrypted volume.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ sudo dd if=/dev/urandom of=/etc/cryptsetup-keys.d/backup_crypt.key bs=1024 \
   count=4
@@ -123,14 +123,14 @@ The keyfile should be named after the associated volume.
 
 . Ensure that only _root_ can read this file.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo chmod 0400 /etc/cryptsetup-keys.d/backup_crypt.key
 ----
 
 . Add the keyfile to the device.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo cryptsetup luksAddKey /dev/sdb1 /etc/cryptsetup-keys.d/backup_crypt.key
 Enter any existing passphrase: 
@@ -139,7 +139,7 @@ Enter any existing passphrase:
 . Add an entry in {crypttab} for the device.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ echo "backup_crypt UUID="(sudo blkid -o value -s UUID /dev/sdb1)" /etc/cryptsetup-keys.d/backup_crypt.key luks,noauto,nofail,discard" \
   | sudo tee -a /etc/crypttab
@@ -157,7 +157,7 @@ systemd will generate the {systemd-cryptsetup} unit `systemd-cryptsetup@backup_c
 . Add an entry in {fstab} to mount the Btrfs subvolume with the appropriate mount options.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ echo "/dev/mapper/backup_crypt /run/media/system/System_Backups btrfs defaults,nofail,noauto,x-systemd.automount,noatime,autodefrag,compress=zstd,commit=120,subvol=root_backups 0 0" \
   | sudo tee -a /etc/fstab
@@ -172,7 +172,7 @@ systemd will generate the {systemd-mount-unit} unit `run-media-system-System_Bac
 
 . Verify there aren't any errors in fstab.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo findmnt --verify --verbose
 ...
@@ -189,21 +189,21 @@ systemd will generate the {systemd-mount-unit} unit `run-media-system-System_Bac
 
 . Lock the encrypted volume.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo cryptsetup close backup_crypt
 ----
 
 . Reload the changes in fstab and crypttab and generate the corresponding unit files.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemctl daemon-reload
 ----
 
 . Restart the Cryptsetup target in order to make sure that the volume isn't decrypted automatically.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemctl restart cryptsetup.target
 ----
@@ -211,7 +211,7 @@ systemd will generate the {systemd-mount-unit} unit `run-media-system-System_Bac
 . Now verify that the encrypted volume has not been decrypted yet.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemctl status systemd-cryptsetup@backup_crypt.service
 ● systemd-cryptsetup@backup_crypt.service - Cryptography Setup for backup_crypt
@@ -224,7 +224,7 @@ The cryptsetup unit is marked _inactive_, so volume has not been decrypted yet.
 
 . Test that new volume is automatically mounted when accessed by creating a new file under the mount point.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo touch /run/media/system/System_Backups/file
 ----
@@ -232,7 +232,7 @@ The cryptsetup unit is marked _inactive_, so volume has not been decrypted yet.
 . You can now see that the volume has been decrypted because its cryptsetup target is active.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemctl status systemd-cryptsetup@backup_crypt.service
 ● systemd-cryptsetup@backup_crypt.service - Cryptography Setup for backup_crypt
@@ -244,7 +244,7 @@ The cryptsetup unit is marked _inactive_, so volume has not been decrypted yet.
 ====
 You can also check the status of the Cryptsetup volume using `cryptsetup status`.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo cryptsetup status backup_crypt
 /dev/mapper/backup_crypt is active and is in use.
@@ -264,7 +264,7 @@ You can also check the status of the Cryptsetup volume using `cryptsetup status`
 
 . Likewise, the decrypted Btrfs filesystem has been mounted automatically because its mount unit is now active.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemctl status run-media-system-System_Backups.mount
 ● run-media-system-System_Backups.mount - /run/media/system/System_Backups

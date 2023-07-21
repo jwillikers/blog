@@ -24,7 +24,7 @@ On macOS, the X11 software is available from the https://www.xquartz.org/[XQuart
 
 . Ensure the SSH server has the required https://www.x.org/archive/X11R6.8.1/doc/xauth.1.html[`xauth`] program.
 +
-[source,sh]
+[,sh]
 ----
 ➜ which xauth
 /usr/bin/xauth
@@ -41,7 +41,7 @@ ForwardX11 yes
 . Open an SSH connection with X11 forwarding by adding the `-X` flag on the command-line.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ ssh -CX mordor
 ----
@@ -58,7 +58,7 @@ TIP: Enable compression when using X11 forwarding with the `-C` flag, as done he
 . If the graphical application your using requires fully trusting X11, use the `-Y` flag instead.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ ssh -CY helms-deep
 ----
@@ -71,7 +71,7 @@ CAUTION: Your key presses can be captured on the remote machine so make sure you
 --
 Execute https://wiki.gnome.org/Apps/Terminal[GNOME Terminal], for instance.
 
-[source,sh]
+[,sh]
 ----
 ➜ gnome-terminal
 ----
@@ -99,7 +99,7 @@ It's not necessary to keep a dedicated terminal open with the SSH process runnin
 Use the `-f` flag to execute a program on the remote machine and background the SSH process.
 The following example demonstrates this by running GNOME Terminal on the remote host.
 
-[source,sh]
+[,sh]
 ----
 ➜ ssh -CYf helms-deep gnome-terminal
 ----

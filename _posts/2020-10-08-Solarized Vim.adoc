@@ -10,21 +10,21 @@ This guide assumes you are familiar with installing packages from the command-li
 
 . First, install Vim and Git if you haven't already done so.
 +
-[source,sh]
+[,sh]
 ----
 sudo apt -y install git vim
 ----
 
 . Create a `plugins` directory according to Vim's plugin directory scheme for autoloaded plugins, i.e. `\~/.vim/pack/\*/start`.
 +
-[source,sh]
+[,sh]
 ----
 ➜ mkdir -p ~/.vim/pack/plugins/start
 ----
 
 . Download the Solarized plugin's git repository in this directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git clone https://github.com/altercation/vim-colors-solarized.git \
   ~/.vim/pack/plugins/start/vim-colors-solarized
@@ -33,7 +33,7 @@ sudo apt -y install git vim
 . Optionally, update the help index with the new plugin's documentation.footnote:[https://wiki.archlinux.org/index.php/vim#Using_the_built-in_package_manager[Arch Wiki: Vim - Using the built-in package manager]]
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ vim -u NONE -c "helptags vim-colors-solarized/doc" -c q
 ----

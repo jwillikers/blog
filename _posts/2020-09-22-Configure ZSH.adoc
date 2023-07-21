@@ -16,7 +16,7 @@ Plus, it details how to install and configure Antigen, oh-my-zsh, autosuggestion
 
 . Install ZSH.footnote:[https://github.com/ohmyzsh/ohmyzsh/wiki/Installing-ZSH[oh-my-zsh Wiki: Installing ZSH]]
 +
-[source,sh]
+[,sh]
 ----
 $ sudo apt -y install zsh
 ----
@@ -26,7 +26,7 @@ $ sudo apt -y install zsh
 --
 Debian provides a convenient https://manpages.ubuntu.com/manpages/en/man8/add-shell.8.html[`add-shell`] command to accomplish this.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo add-shell /usr/bin/zsh
 ----
@@ -34,7 +34,7 @@ Debian provides a convenient https://manpages.ubuntu.com/manpages/en/man8/add-sh
 
 . Set the default shell to `zsh`.
 +
-[source,sh]
+[,sh]
 ----
 $ chsh -s `which zsh`
 Changing shell for jordan.
@@ -48,7 +48,7 @@ Shell changed.
 There is a https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=906757[bug] in the https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=zsh-antigen;dist=unstable[debian package] at this time, so manually download and install it.footnote:[There is also an https://bugs.launchpad.net/ubuntu/+source/zsh-antigen/+bug/1770915[Ubuntu bug report] and an https://github.com/zsh-users/antigen/issues/659[Antigen bug report.]]
 +
 --
-[source,sh]
+[,sh]
 ----
 $ wget -q git.io/antigen
 $ sudo mkdir /usr/share/zsh-antigen
@@ -59,7 +59,7 @@ $ sudo mv antigen /usr/share/zsh-antigen/antigen.zsh
 ====
 When the bug is fixed, you can simply install the package with https://wiki.debian.org/Aptitude[Aptitude] as follows.
 
-[source,sh]
+[,sh]
 ----
 $ sudo apt -y install zsh-antigen
 ----
@@ -98,7 +98,7 @@ antigen apply
 . Now, from the `.zshrc` file load Antigen and the `.antigenrc` configuration file.
 +
 .~/.zshrc
-[source,sh]
+[,sh]
 ----
 # Load Antigen
 source /usr/share/zsh-antigen/antigen.zsh
@@ -109,14 +109,14 @@ antigen init ~/.antigenrc
 
 . Load the updated `.zshrc` configuration file.
 +
-[source,sh]
+[,sh]
 ----
 $ source ~/.zshrc
 ----
 
 . Update the plugins as needed.footnote:[https://github.com/zsh-users/antigen/wiki/Commands#antigen-update[Antigen Wiki: Commands - antigen update]]
 +
-[source,sh]
+[,sh]
 ----
 $ antigen update
 ----

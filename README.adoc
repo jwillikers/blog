@@ -30,35 +30,35 @@ These steps assume you are on Fedora and familiar with the Linux command-line an
 
 . Clone the blog's repository.
 +
-[source,sh]
+[,sh]
 ----
 git -C ~/Projects clone git@github.com:jwillikers/blog.git
 ----
 
 . Change into the blog's directory.
 +
-[source,sh]
+[,sh]
 ----
 cd ~/Projects/blog
 ----
 
 . Install the dependencies needed for asdf.
 +
-[source,sh]
+[,sh]
 ----
 sudo dnf -y install gcc gcc-c++ libffi-devel ruby-devel rubygem-bundler
 ----
 
 . Configure a project-specific directory for Gems.
 +
-[source,sh]
+[,sh]
 ----
 bundle config set --local path 'vendor/bundle'
 ----
 
 . Install the required Ruby gems.
 +
-[source,sh]
+[,sh]
 ----
 bundle install
 ----
@@ -67,7 +67,7 @@ bundle install
 
 The website can be generated locally by passing the `b` subcommand, i.e. _build_, to Jekyll.
 
-[source,sh]
+[,sh]
 ----
 bundle exec jekyll b
 ----
@@ -79,7 +79,7 @@ The steps below describe how to do this below, assuming you are in the project d
 
 . Run the `jekyll` executable with the `s` subcommand, i.e. _serve_.
 +
-[source,sh]
+[,sh]
 ----
 bundle exec jekyll s
 Configuration file: /home/jordan/Source/blog/_config.yml
@@ -95,7 +95,7 @@ Configuration file: /home/jordan/Source/blog/_config.yml
 
 . Open the server address provided in the previous output with your web browser of choice.
 +
-[source,sh]
+[,sh]
 ----
 open http://127.0.0.1:4000/
 ----
@@ -107,7 +107,7 @@ open http://127.0.0.1:4000/
 Continuous integration is configured through GitHub Actions.
 Trigger the CI to build and deploy by pushing changes to the `main` branch on the GitHub remote.
 
-[source,sh]
+[,sh]
 ----
 git push
 ----
@@ -118,7 +118,7 @@ The updated website is deployed to https://jwillikers.com[jwillikers.com].
 
 Update the Gems with the `bundle update` command.
 
-[source,sh]
+[,sh]
 ----
 bundle update
 ----

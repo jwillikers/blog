@@ -31,7 +31,7 @@ From this page, download the https://downloads.openwrt.org/releases/19.07.1/targ
 The RouterBoard will boot this `.elf` file from the network and the sysupgrade `.bin` file will be flashed, i.e. installed, on to the RouterBoard.
 
 .Download with `curl`
-[source,sh]
+[,sh]
 curl https://downloads.openwrt.org/releases/19.07.1/targets/ar71xx/mikrotik/openwrt-19.07.1-ar71xx-mikrotik-vmlinux-initramfs-lzma.elf
 curl https://downloads.openwrt.org/releases/19.07.1/targets/ar71xx/mikrotik/openwrt-19.07.1-ar71xx-mikrotik-rb-nor-flash-16M-squashfs-sysupgrade.bin
 
@@ -39,7 +39,7 @@ CAUTION: It is important to verify the integrity of the downloaded files before 
 OpenWrt documents this https://openwrt.org/docs/guide-quick-start/verify_firmware_checksum[here].
 
 .Verify the Checksum
-[source,sh]
+[,sh]
 ----
 cat 9af1a143c64db0bbd901b1a8a513c56daf3f2b0aaf408e8b12017c93dbb9cb8a > openwrt-19.07.1-ar71xx-mikrotik-rb-nor-flash-16M-squashfs-sysupgrade.bin.SHA256 # <1>
 sha256sum -c openwrt-19.07.1-ar71xx-mikrotik-vmlinux-initramfs-lzma.elf.SHA256 openwrt-19.07.1-ar71xx-mikrotik-vmlinux-initramfs-lzma.elf # <2>
@@ -52,7 +52,7 @@ sha256sum -c openwrt-19.07.1-ar71xx-mikrotik-rb-nor-flash-16M-squashfs-sysupgrad
 --
 
 . Setup the NetBoot Directory
-[source,sh]
+[,sh]
 ----
 ln -s openwrt-19.07.1-ar71xx-mikrotik-vmlinux-initramfs-lzma.elf openwrt-ar71xx-mikrotik-vmlinux-initramfs.elf # <1>
 mkdir -p ~/mikrotik/trunk/bin/ar71xx/
@@ -69,7 +69,7 @@ The `dnsmasq-base` package was already installed on my system, making the `dnsma
 
 . Run NetBoot
 
-[source,sh]
+[,sh]
 ----
 ifconfig eth0 192.168.1.10 up # <1>
 sudo dnsmasq -i eth0 --dhcp-range=192.168.1.100,192.168.1.200 \ # <2>
@@ -84,7 +84,7 @@ sudo dnsmasq -i eth0 --dhcp-range=192.168.1.100,192.168.1.200 \ # <2>
 ====
 In the commands above, `eth0` represents the name of the ethernet interface connecting your computer to the RouterBoard.
 To find the name of your ethernet interface, use the `ifconfig` command from the `net-tools` package.
-[source,sh]
+[,sh]
 ----
 apt install net-tools
 ifconfig # <1>

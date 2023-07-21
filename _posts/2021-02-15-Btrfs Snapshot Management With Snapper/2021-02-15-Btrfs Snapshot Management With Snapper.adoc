@@ -55,14 +55,14 @@ To install Snapper this way, follow these instructions.
 
 . Install the necessary package for easily adding PPA's.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt -y install software-properties-common
 ----
 
 . Add the Snapper repository for Ubuntu 18.04, off which elementaryOS Hera 5.1 is based, to the system's sources.
 +
-[source,sh]
+[,sh]
 ----
 ➜ echo 'deb http://download.opensuse.org/repositories/filesystems:/snapper/xUbuntu_18.04/ /' \
   | sudo tee /etc/apt/sources.list.d/filesystems:snapper.list
@@ -71,7 +71,7 @@ deb http://download.opensuse.org/repositories/filesystems:/snapper/xUbuntu_18.04
 
 . Trust the repository's GPG key. 
 +
-[source,sh]
+[,sh]
 ----
 ➜ wget -qO - https://download.opensuse.org/repositories/filesystems:/snapper/xUbuntu_18.04/Release.key \
   | gpg --dearmor \
@@ -80,14 +80,14 @@ deb http://download.opensuse.org/repositories/filesystems:/snapper/xUbuntu_18.04
 
 . Refresh the package sources.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt update
 ----
 
 . Install Snapper.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt -y install snapper
 ----
@@ -110,7 +110,7 @@ The subvolume is created according to a {flat-layout}, so it exists at the top-l
 
 . Mount the volume containing the root subvolume to `/mnt`.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo mount (df --output=source / | tail -n 1) /mnt
 ----
@@ -121,7 +121,7 @@ The subvolume is created according to a {flat-layout}, so it exists at the top-l
 Here the subvolume will be named `snapshots`.
 If you prefer to prefix the name with `@`, be my guest.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo btrfs subvolume create /mnt/snapshots
 ----
@@ -129,7 +129,7 @@ If you prefer to prefix the name with `@`, be my guest.
 
 . Add an entry in fstab to mount the snapshots subvolume.
 +
-[source,sh]
+[,sh]
 ----
 ➜ echo (df --output=source / | tail -n 1)" /.snapshots btrfs defaults,autodefrag,compress=zstd,commit=120,noatime,subvol=snapshots 0 0" \
   | tee -a /etc/fstab
@@ -137,14 +137,14 @@ If you prefer to prefix the name with `@`, be my guest.
 
 . Mount the snapshots subvolume.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo mount /.snapshots
 ----
 
 . Unmount _/mnt_.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo umount /mnt
 ----
@@ -156,7 +156,7 @@ One config file is used for each subvolume that Snapper will snapshot.
 Typically, a new Snapper configuration is generated with a single command given the name for the config and the path of the subvolume to snapshot. 
 A configuration for the root subvolume, aptly named _root_, would be generated as shown here.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo snapper -c root create-config /
 ----
@@ -166,7 +166,7 @@ The instructions below create a config manually as a workaround.
 
 . Create a _root_ config file by copying the template file to the configs directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cp /etc/snapper/config-templates/default /etc/snapper/configs/root
 ----
@@ -210,7 +210,7 @@ This is much simpler.
 
 Create a subvolume for snapshots in the user's home directory.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo btrfs subvolume create ~/.snapshots
 ----
@@ -227,7 +227,7 @@ This configuration assumes that the user's home directory resides on a dedicated
 
 . Create a Snapper configuration file for the user's home directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo cp /etc/snapper/config-templates/default /etc/snapper/configs/home_jordan
 ----
@@ -266,7 +266,7 @@ The steps necessary to install Snapper's PAM module follow.
 
 . Install Snapper's PAM module.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt -y install libpam-snapper
 ----

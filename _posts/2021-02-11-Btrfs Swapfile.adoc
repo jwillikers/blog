@@ -39,14 +39,14 @@ You should consider a dedicated, encrypted swap partition if you desire this fea
 
 . Mount the root Btrfs filesystem to create a subvolume. 
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo mount (df --output=source / | tail -n 1) /mnt
 ----
 
 . Create a dedicated Btrfs subvolume for swap in order to exclude the swapfile from snapshots.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo btrfs subvolume create /mnt/swap
 Create subvolume '/mnt/swap'
@@ -54,21 +54,21 @@ Create subvolume '/mnt/swap'
 
 . Set the appropriate permissions on the swap subvolume so that only the owner, the root user in this case, has access to the subvolume.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo chmod 700 /mnt/swap
 ----
 
 . Create a directory at where the swap subvolume will be mounted.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo mkdir /swap
 ----
 
 . Add the subvolume to _{fstab}_.
 +
-[source,sh]
+[,sh]
 ----
 ➜ echo (df --output=source / \
   | tail -n 1)" /swap btrfs defaults,noatime,subvol=swap 0 0" \
@@ -78,49 +78,49 @@ Create subvolume '/mnt/swap'
 
 . Now mount the swap subvolume according to the rules just add in fstab.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo mount /swap
 ----
 
 . Create an empty swapfile within the swap subvolume.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo truncate -s 0 /swap/swapfile
 ----
 
 . Disable Copy-on-Write for the swapfile.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo chattr +C /swap/swapfile
 ----
 
 . Make sure to disable compression on the swapfile.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo btrfs property set /swap/swapfile compression none
 ----
 
 . Allocate the file with as much space as there is RAM on the system.footnote:[For better recommendations on the size of your swapfile, refer to the table _Recommended System Swap Space_ in the _{recommended-partitioning-scheme}_ section of Fedora's installation documentation.]
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo fallocate -l (free -h | awk 'NR == 2 {print $2}') /swap/swapfile
 ----
 
 . Only allow access to the swapfile by its owner, the root user, to prevent snooping.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo chmod 600 /swap/swapfile
 ----
 
 . Initialize the swapfile.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo mkswap /swap/swapfile
 Setting up swapspace version 1, size = 7.8 GiB (8355049472 bytes)
@@ -129,21 +129,21 @@ no label, UUID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 
 . Enable the swapfile!
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo swapon /swap/swapfile
 ----
 
 . Add the swapfile to _/etc/fstab_ so that {systemd} will initialize it automatically when booting the system.footnote:[How systemd handles swap is documented thoroughly in the corresponding man page: {systemd-swap-man}.]
 +
-[source,sh]
+[,sh]
 ----
 ➜ echo "/swap/swapfile none swap defaults 0 0" | sudo tee -a /etc/fstab
 ----
 
 . Verify there are no errors in _/etc/fstab_.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo findmnt --verify --verbose
 ----
@@ -154,7 +154,7 @@ no label, UUID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 This is described in the ArchWiki's page on Swap in the _{archwiki-swappiness}_ section.
 A lower setting as used here advises the kernel to avoid swapping.
 
-[source,sh]
+[,sh]
 ----
 echo vm.swappiness=10 | sudo tee /etc/sysctl.d/99-swappiness.conf
 vm.swappiness=10

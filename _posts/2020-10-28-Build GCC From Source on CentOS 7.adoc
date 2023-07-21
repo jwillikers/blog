@@ -17,28 +17,28 @@ Shell commands are provided in both https://www.gnu.org/software/bash/[Bash], th
 
 . If you aren't using the https://rpm-software-management.github.io/[DNF] package manager yet, grab that.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo yum -y install dnf
 ----
 
 . Install the dependencies necessary to build GCC.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo dnf -y install bzip2 wget gcc gcc-c++ gmp-devel mpfr-devel libmpc-devel make
 ----
 
 . Download the latest release, GCC 10.2.0 in this case, available https://ftp.gnu.org/gnu/gcc/[here].
 +
-[source,sh]
+[,sh]
 ----
 ➜ wget https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz
 ----
 
 . Download the corresponding signature file.
 +
-[source,sh]
+[,sh]
 ----
 ➜ wget https://ftp.gnu.org/gnu/gcc/gcc-10.2.0/gcc-10.2.0.tar.xz.sig
 ----
@@ -46,7 +46,7 @@ Shell commands are provided in both https://www.gnu.org/software/bash/[Bash], th
 . Verify the archive's signature.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ gpg --keyserver-options auto-key-retrieve gcc-10.2.0.tar.xz.sig
 gpg: Signature made Thu 23 Jul 2020 01:57:41 AM CDT using RSA key ID FC26A641
@@ -74,21 +74,21 @@ CAUTION: There are potential privacy concerns when automatically downloading the
 
 . Extract the archive.
 +
-[source,sh]
+[,sh]
 ----
 ➜ tar xf gcc-10.2.0.tar.xz
 ----
 
 . Make a build directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ mkdir gcc-10.2.0-build
 ----
 
 . Change into the build directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cd gcc-10.2.0-build
 ----
@@ -96,7 +96,7 @@ CAUTION: There are potential privacy concerns when automatically downloading the
 . Run the https://www.gnu.org/prep/standards/html_node/Configuration.html[configure script] to prepare the build.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ ../gcc-10.2.0/configure --enable-languages=c,c++,fortran \
   --disable-multilib --prefix=$HOME/.gcc/10.2.0
@@ -107,7 +107,7 @@ NOTE: GCC is configured to install to the user's home directory here, but can ea
 
 . Build GCC.
 +
-[source,sh]
+[,sh]
 ----
 # Bash
 ➜ make -j$(nproc)
@@ -120,21 +120,21 @@ NOTE: GCC is configured to install to the user's home directory here, but can ea
 
 . Install GCC.
 +
-[source,sh]
+[,sh]
 ----
 ➜ make install
 ----
 
 . Change out of the build directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cd ..
 ----
 
 . Free up some disk space by deleting the remaining source and build artifacts.
 +
-[source,sh]
+[,sh]
 ----
 ➜ rm -rf gcc-10.2.0 gcc-10.2.0-build gcc-10.2.0.tar.xz
 ----
@@ -146,7 +146,7 @@ The shell variables are configured to persist across shell sessions below.
 
 . Set the `CC` variable to the path to the C compiler.
 +
-[source,sh]
+[,sh]
 ----
 # Bash
 ➜ echo "export CC=$HOME/.gcc/10.2.0/bin/gcc" >> ~/.bashrc
@@ -158,7 +158,7 @@ The shell variables are configured to persist across shell sessions below.
 
 . Set the `CXX` variable to the path of the {cpp} compiler.
 +
-[source,sh]
+[,sh]
 ----
 # Bash
 ➜ echo "export CXX=$HOME/.gcc/10.2.0/bin/g++" >> ~/.bashrc
@@ -170,7 +170,7 @@ The shell variables are configured to persist across shell sessions below.
 
 . Set the `FC` variable to the path of the Fortran compiler.
 +
-[source,sh]
+[,sh]
 ----
 # Bash
 ➜ echo "export FC=$HOME/.gcc/10.2.0/bin/gfortran" >> ~/.bashrc
@@ -182,7 +182,7 @@ The shell variables are configured to persist across shell sessions below.
 
 . Prepend the compiler's executable directory, `bin`, to the `PATH` environment variable.
 +
-[source,sh]
+[,sh]
 ----
 # Bash
 ➜ echo "export PATH=$HOME/.gcc/10.2.0/bin:$PATH" >> ~/.bashrc
@@ -194,7 +194,7 @@ The shell variables are configured to persist across shell sessions below.
 
 . Prepend the compiler's library directory, `lib64`, to the `LD_LIBRARY_PATH` environment variable.
 +
-[source,sh]
+[,sh]
 ----
 # Bash
 ➜ echo "export LD_LIBRARY_PATH=$HOME/.gcc/10.2.0/lib64:$LD_LIRBARY_PATH" >> ~/.bashrc
@@ -210,7 +210,7 @@ When using https://cmake.org/[CMake], it is also possible to set certain CMake v
 This isolates the potential effects from setting environment variables globally, which may incidentally effect other builds.
 Set these variables in the CMake cache like so.
 
-[source,sh]
+[,sh]
 ----
 ➜ cmake \
   -DCMAKE_C_COMPILER=$HOME/.gcc/10.2.0/bin/gcc \

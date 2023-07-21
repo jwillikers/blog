@@ -68,14 +68,14 @@ systemd,
 
 User::
 +
-[source,sh]
+[,sh]
 ----
 ➜ flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 ----
 
 System::
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo flatpak --system remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 ----
@@ -84,14 +84,14 @@ System::
 
 User::
 +
-[source,sh]
+[,sh]
 ----
 ➜ flatpak --user install -y flathub org.gnome.Boxes
 ----
 
 System::
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo flatpak --system install -y flathub org.gnome.Boxes
 ----
@@ -100,7 +100,7 @@ System::
 
 Install the GNOME Boxes Ubuntu package.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt -y install gnome-boxes
 ----
@@ -129,14 +129,14 @@ Here's how to create the subvolume.
 
 Flatpak::
 +
-[source,sh]
+[,sh]
 ----
 ➜ rmdir ~/.var/app/org.gnome.Boxes/data/gnome-boxes/images
 ----
 
 System Package::
 +
-[source,sh]
+[,sh]
 ----
 ➜ rmdir ~/.local/share/gnome-boxes/images
 ----
@@ -145,7 +145,7 @@ System Package::
 
 Flatpak::
 +
-[source,sh]
+[,sh]
 ----
 ➜ btrfs subvolume create ~/.var/app/org.gnome.Boxes/data/gnome-boxes/images
 Create subvolume '/home/jordan/.var/app/org.gnome.Boxes/data/gnome-boxes/images'
@@ -154,7 +154,7 @@ Create subvolume '/home/jordan/.var/app/org.gnome.Boxes/data/gnome-boxes/images'
 System Package::
 +
 +
-[source,sh]
+[,sh]
 ----
 ➜ btrfs subvolume create ~/.local/share/gnome-boxes/images
 Create subvolume '/home/jordan/.local/share/gnome-boxes/images'
@@ -179,14 +179,14 @@ The following commands disable _CoW_ on Boxes' image directory.
 
 Flatpak::
 +
-[source,sh]
+[,sh]
 ----
 ➜ chattr +C ~/.var/app/org.gnome.Boxes/data/gnome-boxes/images
 ----
 
 System Package::
 +
-[source,sh]
+[,sh]
 ----
 ➜ chattr +C ~/.local/share/gnome-boxes/images
 ----
@@ -211,7 +211,7 @@ The steps here walk through the steps to disable _CoW_ on the Boxes storage pool
 . Find the Boxes storage pool with the {virsh-pool-list} subcommand.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ virsh pool-list
  Name                 State      Autostart 
@@ -226,7 +226,7 @@ libvirt's default pool is simply called _default_ while Boxes' pool is named _gn
 . To view the current XML configuration for a pool, use the {virsh-pool-dumpxml} subcommand followed by the pool's name.
 Here I output the default pool's XML configuration where you can verify _path_ is as expected for the Flatpak.
 +
-[source,sh]
+[,sh]
 ----
 ➜ virsh pool-dumpxml gnome-boxes
 <pool type='dir'>
@@ -252,7 +252,7 @@ Here I output the default pool's XML configuration where you can verify _path_ i
 . To edit a pool's configuration, use the {virsh-pool-edit} subcommand.
 To modify the Boxes pool, the command would appear as follows.
 +
-[source,sh]
+[,sh]
 ----
 ➜ virsh pool-edit gnome-boxes
 ----

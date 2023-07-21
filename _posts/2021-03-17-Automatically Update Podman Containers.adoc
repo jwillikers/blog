@@ -27,7 +27,7 @@ You should also be familiar with Linux containers, Podman, the command-line, the
 
 . Clone the GitHub repository with the Kubernetes configuration file for the UniFi controller.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git clone git@github.com:jwillikers/unifi-controller.git ~/Projects/unifi-controller
 ----
@@ -59,7 +59,7 @@ The image name must be fully qualified for auto-update to update the image.
 
 . Provide the generated Kubernetes YAML to {podman-play-kube} to create and launch the pod.
 +
-[source,sh]
+[,sh]
 ----
 ➜ podman play kube ~/Projects/unifi-controller/unifi-controller.yml
 ----
@@ -67,7 +67,7 @@ The image name must be fully qualified for auto-update to update the image.
 . Check the labels attached to the UniFi Controller container with `podman ps`.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ podman ps -a --filter name=unifi-controller --format "{{.Names}}  {{.Labels}}"
 unifi-controller_unifi-controller_1  map[PODMAN_SYSTEMD_UNIT:container-unifi-controller_unifi-controller_1.service build_version:Linuxserver.io version:- 6.0.45-ls100 Build-date:- 2021-03-02T04:05:16+00:00 com.docker.compose.container-number:1 com.docker.compose.service:unifi-controller io.containers.autoupdate:image io.podman.compose.config-hash:123 io.podman.compose.project:unifi-controller io.podman.compose.version:0.0.1 maintainer:aptalca]
@@ -82,14 +82,14 @@ This tutorial uses the rootless runtime, but the necessary command is provided f
 
 Rootless::
 +
-[source,sh]
+[,sh]
 ----
 ➜ systemctl --user enable --now podman-auto-update.timer
 ----
 
 Root::
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemctl enable --now podman-auto-update.timer
 ----
@@ -100,7 +100,7 @@ To learn more about running a pod or container as a systemd service, refer to <<
 
 . It's also possible to trigger auto-updates manually with {podman-auto-update}.
 +
-[source,sh]
+[,sh]
 ----
 ➜ podman auto-update
 ----
@@ -109,14 +109,14 @@ To learn more about running a pod or container as a systemd service, refer to <<
 
 fish::
 +
-[source,sh]
+[,sh]
 ----
 ➜ open http://127.0.0.1:8443
 ----
 
 Other shells::
 +
-[source,sh]
+[,sh]
 ----
 ➜ xdg-open http://127.0.0.1:8443
 ----

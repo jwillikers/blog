@@ -61,7 +61,7 @@ up mtu 1508
 ----
 
 Start up the `em0` and `pppoe0` interfaces.
-[source,sh]
+[,sh]
 ----
 sh /etc/netstart em0 pppoe0
 ----
@@ -71,7 +71,7 @@ sh /etc/netstart em0 pppoe0
 The `/etc/netstart` script was not able to successfully establish a PPPoE connection when I changed my configuration from `pap` to `chap`.
 I had to reboot my system after changing the configuration file for the connection to succeed.
 
-[source,sh]
+[,sh]
 ----
 reboot
 ----

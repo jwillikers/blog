@@ -19,14 +19,14 @@ If you made it this far you probably know all of that stuff anyways, so let's ju
 
 . Install https://www.sudo.ws/[Snapcraft].
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo snap install --classic snapcraft
 ----
 
 . It's still early days for https://linuxcontainers.org/lxd/[LXD] on the 64-bit ARM architecture, so install the latest candidate release.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo snap install lxd --channel candidate
 ----
@@ -34,7 +34,7 @@ If you made it this far you probably know all of that stuff anyways, so let's ju
 . To avoid having to use root for LXD, add your user to the _lxd_ group.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ sudo usermod -a -G lxd $USER
 ----
@@ -44,7 +44,7 @@ WARNING: Only place users you trust with root access in the _lxd_ group.footnote
 
 . Now that LXD is installed, it must be initialized.
 +
-[source,sh]
+[,sh]
 ----
 ➜ lxd init --auto
 ----
@@ -52,7 +52,7 @@ WARNING: Only place users you trust with root access in the _lxd_ group.footnote
 . Get the snapcraft YAML file for an application that supports building on the _arm64_ architecture, such as the https://github.com/ubuntu-core/hello-snapcraftio[hello-snapcraftio] example project.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ git clone https://github.com/ubuntu-core/hello-snapcraftio.git
 ----
@@ -60,7 +60,7 @@ WARNING: Only place users you trust with root access in the _lxd_ group.footnote
 
 . Change into the project root or the directory containing the Snapcraft YAML file, usually located in a _snap_ directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cd hello-snapcraftio
 ----
@@ -68,7 +68,7 @@ WARNING: Only place users you trust with root access in the _lxd_ group.footnote
 . Build the snap, using LXD to drive the containers.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ snapcraft --use-lxd
 ----
@@ -84,7 +84,7 @@ TIP: If you run into issues with LXD here, you might try a good old fashioned re
 
 . Now, install the _.snap_ file created in the current directory by the previous command.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo snap install --devmode --dangerous hello_*.snap
 hello 2.10 installed
@@ -92,7 +92,7 @@ hello 2.10 installed
 
 . And the magic moment, run your new snap!
 +
-[source,sh]
+[,sh]
 ----
 ➜ snap run hello
 Hello, world!
@@ -100,7 +100,7 @@ Hello, world!
 
 . To clean things up, remove the _hello_ snap.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo snap remove hello
 ----

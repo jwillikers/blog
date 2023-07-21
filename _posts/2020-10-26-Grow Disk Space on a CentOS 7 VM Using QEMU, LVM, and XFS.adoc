@@ -21,7 +21,7 @@ This tutorial uses https://www.qemu.org/[QEMU] for modifying the disk image, htt
 . Increase the size of the disk image with the https://www.qemu.org/docs/master/interop/qemu-img.html[QEMU disk image utility].
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ qemu-img resize example.qcow2 +40G
 Image resized.
@@ -34,7 +34,7 @@ This increases the size of the disk image _example.qcow2_ by forty Gibibytes.
 
 . On the virtual machine, install the `cloud-utils-growpart` package from Canonical's https://github.com/canonical/cloud-utils[cloud-utils] project.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo dnf -y install cloud-utils-growpart
 ----
@@ -42,7 +42,7 @@ This increases the size of the disk image _example.qcow2_ by forty Gibibytes.
 . List your disks and partitions with the https://www.freebsd.org/cgi/man.cgi?query=lsblk&manpath=CentOS+7.1[`lsblk`] command and note the device and partition you wish to expand.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ lsblk
 NAME                           MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
@@ -61,7 +61,7 @@ The _home_ partition is low on space, so partition 2 on the device `vda` will be
 
 . Grow partition 2 on device `vda` with all the new free space on the disk image by using the https://www.freebsd.org/cgi/man.cgi?query=growpart&manpath=Debian+8.1.0[`growpart`] command.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo growpart /dev/vda 2
 CHANGED: partition=2 start=2099200 old: size=123729920 end=125829120 new: size=207615967 end=209715167
@@ -71,7 +71,7 @@ CHANGED: partition=2 start=2099200 old: size=123729920 end=125829120 new: size=2
 
 . Expand the corresponding physical from new space available on the partition with https://www.freebsd.org/cgi/man.cgi?query=pvresize&manpath=CentOS+7.1[`pvresize`].
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo pvresize /dev/vda2
   Physical volume "/dev/vda2" changed
@@ -81,7 +81,7 @@ CHANGED: partition=2 start=2099200 old: size=123729920 end=125829120 new: size=2
 . Use the https://www.gnu.org/software/coreutils/manual/html_node/df-invocation.html[`df`] command, determine which logical volume is to be grown.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ df -Th
 Filesystem                             Type      Size  Used Avail Use% Mounted on
@@ -101,7 +101,7 @@ The `/dev/mapper/centos-home` filesystem is ninety-nine percent full, so this is
 
 . With https://www.freebsd.org/cgi/man.cgi?query=lvextend&manpath=CentOS+7.1[`lvextend`], extend the logical volume to with the space just added to the physical volume.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo lvextend -l +100%FREE /dev/mapper/centos-home
   Size of logical volume centos/home changed from <18.09 GiB (4630 extents) to <58.09 GiB (14870 extents).
@@ -111,7 +111,7 @@ The `/dev/mapper/centos-home` filesystem is ninety-nine percent full, so this is
 . Determine the filesystem path for the logical volume `/dev/mapper/centos-home` from the output of the https://www.freebsd.org/cgi/man.cgi?query=lvdisplay&apropos=0&sektion=0&manpath=CentOS+7.1&arch=default&format=html[`lvdisplay`] command.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ sudo lvdisplay
   --- Logical volume ---
@@ -172,7 +172,7 @@ The path for the _home_ directory is `/dev/centos/home`.
 
 . Increase the filesystem's size by passing the path `/dev/centos/home` to the https://www.freebsd.org/cgi/man.cgi?query=xfs_growfs&manpath=CentOS+7.1[`xfs_growfs`] command.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo xfs_growfs /dev/centos/home
 meta-data=/dev/mapper/home isize=512    agcount=5, agsize=1185024 blks
@@ -189,7 +189,7 @@ data blocks changed from 4741120 to 15226880
 
 . Verify that more disk space is indeed available.
 +
-[source,sh]
+[,sh]
 ----
 ➜ df -Th /home
 Filesystem                             Type  Size  Used Avail Use% Mounted on

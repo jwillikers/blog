@@ -98,14 +98,14 @@ Integration for direnv will also be added, even though it will be installed in e
 
 . Install the dependencies needed for asdf.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt -y install curl git
 ----
 
 . Pull down the https://github.com/asdf-vm/asdf[asdf repository] in to your home directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git clone https://github.com/asdf-vm/asdf.git ~/.asdf
 Cloning into '/home/ubuntu/.asdf'...
@@ -122,7 +122,7 @@ Resolving deltas: 100% (3293/3293), done.
 --
 _fish_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ git -C ~/.asdf switch --detach (git -C ~/.asdf describe --abbrev=0 --tags)
 HEAD is now at c6145d0 Update version to 0.8.0
@@ -142,7 +142,7 @@ HEAD is now at c6145d0 Update version to 0.8.0
 --
 _fish_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ mkdir -p ~/.config/fish/conf.d; and echo "source ~/.asdf/asdf.fish" > ~/.config/fish/conf.d/asdf.fish
 ----
@@ -167,7 +167,7 @@ _ZSH_::
 --
 _fish_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ mkdir -p ~/.config/fish/completions; and ln -s ~/.asdf/completions/asdf.fish ~/.config/fish/completions
 ----
@@ -192,7 +192,7 @@ _ZSH_::
 --
 _fish_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ exec fish
 ----
@@ -214,7 +214,7 @@ _ZSH_::
 
 . Install the necessary dependencies to build Python which are helpfully documented in the https://github.com/pyenv/pyenv/wiki#suggested-build-environment[Pyenv Wiki].
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev \
   libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils \
@@ -223,7 +223,7 @@ _ZSH_::
 
 . Add the https://github.com/danhper/asdf-python[Python plugin] to asdf.
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf plugin add python
 initializing plugin repository...
@@ -250,7 +250,7 @@ IMPORTANT: Whenever the user's global version of Python is updated, Pipenv must 
 This means that asdf won't be able to detect the system version of python.
 Install the Python package `python-is-python3` to install a `python` executable for the system which uses `python3`.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt -y install python-is-python3
 ----
@@ -258,14 +258,14 @@ Install the Python package `python-is-python3` to install a `python` executable 
 
 ... Install pip and venv because they are not installed by default on Ubuntu.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt -y install python3-pip python3-venv
 ----
 
 ... Set the user's Python to the system-wide version.
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf global python system
 ----
@@ -274,7 +274,7 @@ Install the Python package `python-is-python3` to install a `python` executable 
 
 ... Build and install the latest version of Python.
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf install python latest
 ----
@@ -284,7 +284,7 @@ Install the Python package `python-is-python3` to install a `python` executable 
 --
 _fish_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf global python (asdf latest python)
 ----
@@ -299,7 +299,7 @@ _Bash / ZSH_::
 
 . Install https://pipxproject.github.io/pipx/[pipx] for installing Pipenv in an isolated environment.
 +
-[source,sh]
+[,sh]
 ----
 ➜ python -m pip install --user pipx
 Collecting pipx
@@ -327,7 +327,7 @@ Successfully installed argcomplete-1.12.1 packaging-20.4 pipx-0.15.6.0 pyparsing
 
 . Add the directory where pip installs executables for the local user to `PATH`.
 +
-[source,sh]
+[,sh]
 ----
 ➜ python -m pipx ensurepath
 Success! Added /home/ubuntu/.local/bin to the PATH environment
@@ -350,7 +350,7 @@ Otherwise pipx is ready to go! ✨ 🌟 ✨
 --
 _fish_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ exec fish
 ----
@@ -372,7 +372,7 @@ _ZSH_::
 
 . Install Pipenv.
 +
-[source,sh]
+[,sh]
 ----
 ➜ python -m pipx install pipenv
   installed package pipenv 2020.8.13, Python 3.8.5
@@ -384,7 +384,7 @@ done! ✨ 🌟 ✨
 
 . Add the direnv plugin to asdf.
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf plugin add direnv
 ----
@@ -394,7 +394,7 @@ done! ✨ 🌟 ✨
 --
 _fish_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ mkdir -p ~/.config/fish/conf.d; and echo "asdf exec direnv hook fish | source" > ~/.config/fish/conf.d/direnv.fish
 ----
@@ -419,7 +419,7 @@ _ZSH_::
 --
 _fish_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ mkdir -p ~/.config/direnv; and echo 'source "$(asdf direnv hook asdf)"' >> ~/.config/direnv/direnvrc
 ----
@@ -439,7 +439,7 @@ NOTE: The `direnvrc` file should only use Bash syntax.
 --
 _fish_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ echo "eval (pipenv --completion)" > ~/.config/fish/completions/pipenv.fish
 ----
@@ -468,21 +468,21 @@ Additionally, automatic loading of the virtual environment is configured through
 
 . Create a directory for the project.
 +
-[source,sh]
+[,sh]
 ----
 ➜ mkdir -p ~/Source/MyProject
 ----
 
 . Change into the root directory of the project.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cd ~/Source/MyProject
 ----
 
 . Initialize a Git repository for the project.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git init
 Initialized empty Git repository in /home/ubuntu/Source/MyProject/.git/
@@ -490,7 +490,7 @@ Initialized empty Git repository in /home/ubuntu/Source/MyProject/.git/
 
 . Install version of Python to use for the project.
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf install python latest
 Downloading python-build...
@@ -513,7 +513,7 @@ Installed Python-3.9.0 to /home/ubuntu/.asdf/installs/python/3.9.0
 --
 _fish_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf local python (asdf current python | awk '{print $2}')
 ----
@@ -529,7 +529,7 @@ _Bash / ZSH_::
 . Install the latest version of direnv.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ asdf install direnv latest
 ∗ Downloading and installing direnv...
@@ -542,7 +542,7 @@ If you haven't set the default global version of direnv, now is a good time to d
 
 _fish_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf global direnv (asdf latest direnv)
 ----
@@ -561,7 +561,7 @@ _Bash / ZSH_::
 --
 _fish_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf local direnv (asdf latest direnv)
 ----
@@ -576,14 +576,14 @@ _Bash / ZSH_::
 
 . The previous `asdf local` commands place version information in the `.tool-versions` file, so add this file to version control.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git add .tool-versions
 ----
 
 . Install Conan with Pipenv.
 +
-[source,sh]
+[,sh]
 ----
 ➜ pipenv install conan
 Creating a virtualenv for this project…
@@ -616,7 +616,7 @@ Alternatively, run a command inside the virtualenv with pipenv run.
 
 . Add both the `Pipfile` and `Pipfile.lock` files generated by Pipenv to version control.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git add Pipfile Pipfile.lock
 ----
@@ -626,7 +626,7 @@ Alternatively, run a command inside the virtualenv with pipenv run.
 --
 _fish_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ echo > .envrc "\
 use asdf
@@ -643,7 +643,7 @@ _Bash / ZSH_::
 
 . Add the `.envrc` file to version control.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git add .envrc
 ----
@@ -653,7 +653,7 @@ _Bash / ZSH_::
 --
 _fish_::
 +
-[source,sh]
+[,sh]
 ----
 # fish
 ➜ exec fish
@@ -679,7 +679,7 @@ direnv: error /home/ubuntu/Source/MyProject/.envrc is blocked. Run `direnv allow
 
 . Enable automatic loading of the project's environment.
 +
-[source,sh]
+[,sh]
 ----
 ➜ direnv allow
 direnv: loading ~/Source/MyProject/.envrc
@@ -693,7 +693,7 @@ direnv: export +PIPENV_ACTIVE +VIRTUAL_ENV ~PATH
 
 . Check that the virtual environment is automatically loaded and that the Conan executable resides within the virtual environment.
 +
-[source,sh]
+[,sh]
 ----
 ➜ which conan
 /home/ubuntu/.local/share/virtualenvs/MyProject-6C2lAvdi/bin/conan
@@ -707,7 +707,7 @@ To initialize a previously configured project in a fresh environment, follow the
 
 . Change to the project directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cd ~/Source/MyProject
 ----
@@ -715,7 +715,7 @@ To initialize a previously configured project in a fresh environment, follow the
 . Run asdf to automatically install Python and direnv.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ asdf install
 ∗ Downloading and installing direnv...
@@ -741,14 +741,14 @@ If you haven't set a default global version of direnv, you should do so now.
 
 _fish_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf global direnv (asdf list direnv | awk 'FNR <= 1')
 ----
 
 _Bash / ZSH_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf global direnv $(asdf list direnv | awk 'FNR <= 1')
 ----
@@ -760,7 +760,7 @@ _Bash / ZSH_::
 --
 _fish_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ exec fish
 direnv: error /home/ubuntu/Source/MyProject/.envrc is blocked. Run `direnv allow` to approve its content
@@ -785,7 +785,7 @@ direnv: error /home/ubuntu/Source/MyProject/.envrc is blocked. Run `direnv allow
 
 . Enable automatic loading of the project's environment.
 +
-[source,sh]
+[,sh]
 ----
 ➜ direnv allow
 direnv: loading ~/Source/MyProject/.envrc
@@ -815,7 +815,7 @@ direnv: export +PIPENV_ACTIVE +VIRTUAL_ENV ~PATH
 
 . Check that the virtual environment is properly setup and loaded, which can be verified by checking that the Conan executable resides within the virtual environment.
 +
-[source,sh]
+[,sh]
 ----
 ➜ which conan
 /home/ubuntu/.local/share/virtualenvs/MyProject-6C2lAvdi/bin/conan
@@ -830,14 +830,14 @@ Steps for updating the various software components follow.
 
 . Update asdf to the latest stable version.
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf update
 ----
 
 . Update an individual asdf plugin by providing the plugin name to the `asdf plugin update` command or update all plugins at once by providing the `--all` flag as shown here.
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf plugin update --all
 ----
@@ -846,7 +846,7 @@ Steps for updating the various software components follow.
 
 . Install the desired version of direnv.
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf install direnv latest
 ----
@@ -856,7 +856,7 @@ Steps for updating the various software components follow.
 --
 _fish_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf local direnv (asdf latest direnv)
 ----
@@ -879,14 +879,14 @@ Otherwise, <<Upgrade the Global Python Version and Install Pipenv>>.
 
 . Update pipx.
 +
-[source,sh]
+[,sh]
 ----
 ➜ python -m pip install --user -U pipx
 ----
 
 . Update Pipenv.
 +
-[source,sh]
+[,sh]
 ----
 ➜ python -m pipx upgrade pipenv
 ----
@@ -897,7 +897,7 @@ TIP: If you want to upgrade all packages managed by pipx, just run `pipx upgrade
 
 . Build and install the newer version of Python.
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf install python latest
 ----
@@ -907,14 +907,14 @@ TIP: If you want to upgrade all packages managed by pipx, just run `pipx upgrade
 --
 _fish_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf global python (asdf latest python)
 ----
 
 _Bash / ZSH_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf global python $(asdf latest python)
 ----
@@ -922,14 +922,14 @@ _Bash / ZSH_::
 
 . Install pipx for installing Pipenv in an isolated environment.
 +
-[source,sh]
+[,sh]
 ----
 ➜ python -m pip install --user pipx
 ----
 
 . Install Pipenv.
 +
-[source,sh]
+[,sh]
 ----
 ➜ python -m pipx install pipenv
 ----
@@ -940,7 +940,7 @@ Update the project's Python version with these instructions.
 
 . Install the desired version of Python.
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf install python latest
 ----
@@ -950,7 +950,7 @@ Update the project's Python version with these instructions.
 --
 _fish_::
 +
-[source,sh]
+[,sh]
 ----
 ➜ asdf local python (asdf latest python)
 ----
@@ -969,14 +969,14 @@ _Bash / ZSH_::
 
 . Check for outdated Python packages with pipenv.
 +
-[source,sh]
+[,sh]
 ----
 ➜ pipenv update --outdated
 ----
 
 . Update a single package by providing the name of the package or omit the package name to update all packages, as shown here.
 +
-[source,sh]
+[,sh]
 ----
 ➜ pipenv update
 ----

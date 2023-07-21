@@ -40,7 +40,7 @@ Knowledge of Linux, filesystems, and the command-line is assumed.
 
 . Install the Cryptsetup package.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt -y install cryptsetup
 ----
@@ -48,7 +48,7 @@ Knowledge of Linux, filesystems, and the command-line is assumed.
 . Locate the disk's device path.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ lsblk
 NAME           MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
@@ -77,7 +77,7 @@ Here, I instruct {sgdisk} to completely destroy any existing partition tables an
 The partition table includes a singular partition taking up the entirety of the disk.
 A descriptive label, _BlackWDExtHDD_, is attached to the partition.
 
-[source,sh]
+[,sh]
 ----
 ➜ sudo sgdisk -Z -n 0:0:0 -c 0:"BlackWDExtHDD" /dev/sdb
 GPT data structures destroyed! You may now partition the disk using fdisk or
@@ -91,7 +91,7 @@ The operation has completed successfully.
 . Encrypt the partition.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ sudo cryptsetup luksFormat --type luks2 --label "Black WD easystore" /dev/sdb1
 
@@ -115,7 +115,7 @@ Only versions of Cryptsetup prior to version 2.3.4 need to explicitly specify th
 udisks2::
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ udisksctl unlock -b /dev/sdb1
 Passphrase: 
@@ -130,7 +130,7 @@ An additional symlink is created at `/dev/dm-1` as mentioned in the command's ou
 Cryptsetup::
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ sudo cryptsetup open /dev/sdb1 MyUSB
 Enter passphrase for /dev/sdb1:
@@ -144,7 +144,7 @@ In this case, the device appears at `/dev/mapper/MyUSB`.
 
 udisks2::
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo mkfs -t btrfs -L "My Backups" /dev/dm-1
 btrfs-progs v4.15.1
@@ -169,7 +169,7 @@ Devices:
 
 Cryptsetup::
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo mkfs -t btrfs -L "My Backups" /dev/mapper/MyUSB
 btrfs-progs v4.15.1
@@ -197,7 +197,7 @@ Devices:
 udisks2::
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ udisksctl mount -b /dev/mapper/MyUSB -o noatime
 Mounted /dev/dm-1 at /run/media/jordan/My_Backups
@@ -213,7 +213,7 @@ Refer to <<install-udisks2-from-source#,Install udisks2 From Source>> if you wan
 Cryptsetup::
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemd-mount -o noatime,autodefrag,compress=zstd /dev/mapper/MyUSB
 Started unit run-media-system-System_Backups.mount for mount point: /run/media/system/System_Backups
@@ -229,7 +229,7 @@ For more information on mounting, see the post <<adjust-mount-options#,Adjust Mo
 
 udisks2::
 +
-[source,sh]
+[,sh]
 ----
 ➜ udisksctl unmount -b /dev/dm-1
 Unmounted /dev/dm-1.
@@ -237,7 +237,7 @@ Unmounted /dev/dm-1.
 
 Cryptsetup::
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo systemd-umount /run/media/system/My_Backups
 Stopped unit run-media-system-System_Backups.mount for mount point: /run/media/system/System_Backups
@@ -247,7 +247,7 @@ Stopped unit run-media-system-System_Backups.mount for mount point: /run/media/s
 
 udisks2::
 +
-[source,sh]
+[,sh]
 ----
 ➜ udisksctl lock -b /dev/sdb1
 Locked /dev/sdb1.
@@ -255,7 +255,7 @@ Locked /dev/sdb1.
 
 Cryptsetup::
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo cryptsetup close MyUSB
 ----
@@ -269,7 +269,7 @@ The following instruction demonstrate how to use GIO to easily access your newly
 
 . Unlock and mount the volume by passing the device to GIO's _mount_ subcommand via the `-d` flag.
 +
-[source,sh]
+[,sh]
 ----
 ➜ gio mount -d /dev/sdb1
 Enter a passphrase to unlock the volume
@@ -280,7 +280,7 @@ Mounted /dev/sdb1 at /run/media/jordan/My_Backups
 
 . Unmount and lock the volume with the _mount_ command, the `-u` flag, and the mount point.
 +
-[source,sh]
+[,sh]
 ----
 ➜ gio mount -u /run/media/jordan/My_Backups
 ----

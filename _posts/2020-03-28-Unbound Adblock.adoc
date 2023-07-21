@@ -20,14 +20,14 @@ NOTE: Disable any browser-based ad-blockers you might have enabled, otherwise yo
 
 Download the https://www.geoghegan.ca/scripts/unbound-adblock.sh[unbound-adblock.sh script].
 
-[source,sh]
+[,sh]
 ----
 ftp https://www.geoghegan.ca/scripts/unbound-adblock.sh
 ----
 
 Install the script with the appropriate permissions.
 
-[source,sh]
+[,sh]
 ----
 install -g bin -m 644 -o root unbound-adblock.sh /usr/local/bin/ # <1>
 ----
@@ -35,14 +35,14 @@ install -g bin -m 644 -o root unbound-adblock.sh /usr/local/bin/ # <1>
 
 Create a new user, `_adblock`, who will not be allowed to login.
 
-[source,sh]
+[,sh]
 ----
 useradd -s /sbin/nologin _adblock
 ----
 
 Install an empty `adblock.conf` file owned by the `_adblock` user which is readable by everyone but only writeable by the owner.
 
-[source,sh]
+[,sh]
 ----
 install -m 644 -o _adblock /dev/null /var/unbound/etc/adblock.conf
 ----
@@ -69,7 +69,7 @@ permit nopass _adblock cmd rcctl args reload unbound
 
 Edit the `_adblock` users crontab file.
 
-[source,sh]
+[,sh]
 ----
 crontab -u _adblock -e
 ----
@@ -88,14 +88,14 @@ SHELL=/bin/sh
 
 Run the `unbound-adblock.sh` script once.
 
-[source,sh]
+[,sh]
 ----
 doas -u _adblock sh /usr/local/bin/unbound-adblock.sh
 ----
 
 Restart the unbound service.
 
-[source,sh]
+[,sh]
 ----
 rcctl restart unbound
 ----
@@ -152,7 +152,7 @@ pass in quick on $guest_wifi_if inet proto { tcp udp } to <google_dns_servers> p
 
 Reload the updated PF rules.
 
-[source,sh]
+[,sh]
 ----
 pfctl -f /etc/pf.conf
 ----

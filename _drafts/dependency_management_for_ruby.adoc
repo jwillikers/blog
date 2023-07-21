@@ -26,35 +26,35 @@ This tutorial uses the https://fishshell.com/[fish shell], though these tools wo
 
 . Install git for version controlling the project.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt install -y git
 ----
 
 . Create a directory for the project.
 +
-[source,sh]
+[,sh]
 ----
 ➜ mkdir example-project
 ----
 
 . Change into the project directory, where the rest of this tutorial will take place.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cd example-project
 ----
 
 . Fetch the sample Asciidoc file which will be converted to a PDF.
 +
-[source,sh]
+[,sh]
 ----
 ➜ wget -L https://github.com/asciidoctor/asciidoctor-pdf/blob/master/examples/basic-example.adoc
 ----
 
 . Initialize a git repository for the project.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git init
 ----
@@ -67,7 +67,7 @@ It also takes care of Ruby gems by associating them with the particular Ruby ver
 
 . Install the dependencies required to build Ruby.footnote:[https://github.com/rbenv/ruby-build/wiki#ubuntudebianmint[ruby-build Wiki: Suggested build environment - Ubuntu/Debian/Mint]]
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt install -y autoconf bison build-essential git libssl-dev libyaml-dev libreadline6-dev \
   zlib1g-dev libncurses5-dev libffi-dev libgdbm6 libgdbm-dev libdb-dev
@@ -76,7 +76,7 @@ It also takes care of Ruby gems by associating them with the particular Ruby ver
 . Clone the rbenv source code repository into the directory `~/.rbenv`.footnote:[https://github.com/rbenv/rbenv#basic-github-checkout[rbenv: Basic Github Checkout]]
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ git clone https://github.com/rbenv/rbenv.git ~/.rbenv
 ----
@@ -100,14 +100,14 @@ PATH DEFAULT="@{HOME}/.rbenv/bin:${PATH}"
 
 . Create the plugins directory for rbenv.
 +
-[source,sh]
+[,sh]
 ----
 ➜ mkdir -p (rbenv root)"/plugins"
 ----
 
 . Clone the ruby-build source code repository into rbenv's plugin directory.footnote:[https://github.com/rbenv/ruby-build[ruby-build]]
 +
-[source,sh]
+[,sh]
 ----
 ➜ git clone https://github.com/rbenv/ruby-build.git (rbenv root)"/plugins/ruby-build"
 ----
@@ -117,7 +117,7 @@ PATH DEFAULT="@{HOME}/.rbenv/bin:${PATH}"
 In the future, updating the rbenv program and ruby-build program can be done by pulling down the latest source.
 The commands below update rbenv and ruby-build.
 
-[source,sh]
+[,sh]
 ----
 ➜ git -C (rbenv root) pull
 ➜ git -C (rbenv root)"/plugins/ruby-build" pull
@@ -130,7 +130,7 @@ The rbenv project provides a plugin specifically for the fish shell, https://git
 
 . Install the fish plugin manager https://github.com/jorgebucaran/fisher[fisher] to make installing the plugin a breeze.
 +
-[source,sh]
+[,sh]
 ----
 ➜ mkdir -p ~/.config/fish/functions
 ➜ wget -LO ~/.config/fish/functions/fisher.fish https://git.io/fisher
@@ -138,7 +138,7 @@ The rbenv project provides a plugin specifically for the fish shell, https://git
 
 . Install the fish-rbenv plugin.
 +
-[source,sh]
+[,sh]
 ----
 ➜ fisher add rbenv/fish-rbenv
 created new fishfile in ~/.config/fish/fishfile
@@ -151,7 +151,7 @@ added 1 plugin in 6.91s
 
 . Initialize rbenv.
 +
-[source,sh]
+[,sh]
 ----
 ➜ rbenv init
 # Load rbenv automatically by appending
@@ -162,7 +162,7 @@ status --is-interactive; and rbenv init - | source
 
 . Set rbenv to start automatically in the fish shell.
 +
-[source,sh]
+[,sh]
 ----
 ➜ cat "status --is-interactive; and rbenv init - | source" >> ~/.config/fish/config.fish
 ----
@@ -174,7 +174,7 @@ Now that rbenv is setup, it's straightforward to build a version of Ruby and spe
 . Build the desired version of Ruby for the project.
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ rbenv install (rbenv install -L | grep -v - | tail -1)
 Downloading ruby-2.7.1.tar.bz2...
@@ -188,14 +188,14 @@ This command-line installs the latest stable Ruby version available.footnote:[ht
 
 . Set Ruby version for the project's Ruby version to the latest stable version.
 +
-[source,sh]
+[,sh]
 ----
 ➜ rbenv local (rbenv install -l | grep -v - | tail -1)
 ----
 
 . This generates a `.ruby-version` file which can be checked in to version control.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git add .ruby-version
 ----
@@ -206,7 +206,7 @@ Bundler manages a project's Ruby gem dependencies.
 
 . Install the bundler gem.
 +
-[source,sh]
+[,sh]
 ----
 ➜ gem install bundler
 Fetching bundler-2.1.4.gem
@@ -219,14 +219,14 @@ Done installing documentation for bundler after 3 seconds
 
 . Create the initial Gemfile.footnote:[https://bundler.io/gemfile.html#gemfiles[Bundler Docs: Gemfiles]]
 +
-[source,sh]
+[,sh]
 ----
 ➜ bundle init
 ----
 
 . Add the `asciidoctor-pdf` gem and the `rouge` gem, for syntax highlighting, to the Gemfile.
 +
-[source,sh]
+[,sh]
 ----
 source "https://rubygems.org"
 
@@ -236,7 +236,7 @@ gem 'rouge'
 
 . Install the gems provided in the Gemfile.footnote:[https://bundler.io/v2.1/guides/using_bundler_in_applications.html#recommended-workflow[Bundler Docs: How to manage application dependencies with Bundler - Recommended Workflow]]
 +
-[source,sh]
+[,sh]
 ----
 ➜ bundle install
 Fetching gem metadata from https://rubygems.org/.........
@@ -253,7 +253,7 @@ Use `bundle info [gemname]` to see where a bundled gem is installed.
 
 . Add the `Gemfile.lock` file to version control.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git add Gemfile.lock
 ----
@@ -261,7 +261,7 @@ Use `bundle info [gemname]` to see where a bundled gem is installed.
 . Generate a binstub for `asciidoctor-pdf` to avoid having to prefix each call to the `asciidoctor-pdf` gem with `bundle exec`.footnote:[https://github.com/rbenv/rbenv/wiki/Understanding-binstubs#bundler-generated-binstubs[rbenv Wiki: Understanding binstubs - Bundler-generated binstubs]]
 +
 --
-[source,sh]
+[,sh]
 ----
 ➜ bundle binstubs asciidoctor-pdf
 ----
@@ -271,14 +271,14 @@ NOTE: When calling the binstub from outside the project directory, the proper Ru
 
 . Share the binstub with other developers by checking it into version control.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git add bin/asciidoctor-pdf
 ----
 
 . Finally, generate the PDF with `asciidoctor-pdf` binstub.
 +
-[source,sh]
+[,sh]
 ----
 ➜ bin/asciidoctor-pdf basic-example.adoc
 ----
@@ -287,7 +287,7 @@ NOTE: When calling the binstub from outside the project directory, the proper Ru
 ====
 Update all of the project's dependencies at once with this command.
 
-[source,sh]
+[,sh]
 ----
 ➜ bundle update
 ----
@@ -312,14 +312,14 @@ https://github.com/rbenv/rbenv/wiki/Understanding-binstubs#adding-project-specif
 
 . Install direnv.
 +
-[source,sh]
+[,sh]
 ----
 ➜ sudo apt install -y direnv
 ----
 
 . Hook direnv into fish.footnote:[https://github.com/direnv/direnv/blob/master/docs/hook.md#fish[direnv: Hook fish]]
 +
-[source,sh]
+[,sh]
 ----
 ➜ mkdir ~/.config/fish/conf.d
 ➜ echo "eval (direnv hook fish)" > ~/.config/fish/conf.d/direnv.fish
@@ -329,21 +329,21 @@ https://github.com/rbenv/rbenv/wiki/Understanding-binstubs#adding-project-specif
 
 . Tell direnv to use rbenv for the project, if desired.footnote:[https://github.com/direnv/direnv/wiki/Ruby#-rbenv[rbenv Wiki: Ruby - rbenv]]
 +
-[source,sh]
+[,sh]
 ----
 ➜ echo "use rbenv" >> .envrc
 ----
 
 . Add the binstubs directory to `PATH`.
 +
-[source,sh]
+[,sh]
 ----
 ➜ echo "PATH_add bin" >> .envrc
 ----
 
 . Allow direnv to run for the project directory.
 +
-[source,sh]
+[,sh]
 ----
 ➜ direnv allow
 direnv: loading my-project/.envrc
@@ -356,7 +356,7 @@ direnv: export ~PATH ~RBENV_SHELL
 
 . Finally, generate the PDF with `asciidoctor-pdf`.
 +
-[source,sh]
+[,sh]
 ----
 ➜ asciidoctor-pdf basic-example.adoc
 ----
@@ -369,7 +369,7 @@ The workflow to get up and running with the project ends up as follows.
 // todo Include this workflow in the project's README.
 . Fetch the project.
 +
-[source,sh]
+[,sh]
 ----
 ➜ git clone
 ----
@@ -379,7 +379,7 @@ The workflow to get up and running with the project ends up as follows.
 
 . Build the required version of Ruby for the project.
 +
-[source,sh]
+[,sh]
 ----
 ➜ rbenv install (rbenv local)
 Downloading ruby-2.7.1.tar.bz2...
@@ -390,7 +390,7 @@ Installed ruby-2.7.1 to /home/jwill/.rbenv/versions/2.7.1
 
 . Install the bundler gem.
 +
-[source,sh]
+[,sh]
 ----
 ➜ gem install bundler
 Fetching bundler-2.1.4.gem
@@ -403,7 +403,7 @@ Done installing documentation for bundler after 3 seconds
 
 . Install the project's gems.
 +
-[source,sh]
+[,sh]
 ----
 ➜ bundle install
 Fetching gem metadata from https://rubygems.org/.........
@@ -420,7 +420,7 @@ Use `bundle info [gemname]` to see where a bundled gem is installed.
 
 . Use the `asciidoctor-pdf` binstub to generate the PDF.
 +
-[source,sh]
+[,sh]
 ----
 ➜ bin/asciidoctor-pdf basic-example.adoc
 ----
@@ -435,7 +435,7 @@ Use `bundle info [gemname]` to see where a bundled gem is installed.
 // todo Is this needed?
 . Update the rbenv shims to include `asciidoctor-pdf` and `rouge`.footnote[https://github.com/rbenv/rbenv#rbenv-rehash[rbenv rehash]]
 +
-[source,sh]
+[,sh]
 ----
 ➜ rbenv rehash
 ----
