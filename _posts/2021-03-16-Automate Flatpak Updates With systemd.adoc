@@ -18,12 +18,17 @@ Since I don't want to have multiple app stores on my machine, I opted for using 
 == Tutorial
 
 The instructions here describe how to create systemd service and timers to automate updating both user and system Flatpak installations.
+The system systemd units will only update the system Flatpaks, whereas the user systemd units will update both the user's Flatpaks and the system's.
+In most cases, having both user and system services to update Flatpaks is unnecessary.
+The system systemd units are handy for the default Flatpak behavior, which installs Flatpaks system-wide.
+The user systemd units are great for users who opt to install Flatpaks in their user-specific installation, such as Flatpak developers.
+
 The tutorial uses elementary OS 5.1 as a reference operating system but are more generally applicable to any Linux system with systemd and Flatpak.
-I assume you are familiar with these concepts and keep things brief.
+I assume you are familiar with these concepts and will keep things brief.
 Separate instructions are provided for the user and system Flatpak installations.
 The systemd units here were derived from those provided by https://github.com/flatpak/flatpak/issues/1399#issuecomment-403065567[_marcelpaulo_'s GitHub comment].
 
-[NOTE]
+[TIP]
 ====
 The systemd user unit files are placed in the directory `/etc/systemd/user/` where they are applied to all users on the system.
 An individual user can place the unit files in the directory `~/.config/systemd/user/` to only effect her account.
@@ -33,7 +38,7 @@ An individual user can place the unit files in the directory `~/.config/systemd/
 
 User::
 +
-[source,systemd]
+[,systemd]
 ./etc/systemd/user/update-user-flatpaks.service
 ----
 [Unit]
@@ -41,7 +46,7 @@ Description=Update user Flatpaks
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/flatpak update --assumeyes --noninteractive --user
+ExecStart=/usr/bin/flatpak update --assumeyes --noninteractive
 
 [Install]
 WantedBy=default.target
@@ -49,7 +54,7 @@ WantedBy=default.target
 
 System::
 +
-[source,systemd]
+[,systemd]
 ./etc/systemd/system/update-system-flatpaks.service
 ----
 [Unit]
@@ -69,7 +74,7 @@ WantedBy=multi-user.target
 
 User::
 +
-[source,systemd]
+[,systemd]
 ./etc/systemd/user/update-user-flatpaks.timer
 ----
 [Unit]
@@ -85,7 +90,7 @@ WantedBy=timers.target
 
 System::
 +
-[source,systemd]
+[,systemd]
 ./etc/systemd/system/update-system-flatpaks.timer
 ----
 [Unit]
