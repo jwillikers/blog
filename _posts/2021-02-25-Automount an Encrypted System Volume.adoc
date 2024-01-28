@@ -141,7 +141,7 @@ Enter any existing passphrase:
 --
 [,sh]
 ----
-echo "backup_crypt UUID="(sudo blkid -o value -s UUID /dev/sdb1)" /etc/cryptsetup-keys.d/backup_crypt.key luks,noauto,nofail,discard" \
+echo "backup_crypt UUID="$(sudo blkid -o value -s UUID /dev/sdb1)" /etc/cryptsetup-keys.d/backup_crypt.key luks,noauto,nofail,discard" \
   | sudo tee -a /etc/crypttab
 backup_crypt UUID=0cbab673-2b14-40c0-a1f2-522bc7ff7e18 /etc/cryptsetup-keys.d/backup_crypt.key luks,noauto,nofail,discard
 ----
