@@ -1,0 +1,620 @@
+= Object Detection With Raspberry Pi
+:keywords: camera detect detection libcamera object opencv pi picture raspberry rpicam rpicam-detect tensorflow
+:BirdNET-Pi: https://github.com/mcguirepr89/BirdNET-Pi[BirdNET-Pi]
+:Camera-Module-3: https://www.raspberrypi.com/products/camera-module-3/[Camera Module 3]
+:libcamera: https://libcamera.org/[libcamera]
+:OpenCV: https://opencv.org/[OpenCV]
+:Pi-Camera: https://github.com/jwillikers/pi-camera[Pi Camera]
+:Raspberry-Pi-Camera-Cable: https://www.raspberrypi.com/products/camera-cable/[Raspberry Pi Camera Cable]
+:rpicam-apps: https://github.com/raspberrypi/rpicam-apps[rpicam-apps]
+:systemd: https://systemd.io[systemd]
+:TensorFlow-Lite: https://www.tensorflow.org/lite[TensorFlow Lite]
+
+Vacation last summer involved being surrounded by a lot of nature.
+Perhaps that's the reason I felt compelled to spoil it with some technology in the form of a Raspberry Pi or two.
+{BirdNET-Pi} was a smashing success and my {Pi-Camera} project turned out pretty well too.
+One thing I had planned to accomplish was to capture nocturnal wildlife on camera.
+That's where object detection came in to play.
+I set up a Camera Module 3 NoIR on the same Raspberry Pi 4 running BirdNET-Pi.
+Turns out, you still need an infrared light source to see anything at night.
+My project ended up changing direction slightly to taking pictures of people in broad daylight.  
+This still taught me how to use object detection on the Raspberry Pi.
+Now, I'm trying to get all of my notes cleaned up and prepared for my next attempt, which will _definitely_ include an infrared LED array.
+It will also include an upgrade to the Raspberry Pi 5.
+And that's how this blog post came to be.
+
+== Overview
+
+Raspberry Pi has a convenient tool for playing around with object detection on their devices, `rpicam-detect` from Raspberry Pi's {rpicam-apps} project.
+It uses {OpenCV} and {TensorFlow-Lite} under the hood and is quite lightweight.
+Raspberry Pi already has a fair amount of documentation on this topic, but it's a bit scattered and lacks details on installing the OpenCV and TensorFlow Light dependencies.
+I've distilled all this down into a straightforward guide for those that want to quickly get object detection up and running.
+
+To be clear, I'm not a fan at all of using vendor forks and rpicam-apps only works with Raspberry Pi's fork of {libcamera} at the moment.
+This is certainly convenient as new support for the Pi 5 and such lands much faster, but there's obvious drawbacks when it comes to portability. 
+Until I find a more portable alternative, `rpicam-detect` will suffice.
+
+Okay, so the setup is a Raspberry Pi 5, a {Camera-Module-3}, and all the essentials, including a {Raspberry-Pi-Camera-Cable}.
+The autofocus capability of the Camera Module 3 comes in handy for snapping photos when an object is detected.
+The software stack requires Raspberry Pi OS, OpenCV, TensorFlow Lite, Raspberry Pi's libcamera fork, and rpicam-apps.
+
+== Install
+
+These instructions have been written specifically for the 64-bit release of Raspberry Pi OS based on Debian Bookworm.
+The instructions describe how to install for both the lite and full versions of Raspberry Pi OS. 
+For the official instructions to build Raspberry Pi's fork of libcamera and rpicam-apps, refer to https://www.raspberrypi.com/documentation/computers/camera_software.html#building-libcamera-and-rpicam-apps[Building libcamera and rpicam-apps].
+
+=== TensorFlow Lite
+
+The first item to install is {TensorFlow-Lite}, a version of TensorFlow optimized for low-power devices.
+Unfortunately, it's a C++ project from Google, which means it's an huge pain to build from source.
+I tried the CMake route and, of course, had tons of trouble.
+Since I still don't want to learn Bazel, I settled for installing the pre-compiled package from the https://github.com/prepkg/tensorflow-lite-raspberrypi[tensorflow-lite-raspberrypi] repository that is recommended in Raspberry Pi's documentation.
+
+. Download the prebuilt tensorflow-lite package for the Raspberry Pi.
+At the time of writing, the latest TensorFlow Lite version available is 2.15.0.
++
+[,sh]
+----
+curl --location --remote-name https://github.com/prepkg/tensorflow-lite-raspberrypi/releases/latest/download/tensorflow-lite_64.deb
+----
+
+. Install the prebuilt tensorflow-lite package.
++
+[,sh]
+----
+sudo apt-get --yes install ./tensorflow-lite_64.deb
+----
+
+. Remove the deb package.
++
+[,sh]
+----
+rm --force tensorflow-lite_64.deb
+----
+
+. Create the `/usr/local/lib/pkgconfig` directory.
++
+[,sh]
+----
+sudo mkdir --parents /usr/local/lib/pkgconfig
+----
+
+. Add a pkg-config file for TensorFlow Lite.
+Meson will find the dependency using this file when configuring the `rpicam-apps` build.
++
+./usr/local/lib/pkgconfig/tensorflow-lite.pc
+[source]
+----
+prefix=/usr/local
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+Name: tensorflow-lite
+Description: TensorFlow Lite
+Version: 2.15.0
+Libs: -L${libdir} -ltensorflow-lite
+Cflags: -I${includedir}
+----
+
+=== OpenCV
+
+There's a script to build and install {OpenCV} from source on the Raspberry Pi in the https://github.com/Qengineering/Install-OpenCV-Raspberry-Pi-64-bits[Install-OpenCV-Raspberry-Pi-64-bits] repository.
+
+. Check the amount of available RAM on the Pi.
+If it's less than 5.8 GiB, then you'll need to increase the available swap space for the build.
++
+[,sh]
+----
+free --human
+----
+
+. Allocate extra swap space if using a Raspberry Pi with 4 GiB of RAM or less.
+The following instructions should provide enough swapspace for a 2 GiB and 4 GiB model.
++
+.. Set `CONF_MAXSWAP` to 4 GiB in the `/sbin/dphys-swapfile` file.
++
+./sbin/dphys-swapfile
+[,ini]
+----
+CONF_MAXSWAP=4096
+----
+
+.. Set `CONF_SWAPSIZE` to 4 GiB in the `/etc/dphys-swapfile` file.
++
+./etc/dphys-swapfile
+[,ini]
+----
+CONF_SWAPSIZE=4096
+----
+
+.. Reboot to apply the changes.
++
+[,sh]
+----
+sudo reboot
+----
+
+. Download the installation script.
+The latest available script is for OpenCV 4.9.0 at this time.
++
+[,sh]
+----
+curl --location --remote-name https://github.com/Qengineering/Install-OpenCV-Raspberry-Pi-64-bits/raw/main/OpenCV-4-9-0.sh
+----
+
+. Make the installer executable.
++
+[,sh]
+----
+chmod +x ./OpenCV-4-9-0.sh
+----
+
+. If you're building over an SSH connection, then do yourself a favor and build in a tmux session.
+This allows you to resume the session if you lose your SSH connection during the build.
+If that happens, use the `tmux attach` subcommand to get back.
+
+.. Install https://github.com/tmux/tmux/wiki[tmux].
++
+[,sh]
+----
+sudo apt-get --yes install tmux
+----
+
+.. Run `tmux` to start a tmux session.
++
+[,sh]
+----
+tmux
+----
+
+. Run the installer.
++
+[,sh]
+----
+./OpenCV-4-9-0.sh
+----
+
+. Take a nice long break for a bit while it builds.
+I'm taking a nap.
+
+. Delete the installer.
++
+[,sh]
+----
+rm OpenCV-4-9-0.sh
+----
+
+. If you allocated extra swap space, revert those changes back.
++
+.. Set `CONF_MAXSWAP` to 2 GiB in the `/sbin/dphys-swapfile` file.
++
+./sbin/dphys-swapfile
+[,ini]
+----
+CONF_MAXSWAP=2048
+----
+
+.. Set `CONF_SWAPSIZE` to 100 in the `/etc/dphys-swapfile` file.
++
+./etc/dphys-swapfile
+[,ini]
+----
+CONF_SWAPSIZE=100
+----
+
+.. Reboot to apply the changes.
++
+[,sh]
+----
+sudo reboot
+----
+
+=== libcamera
+
+. Install the dependencies to build libcamera.
++
+[,sh]
+----
+sudo apt-get --yes install \
+  git \
+  libboost-dev \
+  libglib2.0-dev \
+  libgnutls28-dev \
+  libgstreamer1.0-dev \
+  libgstreamer-plugins-base1.0-dev \
+  libpython3-dev \
+  libtiff5-dev \
+  libyaml-dev \
+  libudev-dev \
+  meson \
+  openssl \
+  pybind11-dev \
+  python3-jinja2 \
+  python3-pip \
+  python3-ply \
+  python3-yaml
+----
+
+. Clone Raspberry Pi's fork of libcamera.
++
+[,sh]
+----
+git clone https://github.com/raspberrypi/libcamera.git
+----
+
+. Change to the project's directory.
++
+[,sh]
+----
+cd libcamera
+----
+
+. Configure the build.
++
+[,sh]
+----
+meson setup \
+  --buildtype=release \
+  -Dpipelines=rpi/vc4,rpi/pisp \
+  -Dipas=rpi/vc4,rpi/pisp \
+  -Dv4l2=true \
+  -Dgstreamer=enabled \
+  -Dtest=false \
+  -Dlc-compliance=disabled \
+  -Dcam=disabled \
+  -Dqcam=disabled \
+  -Ddocumentation=disabled \
+  -Dpycamera=disabled \
+  build
+----
+
+. Build.
++
+[,sh]
+----
+meson compile -C build
+----
+
+. Install.
++
+[,sh]
+----
+sudo meson install -C build
+----
+
+. Change out of the project's directory.
++
+[,sh]
+----
+cd ..
+----
+
+=== rpicam-apps
+
+. Install the necessary system dependencies.
++
+lite::
++
+[,sh]
+----
+sudo apt-get --yes install \
+  git \
+  libavcodec-dev \
+  libavdevice-dev \
+  libavformat-dev \
+  libboost-program-options-dev \
+  libdrm-dev \
+  libexif-dev \
+  libswresample-dev \
+  meson
+----
+
+full::
++
+[,sh]
+----
+sudo apt-get --yes install \
+  git \
+  libavcodec-dev \
+  libavdevice-dev \
+  libavformat-dev \
+  libboost-program-options-dev \
+  libdrm-dev \
+  libexif-dev \
+  libqt5core5a \
+  libqt5gui5 \
+  libqt5widgets5 \
+  libswresample-dev \
+  meson \
+  qtbase5-dev
+----
+
+. Clone the rpicam-apps repository.
++
+[,sh]
+----
+git clone https://github.com/raspberrypi/rpicam-apps.git
+----
+
+. Change to the project's directory.
++
+[,sh]
+----
+cd rpicam-apps
+----
+
+. Configure the build.
++
+lite::
++
+[,sh]
+----
+meson setup \
+  --buildtype=release \
+  -Denable_drm=false \
+  -Denable_egl=false \
+  -Denable_libav=true \
+  -Denable_opencv=true \
+  -Denable_qt=false \
+  -Denable_tflite=true \
+  build
+----
+
+full::
++
+[,sh]
+----
+meson setup \
+  --buildtype=release \
+  -Denable_drm=true \
+  -Denable_egl=true \
+  -Denable_libav=true \
+  -Denable_opencv=true \
+  -Denable_qt=true \
+  -Denable_tflite=true \
+  build
+----
+
+. Build.
++
+[,sh]
+----
+meson compile -C build
+----
+
+. Install rpicam-apps.
++
+[,sh]
+----
+sudo meson install -C build
+----
+
+. Update the linker's cache.
++
+[,sh]
+----
+sudo ldconfig
+----
+
+. Change out of the project's directory.
++
+[,sh]
+----
+cd ..
+----
+
+== rpicam-detect
+
+Here's where the fun starts by actually using `rpicam-detect` with a model to detect objects.
+These instructions emulate Raspberry Pi's https://www.raspberrypi.com/documentation/computers/camera_software.html#post-processing-with-tensorflow-lite[Post-Processing with TensorFlow Lite] section of their documentation.
+
+. Download the Google MobileNet v1 SSD (Single Shot Detector) model and label files.
++
+[,sh]
+----
+curl --location --remote-name https://storage.googleapis.com/download.tensorflow.org/models/tflite/coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip
+----
+
+. Extract the archive.
++
+[,sh]
+----
+unzip -d ~/models coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip
+----
+
+. Copy the bundled `object_detect_tf.json` file out of the rpicam-apps repository.
+For lack of a better place, I just place it in the home directory here.
++
+[,sh]
+----
+cp rpicam-apps/assets/object_detect_tf.json ~
+----
+
+. Set the paths for the `model_file` and `labels_file` to the correct locations in the `object_detect_tf.json` file.
+These files are from the archive extracted in a previous step.
+There's other settings that can be tweaked here as desired.
+I won't go into detail because I don't actually understand what any of them do.
++
+.~/object_detect_tf.json
+[,json]
+----
+{
+    "object_detect_tf": {
+        "number_of_threads": 2,
+        "refresh_rate": 10,
+        "confidence_threshold": 0.5,
+        "overlap_threshold": 0.5,
+        "model_file": "/home/core/models/detect.tflite",
+        "labels_file": "/home/core/models/labelmap.txt",
+        "verbose": 1
+    },
+    "object_detect_draw_cv": {
+        "line_thickness": 2
+    }
+}
+----
+
+. Run the `rpicam-detect` application.
++
+[,sh]
+----
+rpicam-detect \
+  --autofocus-on-capture \ # <1>
+  --datetime \ # <2>
+  --gap 40 \ # <3>
+  --lores-height 300 \
+  --lores-width 400 \
+  --nopreview \ # <4>
+  --object person \ # <5>
+  --output ~/Pictures/person- \ # <6>
+  --post-process-file ~/object_detect_tf.json \ # <7>
+  --timeout 0 # <8>
+----
+<1> Focus the camera when taking the picture.
+<2> Use the date and time to name the picture.
+<3> The number of frames with which to space apart captures.
+Omitting `--gap` will almost certainly result in _many_ pictures whenever there is a detection.
+<4> The `--nopreview` flag can be omitted if you'd like to show a preview window.
+The instructions for Raspberry Pi OS lite skipped building support for the preview window.
+<5> The `--object` flag takes, unfortunately, only the name, aka label, of a single object to detect.
+Without the flag, all objects are detected.
+The available labels are documented in the `models/labelmap.txt` file that was extracted with the model in a preceding step.
+<6> The `--output` option is used to tell `rpicam-detect` where to save the pictures.
+The value here saves the pictures in the `~/Pictures/` directory with a the prefix `person-`.
+The actual filename will include a unique timestamp after the prefix when used with the `--datetime` flag.
+<7> The `--post-process-file` argument contains the path to the JSON file configured in the previous step.
+<8> Using a value of `0` for the `--timeout` flag prevents `rpicam-detect` from stopping.
+
+=== rpicam-detect systemd Service
+
+A {systemd} service is convenient for managing `rpicam-detect` as a system service.
+
+System::
++
+. Create a system directory to place the required files.
++
+[,sh]
+----
+sudo mkdir --parents /usr/local/etc/rpicam-detect /var/lib/rpicam-detect/pictures
+----
+
+. Copy the bundled `object_detect_tf.json` file out of the rpicam-apps repository along with the extracted model.
++
+[,sh]
+----
+sudo cp rpicam-apps/assets/object_detect_tf.json models/* /usr/local/etc/rpicam-detect/
+----
+
+. Set the paths for the `model_file` and `labels_file` to the correct locations in the `object_detect_tf.json` file.
++
+./usr/local/etc/rpicam-detect/object_detect_tf.json
+[,json]
+----
+{
+    "object_detect_tf": {
+        "number_of_threads": 2,
+        "refresh_rate": 10,
+        "confidence_threshold": 0.5,
+        "overlap_threshold": 0.5,
+        "model_file": "/usr/local/etc/rpicam-detect/detect.tflite",
+        "labels_file": "/usr/local/etc/rpicam-detect/labelmap.txt",
+        "verbose": 1
+    },
+    "object_detect_draw_cv": {
+        "line_thickness": 2
+    }
+}
+----
+
+. Create an instantiable systemd service unit to run the `rpicam-detect` application for a particular type of object.
++
+./etc/systemd/system/rpicam-detect@.service
+[,sh]
+----
+[Unit]
+Description=Capture pictures of %i
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/rpicam-detect \
+    --autofocus-on-capture \
+    --datetime \
+    --gap 20 \
+    --lores-height 300 \
+    --lores-width 400 \
+    --nopreview \
+    --object %i \
+    --output /var/lib/rpicam-detect/pictures/%i- \
+    --post-process-file /usr/local/etc/rpicam-detect/object_detect_tf.json \
+    --timeout 0
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+----
+
+. Start and enable the `rpicam-detect@.service` unit.
+Here, I instantiate the service so that it takes pictures of dogs.
++
+[,sh]
+----
+sudo systemctl enable --now rpicam-detect@dog.service
+----
+
+User::
++
+. Create the systemd configuration directory for the user.
++
+[,sh]
+----
+mkdir --parents ~/.config/systemd/user/
+----
+
+. Create an instantiable systemd service unit to run the `rpicam-detect` application for a particular type of object.
++
+.~/.config/systemd/user/rpicam-detect@.service
+[,sh]
+----
+[Unit]
+Description=Capture pictures of %i
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/rpicam-detect \
+    --autofocus-on-capture \
+    --datetime \
+    --gap 20 \
+    --lores-height 300 \
+    --lores-width 400 \
+    --nopreview \
+    --object %i \
+    --output %h/Pictures/%i- \
+    --post-process-file %h/object_detect_tf.json \
+    --timeout 0
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=default.target
+----
+
+. Start and enable the `rpicam-detect@.service` unit.
+Here, I instantiate the service so that it takes pictures of dogs.
++
+[,sh]
+----
+systemctl --user enable --now rpicam-detect@dog.service
+----
+
+I set up additional functionality to automatically upload my captured pictures, which I've stowed and documented in my https://github.com/jwillikers/autoupload[AutoUpload] repository.
+This uploads the photos to S3-compatible object storage or Immich using systemd.
+
+== Conclusion
+
+That was quite a bit of work, and I really wish I could use it on my other single-board computers.
+Still, I've found this project pretty fun so far and a good way of dipping my toes in the machine learning realm.
+The detection works especially well for people in my experience. though, I'm still working out the best way to capture animals at night.
+I doubt a single object like dog will suffice to capture the various nocturnal creatures of interest.
+If I end up having to train my own model, you can expect a follow up blog post on the subject.
