@@ -6,6 +6,9 @@ author:
   avatar: "https://www.gravatar.com/avatar/e3189498d000ca4eb4e893739fd63636?s=500"
   location: US
   links:
+    - label: "Codeberg"
+      icon: "fab fa-fw fa-codeberg"
+      url: "https://github.com/jwillikers"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/jwillikers"
@@ -32,10 +35,10 @@ name: >-
     src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
   <br />
   <span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text"
-    property="dct:title" rel="dct:type">JWillikers</span> by 
+    property="dct:title" rel="dct:type">JWillikers</span> by
     <a xmlns:cc="http://creativecommons.org/ns#" href="https://jwillikers.com"
     property="cc:attributionName" rel="cc:attributionURL">Jordan Williams</a>
-    is licensed under a 
+    is licensed under a
     <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
     Creative Commons Attribution-ShareAlike 4.0 International License</a>
 github_username: jwillikers
