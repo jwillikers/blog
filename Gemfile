@@ -5,7 +5,6 @@ gem 'kramdown', '>= 2.3.0'
 gem 'jekyll'
 gem 'minimal-mistakes-jekyll'
 gem 'rouge'
-gem 'travis'
 
 group :jekyll_plugins do
   gem 'jekyll-asciidoc'

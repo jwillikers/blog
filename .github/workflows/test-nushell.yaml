@@ -1,0 +1,18 @@
+name: Test Nushell
+"on":
+  pull_request:
+    branches: ["main"]
+    paths:
+      - .github/workflows/test-nushell.yaml
+      - flake.lock
+      - '**/*.nu'
+
+jobs:
+  test-nushell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v14
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - name: Run the Nushell tests
+        run: nix develop --command nu update-nixos-release-tests.nu

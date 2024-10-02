@@ -1,0 +1,28 @@
+name: Update NixOS Release
+
+"on":
+  schedule:
+    - cron: "0 0 15 5,11 *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-nixos-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v14
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - name: Update the NixOS release in flake.nix to the latest
+        run: nix develop --command nu update-nixos-release.nu
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          assignees: ${{ github.repository_owner }}
+          branch: "update/nixos"
+          commit-message: "chore(deps): Update NixOS release"
+          title: "chore(deps): Update NixOS release"
+          token: ${{ secrets.GH_TOKEN_FOR_UPDATES }}

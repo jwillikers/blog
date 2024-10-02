@@ -17,7 +17,7 @@ One thing I had planned to accomplish was to capture nocturnal wildlife on camer
 That's where object detection came in to play.
 I set up a Camera Module 3 NoIR on the same Raspberry Pi 4 running BirdNET-Pi.
 Turns out, you still need an infrared light source to see anything at night.
-My project ended up changing direction slightly to taking pictures of people in broad daylight.  
+My project ended up changing direction slightly to taking pictures of people in broad daylight.
 This still taught me how to use object detection on the Raspberry Pi.
 Now, I'm trying to get all of my notes cleaned up and prepared for my next attempt, which will _definitely_ include an infrared LED array.
 It will also include an upgrade to the Raspberry Pi 5.
@@ -31,7 +31,7 @@ Raspberry Pi already has a fair amount of documentation on this topic, but it's 
 I've distilled all this down into a straightforward guide for those that want to quickly get object detection up and running.
 
 To be clear, I'm not a fan at all of using vendor forks and rpicam-apps only works with Raspberry Pi's fork of {libcamera} at the moment.
-This is certainly convenient as new support for the Pi 5 and such lands much faster, but there's obvious drawbacks when it comes to portability. 
+This is certainly convenient as new support for the Pi 5 and such lands much faster, but there's obvious drawbacks when it comes to portability.
 Until I find a more portable alternative, `rpicam-detect` will suffice.
 
 Okay, so the setup is a Raspberry Pi 5, a {Camera-Module-3}, and all the essentials, including a {Raspberry-Pi-Camera-Cable}.
@@ -41,7 +41,7 @@ The software stack requires Raspberry Pi OS, OpenCV, TensorFlow Lite, Raspberry 
 == Install
 
 These instructions have been written specifically for the 64-bit release of Raspberry Pi OS based on Debian Bookworm.
-The instructions describe how to install for both the lite and full versions of Raspberry Pi OS. 
+The instructions describe how to install for both the lite and full versions of Raspberry Pi OS.
 For the official instructions to build Raspberry Pi's fork of libcamera and rpicam-apps, refer to https://www.raspberrypi.com/documentation/computers/camera_software.html#building-libcamera-and-rpicam-apps[Building libcamera and rpicam-apps].
 
 === TensorFlow Lite

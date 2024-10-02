@@ -50,7 +50,7 @@ The commands shown use the {fish-shell}, so some syntax may be incompatible if y
 
 1. dbus-send
 2. script to automount using a signal to detect when drive is added.
-3. 
+3.
 
 https://dbus.freedesktop.org/doc/dbus-send.1.html[dbus-send(1)]
 
@@ -100,7 +100,7 @@ Volume changed:     'Black WD easystore'
 
 
 # gsettings set org.gnome.desktop.media-handling automount false
-# gsettings set org.gnome.desktop.media-handling automount-open false 
+# gsettings set org.gnome.desktop.media-handling automount-open false
 # systemctl restart gdm.service
 
 === Unnecessary below here?

@@ -9,24 +9,24 @@ ifdef::env-github[]
 :caution-caption: :fire:
 :warning-caption: :warning:
 endif::[]
+:Nix: https://nixos.org/[Nix]
 
 My developer blog containing handy admin and dev guides from my myriad of tinkering.
 Content is written primarily in https://asciidoctor.org/[Asciidoctor].
 https://jekyllrb.com/[Jekyll] generates a static website from the content which is then deployed with https://pages.github.com/[GitHub Pages].
 The website is available at https://jwillikers.com[jwillikers.com].
 
-== Contributing
-
-Contributions in the form of issues, feedback, and even pull requests are welcome.
-I really appreciate pointing out typos, incorrect instructions, and ways to improve or simplify posts.
-Considering this my personal blog, you will want to create an issue or contact me before making any significant pull request.
-Make sure to adhere to the project's link:CODE_OF_CONDUCT.adoc[Code of Conduct].
-If you wish to test the website locally, please see <<Getting Started>>.
-
 == Getting Started
 
-The steps below will create an environment for generating the website locally.
-These steps assume you are on Fedora and familiar with the Linux command-line and https://git-scm.com/[Git].
+Follow the steps below to build and run the website locally.
+Dependencies are managed by {Nix}.
+
+. Install an implementation of {Nix}, such as https://lix.systems[Lix] used here.
++
+[,sh]
+----
+curl -sSf -L https://install.lix.systems/lix | sh -s -- install
+----
 
 . Clone the blog's repository.
 +
@@ -42,46 +42,63 @@ git clone git@github.com:jwillikers/blog.git
 cd blog
 ----
 
-. Install the dependencies needed for asdf.
+. Build and run the blog locally with Nix by running the default app.
 +
 [,sh]
 ----
-sudo dnf -y install gcc gcc-c++ libffi-devel ruby-devel rubygem-bundler
+nix run
 ----
 
-. Configure a project-specific directory for Gems.
+== Development
+
+This project's {Nix} flake provides a development environment which can be entered by running the `nix develop` command.
+For convenience, direnv can be used to automatically load this environment when entering the project's directory.
+The https://marketplace.visualstudio.com/items?itemName=mkhl.direnv[mkhl.direnv VSCode extension] integrates this environment in VSCode.
+The repository contains configuration for https://pre-commit.com/[pre-commit], which can be used to automate formatting and various checks when committing changes.
+Follow the instructions here to set up your development environment.
+
+. Install direnv for your system according to the https://direnv.net/docs/installation.html[direnv installation instructions].
 +
 [,sh]
 ----
-bundle config set --local path 'vendor/bundle'
+sudo rpm-ostree install direnv
+sudo systemctl reboot
 ----
 
-. Install the required Ruby gems.
+. Integrate direnv with your shell by following the instructions on the https://direnv.net/docs/hook.html[direnv Setup page].
+
+. Permit the direnv configuration for the repository.
 +
 [,sh]
 ----
-bundle install
+direnv allow
 ----
 
-== Build
+. Run `pre-commit install` to configure pre-commit hooks in the repository.
++
+[,sh]
+----
+pre-commit install
+----
 
-The website can be generated locally by passing the `b` subcommand, i.e. _build_, to Jekyll.
+=== Build
+
+The website can be generated locally with the `jekyll build` command.
 
 [,sh]
 ----
-bundle exec jekyll b
+jekyll build
 ----
-
-== Test
 
 Jekyll supports running a web server on the local machine, which can be used to preview and test changes to the website.
-The steps below describe how to do this below, assuming you are in the project directory running Ubuntu with the GNOME desktop.
+The steps below describe how to do this below, assuming you are in the project directory.
 
-. Run the `jekyll` executable with the `s` subcommand, i.e. _serve_.
+. Run the `jekyll` executable with the `serve` subcommand.
+The `--open-url` flag is handy for automatically opening the server at `http://127.0.0.1:4000/` in your browser.
 +
 [,sh]
 ----
-bundle exec jekyll s
+jekyll serve --open-url
 Configuration file: /home/jordan/Source/blog/_config.yml
             Source: /home/jordan/Source/blog
        Destination: /home/jordan/Source/blog/_site
@@ -93,16 +110,9 @@ Configuration file: /home/jordan/Source/blog/_config.yml
   Server running... press ctrl-c to stop.
 ----
 
-. Open the server address provided in the previous output with your web browser of choice.
-+
-[,sh]
-----
-open http://127.0.0.1:4000/
-----
-
 . When finished testing, type kbd:[Ctrl+C] to stop the local web server.
 
-== Deploy
+=== Deploy
 
 Continuous integration is configured through GitHub Actions.
 Trigger the CI to build and deploy by pushing changes to the `main` branch on the GitHub remote.
@@ -114,14 +124,23 @@ git push
 
 The updated website is deployed to https://jwillikers.com[jwillikers.com].
 
-== Update
+=== Update
 
-Update the Gems with the `bundle update` command.
+Update the Gems with the `just update` command.
+This will update the `gemset.nix` file after updating the `Gemfile.lock` file.
 
 [,sh]
 ----
-bundle update
+just update
 ----
+
+== Contributing
+
+Contributions in the form of issues, feedback, and even pull requests are welcome.
+I really appreciate pointing out typos, incorrect instructions, and ways to improve or simplify posts.
+Considering this my personal blog, you will want to create an issue or contact me before making any significant pull request.
+Make sure to adhere to the project's link:CODE_OF_CONDUCT.adoc[Code of Conduct].
+If you wish to test the website locally, please see <<Getting Started>>.
 
 == Open Source Software
 

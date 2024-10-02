@@ -1,0 +1,34 @@
+name: Build Jekyll site
+
+"on":
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/build.yaml
+      - default.nix
+      - flake.lock
+      - flake.nix
+      - Gemfile
+      - Gemfile.lock
+      - gemset.nix
+      - .bundle/config
+      - .ruby-version
+      - _data/
+      - _drafts/
+      - _includes/
+      - _pages/
+      - _posts/
+      - _config.yml
+      - index.adoc
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v14
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      # todo Cache bundler stuff?
+      - name: Build with Jekyll
+        run: nix build

@@ -80,7 +80,3 @@ $ sudo apt install -y keepassxc
 
 https://github.com/keepassxreboot/keepassxc/issues/3864
 logout instead of prev
-
-
-
-

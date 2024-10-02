@@ -20,7 +20,7 @@ Notably, it uses namespaces for process isolation and integrates nicely with {sy
 Just like {Kubernetes}, Podman is built on the concept of _pods_, groups of one or more containers, instead of individual containers.
 
 Podman is only available in the Ubuntu repositories as of {Ubuntu} 20.10, making it just an apt install away.
-For older Ubuntu LTS releases, the Kubic PPA can be used to get Podman which is described here. 
+For older Ubuntu LTS releases, the Kubic PPA can be used to get Podman which is described here.
 
 == Tutorial
 

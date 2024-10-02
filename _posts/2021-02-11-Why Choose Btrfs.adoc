@@ -83,7 +83,7 @@ As for as operating systems go, I'm only going to use one of the BSD's or Linux 
 As far as desktops go, Linux has significantly more polish in this respect to the *BSD.footnote:[No. I'm _not_ counting Darwin.]
 I prefer to use {elementary-OS} as my primary, stable desktop distribution.
 I'm planning on also having a system running Fedora and want to use the same filesystem configuration on both.
-The idea of mixing filesystems seems unnecessarily complicated, though completely doable. 
+The idea of mixing filesystems seems unnecessarily complicated, though completely doable.
 
 The prospect of vendor lock-in to Ubuntu ultimately lead me to Btrfs.
 I get the freedom of choice in regards to Linux distribution and only have to manage one filesystem on my machine.

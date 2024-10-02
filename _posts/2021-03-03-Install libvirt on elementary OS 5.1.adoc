@@ -192,9 +192,9 @@ No surprises here.
 [,sh]
 ----
 virsh pool-list
- Name                 State      Autostart 
+ Name                 State      Autostart
 -------------------------------------------
- default              active     yes  
+ default              active     yes
 ----
 
 . To simply view the XML, use the {virsh-pool-dumpxml} subcommand followed by the pool's name.
@@ -288,7 +288,7 @@ A dedicated Btrfs subvolume for `/var/lib/libvirt/images` is probably your best 
 The subvolume can have _CoW_ disabled via chattr, but _CoW_ can also be disabled with the mount option `nodatacow` when using a subvolume in a {flat-layout}.
 The steps here create a dedicated subvolume for libvirt's disk image directory and mount it with _CoW_ disabled.
 
-. Mount the root Btrfs filesystem to create a subvolume. 
+. Mount the root Btrfs filesystem to create a subvolume.
 +
 [,sh]
 ----

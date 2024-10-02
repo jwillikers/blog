@@ -28,7 +28,7 @@ Previous tutorials include <<podman-compose#,Podman Compose>>, <<translate-docke
 The target system is elementary OS 5.1, based on {Ubuntu} 18.04.
 You'll need to have Podman installed, of course.
 To install Podman on an Ubuntu system, follow the instructions in <<install-podman-on-ubuntu#,Install Podman on Ubuntu>>.
-You are expected to be familiar with Linux containers, Podman, the command-line, the Kubernetes configuration format, {Git}, systemd, and anything else I forgot to mention... 
+You are expected to be familiar with Linux containers, Podman, the command-line, the Kubernetes configuration format, {Git}, systemd, and anything else I forgot to mention...
 
 . Clone the repository with the Kubernetes YAML file for the UniFi Controller.
 +

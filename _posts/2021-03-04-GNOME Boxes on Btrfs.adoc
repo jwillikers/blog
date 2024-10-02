@@ -62,7 +62,7 @@ Some things may not work quite right yet with the Flatpak, but I've found it to 
 
 A Flatpak can be installed system-wide or for an individual user.
 The instructions below describe both methods.
-systemd, 
+systemd,
 
 . Add the Flathub remote.
 
@@ -214,10 +214,10 @@ The steps here walk through the steps to disable _CoW_ on the Boxes storage pool
 [,sh]
 ----
 virsh pool-list
- Name                 State      Autostart 
+ Name                 State      Autostart
 -------------------------------------------
- default              active     yes  
- gnome-boxes          active     yes      
+ default              active     yes
+ gnome-boxes          active     yes
 ----
 
 libvirt's default pool is simply called _default_ while Boxes' pool is named _gnome-boxes_.

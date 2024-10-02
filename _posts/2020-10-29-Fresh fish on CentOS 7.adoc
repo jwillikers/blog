@@ -35,7 +35,7 @@ sudo dnf -y install cmake3 gettext-devel git ncurses-devel ninja-build \
   pcre2-devel
 ----
 
-. Pull down the fish repository. 
+. Pull down the fish repository.
 +
 [,sh]
 ----
@@ -86,7 +86,7 @@ echo /usr/local/bin/fish | sudo tee -a /etc/shells
 ----
 chsh -s /usr/local/bin/fish
 Changing shell for jordan.
-Password: 
+Password:
 Shell changed.
 ----
 

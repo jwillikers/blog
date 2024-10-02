@@ -6,7 +6,7 @@ date = "2020-07-04"
 draft = true
 +++
 
-ZFS is 
+ZFS is
 
 == Tutorial
 
@@ -20,7 +20,7 @@ First, determine which device is the external hard drive.
 ----
 $ sudo fdisk -l
 Disk /dev/sdb: 931.49 GiB, 1000170586112 bytes, 1953458176 sectors
-Disk model: easystore 25FC  
+Disk model: easystore 25FC
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
@@ -107,4 +107,3 @@ $ sudo zfs rollback -r rpool/USERDATA/jordan@2020-07-04-14:00:00
 ----
 
 === Verify
-

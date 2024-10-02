@@ -52,7 +52,6 @@ build-iPhoneSimulator/
 /bin/
 
 ## Environment normalization:
-/.bundle/
 /vendor/bundle
 /lib/bundler/man/
 
@@ -67,3 +66,9 @@ build-iPhoneSimulator/
 
 # Used by RuboCop. Remote config files pulled in from inherit_from directive.
 # .rubocop-https?--*
+
+# direnv
+.direnv/
+
+# Nix
+result
