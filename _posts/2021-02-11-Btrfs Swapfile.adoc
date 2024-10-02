@@ -19,7 +19,7 @@
 
 Swap space is a standard component of most operating systems.
 It's effectively reserved disk space for accommodating a system when it needs more RAM than it has available.
-I recommend the https://opensource.com/[opensource.com] article _{an-introduction-to-swap-space-on-linux-systems}_ as a great primer on the topic. 
+I recommend the https://opensource.com/[opensource.com] article _{an-introduction-to-swap-space-on-linux-systems}_ as a great primer on the topic.
 
 There are two approaches to providing swap space on Linux, swap partitions and https://wiki.archlinux.org/index.php/swap#Swap_file[swapfiles].
 Since version 5.0 of the Linux kernel, {Btrfs} swap files are supported according to the section _{does-btrfs-support-swapfiles}_ in the {btrfs-wiki-faq}.
@@ -37,7 +37,7 @@ I have not been able to get hibernation working when using a Btrfs swapfile.
 You should consider a dedicated, encrypted swap partition if you desire this feature.
 ====
 
-. Mount the root Btrfs filesystem to create a subvolume. 
+. Mount the root Btrfs filesystem to create a subvolume.
 +
 [,sh]
 ----

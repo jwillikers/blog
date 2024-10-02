@@ -113,38 +113,38 @@ sudo systemctl status snap-sync-jordan.timer
 
 // todo Automount!
 
-// todo 
+// todo
 
 . Find the Systemd mount unit.
 +
 [,sh]
 ----
 systemctl --user list-units -t mount
-UNIT                           LOAD   ACTIVE SUB     DESCRIPTION              
--.mount                        loaded active mounted Root Mount               
-\x2esnapshots.mount            loaded active mounted /.snapshots              
-boot.mount                     loaded active mounted /boot                    
-dev-hugepages.mount            loaded active mounted /dev/hugepages           
-dev-mqueue.mount               loaded active mounted /dev/mqueue              
-home.mount                     loaded active mounted /home                    
-opt.mount                      loaded active mounted /opt                     
-proc-sys-fs-binfmt_misc.mount  loaded active mounted /proc/sys/fs/binfmt_misc 
-root.mount                     loaded active mounted /root                    
+UNIT                           LOAD   ACTIVE SUB     DESCRIPTION
+-.mount                        loaded active mounted Root Mount
+\x2esnapshots.mount            loaded active mounted /.snapshots
+boot.mount                     loaded active mounted /boot
+dev-hugepages.mount            loaded active mounted /dev/hugepages
+dev-mqueue.mount               loaded active mounted /dev/mqueue
+home.mount                     loaded active mounted /home
+opt.mount                      loaded active mounted /opt
+proc-sys-fs-binfmt_misc.mount  loaded active mounted /proc/sys/fs/binfmt_misc
+root.mount                     loaded active mounted /root
 run-media-jordan-My_Backups.mount loaded active mounted /run/media/jordan/My_Backups
-run-user-1001-doc.mount        loaded active mounted /run/user/1001/doc       
-run-user-1001-gvfs.mount       loaded active mounted /run/user/1001/gvfs      
-run-user-1001.mount            loaded active mounted /run/user/1001           
-srv.mount                      loaded active mounted /srv                     
-swap.mount                     loaded active mounted /swap                    
-sys-fs-fuse-connections.mount  loaded active mounted /sys/fs/fuse/connections 
-sys-kernel-config.mount        loaded active mounted /sys/kernel/config       
-sys-kernel-debug.mount         loaded active mounted /sys/kernel/debug        
-tmp-.mount_jetbraf0pNsi.mount  loaded active mounted /tmp/.mount_jetbraf0pNsi 
-tmp-.mount_Nextcljn7C82.mount  loaded active mounted /tmp/.mount_Nextcljn7C82 
-tmp-.mount_StretcNgku1T.mount  loaded active mounted /tmp/.mount_StretcNgku1T 
-tmp.mount                      loaded active mounted /tmp                     
-usr-local.mount                loaded active mounted /usr/local               
-var.mount                      loaded active mounted /var                     
+run-user-1001-doc.mount        loaded active mounted /run/user/1001/doc
+run-user-1001-gvfs.mount       loaded active mounted /run/user/1001/gvfs
+run-user-1001.mount            loaded active mounted /run/user/1001
+srv.mount                      loaded active mounted /srv
+swap.mount                     loaded active mounted /swap
+sys-fs-fuse-connections.mount  loaded active mounted /sys/fs/fuse/connections
+sys-kernel-config.mount        loaded active mounted /sys/kernel/config
+sys-kernel-debug.mount         loaded active mounted /sys/kernel/debug
+tmp-.mount_jetbraf0pNsi.mount  loaded active mounted /tmp/.mount_jetbraf0pNsi
+tmp-.mount_Nextcljn7C82.mount  loaded active mounted /tmp/.mount_Nextcljn7C82
+tmp-.mount_StretcNgku1T.mount  loaded active mounted /tmp/.mount_StretcNgku1T
+tmp.mount                      loaded active mounted /tmp
+usr-local.mount                loaded active mounted /usr/local
+var.mount                      loaded active mounted /var
 
 LOAD   = Reflects whether the unit definition was properly loaded.
 ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
@@ -206,4 +206,3 @@ systemctl --user status snap-sync-home.timer
 ----
 
 == Conclusion
-

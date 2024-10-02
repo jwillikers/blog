@@ -31,7 +31,7 @@ Generating public/private rsa key pair.
 --
 [source]
 ----
-Enter file in which to save the key (/home/jordan/.ssh/id_rsa): 
+Enter file in which to save the key (/home/jordan/.ssh/id_rsa):
 ----
 
 [NOTE]
@@ -54,7 +54,7 @@ In fact, it's generally best to keep this key exactly where it is generated, bac
 --
 [source]
 ----
-Enter passphrase (empty for no passphrase): 
+Enter passphrase (empty for no passphrase):
 ----
 
 This passphrase is used to encrypt your private key file.
@@ -65,7 +65,7 @@ Even if someone gains access to the key file, they can't use it to authenticate 
 +
 [source]
 ----
-Enter same passphrase again: 
+Enter same passphrase again:
 Your identification has been saved in /home/jordan/.ssh/id_rsa
 Your public key has been saved in /home/jordan/.ssh/id_rsa.pub
 The key fingerprint is:
@@ -147,7 +147,7 @@ This can be accomplished by dumping the contents of the public key to your termi
 ----
 cat ~/.ssh/id_rsa.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDoxvFhlQciJxydpZVKnNwVYtSZI8hw6aF3ug961FAHzp1sbuZJm++rFSG30wwxeXK3r+FPXXnEnmPW53dn26ywFChHRRpN4zgyEdCXYLBOILObm/9z6hnOa8MReNC9VKH5xBq5CH4YmNfJjmJ5LaeI9PMbF/++F+n+QDTWgpfwKu3FxJYRtQ4NLd5q2QOvwpzQ3M2FOkqJ0N//qwiuJNLtUmDZQRqpeZCbhhAptrF6yyYME70pMKQFuE5gEzZThDIP6TAPuu0L4LECwossWlsA4bvhOK8wN0KWfvuZLx6r/8ld4P9/3FkshuTsWXIDbykewR4QcPE8EcpVNFH6l+zrLBCkndOimN4iLy7eBPPfdLZG1yfcusA0pPMiYKiA4SYzh6w2wrt0Y0wV1/npNHvZM/qS/2tJTkwYYKLxRah3SdR7onJQzWn67SdzxJ5FO5xQB5HsMMe99JTqaHEGEiUrGFB5MsqUbtTqHo3ZMYre0uEax03omq3pZel+MCj52S8= jordan@jwillikers
----- 
+----
 --
 
 . Paste the contents of the public key file in the _Key_ field.

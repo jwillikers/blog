@@ -51,7 +51,7 @@ pacman -S seahorse
 ./etc/pam.d/login
 ----
 #%PAM-1.0
- 
+
 auth       required     pam_securetty.so
 auth       requisite    pam_nologin.so
 auth       include      system-local-login

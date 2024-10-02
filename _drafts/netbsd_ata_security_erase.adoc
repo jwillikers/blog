@@ -11,7 +11,7 @@ How to dispose of all those old disks?
 Ideally, only encrypted data has been written to the drive, making erasure simply the act of throwing out the encryption keys.
 Since these aren't disks I've enabled encryption on myself, I'll have to actually erase them.
 The surest way to safeguard sensitive data is to bore holes in the drive with an electric drill.
-I'd like to recycle the drives at my local Best Buy, and my guess is they recycle better when they aren't riddled full of holes. 
+I'd like to recycle the drives at my local Best Buy, and my guess is they recycle better when they aren't riddled full of holes.
 A less destructive approach is to write zeros over the entire hard drive.
 While this works for spinning rust, it doesn't overwrite all of the data on an SSD nor does it handle bad sectors.
 An alternative that works for both mechanical and solid state disks is the ATA Security Erase command.
@@ -20,9 +20,9 @@ The ATA Security Erase command directs a disk to erase itself.
 The https://web.archive.org/web/20110222015452/http://cmrr.ucsd.edu/people/Hughes/HDDEraseReadMe.txt[HDDErase README] succinctly describes it.
 [quote, HDDEraseReadMe.txt]
 ____
-Secure erase overwrites all user data areas with binary zeroes.  Enhanced 
-secure erase writes predetermined data patterns (set by the manufacturer) to 
-all user data areas, including sectors that are no longer in use due to 
+Secure erase overwrites all user data areas with binary zeroes.  Enhanced
+secure erase writes predetermined data patterns (set by the manufacturer) to
+all user data areas, including sectors that are no longer in use due to
 reallocation.
 ____
 Unfortunately, this relies on proprietary and properly-functioning technology within the drive, which leaves you at the mercy of the manufacturer.
@@ -75,8 +75,8 @@ loop8          7:8    0 173.6M  1 loop /var/lib/snapd/snap/multipass/2379
 mmcblk2      179:0    0  58.2G  0 disk # <1>
 ├─mmcblk2p1  179:1    0 213.6M  0 part /boot
 └─mmcblk2p2  179:2    0    58G  0 part /
-mmcblk2boot0 179:32   0     4M  1 disk 
-mmcblk2boot1 179:64   0     4M  1 disk 
+mmcblk2boot0 179:32   0     4M  1 disk
+mmcblk2boot1 179:64   0     4M  1 disk
 mmcblk1      179:96   0 238.5G  0 disk # <2>
 zram0        252:0    0   5.6G  0 disk [SWAP]
 ----

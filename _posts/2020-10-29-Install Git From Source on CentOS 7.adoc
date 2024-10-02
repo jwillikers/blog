@@ -5,7 +5,7 @@
 
 To get the latest version of https://git-scm.com/[Git] on CentOS 7, it is possible to compile it directly from source.
 
-== Tutorial 
+== Tutorial
 
 This is a quick tutorial showing the necessary steps to install Git from source on CentOS 7.
 Further documentation is available in the https://git-scm.com/book/en/v2/Getting-Started-Installing-Git[Git Book].

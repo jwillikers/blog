@@ -195,7 +195,7 @@ sudo systemctl daemon-reload
 sudo systemctl restart udisks2
 ----
 
-. Cleanup the downloaded source files and residual build artifacts. 
+. Cleanup the downloaded source files and residual build artifacts.
 +
 [,sh]
 ----
