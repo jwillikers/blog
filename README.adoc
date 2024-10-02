@@ -32,14 +32,14 @@ These steps assume you are on Fedora and familiar with the Linux command-line an
 +
 [,sh]
 ----
-git -C ~/Projects clone git@github.com:jwillikers/blog.git
+git clone git@github.com:jwillikers/blog.git
 ----
 
 . Change into the blog's directory.
 +
 [,sh]
 ----
-cd ~/Projects/blog
+cd blog
 ----
 
 . Install the dependencies needed for asdf.
