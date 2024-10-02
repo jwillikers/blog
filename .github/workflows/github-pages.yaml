@@ -1,8 +1,26 @@
 name: Deploy Jekyll site to Pages
 
-on:
+"on":
   push:
     branches: [main]
+    paths:
+      - .github/workflows/github-pages.yaml
+      - default.nix
+      - flake.lock
+      - flake.nix
+      - Gemfile
+      - Gemfile.lock
+      - gemset.nix
+      - .bundle/config
+      - .ruby-version
+      - _data/
+      - _drafts/
+      - _includes/
+      - _pages/
+      - _posts/
+      - _config.yml
+      - CNAME
+      - index.adoc
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
