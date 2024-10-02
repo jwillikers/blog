@@ -9,7 +9,7 @@ author:
     - label: "Codeberg"
       # https://github.com/FortAwesome/Font-Awesome/issues/15882
       icon: "https://codeberg.org/Codeberg-Infrastructure/build-deploy-forgejo/raw/branch/codeberg-8/codeberg-favicon.svg"
-      url: "https://github.com/jwillikers"
+      url: "https://codeberg.org/jwillikers"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/jwillikers"
