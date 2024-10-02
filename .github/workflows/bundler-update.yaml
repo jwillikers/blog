@@ -1,0 +1,31 @@
+name: Bundler Update
+
+"on":
+  schedule:
+    # Once a month on the 22nd
+    - cron: "0 0 22 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  bundler-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v14
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - name: Update Gem lock file
+        run: nix develop --command bundle update
+      - name: Update the hashes in the gemset.nix file
+        run: nix develop --command bundix
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          assignees: ${{ github.repository_owner }}
+          branch: "update/bundler"
+          commit-message: "chore(deps): Update Gem lock file"
+          title: "chore(deps): Update Gem lock file"
+          token: ${{ secrets.GH_TOKEN_FOR_UPDATES }}

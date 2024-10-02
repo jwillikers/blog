@@ -163,10 +163,19 @@ rss-description: Handy admin and dev guides from my myriad of tinkering
 #   - gemfiles/
 #   - node_modules/
 exclude:
+  - .envrc
+  - .direnv/
+  - .github/
+  - .jekyll-cache/
+  - .pre-commit-config.yaml
+  - .vscode/
   - LICENSE.adoc
   - README.adoc
+  - flake.lock
+  - flake.nix
   - Gemfile
   - Gemfile.lock
+  - gemset.nix
   - Rakefile
   - vendor/bundle/
   - vendor/cache/
