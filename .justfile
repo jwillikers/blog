@@ -25,6 +25,8 @@ alias u := update
 alias up := update
 
 update:
+    nu update-nixos-release.nu
+    nix flake update
     bundle update
     bundix
     pre-commit autoupdate
