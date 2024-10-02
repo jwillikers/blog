@@ -11,6 +11,8 @@ ifdef::env-github[]
 endif::[]
 :Nix: https://nixos.org/[Nix]
 
+image:https://github.com/jwillikers/blog/actions/workflows/github-pages.yaml/badge.svg[Deploy, link=https://github.com/jwillikers/blog/actions/workflows/github-pages.yaml]
+
 My developer blog containing handy admin and dev guides from my myriad of tinkering.
 Content is written primarily in https://asciidoctor.org/[Asciidoctor].
 https://jekyllrb.com/[Jekyll] generates a static website from the content which is then deployed with https://pages.github.com/[GitHub Pages].
