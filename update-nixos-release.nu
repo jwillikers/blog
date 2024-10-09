@@ -41,7 +41,7 @@ export def update_nixos_release_in_flake [
     release: string # NixOS release, i.e. 24.05
 ] [ string -> string ] {
     (
-        $in | str replace --regex "github:NixOS/nixpkgs/nixos-[0-9][0-9].[0-9][0-9]"
+        $in | str replace --regex "github:NixOS/nixpkgs/nixos-[0-9][0-9]\\.[0-9][0-9]"
         $"github:NixOS/nixpkgs/nixos-($release)"
     )
 }

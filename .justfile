@@ -25,6 +25,7 @@ alias t := test
 
 test:
     nu update-nixos-release-tests.nu
+    nu update-nix-direnv-tests.nu
 
 alias u := update
 alias up := update
@@ -34,3 +35,4 @@ update: && build test
     nix flake update
     bundle update
     bundix
+    nu update-nix-direnv.nu
