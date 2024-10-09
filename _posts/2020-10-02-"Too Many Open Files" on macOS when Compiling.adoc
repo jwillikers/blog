@@ -142,4 +142,4 @@ ulimit -S -n
 == Conclusion
 
 There's a fair bit of work involved for this fix but it is quite robust.
-Not only should file process limits not be an issue for you for the forseeable future, you should have gained some valuable insights into macOS service management with `launchd`.
+Not only should file process limits not be an issue for you for the foreseeable future, you should have gained some valuable insights into macOS service management with `launchd`.

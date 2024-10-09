@@ -5,6 +5,7 @@
     "mkhl.direnv",
     "bbenoist.nix",
     "thenuprojectcontributors.vscode-nushell-lang",
-    "nefrob.vscode-just-syntax"
+    "nefrob.vscode-just-syntax",
+    "tekumara.typos-vscode"
   ]
 }

@@ -114,7 +114,7 @@ table <google_dns_servers> { 8.8.8.8 8.8.4.4 }
 pass in quick on $lan_if quick inet proto { tcp udp } to <google_dns_servers> port domain rdr-to $lan_dns_server port domain
 ----
 
-NOTE: Be careful to position this rule in a place where it is not superceded by a preceding `quick` rule.
+NOTE: Be careful to position this rule in a place where it is not superseded by a preceding `quick` rule.
 
 My actual configuration is a bit more complex, but I have included it here for reference.
 

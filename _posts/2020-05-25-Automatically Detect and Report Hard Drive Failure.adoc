@@ -8,7 +8,7 @@ Long story short, the hard disk was toast.
 When I repaired the computer, I decided it would be best to avoid the frustration and confusion of a failing hard drive in the future.
 So, how does one know if his or her mother-in-law's hard disk is reaching senility?
 https://www.smartmontools.org/[SmartMonTools] appears to be the best tool for the job.
-It's a tool for monitoring and reporting hard disk health with https://en.wikipedia.org/wiki/S.M.A.R.T[Self-Monitoring, Anlysis, and Reporting Technology (SMART)] which is built into most hard drives.
+It's a tool for monitoring and reporting hard disk health with https://en.wikipedia.org/wiki/S.M.A.R.T[Self-Monitoring, Analysis, and Reporting Technology (SMART)] which is built into most hard drives.
 SmartMonTools is even cross-platform and available in package repositories everywhere.
 
 == Tutorial

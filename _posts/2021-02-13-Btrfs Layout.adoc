@@ -43,7 +43,7 @@
 One of the best features of {Btrfs} is the ability to produce snapshots of data instantaneously.
 Rollbacks take advantage of Btrfs to revert the system, or any subvolume, to a previous state like before that major kernel update.
 This is an extremely valuable feature.
-Unfortunately, to take advantage of a snapshots and rollbacks properly, the filesystem must be layed out intentionally.
+Unfortunately, to take advantage of a snapshots and rollbacks properly, the filesystem must be laid out intentionally.
 Certain directories need to be left alone during a rollback.
 You don't want to rollback your system and have your hard-work lost nor do you want to inadvertently destroy critical system logs.
 Unless your on {openSUSE}, this just isn't done for you on most popular Linux distributions or at least not yet.footnote:[Ubuntu does this for you with {ZFS} and {ZSYS}, but I'm talking about Btrfs here.]

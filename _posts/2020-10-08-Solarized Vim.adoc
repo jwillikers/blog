@@ -4,7 +4,7 @@
 :page-tags: [BSD, Editor, Linux, macOS, Solarized, Ubuntu, Unix, Vim]
 
 I enjoy the https://github.com/altercation/solarized[Solarized] color scheme, so I figured out how to set it up in https://www.vim.org/[Vim].
-The Solarized color scheme provides a https://github.com/altercation/vim-colors-solarized[plugin for Vim], which makes this pretty straightfoward.
+The Solarized color scheme provides a https://github.com/altercation/vim-colors-solarized[plugin for Vim], which makes this pretty straightforward.
 The following instructions detail how to do this on https://ubuntu.com/[Ubuntu] 20.04, but other than the installation step, this should work on any Unix-like system so long as Vim is at least version eight.
 This guide assumes you are familiar with installing packages from the command-line on Ubuntu, https://git-scm.com/[git], configuring Vim, and https://github.com/vim/vim/blob/856c1110c1cf0d6e44e387b70732/runtime/doc/repeat.txt#L525[using Vim packages].footnote:[https://vi.stackexchange.com/a/9523[Vi and Vim StackExchange: What is the Vim8 package feature and how should I use it?]]
 
