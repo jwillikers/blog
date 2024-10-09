@@ -36,43 +36,70 @@
           nushell
         ];
         buildInputs = with pkgs; [ ];
-        treefmt.config = {
-          programs = {
-            actionlint.enable = true;
-            jsonfmt.enable = true;
-            just.enable = true;
-            nixfmt.enable = true;
-            prettier.enable = true;
-            yamlfmt.enable = true;
-          };
-          projectRootFile = "flake.nix";
-          settings.formatter = {
-            "strip-gps-metadata" = {
-              command = "${pkgs.bash}/bin/bash";
-              options = [
-                "-euc"
-                ''
-                  for file in "$@"; do
-                    ${pkgs.exiftool}/bin/exiftool -duplicates -overwrite_original "-gps*=" "$file"
-                  done
-                ''
-                "--" # bash swallows the second argument when using -c
-              ];
-              includes = [
-                "*.avif"
-                "*.bmp"
-                "*.gif"
-                "*.jpeg"
-                "*.jpg"
-                "*.png"
-                "*.svg"
-                "*.tiff"
-                "*.webp"
-              ];
+        treefmt = {
+          config = {
+            programs = {
+              actionlint.enable = true;
+              editorconfig-checker.enable = true;
+              jsonfmt.enable = true;
+              just.enable = true;
+              nixfmt.enable = true;
+              prettier.enable = true;
+              strip-location-metadata.enable = true;
+              typos.enable = true;
+              yamlfmt.enable = true;
+            };
+            projectRootFile = "flake.nix";
+            settings.formatter = {
+              "editorconfig-checker" = {
+                command = "${pkgs.bash}/bin/bash";
+                options = [
+                  "-euc"
+                  ''
+                    for file in "$@"; do
+                      ${pkgs.editorconfig-checker}/bin/editorconfig-checker "$file"
+                    done
+                  ''
+                  "--" # bash swallows the second argument when using -c
+                ];
+                includes = [ "*" ];
+              };
+              "strip-location-metadata" = {
+                command = "${pkgs.bash}/bin/bash";
+                package = pkgs.exiftool;
+                options = [
+                  "-euc"
+                  ''
+                    for file in "$@"; do
+                      ${pkgs.exiftool}/bin/exiftool -duplicates -overwrite_original "-gps*=" "$file"
+                    done
+                  ''
+                  "--" # bash swallows the second argument when using -c
+                ];
+                includes = [
+                  "*.avif"
+                  "*.bmp"
+                  "*.gif"
+                  "*.jpeg"
+                  "*.jpg"
+                  "*.png"
+                  "*.svg"
+                  "*.tiff"
+                  "*.webp"
+                ];
+              };
             };
           };
+          options.programs.editorconfig-checker = {
+            enable = pkgs.lib.mkEnableOption "editorconfig-checker";
+            package = pkgs.lib.mkPackageOption pkgs "editorconfig-checker" { };
+          };
+          options.programs.strip-location-metadata = {
+            enable = pkgs.lib.mkEnableOption "strip-location-metadata";
+            package = pkgs.lib.mkPackageOption pkgs "exiftool" { };
+          };
         };
-        treefmtEval = treefmt-nix.lib.evalModule pkgs treefmt.config;
+        treefmtEval = treefmt-nix.lib.evalModule pkgs treefmt;
         pre-commit = pre-commit-hooks.lib.${system}.run {
           src = ./.;
           hooks = {
@@ -88,7 +115,6 @@
             check-toml.enable = true;
             check-yaml.enable = true;
             detect-private-keys.enable = true;
-            editorconfig-checker.enable = true;
             end-of-file-fixer.enable = true;
             fix-byte-order-marker.enable = true;
             # todo Broken for 24.05 branch
