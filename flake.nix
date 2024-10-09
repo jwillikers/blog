@@ -50,36 +50,6 @@
               yamlfmt.enable = true;
             };
             projectRootFile = "flake.nix";
-            settings.formatter = {
-              "strip-location-metadata" = {
-                command = "${pkgs.bash}/bin/bash";
-                package = pkgs.exiftool;
-                options = [
-                  "-euc"
-                  ''
-                    for file in "$@"; do
-                      ${pkgs.exiftool}/bin/exiftool -duplicates -overwrite_original "-gps*=" "$file"
-                    done
-                  ''
-                  "--" # bash swallows the second argument when using -c
-                ];
-                includes = [
-                  "*.avif"
-                  "*.bmp"
-                  "*.gif"
-                  "*.jpeg"
-                  "*.jpg"
-                  "*.png"
-                  "*.svg"
-                  "*.tiff"
-                  "*.webp"
-                ];
-              };
-            };
-          };
-          options.programs.strip-location-metadata = {
-            enable = pkgs.lib.mkEnableOption "strip-location-metadata";
-            package = pkgs.lib.mkPackageOption pkgs "exiftool" { };
           };
         };
         treefmtEval = treefmt-nix.lib.evalModule pkgs treefmt;
@@ -104,6 +74,16 @@
             # todo Broken for 24.05 branch
             # flake-checker.enable = true;
             mixed-line-endings.enable = true;
+
+            strip-location-metadata = {
+              name = "Strip location metadata";
+              description = "Strip geolocation metadata from image files";
+              enable = true;
+              entry = "${pkgs.exiftool}/bin/exiftool -duplicates -overwrite_original '-gps*='";
+              package = pkgs.exiftool;
+              types = [ "image" ];
+            };
+
             trim-trailing-whitespace.enable = true;
             yamllint.enable = true;
           };
