@@ -51,19 +51,6 @@
             };
             projectRootFile = "flake.nix";
             settings.formatter = {
-              "editorconfig-checker" = {
-                command = "${pkgs.bash}/bin/bash";
-                options = [
-                  "-euc"
-                  ''
-                    for file in "$@"; do
-                      ${pkgs.editorconfig-checker}/bin/editorconfig-checker "$file"
-                    done
-                  ''
-                  "--" # bash swallows the second argument when using -c
-                ];
-                includes = [ "*" ];
-              };
               "strip-location-metadata" = {
                 command = "${pkgs.bash}/bin/bash";
                 package = pkgs.exiftool;
@@ -90,10 +77,6 @@
               };
             };
           };
-          options.programs.editorconfig-checker = {
-            enable = pkgs.lib.mkEnableOption "editorconfig-checker";
-            package = pkgs.lib.mkPackageOption pkgs "editorconfig-checker" { };
-          };
           options.programs.strip-location-metadata = {
             enable = pkgs.lib.mkEnableOption "strip-location-metadata";
             package = pkgs.lib.mkPackageOption pkgs "exiftool" { };
@@ -115,6 +98,7 @@
             check-toml.enable = true;
             check-yaml.enable = true;
             detect-private-keys.enable = true;
+            editorconfig-checker.enable = true;
             end-of-file-fixer.enable = true;
             fix-byte-order-marker.enable = true;
             # todo Broken for 24.05 branch
