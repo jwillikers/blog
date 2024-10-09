@@ -40,12 +40,10 @@
           config = {
             programs = {
               actionlint.enable = true;
-              editorconfig-checker.enable = true;
               jsonfmt.enable = true;
               just.enable = true;
               nixfmt.enable = true;
               prettier.enable = true;
-              strip-location-metadata.enable = true;
               typos.enable = true;
               yamlfmt.enable = true;
             };
