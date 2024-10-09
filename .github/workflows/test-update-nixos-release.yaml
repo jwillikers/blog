@@ -1,0 +1,27 @@
+name: Test update-nixos-release.nu
+"on":
+  pull_request:
+    branches: ["main"]
+    paths:
+      - .github/workflows/test-update-nixos-release.yaml
+      - flake.lock
+      - update-nixos-release.nu
+      - update-nixos-release-tests.nu
+  push:
+    branches: ["main"]
+    paths:
+      - .github/workflows/test-update-nixos-release.yaml
+      - flake.lock
+      - update-nixos-release.nu
+      - update-nixos-release-tests.nu
+  workflow_dispatch:
+
+jobs:
+  test-update-nixos-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v14
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - name: Run the Nushell tests
+        run: nix develop --command nu update-nixos-release-tests.nu

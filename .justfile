@@ -4,7 +4,7 @@ alias f := format
 alias fmt := format
 
 format:
-    just --fmt --unstable
+    treefmt
 
 alias l := lint
 
@@ -34,4 +34,3 @@ update: && build test
     nix flake update
     bundle update
     bundix
-    pre-commit autoupdate

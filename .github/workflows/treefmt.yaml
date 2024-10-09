@@ -1,0 +1,21 @@
+name: Check files with treefmt
+"on":
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+
+jobs:
+  treefmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v14
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - name: Run treefmt
+        run: nix develop --command treefmt --ci
+      - uses: reviewdog/action-suggester@v1
+        with:
+          fail_on_error: true
+          github_token: ${{ secrets.GH_TOKEN_FOR_UPDATES }}
+          tool_name: treefmt

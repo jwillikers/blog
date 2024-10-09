@@ -29,13 +29,10 @@ basewebsite: /
 url: "https://www.jwillikers.com"
 repository: "jwillikers/blog"
 name: >-
-  Jordan Williams
-  <br />
-  <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
-  <img alt="Creative Commons License" style="border-width:0"
-    src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
-  <br />
-  <span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text"
+  Jordan Williams <br /> <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+    <img alt="Creative Commons License" style="border-width:0"
+      src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" />
+  </a> <br /> <span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text"
     property="dct:title" rel="dct:type">JWillikers</span> by
     <a xmlns:cc="http://creativecommons.org/ns#" href="https://jwillikers.com"
     property="cc:attributionName" rel="cc:attributionURL">Jordan Williams</a>
@@ -56,10 +53,10 @@ collections:
 pagination:
   enabled: true
   per_page: 7
-  permalink: '/page:num/'
-  title: ':title | :num of :max'
+  permalink: "/page:num/"
+  title: ":title | :num of :max"
   limit: 0
-  sort_field: 'date'
+  sort_field: "date"
   sort_reverse: true
 
 defaults:
@@ -117,8 +114,8 @@ minimal_mistakes_skin: "dark"
 read_time: true
 words_per_minute: 50
 search: true
-#search_provider: algolia
-#algolia:
+# search_provider: algolia
+# algolia:
 #  application_id: BMA3RTGG4I
 #  index_name: prod_jwillikers
 #  search_only_api_key: 95fa80641d767b8500a5e89ada72c377
@@ -139,7 +136,7 @@ asciidoctor:
   attributes:
     icons: font
     idseparator:
-    experimental: ''
+    experimental: ""
     source-highlighter: rouge
     pygments-css: style
   base_dir: :docdir
