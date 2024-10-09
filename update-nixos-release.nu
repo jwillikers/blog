@@ -40,7 +40,10 @@ export def get_latest_nixos_release [date: datetime] [ nothing -> string ] {
 export def update_nixos_release_in_flake [
     release: string # NixOS release, i.e. 24.05
 ] [ string -> string ] {
-    $in | str replace --regex "github:NixOS/nixpkgs/nixos-[0-9][0-9].[0-9][0-9]" $"github:NixOS/nixpkgs/nixos-($release)"
+    (
+        $in | str replace --regex "github:NixOS/nixpkgs/nixos-[0-9][0-9].[0-9][0-9]"
+        $"github:NixOS/nixpkgs/nixos-($release)"
+    )
 }
 
 def main [

@@ -32,7 +32,7 @@ def test_update_nixos_release_in_flake [] {
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem
       (system:
-         let
+        let
           overlays = [
           ];
           pkgs = import nixpkgs {
@@ -57,7 +57,7 @@ def test_update_nixos_release_in_flake [] {
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem
       (system:
-         let
+        let
           overlays = [
           ];
           pkgs = import nixpkgs {
