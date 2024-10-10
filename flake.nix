@@ -36,19 +36,18 @@
           nushell
         ];
         buildInputs = with pkgs; [ ];
-        treefmt = {
-          config = {
-            programs = {
-              actionlint.enable = true;
-              jsonfmt.enable = true;
-              just.enable = true;
-              nixfmt.enable = true;
-              prettier.enable = true;
-              typos.enable = true;
-              yamlfmt.enable = true;
-            };
-            projectRootFile = "flake.nix";
+        treefmt.config = {
+          programs = {
+            actionlint.enable = true;
+            deadnix.enable = true;
+            jsonfmt.enable = true;
+            just.enable = true;
+            nixfmt.enable = true;
+            prettier.enable = true;
+            typos.enable = true;
+            yamlfmt.enable = true;
           };
+          projectRootFile = "flake.nix";
         };
         treefmtEval = treefmt-nix.lib.evalModule pkgs treefmt;
         pre-commit = pre-commit-hooks.lib.${system}.run {
