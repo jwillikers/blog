@@ -13,7 +13,7 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@v14
       - uses: DeterminateSystems/magic-nix-cache-action@v8
       - name: Run treefmt
-        run: nix develop --command treefmt --ci
+        run: nix develop --command treefmt --fail-on-change --no-cache
       - uses: reviewdog/action-suggester@v1
         with:
           fail_on_error: true
