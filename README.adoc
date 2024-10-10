@@ -76,13 +76,6 @@ sudo systemctl reboot
 direnv allow
 ----
 
-. Run `pre-commit install` to configure pre-commit hooks in the repository.
-+
-[,sh]
-----
-pre-commit install
-----
-
 === Build
 
 The website can be generated locally with the `jekyll build` command.

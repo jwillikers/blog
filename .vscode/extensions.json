@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "ibecker.treefmt-vscode",
+    "asciidoctor.asciidoctor-vscode",
+    "mkhl.direnv",
+    "bbenoist.nix",
+    "thenuprojectcontributors.vscode-nushell-lang",
+    "nefrob.vscode-just-syntax",
+    "tekumara.typos-vscode"
+  ]
+}

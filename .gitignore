@@ -72,3 +72,6 @@ build-iPhoneSimulator/
 
 # Nix
 result
+
+# git-hooks.nix
+/.pre-commit-config.yaml

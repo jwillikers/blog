@@ -1,0 +1,2 @@
+# Ignore HTML documents since they use Liquid templating
+**/*.html

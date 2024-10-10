@@ -8,7 +8,7 @@ Unfortunately, this isn't always straightforward, especially when you want to se
 Sending an email directly from your desktop to your email account is likely going to accomplish nothing.
 The email will likely be blocked since, to your email provider, it is from an unknown source.
 I ran into this problem recently trying to set up https://www.smartmontools.org/[SmartMonTools] to send an email when it detected hard drive errors.
-The https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol[Simple Mail Transfer Protocal (SMTP)] is perfect for getting around this by *relaying* the email through your account from an established email provider.
+The https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol[Simple Mail Transfer Protocol (SMTP)] is perfect for getting around this by *relaying* the email through your account from an established email provider.
 
 In my instance, I wanted to relay the alert through my GMail account, which has nice support for SMTP.
 Using an Ubuntu desktop computer, I figured this would be a breeze.

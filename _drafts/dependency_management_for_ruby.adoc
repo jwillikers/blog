@@ -6,8 +6,8 @@ date = "2020-10-17"
 draft = true
 +++
 
-Seperating various project dependencies from system dependencies has been a huge software issue for a long time.
-There are many methods to acheive this depending on the platfrom and programming language.
+Separating various project dependencies from system dependencies has been a huge software issue for a long time.
+There are many methods to achieve this depending on the platform and programming language.
 The tool I use for writing this blog - and lots of documentation - is https://asciidoctor.org/[Asciidoctor].
 Asciidoctor is written in https://www.ruby-lang.org/en/[Ruby].
 Until recently, I've managed Asciidoctor and other Ruby dependencies at the system level.

@@ -4,7 +4,7 @@ alias f := format
 alias fmt := format
 
 format:
-    just --fmt --unstable
+    treefmt
 
 alias l := lint
 
@@ -25,6 +25,7 @@ alias t := test
 
 test:
     nu update-nixos-release-tests.nu
+    nu update-nix-direnv-tests.nu
 
 alias u := update
 alias up := update
@@ -34,4 +35,4 @@ update: && build test
     nix flake update
     bundle update
     bundix
-    pre-commit autoupdate
+    nu update-nix-direnv.nu
