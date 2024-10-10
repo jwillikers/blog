@@ -47,6 +47,18 @@
             typos.enable = true;
             yamlfmt.enable = true;
           };
+          settings.formatter.typos.excludes = [
+            "*.avif"
+            "*.bmp"
+            "*.gif"
+            "*.jpeg"
+            "*.jpg"
+            "*.png"
+            "*.svg"
+            "*.tiff"
+            "*.webp"
+            ".vscode/settings.json"
+          ];
           projectRootFile = "flake.nix";
         };
         treefmtEval = treefmt-nix.lib.evalModule pkgs treefmt;
