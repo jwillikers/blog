@@ -1,0 +1,8 @@
+dirs:
+  - .
+fileExtensions:
+  - adoc
+ignorePatterns:
+  - pattern: "^https://127.0.0.1:8443"
+  - pattern: "^(ftp)://[^\\s/$?#]*\\.[^\\s]*$"
+useGitIgnore: true
