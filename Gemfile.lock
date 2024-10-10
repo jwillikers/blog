@@ -128,7 +128,7 @@ DEPENDENCIES
   kramdown (>= 2.3.0)
   minimal-mistakes-jekyll
   rouge
-  webrick (~> 1.7)
+  webrick
 
 BUNDLED WITH
-   2.5.16
+   2.5.9
