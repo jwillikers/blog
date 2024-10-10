@@ -1,7 +1,5 @@
 {
-  "files.associations": {
-    "*.html": "liquid"
-  },
+  "asciidoc.antora.enableAntoraSupport": false,
   "cSpell.words": [
     "accountsservices",
     "adoc",
@@ -282,5 +280,9 @@
     "zstd",
     "ZSYS"
   ],
-  "asciidoc.antora.enableAntoraSupport": false
+  "files.associations": {
+    "*.html": "liquid"
+  },
+  "nix.enableLanguageServer": true,
+  "nix.serverPath": "nil"
 }
