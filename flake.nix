@@ -33,9 +33,10 @@
           gems
           gems.wrappedRuby
           just
+          nil
           nushell
         ];
-        buildInputs = with pkgs; [ ];
+        buildInputs = [ ];
         treefmt.config = {
           programs = {
             actionlint.enable = true;
@@ -85,6 +86,7 @@
             # todo Broken for 24.05 branch
             # flake-checker.enable = true;
             mixed-line-endings.enable = true;
+            nil.enable = true;
 
             strip-location-metadata = {
               name = "Strip location metadata";
@@ -107,7 +109,7 @@
             let
               script = pkgs.writeShellApplication {
                 name = "serve";
-                runtimeInputs = with pkgs; [
+                runtimeInputs = [
                   gems
                   gems.wrappedRuby
                 ];
