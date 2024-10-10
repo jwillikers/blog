@@ -1,15 +1,16 @@
 default: serve
 
+alias c := check
+
+check: build
+    yamllint .
+    lychee --cache _site/
+
 alias f := format
 alias fmt := format
 
 format:
     treefmt
-
-alias l := lint
-
-lint:
-    yamllint .
 
 alias b := build
 

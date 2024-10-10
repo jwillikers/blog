@@ -9,8 +9,8 @@
 :LinuxServer-io: https://www.linuxserver.io/[LinuxServer.io]
 :Podman: https://podman.io/[Podman]
 :Podman-Compose: https://github.com/containers/podman-compose[Podman Compose]
-:podman-generate-kube: https://docs.podman.io/en/latest/markdown/podman-generate-kube.1.html[podman-generate-kube(1)]
-:podman-play-kube: https://docs.podman.io/en/latest/markdown/podman-play-kube.1.html[podman-play-kube(1)]
+:podman-kube-generate: https://docs.podman.io/en/latest/markdown/podman-kube-generate.1.html[podman-kube-generate(1)]
+:podman-kube-play: https://docs.podman.io/en/latest/markdown/podman-kube-play.1.html[podman-kube-play(1)]
 :podman-pod-ps: https://docs.podman.io/en/latest/markdown/podman-pod-ps.1.html[podman-pod-ps(1)]
 :systemd: https://systemd.io/[systemd]
 :Ubuntu: https://ubuntu.com/[Ubuntu]
@@ -47,7 +47,7 @@ POD ID        NAME              STATUS   CREATED      INFRA ID      # OF CONTAIN
 Okay, it's present and accounted for!
 --
 
-. To generate the Kubernetes configuration from a Podman container, use {podman-generate-kube}.
+. To generate the Kubernetes configuration from a Podman container, use {podman-kube-generate}.
 +
 --
 Here I output the configuration to the file _unifi-controller.yml_ using the `-f` flag.
@@ -55,7 +55,7 @@ The `-s` flag produces the necessary network service configuration.
 
 [,sh]
 ----
-podman generate kube -s -f unifi-controller.yml unifi-controller
+podman kube generate -s -f unifi-controller.yml unifi-controller
 ----
 --
 
@@ -304,11 +304,11 @@ Details forthcoming.
 podman-compose down
 ----
 
-. Provide the generated Kubernetes YAML to {podman-play-kube} to create and launch the pod.
+. Provide the generated Kubernetes YAML to {podman-kube-play} to create and launch the pod.
 +
 [,sh]
 ----
-podman play kube ~/Projects/unifi-controller/unifi-controller.yml
+podman kube play ~/Projects/unifi-controller/unifi-controller.yml
 ----
 
 . Access the controller's web console at https://127.0.0.1:8443/.

@@ -9,7 +9,7 @@ Using this http://www.lonecpluspluscoder.com/2020/01/16/building-an-openbsd-wire
 
 == Unbound Configuration
 
-Use the https://man.openbsd.org/ftp.1[ftp] command to download the https://wiki.archlinux.org/index.php/unbound#Root_hints[Root Hints].
+Use the https://man.openbsd.org/ftp.1[ftp] command to download the https://wiki.archlinux.org/title/unbound#Root_hints[Root Hints].
 
 [,sh]
 ----
@@ -69,7 +69,7 @@ rcctl restart unbound
 
 Verify that DNSSEC is working with the https://man.openbsd.org/OpenBSD-6.6/dig[dig] command from a computer using your unbound server.
 This website, `jwillikers.com`, has DNSSEC enabled and so makes for a good address to test.
-Cloudflare provides a nice write-up about using dig to verify DNSSEC https://support.cloudflare.com/hc/en-us/articles/360021111972-Troubleshooting-DNSSEC#TroubleshootingDNSSEC-DNSSECinPracticewithDig[here].
+Cloudflare provides a nice write-up about using dig to verify DNSSEC https://developers.cloudflare.com/dns/dnssec/troubleshooting/#TroubleshootingDNSSEC-DNSSECinPracticewithDig[here].
 
 [,sh]
 ----

@@ -10,7 +10,7 @@ To get the latest version of https://git-scm.com/[Git] on CentOS 7, it is possib
 This is a quick tutorial showing the necessary steps to install Git from source on CentOS 7.
 Further documentation is available in the https://git-scm.com/book/en/v2/Getting-Started-Installing-Git[Git Book].
 This tutorial assumes familiarity with CentOS 7 packages management, source code compilation, and the command-line.
-Where an instruction applies to a specific shell, the instruction will be shown for both https://www.gnu.org/software/bash/[Bash], the default shell on CentOS 7, and https://fishshell.com/[fish], the better shell everywhere.footnote:[It's not like I'm biased or anything.]
+Where an instruction applies to a specific shell, the instruction will be shown for both https://tiswww.case.edu/php/chet/bash/bashtop.html[Bash], the default shell on CentOS 7, and https://fishshell.com/[fish], the better shell everywhere.footnote:[It's not like I'm biased or anything.]
 To account for two distinct yet equally important use cases, instructions are provided for installing Git for the current user as well as system-wide.
 
 . If you aren't using the https://rpm-software-management.github.io/[DNF] package manager yet, grab that.

@@ -3,7 +3,7 @@
 :page-category: Data Storage
 :page-tags: [backups, Btrbk, Btrfs, elementary, Linux, snap-sync, Snapper, snapshots, Ubuntu]
 :arch-wiki-snapper-change-frequencies: https://wiki.archlinux.org/index.php/snapper#Change_snapshot_and_cleanup_frequencies[Change snapshot and cleanup frequencies]
-:bash: https://www.gnu.org/software/bash/[Bash]
+:bash: https://tiswww.case.edu/php/chet/bash/bashtop.html[Bash]
 :btrbk: https://github.com/digint/btrbk[Btrbk]
 :btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
 :btrfs-maintenance-toolbox: https://github.com/kdave/btrfsmaintenance[Btrfs maintenance toolbox]

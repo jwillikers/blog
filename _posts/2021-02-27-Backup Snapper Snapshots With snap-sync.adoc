@@ -3,7 +3,7 @@
 :page-category: Data Storage
 :page-tags: [backups, Btrbk, Btrfs, elementary, encryption, Linux, snap-sync, Snapper, snapshots, systemd, Ubuntu]
 :AccuracySec: https://www.freedesktop.org/software/systemd/man/systemd.timer.html#AccuracySec=[AccuracySec]
-:Bash: https://www.gnu.org/software/bash/[Bash]
+:Bash: https://tiswww.case.edu/php/chet/bash/bashtop.html[Bash]
 :Btrbk: https://github.com/digint/btrbk[Btrbk]
 :Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
 :Cryptsetup: https://gitlab.com/cryptsetup/cryptsetup[Cryptsetup]

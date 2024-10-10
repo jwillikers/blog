@@ -7,7 +7,7 @@
 :Podman: https://podman.io/[Podman]
 :podman-auto-update: https://docs.podman.io/en/latest/markdown/podman-auto-update.1.html[podman-auto-update(1)]
 :podman-generate-systemd: https://docs.podman.io/en/latest/markdown/podman-generate-systemd.1.html[podman-generate-systemd(1)]
-:podman-play-kube: https://docs.podman.io/en/latest/markdown/podman-play-kube.1.html[podman-play-kube(1)]
+:podman-kube-play: https://docs.podman.io/en/latest/markdown/podman-kube-play.1.html[podman-kube-play(1)]
 :podman-pod-ps: https://docs.podman.io/en/latest/markdown/podman-pod-ps.1.html[podman-pod-ps(1)]
 :systemd: https://systemd.io/[systemd]
 :Ubuntu: https://ubuntu.com/[Ubuntu]
@@ -57,11 +57,11 @@ The image name must be fully qualified for auto-update to update the image.
 ====
 --
 
-. Provide the generated Kubernetes YAML to {podman-play-kube} to create and launch the pod.
+. Provide the generated Kubernetes YAML to {podman-kube-play} to create and launch the pod.
 +
 [,sh]
 ----
-podman play kube ~/Projects/unifi-controller/unifi-controller.yml
+podman kube play ~/Projects/unifi-controller/unifi-controller.yml
 ----
 
 . Check the labels attached to the UniFi Controller container with `podman ps`.

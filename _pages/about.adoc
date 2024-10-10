@@ -69,7 +69,7 @@ If you haven't figured it out yet, I'm big proponent of open-source software whe
 I enjoy collaborating with other developers to improve open-source software for everyone.
 
 * Desktop Linux, namely https://ubuntu.com/download/desktop[Ubuntu] and https://www.gnome.org/[GNOME]
-* Open-hardware mobile devices (and relevant software), such as the https://www.pine64.org/pinebook-pro/[Pinebook Pro], https://www.pine64.org/pinephone/[PinePhone], and https://www.pine64.org/pinetab/[PineTab] developed by https://www.pine64.org/[Pine64]
+* Open-hardware mobile devices (and relevant software), such as the https://pine64.org/devices/pinebook_pro/[Pinebook Pro], https://www.pine64.org/pinephone/[PinePhone], and https://pine64.org/devices/pinetab/[PineTab] developed by https://www.pine64.org/[Pine64]
 * Safe, simple, and easy-to-use programming languages like https://www.rust-lang.org/[Rust] and https://golang.org/[Go]
 * https://www.openbsd.org/[OpenBSD]
 * https://www.freebsd.org/[FreeBSD]
@@ -103,7 +103,7 @@ Operating Systems::
 Languages::
 * https://asciidoctor.org/[Asciidoctor]
 * https://www.gnu.org/software/gawk/manual/gawk.html[awk]
-* https://www.gnu.org/software/bash/[Bash]
+* https://tiswww.case.edu/php/chet/bash/bashtop.html[Bash]
 * http://www.open-std.org/jtc1/sc22/wg14/[C]
 * https://isocpp.org/[{cpp}] (Standards including 98, 11, 14, 17, 20)
 * https://fishshell.com/[fish]
@@ -211,7 +211,7 @@ System Utilities::
 * https://www.sudo.ws/[Sudo]
 
 Filesystems::
-* https://openzfs.org/wiki/Main_Pag[OpenZFS]
+* https://openzfs.org/wiki/Main_Page[OpenZFS]
 
 Services::
 * https://nextcloud.com/[Nextcloud]

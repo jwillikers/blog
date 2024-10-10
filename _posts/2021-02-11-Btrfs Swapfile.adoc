@@ -168,8 +168,8 @@ This setting will be applied at the next reboot.
 
 == References
 
-https://wiki.archlinux.org/index.php/btrfs#Swap_file[ArchWiki Btrfs - Swap file]
-https://wiki.archlinux.org/index.php/Swap#Swap_file_creation[ArchWiki Swap - Swap file creation]
+https://wiki.archlinux.org/title/Swap#Swap_file[ArchWiki Btrfs - Swap file]
+https://wiki.archlinux.org/title/Swap#Swap_file_creation[ArchWiki Swap - Swap file creation]
 https://wiki.debian.org/Swap[Debian Wiki Swap]
 
 == Conclusion

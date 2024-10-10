@@ -32,11 +32,11 @@ $ sudo pacman -S dkms linux-pinebookpro-headers
 $ sudo pacman -S yay
 ----
 
-. Then, install the https://aur.archlinux.org/packages/zfs-dkms-any/[zfs-dkms-any] package from the AUR.
+. Then, install the https://aur.archlinux.org/packages/zfs-dkms[zfs-dkms] package from the AUR.
 +
 [,sh]
 ----
-$ yay -S zfs-dkms-any
+$ yay -S zfs-dkms
 ----
 
 === Configure
@@ -64,4 +64,4 @@ $ sudo systemctl enable zfs.target
 
 === Next Steps
 
-See <<zfs_external_storage_pinebook_pro#,External Storage on the Pinebook Pro with ZFS>> to learn how to use ZFS to store your files on a microSD card.
+See <<external-storage-on-the-pinebook-pro-with-zfs#,External Storage on the Pinebook Pro with ZFS>> to learn how to use ZFS to store your files on a microSD card.

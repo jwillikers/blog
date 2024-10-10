@@ -33,6 +33,7 @@
           gems
           gems.wrappedRuby
           just
+          lychee
           nil
           nushell
         ];
@@ -47,6 +48,7 @@
             nixfmt.enable = true;
             prettier.enable = true;
             statix.enable = true;
+            taplo.enable = true;
             typos.enable = true;
             yamlfmt.enable = true;
           };

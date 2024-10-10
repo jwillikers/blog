@@ -32,8 +32,7 @@ name: >-
   Jordan Williams <br /> <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
     <img alt="Creative Commons License" style="border-width:0"
       src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" />
-  </a> <br /> <span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text"
-    property="dct:title" rel="dct:type">JWillikers</span> by
+  </a> <br /> <span "dct:title" rel="dct:type">JWillikers</span> by
     <a xmlns:cc="http://creativecommons.org/ns#" href="https://jwillikers.com"
     property="cc:attributionName" rel="cc:attributionURL">Jordan Williams</a>
     is licensed under a
@@ -174,6 +173,7 @@ exclude:
   - Gemfile.lock
   - gemset.nix
   - Rakefile
+  - result/
   - vendor/bundle/
   - vendor/cache/
   - vendor/gems/

@@ -3,7 +3,7 @@
 :page-category: Command-Line
 :page-tags: [bat, Linux, less, Rust, Solarized, Ubuntu, Unix]
 
-https://github.com/sharkdp/bat[`bat`] is a helpful alternative to https://www.gnu.org/software/coreutils/manual/html_node/cat-invocation.html#cat-invocation[`cat`] when you want peruse files on the command-line with the improved readability that syntax highlighting has to offer.
+https://github.com/sharkdp/bat[`bat`] is a helpful alternative to https://www.gnu.org/software/coreutils/manual/html_node/cat-invocation.html[`cat`] when you want peruse files on the command-line with the improved readability that syntax highlighting has to offer.
 The https://www.rust-lang.org/[Rust] program boasts a wide selection of color themes, automatically uses the system pager when needed, provides syntax highlighting for man pages, and even provides basic integration with https://git-scm.com/[`git`].
 It is a wonderful tool, though it won't replace your general pager, like https://github.com/rkitover/vimpager[`vimpager`], or your `git` pager, like https://github.com/dandavison/delta[`delta`].footnote:[According to https://github.com/sharkdp/bat/issues/1053[this issue], `bat` might just be it's own pager before long.]
 

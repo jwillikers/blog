@@ -71,7 +71,7 @@ It's important to take into account how well the tooling you choose integrates w
 These will need to be aware of the appropriate interpreter and virtual environment to use for your project.
 While it's usually possible to configure these things manually, think _humans_, remember?
 Many IDE's and code editors integrate well with setups using the built-in Python tooling.
-Pipenv boasts https://pipenv.pypa.io/en/latest/advanced/#community-integrations[community-maintained extensions] for several popular IDE's and code editors.
+Pipenv boasts https://docs.pipenv.org/advanced/#community-integrations[community-maintained extensions] for several popular IDE's and code editors.
 Even direnv works with many graphical editors through plugins.
 
 For official, up-to-date information on this topic and related utilities, consult the https://packaging.python.org/tutorials/managing-dependencies/[Managing Application Dependencies] tutorial and the https://packaging.python.org/guides/tool-recommendations/[Tool recommendations] guide.
@@ -86,7 +86,7 @@ The last bits, direnv and the https://github.com/asdf-community/asdf-direnv[asdf
 
 This tutorial uses https://ubuntu.com/[Ubuntu] 20.04 as the reference system, though these instructions should transfer relatively easily to any Unix-like platform.
 You should be familiar with Python, shells, Linux, and https://git-scm.com/[Git].
-Instructions are provided for fish, https://www.gnu.org/software/bash/[Bash], and https://www.zsh.org/[ZSH].
+Instructions are provided for fish, https://tiswww.case.edu/php/chet/bash/bashtop.html[Bash], and https://www.zsh.org/[ZSH].
 
 The first section details how to install these tools, the second section describes the steps to configure a project, the third section describes how to initialize the environment for a previously configured project, and the last section of the tutorial describes how to handle updates for Python, Python packages, and these utilities.
 Without further ado, let's begin.

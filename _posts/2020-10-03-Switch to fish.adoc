@@ -43,10 +43,10 @@ sudo apt -y install fish
 
 Once installed, switching is just a matter of updating the login shell.footnote:[https://fishshell.com/docs/current/tutorial.html#switching-to-fish[fish Tutorial: Switching to fish?]]
 
-. Register `/usr/bin/fish` as a login shell by adding its path to https://manpages.ubuntu.com/manpages/en/man5/shells.5.html[`/etc/shells`].
+. Register `/usr/bin/fish` as a login shell by adding its path to https://manpages.debian.org/unstable/manpages/shells.5.en.html[`/etc/shells`].
 +
 --
-Debian provides a convenient https://manpages.ubuntu.com/manpages/en/man8/add-shell.8.html[`add-shell`] command to accomplish this.
+Debian provides a convenient https://manpages.debian.org/unstable/debianutils/add-shell.8.en.html[`add-shell`] command to accomplish this.
 
 [,sh]
 ----
@@ -54,7 +54,7 @@ sudo add-shell /usr/bin/fish
 ----
 --
 
-. Set the current user's login shell to fish with https://manpages.ubuntu.com/manpages/en/man1/chsh.1.html[`chsh`].
+. Set the current user's login shell to fish with https://manpages.debian.org/unstable/passwd/chsh.1.en.html[`chsh`].
 +
 [,sh]
 ----
@@ -282,7 +282,7 @@ As autosuggestion appear from your history, choose the suggested line with kbd:[
 To select only the next word of the suggestion, use kbd:[Alt+→].
 --
 
-* Use fish's https://fishshell.com/docs/current/index.html#history-search[searchable history] instead of Bash's https://www.gnu.org/software/bash/manual/html_node/Commands-For-History.html[reverse-search-history].
+* Use fish's https://fishshell.com/docs/current/index.html#history-search[searchable history] instead of Bash's https://www.gnu.org/software/bash/manual/html_node/Searching.html[reverse history search].
 +
 --
 This one has required a bit of learning curve since I'm so used to finding previous commands by searching with kbd:[Ctrl+R].
