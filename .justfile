@@ -4,7 +4,8 @@ alias c := check
 
 check: build
     yamllint .
-    lychee --cache _site/
+    asciidoctor {CODE_OF_CONDUCT,LICENSE,README}.adoc
+    lychee --cache _site/ *.html
 
 alias f := format
 alias fmt := format

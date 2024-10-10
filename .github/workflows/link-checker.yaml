@@ -26,7 +26,9 @@ jobs:
       # todo Cache bundler stuff?
       - name: Build with Jekyll
         run: nix build
+      - name: Convert the README files to html
+        run: nix develop --command asciidoctor {CODE_OF_CONDUCT,LICENSE,README}.adoc
       - name: Run lychee on the generated site
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: nix develop --command lychee --cache --no-progress --verbose result/srv/
+        run: nix develop --command lychee --cache --no-progress --verbose result/srv/ ./*.html

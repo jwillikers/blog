@@ -78,3 +78,8 @@ result
 
 # lychee
 .lycheecache
+
+# Asciidoctor
+CODE_OF_CONDUCT.html
+LICENSE.html
+README.html
