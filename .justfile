@@ -4,7 +4,6 @@ alias c := check
 
 check: build
     yamllint .
-    awesome_bot **/*.adoc
     lychee --cache _site/
 
 alias f := format
