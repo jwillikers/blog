@@ -136,7 +136,6 @@
         };
         devShells.default = mkShell {
           inherit buildInputs;
-          inherit (pre-commit) shellHook;
           nativeBuildInputs =
             nativeBuildInputs
             ++ [
@@ -145,6 +144,7 @@
               (lib.attrValues treefmtEval.config.build.programs)
             ]
             ++ pre-commit.enabledPackages;
+          postShellHook = pre-commit.shellHook;
         };
         packages.default = callPackage ./default.nix { inherit gems; };
         formatter = treefmtEval.config.build.wrapper;
