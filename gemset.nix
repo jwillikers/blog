@@ -26,6 +26,17 @@
     };
     version = "2.0.23";
   };
+  awesome_bot = {
+    dependencies = [ "parallel" ];
+    groups = [ "default" ];
+    platforms = [ ];
+    source = {
+      remotes = [ "https://rubygems.org" ];
+      sha256 = "1cslx0gsqv98laqg5qq9a7v3gq8zckbpfv2a0cnbmw46mpidg5cp";
+      type = "gem";
+    };
+    version = "1.20.0";
+  };
   bigdecimal = {
     groups = [
       "default"
@@ -504,6 +515,16 @@
       type = "gem";
     };
     version = "4.25.1";
+  };
+  parallel = {
+    groups = [ "default" ];
+    platforms = [ ];
+    source = {
+      remotes = [ "https://rubygems.org" ];
+      sha256 = "0055br0mibnqz0j8wvy20zry548dhkakws681bhj3ycb972awkzd";
+      type = "gem";
+    };
+    version = "1.20.1";
   };
   pathutil = {
     dependencies = [ "forwardable-extended" ];
