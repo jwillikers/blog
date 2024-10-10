@@ -21,10 +21,10 @@ Plus, it details how to install and configure Antigen, oh-my-zsh, autosuggestion
 $ sudo apt -y install zsh
 ----
 
-. Register `/usr/bin/zsh` as a login shell by adding its path to https://manpages.ubuntu.com/manpages/en/man5/shells.5.html[`/etc/shells`].
+. Register `/usr/bin/zsh` as a login shell by adding its path to https://manpages.debian.org/unstable/manpages/shells.5.en.html[`/etc/shells`].
 +
 --
-Debian provides a convenient https://manpages.ubuntu.com/manpages/en/man8/add-shell.8.html[`add-shell`] command to accomplish this.
+Debian provides a convenient https://manpages.debian.org/unstable/debianutils/add-shell.8.en.html[`add-shell`] command to accomplish this.
 
 [,sh]
 ----

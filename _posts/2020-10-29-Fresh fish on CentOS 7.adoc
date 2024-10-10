@@ -8,7 +8,7 @@ Well, you've come to the right place.
 
 == Tutorial
 
-The instructions herein describe how to install a much newer version of the fish shell, version 3.1.2, from source on https://www.gnu.org/software/bash/[CentOS] 7.
+The instructions herein describe how to install a much newer version of the fish shell, version 3.1.2, from source on https://tiswww.case.edu/php/chet/bash/bashtop.html[CentOS] 7.
 Further instructions for building fish are available from the https://github.com/fish-shell/fish-shell/#building[fish documentation].
 For this tutorial to make a lick of sense, you should be familiar with the command-line, Linux, installing packages, and building projects from source.
 
@@ -145,7 +145,7 @@ sudo cmake3 --install fish-shell/build
 
 === Troubleshooting
 
-Packages on CentOS 7 might assume you are using a https://www.gnu.org/software/bash/[Bash]-compatible login shell.
+Packages on CentOS 7 might assume you are using a https://tiswww.case.edu/php/chet/bash/bashtop.html[Bash]-compatible login shell.
 For instance, the https://www.qt.io/[Qt] 5 development packages work fine when using a Bash shell.
 After switching to fish, building a Qt 5 application failed because it could not find the `xcb` plugin.
 Setting the `QT_QPA_PLATFORM_PLUGIN_PATH` to as shown below resolved this issue.

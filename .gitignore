@@ -75,3 +75,11 @@ result
 
 # git-hooks.nix
 /.pre-commit-config.yaml
+
+# lychee
+.lycheecache
+
+# Asciidoctor
+CODE_OF_CONDUCT.html
+LICENSE.html
+README.html

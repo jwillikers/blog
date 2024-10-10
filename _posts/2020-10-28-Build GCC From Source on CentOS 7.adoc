@@ -13,7 +13,7 @@ As it turns out, it's not actually that hard.
 This tutorial provides the steps necessary to compile and install a newer version of GCC, version 10.2.0 to be specific, on CentOS 7.
 The GCC front-ends for C, {cpp}, and Fortran are included.
 You should be familiar with command-line tools, CentOS, and the compiling and installing software on Linux.
-Shell commands are provided in both https://www.gnu.org/software/bash/[Bash], the native shell on CentOS 7, and https://fishshell.com/[fish] because it has standards.
+Shell commands are provided in both https://tiswww.case.edu/php/chet/bash/bashtop.html[Bash], the native shell on CentOS 7, and https://fishshell.com/[fish] because it has standards.
 
 . If you aren't using the https://rpm-software-management.github.io/[DNF] package manager yet, grab that.
 +

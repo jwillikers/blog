@@ -148,7 +148,7 @@ Several of these projects are enumerated below.
 * https://jekyllrb.com/[Jekyll]
 * https://github.com/asciidoctor/jekyll-asciidoc[jekyll-asciidoc]
 * https://mmistakes.github.io/minimal-mistakes/[Minimal Mistakes]
-* https://rouge.jneen.net/[Rouge]
+* https://rouge.jneen.net[Rouge]
 * https://www.ruby-lang.org/en/[Ruby]
 
 == Code of Conduct

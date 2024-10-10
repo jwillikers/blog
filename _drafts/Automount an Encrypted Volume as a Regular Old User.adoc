@@ -2,7 +2,7 @@
 :page-layout:
 :page-category: Data Storage
 :page-tags: [automount, Btrfs, Cryptsetup, elementary, encryption, GIO, Linux, mount, systemd, Ubuntu, udev, udevil, udisks2]
-:Bash: https://www.gnu.org/software/bash/[Bash]
+:Bash: https://tiswww.case.edu/php/chet/bash/bashtop.html[Bash]
 :Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
 :Cryptsetup: https://gitlab.com/cryptsetup/cryptsetup[Cryptsetup]
 :elementary-OS: https://elementary.io/[elementary OS]

@@ -29,31 +29,51 @@
           extraConfigPaths = [ "${./.}/.ruby-version" ];
         };
         nativeBuildInputs = with pkgs; [
+          asciidoctor
+          bundix
           fish
           gems
           gems.wrappedRuby
           just
+          lychee
+          nil
           nushell
         ];
-        buildInputs = with pkgs; [ ];
-        treefmt = {
-          config = {
-            programs = {
-              actionlint.enable = true;
-              jsonfmt.enable = true;
-              just.enable = true;
-              nixfmt.enable = true;
-              prettier.enable = true;
-              typos.enable = true;
-              yamlfmt.enable = true;
-            };
-            projectRootFile = "flake.nix";
+        buildInputs = [ ];
+        treefmt.config = {
+          programs = {
+            actionlint.enable = true;
+            deadnix.enable = true;
+            fish_indent.enable = true;
+            jsonfmt.enable = true;
+            just.enable = true;
+            nixfmt.enable = true;
+            prettier.enable = true;
+            statix.enable = true;
+            taplo.enable = true;
+            typos.enable = true;
+            yamlfmt.enable = true;
           };
+          settings.formatter.typos.excludes = [
+            "*.avif"
+            "*.bmp"
+            "*.gif"
+            "*.jpeg"
+            "*.jpg"
+            "*.png"
+            "*.svg"
+            "*.tiff"
+            "*.webp"
+            ".vscode/settings.json"
+          ];
+          projectRootFile = "flake.nix";
         };
         treefmtEval = treefmt-nix.lib.evalModule pkgs treefmt;
         pre-commit = pre-commit-hooks.lib.${system}.run {
           src = ./.;
           hooks = {
+            check-added-large-files.enable = true;
+            check-case-conflicts.enable = true;
             check-executables-have-shebangs.enable = true;
 
             # todo Not integrated with Nix?
@@ -63,15 +83,22 @@
             };
 
             check-json.enable = true;
+            check-shebang-scripts-are-executable.enable = true;
+            check-symlinks.enable = true;
             check-toml.enable = true;
             check-yaml.enable = true;
             detect-private-keys.enable = true;
             editorconfig-checker.enable = true;
             end-of-file-fixer.enable = true;
             fix-byte-order-marker.enable = true;
+            forbid-new-submodules.enable = true;
+            # todo Enable lychee when asciidoc is supported.
+            # See https://github.com/lycheeverse/lychee/issues/291
+            # lychee.enable = true;
             # todo Broken for 24.05 branch
             # flake-checker.enable = true;
             mixed-line-endings.enable = true;
+            nil.enable = true;
 
             strip-location-metadata = {
               name = "Strip location metadata";
@@ -94,7 +121,7 @@
             let
               script = pkgs.writeShellApplication {
                 name = "serve";
-                runtimeInputs = with pkgs; [
+                runtimeInputs = [
                   gems
                   gems.wrappedRuby
                 ];
@@ -110,7 +137,6 @@
         };
         devShells.default = mkShell {
           inherit buildInputs;
-          inherit (pre-commit) shellHook;
           nativeBuildInputs =
             nativeBuildInputs
             ++ [
@@ -119,6 +145,7 @@
               (lib.attrValues treefmtEval.config.build.programs)
             ]
             ++ pre-commit.enabledPackages;
+          postShellHook = pre-commit.shellHook;
         };
         packages.default = callPackage ./default.nix { inherit gems; };
         formatter = treefmtEval.config.build.wrapper;

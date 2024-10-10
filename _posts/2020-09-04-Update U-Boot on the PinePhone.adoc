@@ -4,7 +4,7 @@
 :page-tags: [ArchLinux, Boot, Linux, Manjaro, PinePhone, UBoot]
 
 As I big fan of https://www.gnome.org/[GNOME], I really wanted a similar experience on the https://www.pine64.org/pinephone/[PinePhone].
-That's why I opted for running https://osdn.net/projects/manjaro-arm/[Manjaro ARM]'s alpha for the PinePhone, which comes in a GNOME-like https://developer.puri.sm/Librem5/Software_Reference/Environments/Phosh.html[Phosh] flavor.
+That's why I opted for running https://wiki.manjaro.org/index.php/Manjaro-ARM[Manjaro ARM]'s alpha for the PinePhone, which comes in a GNOME-like https://developer.puri.sm/Librem5/Software_Reference/Environments/Phosh.html[Phosh] flavor.
 It's been running from the SD card great so far, but I thought to update the internal https://gitlab.manjaro.org/manjaro-arm/packages/core/uboot-pinephone-crust[U-Boot] as <<update-u-boot-on-the-pinebook-pro#,I did on the Pinebook Pro>>.
 
 == Tutorial

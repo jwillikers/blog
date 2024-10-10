@@ -12,7 +12,7 @@ And now you're just dying to use ZFS on that, right?
 
 == Tutorial
 
-Following the previous post, <<install_zfs_pinebook_pro#,Install ZFS on the Pinebook Pro>>, this tutorial describes the steps required to setup a microSD card for your music files with ZFS on the Pinebook Pro.
+Following the previous post, <<install-zfs-on-the-pinebook-pro#,Install ZFS on the Pinebook Pro>>, this tutorial describes the steps required to setup a microSD card for your music files with ZFS on the Pinebook Pro.
 
 === Create the Pool
 

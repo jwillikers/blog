@@ -5,7 +5,7 @@
 :cgdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/cgdisk.8.html[cgdisk(8)]
 :create-a-bootable-windows-10-usb-drive-in-linux: https://linuxhint.com/create-a-bootable-windows-10-usb-drive-in-linux/[How to Create a Bootable Windows 10 USB Drive in Linux]
 :fdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/fdisk.8.html[fdisk(8)]
-:Fedora: https://start.fedoraproject.org/[Fedora]
+:Fedora: https://fedoraproject.org/start[Fedora]
 :gdisk: https://manpages.ubuntu.com/manpages/focal/en/man8/gdisk.8.html[gdisk(8)]
 :GNOME: https://www.gnome.org/[GNOME]
 :gnome-disk-image-mounter: https://manpages.ubuntu.com/manpages/focal/en/man1/gnome-disk-image-mounter.1.html[gnome-disk-image-mounter(1)]

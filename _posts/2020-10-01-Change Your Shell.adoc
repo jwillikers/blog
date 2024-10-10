@@ -21,10 +21,10 @@ sudo apt -y install fish
 This Debian package installs the `fish` executable in `/usr/bin`.
 --
 
-. Register `/usr/bin/fish` as a valid login shell by adding its path to https://manpages.ubuntu.com/manpages/en/man5/shells.5.html[`/etc/shells`].
+. Register `/usr/bin/fish` as a valid login shell by adding its path to https://manpages.debian.org/unstable/manpages/shells.5.en.html[`/etc/shells`].
 +
 --
-Debian provides a convenient https://manpages.ubuntu.com/manpages/en/man8/add-shell.8.html[`add-shell`] command to accomplish this.
+Debian provides a convenient https://manpages.debian.org/unstable/debianutils/add-shell.8.en.html[`add-shell`] command to accomplish this.
 
 [,sh]
 ----

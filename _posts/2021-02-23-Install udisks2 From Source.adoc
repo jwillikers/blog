@@ -2,7 +2,7 @@
 :page-layout:
 :page-category: Data Storage
 :page-tags: [Btrfs, elementary, Linux, mount, Ubuntu, udisks2]
-:Bash: https://www.gnu.org/software/bash/[Bash]
+:Bash: https://tiswww.case.edu/php/chet/bash/bashtop.html[Bash]
 :Btrfs: https://btrfs.wiki.kernel.org/index.php/Main_Page[Btrfs]
 :Btrfs-Wiki-FAQ: https://btrfs.wiki.kernel.org/index.php/FAQ[Btrfs Wiki FAQ]
 :elementary-OS: https://elementary.io/[elementary OS]

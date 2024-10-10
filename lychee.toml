@@ -1,0 +1,10 @@
+# Due to rate limiting from https://www.gnu.org
+accept = [429]
+
+cache = true
+exclude = [
+  '^https://linuxize.com/post/how-to-add-user-to-sudoers-in-ubuntu/',
+  '^https://127\.0\.0\.1:8443/',
+]
+# exclude_path = ["_site/", "result/"]
+max_cache_age = "2w"

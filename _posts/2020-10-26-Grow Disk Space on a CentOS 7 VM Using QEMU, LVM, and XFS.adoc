@@ -18,7 +18,7 @@ This tutorial uses https://www.qemu.org/[QEMU] for modifying the disk image, htt
 
 . Shutdown the virtual machine.
 
-. Increase the size of the disk image with the https://www.qemu.org/docs/master/interop/qemu-img.html[QEMU disk image utility].
+. Increase the size of the disk image with the https://www.qemu.org/docs/master/tools/qemu-img.html[QEMU disk image utility].
 +
 --
 [,sh]
