@@ -1,6 +1,5 @@
 source 'https://rubygems.org'
 
-gem 'awesome_bot'
 gem 'coderay'
 gem 'kramdown', '>= 2.3.0'
 gem 'jekyll'
