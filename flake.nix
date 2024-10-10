@@ -29,6 +29,7 @@
           extraConfigPaths = [ "${./.}/.ruby-version" ];
         };
         nativeBuildInputs = with pkgs; [
+          bundix
           fish
           gems
           gems.wrappedRuby
