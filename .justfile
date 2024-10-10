@@ -35,5 +35,5 @@ update: && build test
     nu update-nixos-release.nu
     nix flake update
     bundle update
-    bundix --magic
+    bundix --lock
     nu update-nix-direnv.nu
