@@ -45,6 +45,7 @@
             just.enable = true;
             nixfmt.enable = true;
             prettier.enable = true;
+            statix.enable = true;
             typos.enable = true;
             yamlfmt.enable = true;
           };
