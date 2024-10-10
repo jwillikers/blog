@@ -68,6 +68,8 @@
         pre-commit = pre-commit-hooks.lib.${system}.run {
           src = ./.;
           hooks = {
+            check-added-large-files.enable = true;
+            check-case-conflicts.enable = true;
             check-executables-have-shebangs.enable = true;
 
             # todo Not integrated with Nix?
@@ -77,12 +79,18 @@
             };
 
             check-json.enable = true;
+            check-shebang-scripts-are-executable.enable = true;
+            check-symlinks.enable = true;
             check-toml.enable = true;
             check-yaml.enable = true;
             detect-private-keys.enable = true;
             editorconfig-checker.enable = true;
             end-of-file-fixer.enable = true;
             fix-byte-order-marker.enable = true;
+            forbid-new-submodules.enable = true;
+            # todo Enable lychee when asciidoc is supported.
+            # See https://github.com/lycheeverse/lychee/issues/291
+            # lychee.enable = true;
             # todo Broken for 24.05 branch
             # flake-checker.enable = true;
             mixed-line-endings.enable = true;
