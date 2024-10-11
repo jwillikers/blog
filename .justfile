@@ -1,8 +1,13 @@
 default: serve
 
+alias b := build
+
+build:
+    jekyll build
+
 alias c := check
 
-check: build
+check: build && format
     yamllint .
     asciidoctor {CODE_OF_CONDUCT,LICENSE,README}.adoc
     lychee --cache _site/ *.html
@@ -13,11 +18,6 @@ alias fmt := format
 format:
     treefmt
 
-alias b := build
-
-build:
-    jekyll build
-
 alias s := serve
 
 serve:
@@ -26,8 +26,8 @@ serve:
 alias t := test
 
 test:
-    nu update-nixos-release-tests.nu
     nu update-nix-direnv-tests.nu
+    nu update-nixos-release-tests.nu
 
 alias u := update
 alias up := update
