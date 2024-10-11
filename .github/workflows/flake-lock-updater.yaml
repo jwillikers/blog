@@ -22,5 +22,6 @@ jobs:
           pr-labels: |
             automated
             dependencies
+          pr-reviewers: ${{ github.repository_owner }}
           pr-title: "chore: update flake.lock"
           token: ${{ secrets.GH_TOKEN_FOR_UPDATES }}
