@@ -5,7 +5,7 @@
 :elementary-os: https://elementary.io/[elementary OS]
 :TLP: https://linrunner.de/tlp/#[TLP]
 :TLPUI: https://github.com/d4nj1/TLPUI[TLPUI]
-:Ubuntu: https://opensource.org/licenses/gpl-license[Ubuntu]
+:Ubuntu: https://ubuntu.com/[Ubuntu]
 
 {TLP} is a powerful power management utility for Linux.
 It helps conserve battery life on mobile Linux devices by taking advantage of various kernel features.

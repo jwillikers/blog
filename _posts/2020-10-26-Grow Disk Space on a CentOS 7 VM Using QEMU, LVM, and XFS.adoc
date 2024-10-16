@@ -5,7 +5,7 @@
 
 Sometimes you just need some more disk space.
 Expanding the size of a virtual disk, though, is not necessarily as easy as you'd hope.
-Having just done this on a https://www.centos.org/[CentOS] 7 virtual machine, I document how to do so here.
+Having just done this on a https://www.centos.org[CentOS] 7 virtual machine, I document how to do so here.
 Thanks goes to the article https://www.systemmen.com/storage-fs/how-to-extend-linux-lvm-partition-in-aws-379.html[How to extend Linux LVM partition in AWS] from https://www.systemmen.com/[SystemMen].
 
 == Tutorial

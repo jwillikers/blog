@@ -11,12 +11,12 @@
 :FreeBSD: https://www.freebsd.org/[FreeBSD]
 :FreeBSD-Mastery-ZFS: https://www.tiltedwindmillpress.com/product/fmzfs/[FreeBSD Mastery: ZFS]
 :FreeBSD-Mastery-Advanced-ZFS: https://www.tiltedwindmillpress.com/product/fmaz/[FreeBSD Mastery: Advanced ZFS]
-:GPL: https://opensource.org/licenses/gpl-license[GPL]
+:GPL: https://opensource.org/license/gpl-2-0[GPL]
 :Michael-W-Lucas: https://mwl.io/[Michael W. Lucas]
 :NetBSD: https://www.netbsd.org/[NetBSD]
 :openSUSE: https://www.opensuse.org/[openSUSE]
 :OpenZFS: https://openzfs.org/wiki/Main_Page[OpenZFS]
-:Ubuntu: https://opensource.org/licenses/gpl-license[Ubuntu]
+:Ubuntu: https://ubuntu.com/[Ubuntu]
 
 There are many compelling reasons to use a modern {CoW}, _CoW_ for short, filesystem.
 These include low-cost snapshots and incremental backups.

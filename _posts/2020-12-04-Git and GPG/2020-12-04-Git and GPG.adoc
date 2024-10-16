@@ -22,11 +22,11 @@ All Git configuration settings are done _globally_, i.e. for the user in these s
 They may just as easily be configured at the repository level.
 ====
 
-. Install https://packages.ubuntu.com/focal/git[Ubuntu's git package], of course.
+. Install the git package, of course.
 +
 [,sh]
 ----
-sudo apt -y install git
+sudo apt --yes install git
 ----
 
 . Set your Git username.
