@@ -14,12 +14,6 @@ jobs:
   link-checker:
     runs-on: ubuntu-latest
     steps:
-      - name: Restore lychee cache
-        uses: actions/cache@v4
-        with:
-          path: .lycheecache
-          key: cache-lychee-${{ github.sha }}
-          restore-keys: cache-lychee-
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v14
       - uses: DeterminateSystems/magic-nix-cache-action@v8
@@ -38,9 +32,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: nix develop --command lychee --cache --no-progress --verbose result/srv/ ./*.html
-      - name: Save ccache cache
+      - name: Save lychee cache
         uses: actions/cache/save@v4
-        if: always() && steps.cache-lychee-restore.outputs.cache-hit != 'true'
         with:
           key: lychee-ccache
           path: .lycheecache
