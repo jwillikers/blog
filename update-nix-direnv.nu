@@ -52,7 +52,7 @@ def main [
   let hash = get_direnvrc_hash $version
 
   for file in $files {
-    $file | open | update_nix_direnv_in_envrc $version $hash | save --force $file
+    $file | open | update_nix_direnv_in_envrc $version $hash | $"($in)\n" | save --force $file
   }
 
   exit 0

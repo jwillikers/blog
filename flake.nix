@@ -2,6 +2,7 @@
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     pre-commit-hooks = {
       url = "github:cachix/pre-commit-hooks.nix";
       inputs = {
@@ -16,6 +17,7 @@
       self,
       flake-utils,
       nixpkgs,
+      nixpkgs-unstable,
       pre-commit-hooks,
       treefmt-nix,
     }:
@@ -24,6 +26,7 @@
       let
         overlays = [ ];
         pkgs = import nixpkgs { inherit system overlays; };
+        unstablePkgs = import nixpkgs-unstable { inherit system overlays; };
         gems = pkgs.bundlerEnv {
           name = "jwillikers-blog";
           gemdir = ./.;
@@ -38,7 +41,7 @@
           just
           lychee
           nil
-          nushell
+          unstablePkgs.nushell
         ];
         buildInputs = [ ];
         treefmt.config = {
