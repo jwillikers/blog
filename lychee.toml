@@ -4,6 +4,7 @@ accept = [429]
 cache = true
 exclude = [
   '^https://127\.0\.0\.1:8443/',
+  '^https://www\.centos\.org',
   '^https://linuxize.com/post/how-to-add-user-to-sudoers-in-ubuntu/',
   '^https://opensource\.org/license/gpl-2-0',
   '^https://rouge.jneen.net/',
