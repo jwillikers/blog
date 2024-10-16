@@ -19,7 +19,9 @@ jobs:
       - name: Update the NixOS release in flake.nix to the latest
         run: |
           nix develop --command nu update-nixos-release.nu
-          nix flake update
+          if [[ -n $(git status --porcelain=2) ]]; then
+            nix flake update
+          fi
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
