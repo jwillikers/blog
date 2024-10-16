@@ -34,6 +34,7 @@ jobs:
         run: nix develop --command lychee --cache --no-progress --verbose result/srv/ ./*.html
       - name: Save lychee cache
         uses: actions/cache/save@v4
+        if: always()
         with:
           key: lychee-ccache
           path: .lycheecache
