@@ -89,7 +89,6 @@ Operating Systems::
 * https://www.openbsd.org/[OpenBSD]
 * https://elementary.io/[elementaryOS]
 * https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux[Red Hat Enterprise Linux]
-* https://www.centos.org/[CentOS]
 * https://www.debian.org/[Debian]
 * https://getfedora.org/[Fedora]
 * https://www.gentoo.org/[Gentoo]
