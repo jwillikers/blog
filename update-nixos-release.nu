@@ -47,7 +47,7 @@ export def update_nixos_release_in_flake [
 }
 
 def main [
-    flake_file: string # Path to the flake.nix file to update
+    flake_file: string = "" # Path to the flake.nix file to update
 ] {
     let release = get_latest_nixos_release (date now)
     let flake_file = (
@@ -57,6 +57,6 @@ def main [
             $flake_file
         }
     )
-    open $flake_file | update_nixos_release_in_flake $release | save --force $flake_file
+    open $flake_file | update_nixos_release_in_flake $release | $"($in)\n" | save --force $flake_file
     exit 0
 }
