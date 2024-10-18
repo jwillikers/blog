@@ -8,6 +8,8 @@ exclude = [
   '^https://linuxize.com/post/how-to-add-user-to-sudoers-in-ubuntu/',
   '^https://opensource\.org/license/gpl-2-0',
   '^https://rouge.jneen.net/',
+  # bcachefs.org is currently down
+  'https://bcachefs.org',
 ]
 # exclude_path = ["_site/", "result/"]
 max_cache_age = "2w"
