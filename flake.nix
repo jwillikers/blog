@@ -1,6 +1,7 @@
 {
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
+    nix-update-scripts.url = "github:jwillikers/nix-update-scripts";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     pre-commit-hooks = {
@@ -16,6 +17,7 @@
       # deadnix: skip
       self,
       flake-utils,
+      nix-update-scripts,
       nixpkgs,
       nixpkgs-unstable,
       pre-commit-hooks,
@@ -121,6 +123,8 @@
       with pkgs;
       {
         apps = {
+          inherit (nix-update-scripts.apps.${system}) update-nix-direnv;
+          inherit (nix-update-scripts.apps.${system}) update-nixos-release;
           default =
             let
               script = pkgs.writeShellApplication {

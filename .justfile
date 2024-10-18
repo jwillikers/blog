@@ -23,18 +23,10 @@ alias s := serve
 serve:
     jekyll serve --open-url
 
-alias t := test
-
-test:
-    nu update-nix-direnv-tests.nu
-    nu update-nixos-release-tests.nu
-
 alias u := update
 alias up := update
 
 update: && build test
-    nu update-nixos-release.nu
     nix flake update
     bundle update
     bundix --lock
-    nu update-nix-direnv.nu
