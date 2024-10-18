@@ -4,13 +4,11 @@ name: Build Jekyll site
   pull_request:
     branches: [main]
     paths:
+      - "**.nix"
       - .github/workflows/build.yaml
-      - default.nix
       - flake.lock
-      - flake.nix
       - Gemfile
       - Gemfile.lock
-      - gemset.nix
       - .bundle/config
       - .ruby-version
       - _data/

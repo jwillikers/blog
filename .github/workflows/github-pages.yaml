@@ -4,13 +4,11 @@ name: Deploy Jekyll site to Pages
   push:
     branches: [main]
     paths:
+      - "**.nix"
       - .github/workflows/github-pages.yaml
-      - default.nix
       - flake.lock
-      - flake.nix
       - Gemfile
       - Gemfile.lock
-      - gemset.nix
       - .bundle/config
       - .ruby-version
       - _data/
