@@ -4,19 +4,21 @@ name: Check URLs with Lychee
   pull_request:
     branches: [main]
     paths:
-      - .github/workflows/link-checker.yaml
-      - flake.lock
       - "**.adoc"
       - "**.html"
       - "**.md"
+      - .github/workflows/link-checker.yaml
+      - flake.lock
+      - lychee.toml
   push:
     branches: [main]
     paths:
-      - .github/workflows/link-checker.yaml
-      - flake.lock
       - "**.adoc"
       - "**.html"
       - "**.md"
+      - .github/workflows/link-checker.yaml
+      - flake.lock
+      - lychee.toml
   schedule:
     # Run once a month on the 14th.
     - cron: "0 0 14 * *"
