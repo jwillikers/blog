@@ -34,18 +34,6 @@
           gemdir = ./.;
           extraConfigPaths = [ "${./.}/.ruby-version" ];
         };
-        nativeBuildInputs = with pkgs; [
-          asciidoctor
-          bundix
-          fish
-          gems
-          gems.wrappedRuby
-          just
-          lychee
-          nil
-          unstablePkgs.nushell
-        ];
-        buildInputs = [ ];
         treefmt.config = {
           programs = {
             actionlint.enable = true;
@@ -144,10 +132,18 @@
             };
         };
         devShells.default = mkShell {
-          inherit buildInputs;
           nativeBuildInputs =
-            nativeBuildInputs
-            ++ [
+            with pkgs;
+            [
+              asciidoctor
+              bundix
+              fish
+              gems
+              gems.wrappedRuby
+              just
+              lychee
+              nil
+              unstablePkgs.nushell
               treefmtEval.config.build.wrapper
               # Make formatters available for IDE's.
               (lib.attrValues treefmtEval.config.build.programs)
