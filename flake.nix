@@ -32,7 +32,6 @@
         gems = pkgs.bundlerEnv {
           name = "jwillikers-blog";
           gemdir = ./.;
-          extraConfigPaths = [ "${./.}/.ruby-version" ];
         };
         treefmt.config = {
           programs = {
@@ -137,6 +136,7 @@
             [
               asciidoctor
               bundix
+              bundler
               fish
               gems
               gems.wrappedRuby
@@ -149,7 +149,7 @@
               (lib.attrValues treefmtEval.config.build.programs)
             ]
             ++ pre-commit.enabledPackages;
-          postShellHook = pre-commit.shellHook;
+          inherit (pre-commit) shellHook;
         };
         packages.default = callPackage ./default.nix { inherit gems; };
         formatter = treefmtEval.config.build.wrapper;

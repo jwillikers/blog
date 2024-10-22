@@ -26,7 +26,8 @@ serve:
 alias u := update
 alias up := update
 
-update: && build test
+update:
     nix flake update
     bundle update
-    bundix --lock
+    bundix
+    nix fmt

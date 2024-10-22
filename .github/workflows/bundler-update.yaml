@@ -20,7 +20,9 @@ jobs:
       - name: Update Gem lock file
         run: nix develop --command bundle update
       - name: Update the hashes in the gemset.nix file
-        run: nix develop --command bundix --lock
+        run: nix develop --command bundix
+      - name: Format the gemset.nix file
+        run: nix fmt
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
