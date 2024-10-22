@@ -623,10 +623,10 @@
     platforms = [ ];
     source = {
       remotes = [ "https://rubygems.org" ];
-      sha256 = "14ifw54zz56w25qbkwimxj9lcm42hmvlryn1d7z141f8pg8i3dmx";
+      sha256 = "17szxs6kmqmn1g6qp8rnnnrcwvsw3a6z10r50f6splrk4l2pgi30";
       type = "gem";
     };
-    version = "1.79.4";
+    version = "1.80.3";
   };
   sawyer = {
     dependencies = [
