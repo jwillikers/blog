@@ -116,12 +116,10 @@
             let
               script = pkgs.writeShellApplication {
                 name = "serve";
-                runtimeInputs = [
-                  gems
-                  gems.wrappedRuby
-                ];
                 text = ''
-                  jekyll serve --destination ${self.packages.${system}.default}/srv --open-url --skip-initial-build
+                  ${gems}/bin/jekyll serve --destination ${
+                    self.packages.${system}.default
+                  }/srv --open-url --skip-initial-build
                 '';
               };
             in
