@@ -80,7 +80,6 @@
               gems.wrappedRuby
               just
               lychee
-              nil
               nushell
               treefmtEval.config.build.wrapper
               (builtins.attrValues treefmtEval.config.build.programs)
