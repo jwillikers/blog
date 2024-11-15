@@ -183,6 +183,7 @@
     "pacman",
     "passwd",
     "Phoronix",
+    "Piceiver",
     "Pinebook",
     "pinentry",
     "Pipenv",
@@ -284,6 +285,15 @@
   ],
   "files.associations": {
     "*.html": "liquid"
+  },
+  "files.watcherExclude": {
+    "_site/**": true,
+    ".direnv/**": true,
+    ".jekyll-cache/**": true,
+    ".lycheecache": true,
+    ".pre-commit-config.yaml": true,
+    "result": true,
+    "result/**": true
   },
   "nix.enableLanguageServer": true,
   "nix.serverPath": "nil"
