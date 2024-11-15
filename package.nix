@@ -11,7 +11,9 @@ stdenvNoCC.mkDerivation {
   ];
 
   buildPhase = ''
+    runHook preBuild
     jekyll build
+    runHook postBuild
   '';
 
   installPhase = ''
