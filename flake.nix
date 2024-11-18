@@ -50,13 +50,12 @@
       with pkgs;
       {
         apps = {
-          inherit (nix-update-scripts.apps.${system}) update-nix-direnv;
-          inherit (nix-update-scripts.apps.${system}) update-nixos-release;
+          inherit (nix-update-scripts.apps.${system}) update-nix-direnv update-nixos-release;
           default = {
             type = "app";
             program = builtins.toString (
               pkgs.writers.writeNu "serve" ''
-                ${gems}/bin/jekyll serve --destination ${
+                ^${gems}/bin/jekyll serve --destination ${
                   self.packages.${system}.default
                 }/srv --open-url --skip-initial-build
               ''
