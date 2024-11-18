@@ -2,7 +2,7 @@ name: Update NixOS Release
 
 "on":
   schedule:
-    - cron: "0 0 15 5,11 *"
+    - cron: "0 0 15 6,12 *"
   workflow_dispatch:
 
 permissions:
