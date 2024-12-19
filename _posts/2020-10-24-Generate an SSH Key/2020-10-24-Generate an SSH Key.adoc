@@ -5,7 +5,7 @@
 
 Entering passwords is a pain.
 I know you agree.
-Why not enter passwords less by using https://www.ssh.com/ssh/[SSH]?
+Why not enter passwords less by using https://en.wikipedia.org/wiki/Secure_Shell[SSH]?
 You'll just need a key and a little know-how to get started.
 
 == Generate an SSH Key
