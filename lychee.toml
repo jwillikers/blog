@@ -3,13 +3,17 @@ accept = [429]
 
 cache = true
 exclude = [
+  '^http://www\.gnu\.org',
   '^https://127\.0\.0\.1:8443/',
   '^https://flatpak\.org',
   '^https://linuxize.com/post/how-to-add-user-to-sudoers-in-ubuntu/',
   '^https://opensource\.org/license/gpl-2-0',
   '^https://rouge.jneen.net/',
   '^https://www\.centos\.org',
+  '^https://www\.geoghegan\.ca',
   '^https://www\.gnome\.org',
+  '^https://www\.gnu\.org',
+  '^https://wilsonmar\.github\.io',
 ]
 # exclude_path = ["_site/", "result/"]
 max_cache_age = "2w"
