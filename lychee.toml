@@ -11,6 +11,7 @@ exclude = [
   '^https://opensource\.org/license/gpl-2-0',
   '^https://rouge.jneen.net/',
   '^https://www\.centos\.org',
+  '^https://www\.denx\.de/wiki/U-Boot',
   '^https://www\.geoghegan\.ca',
   '^https://www\.gnome\.org',
   '^https://www\.gnu\.org',
