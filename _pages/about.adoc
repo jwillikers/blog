@@ -220,5 +220,4 @@ Version Control::
 * https://git-scm.com/[Git]
 
 Currently Learning::
-* https://www.ansible.com/[Ansible]
 * https://www.rust-lang.org/[Rust]

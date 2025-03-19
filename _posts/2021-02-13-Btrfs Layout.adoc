@@ -36,7 +36,7 @@
 :ubuntu: https://opensource.org/licenses/gpl-license[Ubuntu]
 :usr-local: https://refspecs.linuxfoundation.org/FHS_3.0/fhs-3.0.html#usrlocalLocalHierarchy[/usr/local]
 :var: https://refspecs.linuxfoundation.org/FHS_3.0/fhs-3.0.html#purpose31[/var]
-:xdg-base-directory-specification: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html[XDG Base Directory Specification]
+:xdg-base-directory-specification: https://specifications.freedesktop.org/basedir-spec/latest/[XDG Base Directory Specification]
 :ZFS: https://openzfs.org/wiki/Main_Page[ZFS]
 :ZSYS: https://github.com/ubuntu/zsys[ZSYS]
 
