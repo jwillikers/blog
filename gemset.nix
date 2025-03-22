@@ -96,10 +96,10 @@
     platforms = [ ];
     source = {
       remotes = [ "https://rubygems.org" ];
-      sha256 = "0kmx36jjh2sahd989vcvw74lrlv07dqc3rnxchc5sj2ywqsw3w3g";
+      sha256 = "0059n2hqiv3afahq1wc4ymr7lpka7vkisvmkx7azgnkvzfz6caby";
       type = "gem";
     };
-    version = "3.3.2";
+    version = "3.3.3";
   };
   em-websocket = {
     dependencies = [
@@ -655,10 +655,10 @@
     platforms = [ ];
     source = {
       remotes = [ "https://rubygems.org" ];
-      sha256 = "1cbvgvl24ki6jlxjccx2j1vwwcpg36bivksmx78i43m35j6nf8bz";
+      sha256 = "1nzma5pcwajmz2002jd96ylszx3jckwg9ml5bbn3hvlrdmn680f0";
       type = "gem";
     };
-    version = "1.85.1";
+    version = "1.86.0";
   };
   sawyer = {
     dependencies = [
