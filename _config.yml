@@ -44,6 +44,7 @@ highlighter: rouge
 
 include:
   - _pages
+  - .well-known
 
 collections:
   posts:
