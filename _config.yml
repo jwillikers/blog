@@ -6,6 +6,9 @@ author:
   avatar: "https://www.libravatar.org/avatar/bf1ce3a8cc453a994d69847c52ef3b63ea4cba77a2958403c9e6d28253690682?s=500"
   location: US
   links:
+    - label: "Nostr"
+      # icon: "fab fa-fw fa-nostr"
+      url: "https://primal.net/p/npub1wg06u0uuhm34e9xpefgwx69e9ync3glgfxq2vudte7yppmkfqhdqzek58e"
     - label: "Codeberg"
       # https://github.com/FortAwesome/Font-Awesome/issues/15882
       icon: "fab fa-fw fa-codeberg"
@@ -13,15 +16,6 @@ author:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/jwillikers"
-    - label: "Gitlab"
-      icon: "fab fa-fw fa-gitlab"
-      url: "https://gitlab.gnome.org/jwillikers"
-    - label: "Stack Overflow"
-      icon: "fab fa-fw fa-stack-overflow"
-      url: "https://stackoverflow.com/users/9835303/jwillikers"
-    - label: "Stack Exchange"
-      icon: "fab fa-fw fa-stack-exchange"
-      url: "https://elementaryos.stackexchange.com/users/20782"
 email: jordan@jwillikers.com
 description: Handy admin and dev guides from my myriad of tinkering
 baseurl: ""
