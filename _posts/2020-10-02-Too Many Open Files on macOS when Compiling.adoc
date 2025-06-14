@@ -40,7 +40,7 @@ What follows are step-by-step instructions for detecting and resolving this issu
 [,sh]
 ----
 launchctl limit maxfiles
-	maxfiles    256            unlimited
+  maxfiles    256            unlimited
 ----
 
 In this case, the 256 file soft limit is the issue.
@@ -126,7 +126,7 @@ sudo launchctl enable system/limit.maxfiles
 +
 ----
 launchctl limit maxfiles
-	maxfiles    65536          2147483647
+  maxfiles    65536          2147483647
 ----
 
 . Restart your terminal application to take advantage of the increased limits.
