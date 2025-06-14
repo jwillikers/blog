@@ -16,7 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v17
-      - uses: DeterminateSystems/magic-nix-cache-action@v9
       - name: Update Gem lock file
         run: nix develop --command bundle update
       - name: Update the hashes in the gemset.nix file
