@@ -3,7 +3,6 @@ _: {
     programs = {
       actionlint.enable = true;
       deadnix.enable = true;
-      fish_indent.enable = true;
       jsonfmt.enable = true;
       just.enable = true;
       nixfmt.enable = true;
