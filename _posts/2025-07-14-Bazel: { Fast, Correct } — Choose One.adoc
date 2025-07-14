@@ -139,12 +139,18 @@ Bugs introduced by the Bazel build system may be vulnerabilities or the BCR coul
 Because the BCR package will most likely have less visibility in the wild, vulnerabilities are also less likely to be discovered.
 
 Most package managers don't have these kinds of difficulties, at least, not to the same extent, because they use the build system provided by the upstream project.
-This approach fosters a direct collaboration with the upstream projects, avoiding all of the downsides of adding a bespoke build system just described.
-Bazel is capable of wrapping existing build systems, which would make it function just like a traditional package manager, however without something like the BCR for this, it's quite a large ask.
+This approach fosters a direct collaboration with the upstream projects, minimizing the kinds of downsides associated with adding a bespoke build system just described.
+The BCR does indicate that it "is a central host for upstream projects that don't have upstream support," in https://github.com/bazelbuild/bazel-central-registry/blob/main/README.md[its README], but convincing upstream maintainers to accept the burden of maintaining a Bazel build system sounds like a pipe dream at this time.
+Many freedesktop projects are in the process of migrating or have migrated to Meson from Autotools and/or CMake.footnote:[I have to say "and" here because DBus has like three build systems. At that point, what's one more build system?]
+I've helped with some of these migrations myself, even helping get the Meson build system in the `util-linux` project production-ready.footnote:[Autotools failed to cross-compile too many times.]
+Migrating the build system again right away, just doesn't seem like something you'd want to ask yet.
+Bazel is capable of wrapping existing build systems, which would make it function just like a traditional package manager.
+However, without something akin to the BCR crowd sourcing this work, it's too large an undertaking to ask individual projects to maintain this themselves.
 
 The lack of dependencies in the BCR is also a massive problem for projects with many dependencies, particularly large graphical frameworks like Qt or Gtk.
 Bazel requires writing everything for one of these from scratch, using custom rules, and/or trying to shim it in via third party package managers.
-That's by no means a small thing.
+Trust me.
+It's horrifying.
 
 Even if Bazel is used for everything, it's still possible that your build relies on something, somewhere on the host system.
 Luckily, Bazel does have a flag, albeit an experimental one, that enables a sandbox that is properly isolated from the host's filesystem.
@@ -164,12 +170,12 @@ Maybe you can even manage your Yocto SDK with Bazel, assuming those hard-coded a
 ==== Environment Management
 
 If Bazel uses anything on the host system, then something besides Bazel should manage those files on the host.
-This brings us to the second approach to making Bazel builds correct, managing the environment.
+This brings us to the second approach for making Bazel builds correct, managing the environment.
 This approach is fraught with dangers, especially when the versions of dependencies aren't explicitly managed within the project.
 Virtual machines, Docker, or any number of package managers could be used to solve this problem.
 All of them add more configuration and maintenance overhead.
 Synchronizing changes to the environment across all build machines can also be difficult and lead to all sorts of inconsistencies.
-Take Docker for instance.
+Take Docker, for instance.
 Managing the environment with containers complicates integration with IDE's and building an updated image locally doesn't ensure that every developer or build machine starts using that new image from that commit onwards or that it rewinds with the Git history.
 Unless you have a manageable number of external dependencies you can handle exclusively with Bazel, this approach is likely to be your best choice.
 
@@ -189,7 +195,7 @@ For Linux, the entire build toolchain and glibc implementation are provided by N
 ====== Nix + Bazel
 
 Nix and Bazel don't get along very well.
-{Nix-Bazel} is project that tries to bring these feuding children together play nice by providing a set of rules, `rules_nixpkgs`, for Bazel to use packages managed by Nix.
+{Nix-Bazel} is project that tries to get these feuding children play nice by providing a set of rules, `rules_nixpkgs`, for Bazel to use packages managed by Nix.
 The talk https://youtu.be/FoSCSQO5xhI?si=2Y0iUiAK4t6yv8P9[The Best of Both Worlds With Nix + Bazel] by Andreas Herrmann goes into this in detail and highly recommend watching it.
 Sadly, the project has yet to make `rules_nixpkgs` work with remote execution, one of Bazel's hallmark features.
 See https://github.com/tweag/rules_nixpkgs/issues/180[tweag/rules_nixpkgs issue #180] for further details.
