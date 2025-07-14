@@ -196,7 +196,7 @@ For Linux, the entire build toolchain and glibc implementation are provided by N
 
 Nix and Bazel don't get along very well.
 {Nix-Bazel} is a project that tries to get these feuding children to play nice by providing a set of rules, `rules_nixpkgs`, for Bazel to use packages managed by Nix.
-The talk https://youtu.be/FoSCSQO5xhI?si=2Y0iUiAK4t6yv8P9[The Best of Both Worlds With Nix + Bazel] by Andreas Herrmann goes into this in detail and highly recommend watching it.
+The talk https://youtu.be/FoSCSQO5xhI?si=2Y0iUiAK4t6yv8P9[The Best of Both Worlds With Nix + Bazel] by Andreas Herrmann goes into this in detail and I highly recommend watching it.
 Sadly, the project has yet to make `rules_nixpkgs` work with remote execution, one of Bazel's hallmark features.
 See https://github.com/tweag/rules_nixpkgs/issues/180[tweag/rules_nixpkgs issue #180] for further details.
 
