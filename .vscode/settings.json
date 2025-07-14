@@ -89,6 +89,7 @@
     "gnupg",
     "gsub",
     "haswell",
+    "Hermeticity",
     "hfsplus",
     "hostfwd",
     "idbloader",

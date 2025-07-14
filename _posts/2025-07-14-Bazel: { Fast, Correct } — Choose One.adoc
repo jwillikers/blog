@@ -1,0 +1,255 @@
+= Bazel: { Fast, Correct } — Choose One
+:page-layout:
+:page-category: Build System
+:page-tags: [Bazel, Build System, CMake, Hermetic, Hermeticity, Linux, Nix, Package Manager, Package Management, Reproducible, Reproducibility, Sandbox]
+:Bazel: https://bazel.build/[Bazel]
+:Bazel-Central-Repository: https://registry.bazel.build/[Bazel Central Repository]
+:Buck2: https://buck2.build/[Buck2]
+:Nix: https://nixos.org/[Nix]
+:Nix-Bazel: https://nix-bazel.build/[Nix + Bazel]
+:Pants: https://www.pantsbuild.org/[Pants]
+:Please: https://please.build/[Please]
+
+When it comes to build systems and package management, there really is no silver bullet.
+Everything would be so much easier if there were.
+{Bazel} has been gaining popularity for a while now, and for good reason.
+It's very fast and offers both distributed caching and remote building, and supports multiple programming languages.
+It's also more correct than most of the competition.
+Another sign of its popularity is the number of clones its spawned which includes {Buck2}, {Pants}, and {Please}.footnote:[Apparently Buck1 was open-sourced a couple of years before Bazel.]
+Of those, only Bazel and Buck2 treat {cpp} as a first-class citizen, and from Buck2's documentation you can find it says, "There are not yet mechanisms to build in release mode."footnote:[https://buck2.build/docs/about/why/[Why Buck2?]]
+_Wait._
+_Really?_
+Enough of the clones.
+I'll just focus on Bazel here, since my primary target is {cpp} and I'd like to be able to make release builds.
+
+== Where Bazel Shines
+
+I've briefly mentioned several benefits that Bazel offers, and there's no need to rehash those here.
+Rather, I'm going to dive into what makes Bazel _way better_ for developers compared to traditional build systems.
+That's Bazel's improved determinism.
+Developers need to be able to build code reliably, and deterministic builds are reliable.
+When it comes to building software, things should __just work__.footnote:[Assuming you're not looking at, like, the dependency graph or something. At which point you start wondering, "How is this even working in the first place?"]
+When they don't, developers lose time debugging their build system, forcing clean rebuilds, and monkeying around with their environment.
+It's distracting and frustrating, taking energy away from what could be used for cool new features, critical bug fixes, or a brief moment of peace and tranquility{empty}footnote:[Knowing with absolute certainty that your change just fixed everything. It's important to cherish those fleeting moments, you know?].
+Bazel makes builds more deterministic by using file hashes instead of timestamps to detect file changes, not having a separate configure step, and by requiring correct dependencies.
+
+Both Make and Ninja rely on file modification timestamps to determine if a file has changed and subsequently rebuild dependents.
+Unfortunately for Make and Ninja, modification timestamps aren't a correct measure of whether or not a file has actually changed.
+File checksums do just that, which is why Bazel relies on checksums instead of modification times.
+This may seem like a small thing, but it's a big step forward, ensuring that things are actually rebuilt when they need to be rebuilt.
+It also avoids unnecessary rebuilds.
+
+When you build a project with Bazel, there's something you'll notice immediately when you're used to build systems like CMake, Meson, and Autotools.
+There's no configure step.
+Those build systems all require running a configure step to initialize the build system.
+This populates the build system's cache and generates all of the necessary bits used to build the software using the underlying build tool, usually Make or Ninja.
+With Bazel, there is no configure step.
+You just build the software with the build command.
+There is no underlying build tool as Bazel handles everything, and Bazel will automatically cache the things it needs and reload anything that's changed.
+
+Those familiar with CMake, Meson, Autotools, and Make, know all too well the inclination to immediately wipe the entire build directory and start from scratch whenever hitting an unexpected build issue.
+Where this does fix the issue, the root of the problem is typically a change to a default value that already exists in the build system's cache and is therefore not updated, or a change to the external environment which, unbeknown to the build system, renders its cache invalid.
+Bazel is setup to handle the former problem, but is still susceptible to changes in its environment.
+
+Sometimes, the build system doesn't understand that it needs to rebuild a specific component when a file managed by the build system has been changed.
+This is caused by incorrect or incomplete dependency specifications in the build system.
+This is what Bazel means when it says that it is _correct_.
+Everything built by Bazel must have correctly specified all of its dependencies or it won't build.
+Bazel accomplishes this with what it dubs a _sandbox_.
+Each individual component is built in its own individual sandbox where it only has access to the components upon which it depends.
+If there is any inconsistency between what the component actually depends upon and what is specified in the build system, the component either won't build because a dependency it can't find a missing dependency or it _will build_ because the dependency is extraneous.
+When dealing with {cpp}, this is about the best you can hope for.
+Handling superfluous dependencies requires tooling that spans the code itself, the build system, and the package manager.
+This is why Rust is really good at handling this, since its integrated tooling flags both unused imports and unused dependencies for removal.
+
+These aspects of Bazel lead to builds which are _more correct_, simpler to perform, and less disruptive for developers.
+Developers don't need to frequently rebuild from scratch due to cache inconsistencies or deal with missing or incorrect dependencies.
+Rebuilds occur when files actually change.
+Of course, developers love quick builds, too.
+Everything is awesome, correct?
+
+== Correct?
+
+Bazel's tagline is that it is both fast and correct.
+Despite that claim, there appear to be a couple of constraints on the word _correct_ as Bazel uses it here.
+Correct only applies so far as Bazel is doing the building, and, as discussed in the previous section, overspecifying dependencies is _not incorrect_.
+This first point is the most important, and the one I'm going to prioritize in this section.
+
+=== Hermetic
+
+Bazel builds aren't actually hermetic, terminology which Bazel uses frequently in its documentation.
+
+[NOTE]
+====
+By hermetic, Bazel means free of external influence, which is closely tied to the concept of reproducible builds.
+While Bazel builds can be hermetic, in the wild, it may be difficult to find any that are.
+Technically, I'm not sure completely hermetic builds are achievable.
+Just consider what happens when you try to build a decently sized application on a computer with hardly any RAM.
+The build will fail.
+That's a physical limitation influencing the build.
+On the other hand, reproducible builds have a more attainable goal, that builds of the software always result in the exact same binary.
+That said, reproducible and hermetic are often synonymous forms of measurement, since the more hermetic a build is, the more reproducible it is and vice versa.
+Deterministic builds on the other hand, are focused on consistency.
+A deterministic build can incorporate a build timestamp in the final binary, even though this exposes the build to external influence and means that it is no longer "reproducible."
+====
+
+You need a compiler, glibc, or a bunch of random libraries?
+No sweat, Bazel will just use whatever it finds on the host.
+Wait, what about the sandbox?
+Well, just like with a real sandbox, with Bazel, you can just stand up, step outside the sandbox, grab anything you may need, and step right back in to your sandbox.
+Not a problem.
+Bazel has full read access to the host because its _sandbox_ doesn't isolate builds from the host.
+
+[TIP]
+====
+If you ever want to know if a build system or package manager is hermetic or perhaps the degree to which it is, just ask the question, "How does it manage the libc implementation?"
+If you can't find that it manages anything to do with the libc implementation, then you've got your answer.
+It's not hermetic.
+It's using that libc from somewhere. Or it's all in assembly. In which case, you have _much, much_ bigger problems. Or it's in Fortran, maybe? If so, I'm sorry. You probably don't need to keep reading.footnote:[I'm assuming that the state of this https://github.com/edbaunton/rules_fortran[rules_fortran project] accurately reflects Bazel's support. And yes, that link is one of the top search results from Google.]
+====
+
+Recall that one of the major benefits of Bazel comes from its sandbox.
+If you forget to add a dependency on another part of your project, the build will fail since the sandbox won't contain the missing component.
+Bazel therefore _creates_ the correct environment for the build.
+This forces the build system to be correct, or at least, more correct in this case.
+The approach of traditional build systems is error-prone exactly because it requires you to write a correct build system.
+Well, Bazel takes the same approach to the host environment, putting the onus on developers.
+Expecting a developer to write a correct build system is like trying to transport a 5-gallon bucket of nitroglycerin half-way around the world _inside_ a jet engine, saying, "It'll be fine as long as there isn't too much turbulence," and then immediately detonating half a ton of dynamite around the engine for good measure.footnote:[Yes, just a single, lone jet engine.]footnote:[Obviously, the jet engine in question was in a test facility. No humans, animals, plants, environmental ecosystems, or biological organisms were harmed or adversely effected in the making of this metaphor, apart from the author, possibly.]
+Wait, maybe that's a better metaphor for what you end up with…footnote:[For those who have been hand-writing makefiles for years without a single issue, I kindly ask that you cross-compile your project _before_ sending me feedback on the accuracy of this metaphor.]
+The recent research article https://www.computer.org/csdl/magazine/so/5555/01/10703127/20JUqvPnreo[On Build Hermeticity in Bazel-based Build Systems] by Shenyu Zheng, Bram Adams, and Ahmed E. Hassan backs up this metaphor.
+The researchers analyzed seventy open source projects using the Bazel build system and found zero of them to be hermetic.
+Defaults played a big role in determining the hermeticity of the projects, and Bazel is definitely not hermetic out-of-the-box.
+
+==== Bazelify All the Things
+
+So, how does one make a Bazel project hermetic?
+This is a fundamental part of Bazel's design, and solving this problem retroactively is very difficult, if not impossible.
+One approach, taken by the {Bazel-Central-Repository}, abbreviated as _BCR_, is to use Bazel for everything.
+This effectively uses Bazel as a package manager.
+The BCR offers some compiler toolchains which usually provide artifacts from prebuilt binary releases.
+In contrast, most libraries on the BCR appear to be built from source by adding a Bazel build system for each version of the library.
+The BCR has a fairly limited amount of software available at this time, which is unsurprising given adding an entire build system for any project of reasonable complexity is a substantial investment.
+This maintenance overhead is a massive impediment for the BCR to overcome in order to scale appropriately.
+The upstream projects are not responsible for maintaining their packages in the BCR.
+These Bazel build systems are effectively an island, and may lead to all sorts of inconsistencies between the built artifacts.
+These differences may be harmless, but they're likely to contain bugs which are not seen outside the BCR.
+The upstream may not be able to support developers in this situation, and developers may have difficulty finding similar issues, making it more difficult for them to diagnose and solve the problem.
+To make matters worse, this also has important security implications.
+Bugs introduced by the Bazel build system may be vulnerabilities or the BCR could be used to carry out a supply chain attack.
+Because the BCR package will most likely have less visibility in the wild, vulnerabilities are also less likely to be discovered.
+
+Most package managers don't have these kinds of difficulties, at least, not to the same extent, because they use the build system provided by the upstream project.
+This approach fosters a direct collaboration with the upstream projects, avoiding all of the downsides of adding a bespoke build system just described.
+Bazel is capable of wrapping existing build systems, which would make it function just like a traditional package manager, however without something like the BCR for this, it's quite a large ask.
+
+The lack of dependencies in the BCR is also a massive problem for projects with many dependencies, particularly large graphical frameworks like Qt or Gtk.
+Bazel requires writing everything for one of these from scratch, using custom rules, and/or trying to shim it in via third party package managers.
+That's by no means a small thing.
+
+Even if Bazel is used for everything, it's still possible that your build relies on something, somewhere on the host system.
+Luckily, Bazel does have a flag, albeit an experimental one, that enables a sandbox that is properly isolated from the host's filesystem.
+The flag is https://bazel.build/reference/command-line-reference#build-flag--experimental_use_hermetic_linux_sandbox[--experimental_use_hermetic_linux_sandbox].
+Additional flags can be used to permit access to parts of the host's filesystem.
+If you do permit access to the host filesystem, then you're going to need to control the environment, which brings us to the other way to solve this problem.
+
+[NOTE]
+====
+Cross-_complication_{empty}footnote:[Pardon the pun. It's _cross-compilation_.] is one area where Bazel probably is more hermetic.
+There are packages available for the Arm GNU Toolchain as well as FreeRTOS.
+Projects using Yocto SDKs are probably better than those just using whatever compiler and system libraries are on the host.
+Although you still have to be sure to manage the version of the Yocto SDK being used to build the software.
+Maybe you can even manage your Yocto SDK with Bazel, assuming those hard-coded absolute paths don't get in the way?
+====
+
+==== Environment Management
+
+If Bazel uses anything on the host system, then something besides Bazel should manage those files on the host.
+This brings us to the second approach to making Bazel builds correct, managing the environment.
+This approach is fraught with dangers, especially when the versions of dependencies aren't explicitly managed within the project.
+Virtual machines, Docker, or any number of package managers could be used to solve this problem.
+All of them add more configuration and maintenance overhead.
+Synchronizing changes to the environment across all build machines can also be difficult and lead to all sorts of inconsistencies.
+Take Docker for instance.
+Managing the environment with containers complicates integration with IDE's and building an updated image locally doesn't ensure that every developer or build machine starts using that new image from that commit onwards or that it rewinds with the Git history.
+Unless you have a manageable number of external dependencies you can handle exclusively with Bazel, this approach is likely to be your best choice.
+
+===== Nix: { Slow, Correct } — Choose Two
+
+{Nix} is one solution for managing dependencies outside of Bazel.
+It has an incredible number of packages, is great for managing dependencies within a project, and reproducibility is its top priority.
+Remember what I said at the beginning, there's no silver bullet when it comes to build systems and package managers?
+Well, Nix is no exception.
+Forget about Windows.
+It's slow as molasses and you'd better be good with Haskell, because that's pretty much what the Nix language is.
+Nix still doesn't solve the problem of overspecifying dependencies, however, it accomplishes exactly what Bazel doesn't.
+Instead of relying on the environment to be correct, Nix _creates the correct environment_.
+This environment is probably as isolated from the host system as you can get.
+For Linux, the entire build toolchain and glibc implementation are provided by Nix as are all of the other dependencies.
+
+====== Nix + Bazel
+
+Nix and Bazel don't get along very well.
+{Nix-Bazel} is project that tries to bring these feuding children together play nice by providing a set of rules, `rules_nixpkgs`, for Bazel to use packages managed by Nix.
+The talk https://youtu.be/FoSCSQO5xhI?si=2Y0iUiAK4t6yv8P9[The Best of Both Worlds With Nix + Bazel] by Andreas Herrmann goes into this in detail and highly recommend watching it.
+Sadly, the project has yet to make `rules_nixpkgs` work with remote execution, one of Bazel's hallmark features.
+See https://github.com/tweag/rules_nixpkgs/issues/180[tweag/rules_nixpkgs issue #180] for further details.
+
+==== Bliss
+
+There is a third approach, and I don't want to treat it the same way it treats all of the other non-hermetic dependencies of your project.
+That is, to ignore them.
+You could just not think about each little thing that might influence the build.
+This is actually a viable solution for projects that you only ever need to build once, and never need to build again.
+Whether or not this is something you can actually predict, you can probably do a little bit to address the issues.
+Most projects out there would at least benefit from considering their dependencies and how they impact build reproducibility and reliability.
+Taking small steps to, at the very least, document those dependencies can be a huge benefit for everyone.
+There are lots of great questions you can ask yourself around these kinds of things.
+One of the best questions to ask is, "How do I make sure that I can build this commit in six months?"
+It's not difficult to go a little bit farther and to actually try building a commit from six months ago in your project.
+How far back do you have to go before you can no longer build things?
+What caused those old builds to break?
+What changes do you have to make to fix them?
+What changes can you make now to prevent that from happening in the future?
+What problems are developers facing during onboarding?
+Answering questions like these may be a better starting point than trying to solve hermeticity for your entire project all at once, and it certainly shouldn't take as long.
+So, why not do that, too?
+From the previous sections, improving hermeticity for your projects' builds may seem like an insurmountable obstacle.
+It may not be something ever completely solved, but something consistently evaluated over time.
+Like many things in this realm, you'll often be best suited by an incremental approach that solves one individual problem at a time.
+As you fix problems, it's important to be wary of regressions, testing things again after some significant amount of time has passed.
+And finally, always keep in mind the cost of the solutions.
+Frequently, solving these kinds of issues requires some form of additional overhead like maintenance tasks and knowledge of different tools and configuration files or languages.
+Document everything.
+Automate everything.
+And keep the _real_ goal in mind.
+The most important thing probably isn't reproducible or correct builds, but rather that developers are able to just build the darn code without having the build system or tooling constantly getting in the way.
+So be sure to ask developers if they are able to maintain, or whether the learning curve is too high, or if the solution adds more complexity and problems than it actually solves.
+Um… when did I get on the soapbox?
+My apologies.
+Let's wrap this up.
+
+== Conclusion
+
+Where does that leave us?
+Bazel is still a major upgrade to most major C and {cpp} build systems, if only for it's speed and greater determinism.
+Both of these are huge wins for developers that just need to build some code.
+There are pitfalls, though.
+There's still a lot of ground to cover when it comes to reproducible, hermetic, and "correct" builds.
+Bazel doesn't have a enough available for those trying to solve this within the Bazel ecosystem, nor is there a simple, ones-size-fits-all solution to manage environments outside of Bazel.
+Solving this complex problem is largely left to developers.
+Luckily, there are developers out there actively working on solutions, and things are definitely trending in the right direction.
+There's also practical steps developers can take to better understand the hermeticity effecting their builds, without having to commit to expensive or finicky solutions.footnote:[
+I lied. There is a silver bullet. Make build systems and package managers a thing of the past! Do compilers constantly tell you you're wrong? Do tools format your code for you and tell you how to do your job? Sick of contrived limitations placed upon you by "operating systems" that think they know best? Ready to throw off the yoke of abstractions forced on you by conceited, _high-level_ programming languages? Give them all the boot! _No compiler, no problem!_ Remove the threat of supply chain attacks, stop reverse engineering in its tracks, thwart others from understanding what you're code is _really doing_, optimize you're code to the max for _every CPU_, comply with the GPL without exposing your IP, seamlessly accelerate your workloads with GPUs, NPUs, and MPUs, simplify your CI pipelines, access registers directly, manage you're own resources, expand your mind, and up you're GDB skills! Make the switch to assembly today! _This message brought to you by hardware vendors everywhere. Code responsibly._]
+
+// https://github.com/bazelbuild/bazel/issues/18377
+// https://bazel.build/reference/command-line-reference#build-flag--experimental_use_hermetic_linux_sandbox
+// https://registry.bazel.build/search?q=bash
+// https://github.com/bazelbuild/bazel/issues/17729
+
+== References
+
+* https://blogsystem5.substack.com/p/bazel-next-generation[The next generation of Bazel builds] by Julio Merino
+* https://youtu.be/FoSCSQO5xhI?si=2Y0iUiAK4t6yv8P9[The Best of Both Worlds With Nix + Bazel] by Andreas Herrmann
+* https://www.computer.org/csdl/magazine/so/5555/01/10703127/20JUqvPnreo[On Build Hermeticity in Bazel-based Build Systems] by Shenyu Zheng, Bram Adams, and Ahmed E. Hassan
+* {Nix-Bazel}
+* https://bazel.build/basics/hermeticity[Bazel Documentation: Hermeticity]
