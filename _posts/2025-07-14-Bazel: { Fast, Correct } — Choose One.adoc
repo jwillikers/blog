@@ -229,7 +229,7 @@ Document everything.
 Automate everything.
 And keep the _real_ goal in mind.
 The most important thing probably isn't reproducible or correct builds, but rather that developers are able to just build the darn code without having the build system or tooling constantly getting in the way.
-So be sure to ask developers if they are able to maintain, or whether the learning curve is too high, or if the solution adds more complexity and problems than it actually solves.
+So be sure to gauge if developers are able to maintain these additions, or whether the learning curve is too high, or if the solution adds more complexity and problems than it actually solves.
 Um… when did I get on the soapbox?
 My apologies.
 Let's wrap this up.
