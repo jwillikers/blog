@@ -17,3 +17,6 @@ max_line_length = off
 
 [{justfile,.justfile,*.just,*.fish}]
 indent_size = 4
+
+[_posts/2020-05-29-DNS Over TLS With Unbound.adoc]
+indent_style = unset
