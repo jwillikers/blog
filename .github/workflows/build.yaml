@@ -11,11 +11,11 @@ name: Build Jekyll site
       - Gemfile.lock
       - .bundle/config
       - .ruby-version
-      - _data/
-      - _drafts/
-      - _includes/
-      - _pages/
-      - _posts/
+      - _data/**
+      - _drafts/**
+      - _includes/**
+      - _pages/**
+      - _posts/**
       - _config.yml
       - index.adoc
   workflow_dispatch:
