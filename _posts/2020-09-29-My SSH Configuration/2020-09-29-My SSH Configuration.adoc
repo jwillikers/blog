@@ -24,7 +24,7 @@ This article assumes the reader is familiar with the basics of SSH and the synta
 
 The first option does not reside in a https://man.openbsd.org/ssh_config#Host[`Host`] or https://man.openbsd.org/ssh_config#Match[`Match`] block because it only refers to one host, `localhost` on the current machine.
 
-[source,ssh,indent=0]
+[,ssh,indent=0]
 .~/.ssh/config
 ----
 include::config[tag=localhost]
@@ -50,7 +50,7 @@ See the section below on `HostKeyAlias` for such a use case.
 The following section contains only one option which applies to `vm_host`.
 As an example, `vm_host` represents a computer dedicated for running multiple virtual machines.
 
-[source,ssh,indent=0]
+[,ssh,indent=0]
 .~/.ssh/config
 ----
 include::config[tag=vm_host]
@@ -63,7 +63,7 @@ The alias `vm_host` can be used on the command-line instead of having to type ou
 
 Next, several configuration options are given for the hosts `vm1` and `vm2`.
 
-[source,ssh,indent=0]
+[,ssh,indent=0]
 .~/.ssh/config
 ----
 include::config[tag=vm1_vm2]
@@ -88,7 +88,7 @@ According to the https://man.openbsd.org/ssh_config#HostKeyAlias[`ssh_config` ma
 
 The following configuration accommodates the variability of the IP address associated with a given hostname on networks using http://www.multicastdns.org/[multicast DNS].
 
-[source,ssh,indent=0]
+[,ssh,indent=0]
 .~/.ssh/config
 ----
 include::config[tag=mdns]
@@ -103,7 +103,7 @@ NOTE: It might be worth setting this option for all users in the system-wide con
 
 The last section contains a few defaults for all hosts, which boil down to a few quality-of-life improvements.
 
-[source,ssh,indent=0]
+[,ssh,indent=0]
 .~/.ssh/config
 ----
 include::config[tag=defaults]
@@ -130,7 +130,7 @@ With a max count of four and a `ServerAliveInterval` of 90 seconds, the session 
 It is possible to forward the SSH Agent to avoid typing passwords so much.
 You can forward the SSH Agent by setting https://man.openbsd.org/ssh_config#ForwardAgent[`ForwardAgent`] to `yes`, shown in the following example.
 
-[source,ssh]
+[,ssh]
 .~/.ssh/ssh_config
 ----
 Host server
@@ -148,7 +148,7 @@ Those with administrative access on the forwarded machine will be able to use th
 The SSH server is configured in `/etc/ssh/sshd_config`.
 I explain my typical server options here.
 
-[source,ssh]
+[,ssh]
 ./etc/ssh/sshd_config
 ----
 ClientAliveInterval 90
