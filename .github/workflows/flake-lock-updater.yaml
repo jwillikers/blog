@@ -15,7 +15,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: DeterminateSystems/nix-installer-action@v18
-      - uses: DeterminateSystems/update-flake-lock@v26
+      - uses: DeterminateSystems/update-flake-lock@v27
         with:
           pr-assignees: ${{ github.repository_owner }}
           pr-labels: |
