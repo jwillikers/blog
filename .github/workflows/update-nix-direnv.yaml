@@ -13,7 +13,7 @@ jobs:
   update-nix-direnv:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: DeterminateSystems/nix-installer-action@v19
       - name: Update nix-direnv to the latest version
         run: nix run .#update-nix-direnv
