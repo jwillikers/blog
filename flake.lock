@@ -71,11 +71,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1755002852,
-        "narHash": "sha256-gRcirsR4XgNeZWGZihdlXjgE3dcm8697A83yuegayQk=",
+        "lastModified": 1758119695,
+        "narHash": "sha256-H13Q1naDKVMOcV1JjTrWW9RKIVei9cMj7bkgv0ookM4=",
         "owner": "jwillikers",
         "repo": "nix-update-scripts",
-        "rev": "e2468bcad1740d5102dd735086b0b9b7cad42e29",
+        "rev": "2e47dea0d17d2b8145e1c18bf10b5e46beb63863",
         "type": "github"
       },
       "original": {
@@ -109,11 +109,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1755960406,
-        "narHash": "sha256-RF7j6C1TmSTK9tYWO6CdEMtg6XZaUKcvZwOCD2SICZs=",
+        "lastModified": 1758108966,
+        "narHash": "sha256-ytw7ROXaWZ7OfwHrQ9xvjpUWeGVm86pwnEd1QhzawIo=",
         "owner": "cachix",
         "repo": "pre-commit-hooks.nix",
-        "rev": "e891a93b193fcaf2fc8012d890dc7f0befe86ec2",
+        "rev": "54df955a695a84cd47d4a43e08e1feaf90b1fd9b",
         "type": "github"
       },
       "original": {
