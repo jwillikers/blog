@@ -37,7 +37,7 @@ jobs:
   treefmt:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: DeterminateSystems/nix-installer-action@v21
       - name: Run treefmt
         run: nix develop --command treefmt --fail-on-change --no-cache
