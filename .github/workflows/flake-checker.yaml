@@ -12,4 +12,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: DeterminateSystems/flake-checker-action@v12
+      - uses: DeterminateSystems/flake-checker-action@v13
