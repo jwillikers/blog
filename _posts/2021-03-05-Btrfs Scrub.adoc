@@ -79,8 +79,8 @@ Check the status of the previous scrub like so.
 ----
 sudo btrfs scrub status (df --output=source / | tail -n 1)
 scrub status for 175792e7-4167-40d1-aebc-78b948d6d378
-	scrub started at Fri Mar  5 06:07:42 2021, running for 00:01:25
-	total bytes scrubbed: 26.19GiB with 0 errors
+        scrub started at Fri Mar  5 06:07:42 2021, running for 00:01:25
+        total bytes scrubbed: 26.19GiB with 0 errors
 ----
 
 In many circumstances, you might want the scrub to block and return once it finishes.
@@ -92,8 +92,8 @@ This command scrubs my boot partition and returns once the scrub is complete.
 ----
 sudo btrfs scrub start -B /boot
 scrub done for 264b42a6-a09c-40cc-b754-88926d43b395
-	scrub started at Fri Mar  5 06:13:23 2021 and finished after 00:00:01
-	total bytes scrubbed: 159.55MiB with 0 errors
+        scrub started at Fri Mar  5 06:13:23 2021 and finished after 00:00:01
+        total bytes scrubbed: 159.55MiB with 0 errors
 ----
 
 That didn't take long!

@@ -47,9 +47,9 @@ The https://dnscrypt.info/public-servers[list provided by DNSCrypt] has some goo
 # Use an upstream forwarder (recursive resolver) for some or all zones.
 #
 forward-zone:
-	name: "." # use for ALL queries
-	forward-addr: 176.103.130.132 # adguard-dns-family
-	forward-addr: 185.228.168.10 # cleanbrowsing-adult
+        name: "." # use for ALL queries
+        forward-addr: 176.103.130.132 # adguard-dns-family
+        forward-addr: 185.228.168.10 # cleanbrowsing-adult
 ----
 ====
 

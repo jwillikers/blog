@@ -108,8 +108,8 @@ Configuration of rad is done in https://man.openbsd.org/rad.conf.5[rad.conf].
 ----
 dns {
   nameserver {
-	2606:4700:4700::1111
-	2606:4700:4700::1001
+        2606:4700:4700::1111
+        2606:4700:4700::1001
   }
 }
 
@@ -144,32 +144,32 @@ I enabled IPv6 support on Unbound and provided upstream IPv6 DNS servers.
 [source]
 ----
 server:
-	interface: 192.168.1.1
-	interface: 192.168.2.1
-	interface: 192.168.3.1
-	interface: 192.168.4.1
-	interface: 192.168.5.1
-	interface: 192.168.6.1
-	interface: 127.0.0.1
-	#interface: 127.0.0.1@5353	# listen on alternative port
-	interface: ::1
+        interface: 192.168.1.1
+        interface: 192.168.2.1
+        interface: 192.168.3.1
+        interface: 192.168.4.1
+        interface: 192.168.5.1
+        interface: 192.168.6.1
+        interface: 127.0.0.1
+        #interface: 127.0.0.1@5353	# listen on alternative port
+        interface: ::1
 
-	do-ip6: yes
-	prefer-ip6: yes
+        do-ip6: yes
+        prefer-ip6: yes
 
-	access-control: ::0/0 refuse
-	access-control: ::1 allow
-	access-control: fd00::/8 allow
-	access-control: fe80::/10 allow
+        access-control: ::0/0 refuse
+        access-control: ::1 allow
+        access-control: fd00::/8 allow
+        access-control: fe80::/10 allow
 
 # Use an upstream forwarder (recursive resolver) for some or all zones.
 #
 forward-zone:
-	name: "."				# use for ALL queries
-	forward-addr: 2606:4700:4700::1111
-	forward-addr: 2606:4700:4700::1001
-	forward-addr: 1.1.1.1
-	forward-addr: 1.0.0.1
+        name: "."				# use for ALL queries
+        forward-addr: 2606:4700:4700::1111
+        forward-addr: 2606:4700:4700::1001
+        forward-addr: 1.1.1.1
+        forward-addr: 1.0.0.1
 ----
 
 === Prefer IPv6
@@ -221,66 +221,66 @@ Eventually, I realized that public IPv6 addresses are only shown for interfaces 
 [,sh]
 ----
 em0: flags=808843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST,AUTOCONF4> mtu 1500
-	lladdr 00:00:00:00:00:00
-	index 1 priority 0 llprio 3
-	groups: egress
-	media: Ethernet autoselect (1000baseT full-duplex,rxpause,txpause)
-	status: active
-	inet 123.45.67.253 netmask 0xffffff00 broadcast 123.45.67.255
-	inet6 fe80::%em0 prefixlen 64 scopeid 0x1
-	inet6 2001:DB8:face:cafe:abcd:1111:2222:33 prefixlen 64 autoconf pltime 604473 vltime 2591673
+        lladdr 00:00:00:00:00:00
+        index 1 priority 0 llprio 3
+        groups: egress
+        media: Ethernet autoselect (1000baseT full-duplex,rxpause,txpause)
+        status: active
+        inet 123.45.67.253 netmask 0xffffff00 broadcast 123.45.67.255
+        inet6 fe80::%em0 prefixlen 64 scopeid 0x1
+        inet6 2001:DB8:face:cafe:abcd:1111:2222:33 prefixlen 64 autoconf pltime 604473 vltime 2591673
 em1: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-	lladdr 00:00:00:00:00:01
-	index 2 priority 0 llprio 3
-	groups: secure_lan
-	media: Ethernet autoselect (1000baseT full-duplex,rxpause,txpause)
-	status: active
-	inet 192.168.1.1 netmask 0xffffff00 broadcast 192.168.1.255
-	inet6 fe80::0001%em1 prefixlen 64 scopeid 0x2
+        lladdr 00:00:00:00:00:01
+        index 2 priority 0 llprio 3
+        groups: secure_lan
+        media: Ethernet autoselect (1000baseT full-duplex,rxpause,txpause)
+        status: active
+        inet 192.168.1.1 netmask 0xffffff00 broadcast 192.168.1.255
+        inet6 fe80::0001%em1 prefixlen 64 scopeid 0x2
 em2: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-	lladdr 00:00:00:00:00:02
-	index 3 priority 0 llprio 3
-	groups: secure_lan
-	media: Ethernet autoselect (100baseTX full-duplex)
-	status: active
-	inet 192.168.2.1 netmask 0xffffff00 broadcast 192.168.2.255
-	inet6 fe80::1%em2 prefixlen 64 scopeid 0x3
-	inet6 2001:DB8:face:cafe:1::1 prefixlen 64 pltime 205171 vltime 231091
+        lladdr 00:00:00:00:00:02
+        index 3 priority 0 llprio 3
+        groups: secure_lan
+        media: Ethernet autoselect (100baseTX full-duplex)
+        status: active
+        inet 192.168.2.1 netmask 0xffffff00 broadcast 192.168.2.255
+        inet6 fe80::1%em2 prefixlen 64 scopeid 0x3
+        inet6 2001:DB8:face:cafe:1::1 prefixlen 64 pltime 205171 vltime 231091
 em3: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-	lladdr 00:00:00:00:00:02
-	index 4 priority 0 llprio 3
-	groups: secure_lan
-	media: Ethernet autoselect (none)
-	status: no carrier
-	inet 192.168.3.1 netmask 0xffffff00 broadcast 192.168.3.255
-	inet6 fe80::2%em3 prefixlen 64 scopeid 0x4
+        lladdr 00:00:00:00:00:02
+        index 4 priority 0 llprio 3
+        groups: secure_lan
+        media: Ethernet autoselect (none)
+        status: no carrier
+        inet 192.168.3.1 netmask 0xffffff00 broadcast 192.168.3.255
+        inet6 fe80::2%em3 prefixlen 64 scopeid 0x4
 em4: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-	lladdr 00:00:00:00:00:03
-	index 5 priority 0 llprio 3
-	groups: secure_lan
-	media: Ethernet autoselect (1000baseT full-duplex,master,rxpause,txpause)
-	status: active
-	inet 192.168.4.1 netmask 0xffffff00 broadcast 192.168.4.255
-	inet6 fe80::3%em4 prefixlen 64 scopeid 0x5
-	inet6 2001:DB8:face:cafe:3::1 prefixlen 64 pltime 205172 vltime 231092
+        lladdr 00:00:00:00:00:03
+        index 5 priority 0 llprio 3
+        groups: secure_lan
+        media: Ethernet autoselect (1000baseT full-duplex,master,rxpause,txpause)
+        status: active
+        inet 192.168.4.1 netmask 0xffffff00 broadcast 192.168.4.255
+        inet6 fe80::3%em4 prefixlen 64 scopeid 0x5
+        inet6 2001:DB8:face:cafe:3::1 prefixlen 64 pltime 205172 vltime 231092
 em5: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-	lladdr 00:00:00:00:00:04
-	index 6 priority 0 llprio 3
-	groups: secure_lan
-	media: Ethernet autoselect (none)
-	status: no carrier
-	inet 192.168.5.1 netmask 0xffffff00 broadcast 192.168.5.255
-	inet6 fe80::4%em5 prefixlen 64 scopeid 0x6
+        lladdr 00:00:00:00:00:04
+        index 6 priority 0 llprio 3
+        groups: secure_lan
+        media: Ethernet autoselect (none)
+        status: no carrier
+        inet 192.168.5.1 netmask 0xffffff00 broadcast 192.168.5.255
+        inet6 fe80::4%em5 prefixlen 64 scopeid 0x6
 vlan2: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-	lladdr 00:00:00:00:00:05
-	index 9 priority 0 llprio 3
-	encap: vnetid 2 parent em1 txprio packet rxprio outer
-	groups: vlan insecure_lan
-	media: Ethernet autoselect (1000baseT full-duplex,rxpause,txpause)
-	status: active
-	inet 192.168.6.1 netmask 0xffffff00 broadcast 192.168.6.255
-	inet6 fe80::5%vlan2 prefixlen 64 scopeid 0x9
-	inet6 2001:DB8:face:cafe:5::1 prefixlen 64 pltime 205172 vltime 231092
+        lladdr 00:00:00:00:00:05
+        index 9 priority 0 llprio 3
+        encap: vnetid 2 parent em1 txprio packet rxprio outer
+        groups: vlan insecure_lan
+        media: Ethernet autoselect (1000baseT full-duplex,rxpause,txpause)
+        status: active
+        inet 192.168.6.1 netmask 0xffffff00 broadcast 192.168.6.255
+        inet6 fe80::5%vlan2 prefixlen 64 scopeid 0x9
+        inet6 2001:DB8:face:cafe:5::1 prefixlen 64 pltime 205172 vltime 231092
 ----
 
 To make sure end-to-end connections were working over IPv6, I pinged https://www.cloudflare.com/[Cloudflare]'s DNS server from my laptop.

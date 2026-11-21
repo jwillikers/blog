@@ -44,8 +44,8 @@ Second, only IPv4 options are present since my ISP doesn't support IPv6.
 [source]
 ----
 inet 0.0.0.0 255.255.255.255 NONE mtu 1500 \ # <1>
-	pppoedev em0 authproto chap \ # <2>
-	authname 'username' authkey 'password' up
+        pppoedev em0 authproto chap \ # <2>
+        authname 'username' authkey 'password' up
 dest 0.0.0.1
 !/sbin/route add default -ifp pppoe0 0.0.0.1
 ----
