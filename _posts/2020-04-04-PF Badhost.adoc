@@ -23,7 +23,7 @@ Install the script with the appropriate permissions.
 ----
 install -g bin -m 644 -o root pf-badhost.sh /usr/local/bin/ # <1>
 ----
-<1> The script will be owned by _root_, belong to the _bin_ group, and be readable by everyone and writeable by the owner.
+<1> The script will be owned by _root_, belong to the _bin_ group, and be readable by everyone and writable by the owner.
 
 Create a new user, `_pfbadhost`, who will not be allowed to login.
 
@@ -32,7 +32,7 @@ Create a new user, `_pfbadhost`, who will not be allowed to login.
 useradd -s /sbin/nologin _pfbadhost
 ----
 
-Install an empty `pf-badhost.txt` file owned by the `_pfbadhost` user which is readable and writeable by the owner only.
+Install an empty `pf-badhost.txt` file owned by the `_pfbadhost` user which is readable and writable by the owner only.
 
 [,sh]
 ----

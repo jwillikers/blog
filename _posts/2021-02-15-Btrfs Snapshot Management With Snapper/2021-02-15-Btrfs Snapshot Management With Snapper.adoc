@@ -103,7 +103,7 @@ PRUNENAMES = ".snapshots"
 === Snapshots Subvolume
 
 For each subvolume you want to snapshot, create a separate subvolume within it to hold the snapshots.
-This prevents snaphots being included in snapshots.
+This prevents snapshots being included in snapshots.
 Snapper uses a `.snapshots` subvolume by convention.
 The steps below create a `.snapshots` subvolume in which to keep snapshots of the root subvolume.
 The subvolume is created according to a {flat-layout}, so it exists at the top-level of the Btrfs volume and is mounted explicitly in {fstab}.

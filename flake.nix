@@ -10,7 +10,7 @@
         treefmt-nix.follows = "treefmt-nix";
       };
     };
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     pre-commit-hooks = {
       url = "github:cachix/pre-commit-hooks.nix";
       inputs = {
@@ -40,6 +40,24 @@
         gems = pkgs.bundlerEnv {
           name = "jwillikers-blog";
           gemdir = ./.;
+          gemConfig = pkgs.defaultGemConfig // {
+            # Newer versions of sass-embedded no longer create the extension directory before writing cli.rb.
+            # The default Nixpkgs config removes the dependency on the dart-sass task, which used to create it.
+            sass-embedded =
+              attrs:
+              let
+                default = pkgs.defaultGemConfig.sass-embedded attrs;
+              in
+              default
+              // {
+                postPatch = default.postPatch + ''
+                  substituteInPlace ext/sass/Rakefile \
+                    --replace-fail "file File.absolute_path('cli.rb', ARCHDIR) do |task|" \
+                      "file File.absolute_path('cli.rb', ARCHDIR) do |task|
+                    mkdir_p ARCHDIR"
+                '';
+              };
+          };
         };
         pre-commit = pre-commit-hooks.lib.${system}.run (
           import ./pre-commit-hooks.nix { inherit pkgs treefmtEval; }
@@ -75,8 +93,8 @@
               lychee
               nushell
               treefmtEval.config.build.wrapper
-              (builtins.attrValues treefmtEval.config.build.programs)
             ]
+            ++ builtins.attrValues treefmtEval.config.build.programs
             ++ pre-commit.enabledPackages;
           inherit (pre-commit) shellHook;
         };
