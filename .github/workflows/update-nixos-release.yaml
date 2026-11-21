@@ -13,8 +13,8 @@ jobs:
   update-nixos-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: DeterminateSystems/nix-installer-action@v22
+      - uses: actions/checkout@v7
+      - uses: DeterminateSystems/nix-installer-action@v23
       - name: Update the NixOS release in flake.nix to the latest
         run: |
           nix develop --command nu update-nixos-release.nu

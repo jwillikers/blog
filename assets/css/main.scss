@@ -9,3 +9,23 @@
 
 // Custom Imports
 @import "asciidoctor.css";
+
+// Minimal Mistakes 4.28 removes the top margin from every `:first-child` in `.page__content`.
+// Asciidoctor wraps each section in a div with the heading as its first child,
+// which collapses the spacing above headings.
+// Restore the theme's default heading margin for Asciidoctor sections.
+.page__content {
+  .sect1,
+  .sect2,
+  .sect3,
+  .sect4,
+  .sect5 {
+    > h2,
+    > h3,
+    > h4,
+    > h5,
+    > h6 {
+      margin-top: 2em;
+    }
+  }
+}

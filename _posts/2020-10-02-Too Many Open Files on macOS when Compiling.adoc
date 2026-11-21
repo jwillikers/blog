@@ -101,7 +101,7 @@ However, such an approach only applies to a single user, doesn't account for cha
 sudo chown root:wheel /Library/LaunchDaemons/limit.maxfiles.plist
 ----
 
-. Set permissions on the file so that it is readable and writeable by the owner and only readable by group members and everyone else.
+. Set permissions on the file so that it is readable and writable by the owner and only readable by group members and everyone else.
 +
 [,sh]
 ----
