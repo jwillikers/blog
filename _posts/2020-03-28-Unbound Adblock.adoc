@@ -53,9 +53,9 @@ Include the `adblock.conf` file at the end of the `server` section.
 [source]
 ----
 server:
-	...
-	# Include the unbound-adblock configuration file.
-	include: /var/unbound/etc/adblock.conf
+        ...
+        # Include the unbound-adblock configuration file.
+        include: /var/unbound/etc/adblock.conf
 ----
 
 Allow the `_adblock` user to reload the unbound service without requiring a password.
